@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\HeroSliderController as AdminHeroSliderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin CRUDs
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('products', AdminProductController::class);
+        Route::resource('sliders', AdminHeroSliderController::class);
+        Route::patch('sliders/{slider}/toggle', [AdminHeroSliderController::class, 'toggle'])->name('sliders.toggle');
     });
 });
 
