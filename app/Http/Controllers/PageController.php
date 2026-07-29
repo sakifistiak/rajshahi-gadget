@@ -125,6 +125,11 @@ class PageController extends Controller
             });
         }
 
+        // Max Price filter
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', (float)$request->max_price);
+        }
+
         // Search query
         if ($request->filled('search')) {
             $search = $request->search;
