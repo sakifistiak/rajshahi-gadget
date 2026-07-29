@@ -13,22 +13,22 @@
             </a>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (Clean Professional Text) -->
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-1 flex border-b border-gray-100">
             <a href="{{ route('admin.sliders.index') }}" 
                class="px-5 py-2.5 text-xs font-medium rounded-lg transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-50">
-                🖼️ Main Hero Slides
+                Main Hero Slides
             </a>
             <a href="{{ route('admin.promos.index') }}" 
                class="px-5 py-2.5 text-xs font-bold rounded-lg transition-all bg-blue-50 text-blue-600">
-                ⚡ Side Promo Banners
+                Side Promo Banners
             </a>
         </div>
 
         @if(session('success'))
             <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold rounded-lg flex items-center justify-between">
                 <span>{{ session('success') }}</span>
-                <button type="button" onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900">✕</button>
+                <button type="button" onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900">Close</button>
             </div>
         @endif
 

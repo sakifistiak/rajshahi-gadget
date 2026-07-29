@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');

@@ -54,6 +54,40 @@ class PageController extends Controller
         ));
     }
 
+    public function ajaxSearch(Request $request)
+    {
+        $query = trim($request->input('q', ''));
+        if (strlen($query) < 3) {
+            return response()->json(['products' => []]);
+        }
+
+        $products = Product::with(['category', 'brand', 'images'])
+            ->where('name', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
+            ->orWhereHas('category', function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->orWhereHas('brand', function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%");
+            })
+            ->take(8)
+            ->get()
+            ->map(function($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'price' => '৳ ' . number_format($product->price),
+                    'compare_at_price' => $product->compare_at_price ? '৳ ' . number_format($product->compare_at_price) : null,
+                    'image' => $product->primaryImage(),
+                    'category' => optional($product->category)->name ?? 'Gadget',
+                    'url' => route('product', $product->slug),
+                ];
+            });
+
+        return response()->json(['products' => $products]);
+    }
+
     public function page(string $page, Request $request)
     {
         if ($page === 'shop') {
