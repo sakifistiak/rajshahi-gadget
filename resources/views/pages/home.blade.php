@@ -36,33 +36,29 @@
         </div>
 
         <!-- Side Promo Banners -->
-        <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1">
-            <a href="/shop?condition=intact" class="group relative block overflow-hidden rounded-md shadow-sm">
-                <div class="aspect-[16/10] w-full bg-gradient-to-br from-sky-100 to-sky-50 sm:aspect-[16/8] lg:aspect-auto lg:h-full">
-                    <div class="relative flex h-full items-center">
-                        <div class="max-w-[58%] p-3 sm:p-5 lg:p-6">
-                            <p class="text-sm font-bold leading-tight text-foreground sm:text-lg lg:text-xl">Up to ৳ 9,500 OFF</p>
-                            <p class="mt-1 line-clamp-2 text-[10px] text-muted-foreground sm:text-xs lg:text-sm">on Apple Watch Series 10 · Ends 25 July</p>
-                        </div>
-                        <div class="absolute right-0 top-1/2 h-[85%] w-[50%] -translate-y-1/2">
-                            <img src="/assets/cat-wearables-WxrTS6bM.jpg" alt="Wearables" loading="lazy" class="h-full w-full object-contain object-right transition-transform duration-500 group-hover:scale-105" />
-                        </div>
-                    </div>
-                </div>
-            </a>
-            <a href="/shop?condition=without-box" class="group relative block overflow-hidden rounded-md shadow-sm">
-                <div class="aspect-[16/10] w-full bg-gradient-to-br from-orange-200 to-orange-100 sm:aspect-[16/8] lg:aspect-auto lg:h-full">
-                    <div class="relative flex h-full items-center">
-                        <div class="max-w-[58%] p-3 sm:p-5 lg:p-6">
-                            <p class="text-sm font-bold leading-tight text-foreground sm:text-lg lg:text-xl">Special Price ৳ 1,499</p>
-                            <p class="mt-1 line-clamp-2 text-[10px] text-muted-foreground sm:text-xs lg:text-sm">AGX HF40 Portable Fan · 6 Month Warranty · 5hr backup</p>
-                        </div>
-                        <div class="absolute right-0 top-1/2 h-[85%] w-[50%] -translate-y-1/2">
-                            <img src="/assets/cat-audio-TSO8_LKU.jpg" alt="Accessories" loading="lazy" class="h-full w-full object-contain object-right transition-transform duration-500 group-hover:scale-105" />
+                <!-- Side Promo Banners (Smart Auto-Split Layout) -->
+        <div class="grid {{ $promoBanners->count() === 1 ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-1' }} gap-3 sm:gap-4 h-full">
+            @foreach($promoBanners as $promo)
+                <a href="{{ $promo->link ?? '/shop' }}" class="group relative block overflow-hidden rounded-md shadow-sm h-full">
+                    <div class="w-full bg-gradient-to-br {{ $promo->bg_color ?? 'from-sky-100 to-sky-50' }} {{ $promoBanners->count() === 1 ? 'h-full min-h-[220px] lg:min-h-0' : 'aspect-[16/10] sm:aspect-[16/8] lg:aspect-auto lg:h-full' }}">
+                        <div class="relative flex h-full items-center">
+                            <div class="max-w-[58%] p-3 sm:p-5 lg:p-6">
+                                <p class="text-sm font-bold leading-tight text-foreground {{ $promoBanners->count() === 1 ? 'sm:text-xl lg:text-2xl' : 'sm:text-lg lg:text-xl' }}">
+                                    {{ $promo->title }}
+                                </p>
+                                @if($promo->subtitle)
+                                    <p class="mt-1 line-clamp-2 text-[10px] text-muted-foreground {{ $promoBanners->count() === 1 ? 'sm:text-sm lg:text-base' : 'sm:text-xs lg:text-sm' }}">
+                                        {{ $promo->subtitle }}
+                                    </p>
+                                @endif
+                            </div>
+                            <div class="absolute right-0 top-1/2 h-[85%] w-[50%] -translate-y-1/2">
+                                <img src="{{ $promo->image_path }}" alt="{{ $promo->title }}" loading="lazy" class="h-full w-full object-contain object-right transition-transform duration-500 group-hover:scale-105" />
+                            </div>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            @endforeach
         </div>
     </div>
 </section>

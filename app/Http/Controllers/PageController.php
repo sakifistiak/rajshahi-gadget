@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\BlogPost;
 use App\Models\HeroSlider;
+use App\Models\PromoBanner;
 use App\Models\Testimonial;
 use App\Models\CustomerFeedback;
 use App\Models\CustomerSpotlight;
@@ -22,6 +23,7 @@ class PageController extends Controller
     public function home()
     {
         $heroSliders = HeroSlider::where('is_active', true)->orderBy('sort_order')->get();
+        $promoBanners = PromoBanner::where('is_active', true)->orderBy('sort_order')->get();
         $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->where('in_stock', true)->latest()->get();
         
         $flashDeals = $allProducts->where('compare_at_price', '!=', null)->take(4);
@@ -43,6 +45,7 @@ class PageController extends Controller
 
         return view('pages.home', compact(
             'heroSliders',
+            'promoBanners',
             'allProducts',
             'flashDeals',
             'intactProducts',
@@ -106,7 +109,6 @@ class PageController extends Controller
             $query->latest();
         }
 
-        // Set per page limit to 48 so all 35-37+ products appear on single page with pagination support
         $products = $query->paginate(48)->withQueryString();
         $categories = Category::all();
         $brands = Brand::all();

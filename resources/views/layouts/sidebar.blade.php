@@ -78,5 +78,13 @@
             </svg>
             {{ __('Hero Sliders') }}
         </a>
+
+        <!-- Side Promo Banners -->
+        <a href="{{ route('admin.promos.index') }}" class="flex items-center gap-2.5 px-3 py-2 rounded text-[13px] font-medium transition-colors {{ request()->routeIs('admin.promos.*') ? 'bg-[#f1f5f9] text-[#1e293b] font-semibold' : 'text-slate-600 hover:bg-[#f8fafc] hover:text-[#1e293b]' }}">
+            <svg class="h-4 w-4 shrink-0 {{ request()->routeIs('admin.promos.*') ? 'text-slate-800' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+            </svg>
+            {{ __('Side Promo Banners') }}
+        </a>
     </nav>
 </aside>
