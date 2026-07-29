@@ -7,6 +7,10 @@
 
         <title>{{ config('app.name', 'Khan Gadget Admin') }}</title>
 
+        <!-- Site & Admin Favicon -->
+        <link rel="icon" href="/favicon.png" type="image/png"/>
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+
         <!-- Fonts (Inter) -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
