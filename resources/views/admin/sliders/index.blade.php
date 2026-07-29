@@ -3,13 +3,25 @@
         <!-- Page Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
             <div>
-                <h1 class="text-xl font-bold text-gray-900">Hero Banners & Sliders</h1>
-                <p class="text-xs text-gray-500 mt-1">Manage homepage top slider banners, order and visibility</p>
+                <h1 class="text-xl font-bold text-gray-900">Homepage Sliders & Banners</h1>
+                <p class="text-xs text-gray-500 mt-1">Manage main hero slides and side promo banners for homepage</p>
             </div>
             <a href="{{ route('admin.sliders.create') }}" 
                class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Add New Banner
+                Add Main Hero Banner
+            </a>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-1 flex border-b border-gray-100">
+            <a href="{{ route('admin.sliders.index') }}" 
+               class="px-5 py-2.5 text-xs font-bold rounded-lg transition-all bg-blue-50 text-blue-600">
+                🖼️ Main Hero Slides
+            </a>
+            <a href="{{ route('admin.promos.index') }}" 
+               class="px-5 py-2.5 text-xs font-medium rounded-lg transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-50">
+                ⚡ Side Promo Banners
             </a>
         </div>
 
@@ -87,7 +99,7 @@
                         @empty
                             <tr>
                                 <td colspan="6" class="px-5 py-8 text-center text-gray-400">
-                                    No banners created yet. Click "Add New Banner" to create one.
+                                    No banners created yet. Click "Add Main Hero Banner" to create one.
                                 </td>
                             </tr>
                         @endforelse
