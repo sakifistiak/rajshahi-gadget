@@ -30,5 +30,11 @@ class AppServiceProvider extends ServiceProvider
                 'siteSlogan'    => SiteSetting::getValue('site_slogan', 'Eternal Tech Companion'),
             ]);
         });
+
+        // Auto-inject single product page button script and CSS
+        View::composer('*', function ($view) {
+            // Shared CSS for single product pages & static product cards
+        });
     }
+
 }

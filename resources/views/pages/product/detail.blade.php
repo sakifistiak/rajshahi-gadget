@@ -89,5 +89,54 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
+<style>
+/* Style override for Single Product Page Buy Now & Add to Cart buttons */
+.product-single-buy-now,
+button.bg-primary.text-primary-foreground,
+a.bg-primary.text-primary-foreground {
+    background-color: #24272c !important;
+    color: #ffffff !important;
+    border-radius: 9999px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+    transition: all 0.2s ease !important;
+}
+
+.product-single-buy-now:hover,
+button.bg-primary.text-primary-foreground:hover,
+a.bg-primary.text-primary-foreground:hover {
+    background-color: #1a1c20 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Also format related product cards on the single page */
+[data-tsd-source*="ProductCard.tsx:88"] button.flex-1,
+[data-tsd-source*="ProductCard.tsx:88"] a.flex-1 {
+    border-radius: 9999px !important;
+    font-weight: 700 !important;
+    background-color: #24272c !important;
+    color: #ffffff !important;
+}
+[data-tsd-source*="ProductCard.tsx:88"] button[aria-label="Add to cart"],
+[data-tsd-source*="ProductCard.tsx:88"] a[aria-label="Add to Cart"] {
+    border-radius: 9999px !important;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('button, a').forEach(function(el) {
+        if (el.textContent && el.textContent.includes('Buy Now')) {
+            if (el.classList.contains('bg-primary') || el.closest('.min-w-56') || el.classList.contains('sm:min-w-56') || el.getAttribute('data-tsd-source')?.includes('product.$slug.tsx:177')) {
+                el.classList.add('product-single-buy-now');
+                el.style.backgroundColor = '#24272c';
+                el.style.color = '#ffffff';
+                el.style.borderRadius = '9999px';
+                el.innerHTML = '<span class="text-sm font-bold">Buy Now</span>';
+            }
+        }
+    });
+});
+</script>
+@include('partials.mobile-drawer')
 </body></html>
 

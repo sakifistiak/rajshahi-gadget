@@ -404,3 +404,94 @@ html.dark #kg-mobile-footer { border-top-color: #1e2330; }
     });
 })();
 </script>
+
+<style>
+/* Single product page "Buy Now" button format matching Home/Shop page */
+.product-single-buy-now,
+button.bg-primary.text-primary-foreground,
+a.bg-primary.text-primary-foreground,
+button.bg-primary,
+a.bg-primary {
+    background-color: #24272c !important;
+    color: #ffffff !important;
+    border-radius: 9999px !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+    transition: all 0.2s ease !important;
+}
+
+.product-single-buy-now:hover,
+button.bg-primary.text-primary-foreground:hover,
+a.bg-primary.text-primary-foreground:hover,
+button.bg-primary:hover,
+a.bg-primary:hover {
+    background-color: #1a1c20 !important;
+    transform: translateY(-1px) !important;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function applySingleProductButtonStyles() {
+        document.querySelectorAll('button, a').forEach(function(el) {
+            var text = (el.textContent || '').trim();
+            if (text.includes('Buy Now')) {
+                el.style.backgroundColor = '#24272c';
+                el.style.color = '#ffffff';
+                el.style.borderRadius = '9999px';
+                el.classList.add('rounded-full', 'font-bold');
+
+                // If button has nested price or icons, simplify it to just "Buy Now" text
+                if (el.querySelector('.tabular-nums') || el.children.length > 0) {
+                    // Check if it's the main single product page big Buy Now button
+                    if (el.classList.contains('bg-primary') || el.closest('.min-w-56') || el.classList.contains('sm:min-w-56') || el.getAttribute('data-tsd-source')?.includes('product.$slug.tsx:177')) {
+                        el.innerHTML = '<span class="text-sm font-bold">Buy Now</span>';
+                        
+                        // Add WhatsApp button next to it if not already added
+                        if (!el.nextElementSibling || !el.nextElementSibling.classList.contains('whatsapp-btn')) {
+                            var waBtn = document.createElement('a');
+                            var productName = document.querySelector('h1') ? document.querySelector('h1').textContent : 'this product';
+                            waBtn.href = "https://wa.me/8801700000001?text=" + encodeURIComponent("I want to order " + productName);
+                            waBtn.target = "_blank";
+                            waBtn.className = "whatsapp-btn inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-colors shadow-sm h-12 px-6 flex-1 rounded-full sm:flex-none";
+                            waBtn.style.backgroundColor = "#25D366";
+                            waBtn.style.color = "#ffffff";
+                            waBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg> Order on WhatsApp';
+                            el.parentNode.insertBefore(waBtn, el.nextSibling);
+                        }
+                    }
+                }
+            }
+
+            // Hide "Save to wishlist" button on single product page (it lacks the 'absolute' class which card wishlist buttons have)
+            if (el.getAttribute('aria-label') === 'Save to wishlist' && !el.classList.contains('absolute')) {
+                el.style.display = 'none';
+            }
+        });
+        
+        // Hide the feature section (Free next-day, 2-year warranty, etc.)
+        document.querySelectorAll('ul').forEach(function(el) {
+            var text = el.textContent || '';
+            if (text.includes('Free next') && text.includes('warranty')) {
+                el.style.display = 'none';
+            }
+        });
+        
+        // Replace $ with ৳ globally in text nodes
+        function replaceDollarWithTaka(node) {
+            if (node.nodeType === 3) { // Text node
+                if (node.nodeValue.includes('$')) {
+                    node.nodeValue = node.nodeValue.replace(/\$(\d+)/g, '৳ $1');
+                }
+            } else if (node.nodeType === 1 && node.nodeName !== 'SCRIPT' && node.nodeName !== 'STYLE') {
+                node.childNodes.forEach(replaceDollarWithTaka);
+            }
+        }
+        replaceDollarWithTaka(document.body);
+    }
+    applySingleProductButtonStyles();
+    setTimeout(applySingleProductButtonStyles, 300);
+});
+</script>
+
+
+
