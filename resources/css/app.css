@@ -1,3 +1,127 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --background: oklch(99% 0.002 265);
+  --foreground: oklch(18% 0.006 265);
+  --surface: oklch(98% 0.003 265);
+  --surface-elevated: oklch(100% 0 0);
+  --card: oklch(100% 0 0);
+  --card-foreground: oklch(18% 0.006 265);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(18% 0.006 265);
+  --primary: oklch(18% 0.006 265);
+  --primary-foreground: oklch(98% 0.003 265);
+  --secondary: oklch(96% 0.004 265);
+  --secondary-foreground: oklch(18% 0.006 265);
+  --muted: oklch(96% 0.004 265);
+  --muted-foreground: oklch(50% 0.01 265);
+  --accent: oklch(96% 0.004 265);
+  --accent-foreground: oklch(18% 0.006 265);
+  --border: oklch(90% 0.005 265);
+  --input: oklch(90% 0.005 265);
+  --ring: oklch(18% 0.006 265);
+  color-scheme: light;
+}
+
+html.dark, .dark {
+  --background: oklch(14% 0.005 265);
+  --foreground: oklch(95% 0.004 265);
+  --surface: oklch(18% 0.006 265);
+  --surface-elevated: oklch(22% 0.007 265);
+  --card: #141417;
+  --card-foreground: oklch(95% 0.004 265);
+  --popover: #141417;
+  --popover-foreground: oklch(95% 0.004 265);
+  --primary: oklch(95% 0.004 265);
+  --primary-foreground: oklch(14% 0.006 265);
+  --secondary: oklch(24% 0.007 265);
+  --secondary-foreground: oklch(95% 0.004 265);
+  --muted: oklch(24% 0.006 265);
+  --muted-foreground: oklch(72% 0.008 265);
+  --accent: oklch(26% 0.008 265);
+  --accent-foreground: oklch(95% 0.004 265);
+  --border: oklch(28% 0.008 265);
+  --input: oklch(28% 0.008 265);
+  --ring: oklch(72% 0.01 265);
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+
+html.dark .bg-background {
+  background-color: var(--background) !important;
+}
+
+html.dark .bg-surface {
+  background-color: var(--surface) !important;
+}
+
+html.dark .bg-card {
+  background-color: var(--card) !important;
+}
+
+html.dark .bg-secondary, html.dark .bg-secondary\/60 {
+  background-color: var(--secondary) !important;
+}
+
+html.dark .bg-muted {
+  background-color: var(--muted) !important;
+}
+
+html.dark .text-foreground, html.dark .text-foreground\/80, html.dark .text-foreground\/90 {
+  color: var(--foreground) !important;
+}
+
+html.dark .text-muted-foreground {
+  color: var(--muted-foreground) !important;
+}
+
+html.dark .border-border {
+  border-color: var(--border) !important;
+}
+
+html.dark header {
+  background-color: rgba(20, 20, 23, 0.95) !important;
+  border-color: var(--border) !important;
+}
+
+html.dark footer {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+html.dark input, html.dark select, html.dark textarea {
+  background-color: var(--surface) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+
+/* Buy Now Button - Always Dark Charcoal/Black (#24272c) with Crisp White Text */
+.btn-buy-now {
+  background-color: #24272c !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-buy-now:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.dark .btn-buy-now {
+  background-color: #1f2428 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+html.dark .btn-buy-now:hover {
+  background-color: #2e343a !important;
+  color: #ffffff !important;
+}
+
+

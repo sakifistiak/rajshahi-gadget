@@ -1,24 +1,23 @@
 <x-app-layout>
     
     @if (session('success'))
-        <div class="mb-5 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded text-xs font-semibold shadow-sm">
+        <div class="mb-5 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded text-xs font-semibold shadow-sm flex items-center gap-2">
+            <i data-lucide="check-circle-2" class="h-4 w-4 text-emerald-600"></i>
             {{ session('success') }}
         </div>
     @endif
 
-    <!-- Product Catalog Panel (CRM table layout) -->
+    <!-- Product Catalog Panel -->
     <div class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
         
-        <!-- Header Controls (Exactly CRM style) -->
+        <!-- Header Controls -->
         <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
                 <h3 class="text-[13px] font-bold text-slate-800">{{ __('Catalog List') }}</h3>
                 <p class="text-[10px] text-slate-400 mt-0.5">Manage details of all products uploaded to the catalog.</p>
             </div>
             <a href="{{ route('admin.products.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors">
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
-                </svg>
+                <i data-lucide="plus" class="h-3.5 w-3.5"></i>
                 {{ __('Add New Product') }}
             </a>
         </div>
@@ -73,13 +72,15 @@
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
-                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                                    <a href="{{ route('admin.products.edit', $product) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
+                                        <i data-lucide="edit-3" class="h-3.5 w-3.5"></i>
                                         {{ __('Edit') }}
                                     </a>
                                     <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800 font-semibold">
+                                        <button type="submit" class="text-red-600 hover:text-red-800 font-semibold inline-flex items-center gap-1">
+                                            <i data-lucide="trash-2" class="h-3.5 w-3.5"></i>
                                             {{ __('Delete') }}
                                         </button>
                                     </form>
