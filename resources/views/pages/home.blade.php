@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         </a>
         @if ($product->badge)
-            <span class="absolute left-3 top-3 rounded bg-accent px-2 py-0.5 text-[10px] font-bold text-accent-foreground uppercase tracking-wider shadow-sm">
+            <span class="absolute left-1.5 top-1.5 rounded bg-accent/90 text-accent-foreground font-bold uppercase tracking-normal shadow-xs pointer-events-none z-10" style="font-size: 8px !important; line-height: 10px !important; padding: 1.5px 4px !important; width: max-content !important; max-width: calc(100% - 12px) !important;">
                 {{ $product->badge }}
             </span>
         @endif

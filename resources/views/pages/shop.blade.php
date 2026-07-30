@@ -97,7 +97,7 @@
             </div>
         </a>
         @if ($product->badge)
-            <span class="absolute left-2 top-2 sm:left-3 sm:top-3 rounded bg-accent px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-accent-foreground uppercase tracking-wider shadow-sm">
+            <span class="absolute left-1.5 top-1.5 rounded bg-accent/90 text-accent-foreground font-bold uppercase tracking-normal shadow-xs pointer-events-none z-10" style="font-size: 8px !important; line-height: 10px !important; padding: 1.5px 4px !important; width: max-content !important; max-width: calc(100% - 12px) !important;">
                 {{ $product->badge }}
             </span>
         @endif
