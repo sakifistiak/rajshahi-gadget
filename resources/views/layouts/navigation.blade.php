@@ -8,7 +8,7 @@
         
         <!-- Site Logo Image -->
         <a href="{{ route('dashboard') }}" class="flex items-center py-1">
-            <img src="/media/b3ca13-kg-lockup-v2.png" alt="Khan Gadget" class="h-8 w-auto object-contain" />
+            <img src="{{ \App\Models\SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}" class="h-8 w-auto object-contain" />
         </a>
     </div>
 
@@ -89,7 +89,7 @@
 
             <!-- Mobile Brand Logo -->
             <div class="flex h-14 shrink-0 items-center px-4 border-b border-slate-100 bg-slate-50/50">
-                <img src="/media/b3ca13-kg-lockup-v2.png" alt="Khan Gadget" class="h-7 w-auto object-contain" />
+                <img src="{{ \App\Models\SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}" class="h-7 w-auto object-contain" />
             </div>
             
             <!-- Mobile Sidebar User Info -->

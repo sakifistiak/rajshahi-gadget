@@ -128,9 +128,13 @@
                 <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 transition-transform duration-200" :class="openSection === 'settings' ? 'rotate-180 text-blue-600' : ''"></i>
             </button>
             <div x-show="openSection === 'settings'" x-collapse class="pl-8 pr-2 py-1 space-y-1">
-                <a href="{{ route('admin.sliders.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*')) ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
-                    <i data-lucide="sliders" class="h-3.5 w-3.5 {{ (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*')) ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="sliders" class="h-3.5 w-3.5 {{ request()->routeIs('admin.settings.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Site Settings</span>
+                </a>
+                <a href="{{ route('admin.sliders.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*')) ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="image" class="h-3.5 w-3.5 {{ (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*')) ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                    <span>Sliders & Banners</span>
                 </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="shield-check" class="h-3.5 w-3.5 text-slate-400"></i>

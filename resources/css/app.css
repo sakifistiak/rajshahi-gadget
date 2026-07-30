@@ -124,4 +124,18 @@ html.dark .btn-buy-now:hover {
   color: #ffffff !important;
 }
 
+/* Product Card Badge - System Wide Light/Dark Mode Contrast */
+.product-card-badge {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+html.dark .product-card-badge, .dark .product-card-badge {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+
 

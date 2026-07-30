@@ -102,3 +102,6 @@ html.dark input, html.dark select, html.dark textarea {
 
 
 .btn-buy-now { background-color: #24272c !important; color: #ffffff !important; border: 1px solid rgba(0,0,0,0.1) !important; } .btn-buy-now:hover { background-color: #000000 !important; color: #ffffff !important; } html.dark .btn-buy-now { background-color: #1f2428 !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.25) !important; } html.dark .btn-buy-now:hover { background-color: #2e343a !important; color: #ffffff !important; }
+
+
+.product-card-badge { background-color: #0f172a !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.15) !important; } html.dark .product-card-badge, .dark .product-card-badge { background-color: #ffffff !important; color: #0f172a !important; border: 1px solid rgba(0,0,0,0.15) !important; }

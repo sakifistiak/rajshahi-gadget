@@ -42,6 +42,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('promos', AdminPromoBannerController::class);
         Route::patch('promos/{promo}/toggle', [AdminPromoBannerController::class, 'toggle'])->name('promos.toggle');
         Route::resource('customers', AdminCustomerController::class);
+        Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
     });
 });
 
