@@ -129,3 +129,5 @@
     </div>
     <div class="h-14 sm:hidden"></div>
 </footer>
+@include('partials.cart-script')
+
