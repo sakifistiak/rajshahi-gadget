@@ -300,14 +300,14 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
 
             <!-- Laptop group -->
             <div class="kg-drawer-group">
-                <button class="kg-drawer-group-btn" data-target="submenu-laptop">
+                <button class="kg-drawer-group-btn expanded" data-target="submenu-laptop">
                     <span style="display:flex;align-items:center;gap:10px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m14 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>
                         Laptop
                     </span>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
-                <div class="kg-drawer-submenu" id="submenu-laptop">
+                <div class="kg-drawer-submenu open" id="submenu-laptop">
                     <a href="/shop?condition=intact" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>BRAND NEW INTACT BOX</a>
                     <a href="/shop?condition=without-box" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>BRAND NEW WITHOUT BOX</a>
                     <a href="/shop?condition=pre-owned" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>PRE-OWNED</a>
@@ -433,6 +433,21 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
 
     /* ── Open/Close ── */
     function openDrawer() {
+        // Keep Laptop submenu expanded by default when menu opens
+        document.querySelectorAll('.kg-drawer-submenu').forEach(function (m) {
+            if (m.id === 'submenu-laptop') {
+                m.classList.add('open');
+            } else {
+                m.classList.remove('open');
+            }
+        });
+        document.querySelectorAll('.kg-drawer-group-btn').forEach(function (b) {
+            if (b.getAttribute('data-target') === 'submenu-laptop') {
+                b.classList.add('expanded');
+            } else {
+                b.classList.remove('expanded');
+            }
+        });
         drawer.classList.add('open');
         document.body.style.overflow = 'hidden';
     }
