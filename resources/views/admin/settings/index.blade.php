@@ -108,6 +108,14 @@
                         <input type="text" name="site_business_hours" value="{{ old('site_business_hours', $settings['site_business_hours']) }}" placeholder="e.g. Sat – Thu · 10:00 AM – 9:00 PM" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>
                 </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        Mobile Menu Contact Number
+                        <span class="text-slate-400 font-normal">(Shown as call button in mobile hamburger menu)</span>
+                    </label>
+                    <input type="text" name="mobile_menu_contact" value="{{ old('mobile_menu_contact', $settings['mobile_menu_contact']) }}" placeholder="e.g. 01341-246152" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                </div>
             </div>
 
             <!-- Card 4: Social Links & Copyright -->

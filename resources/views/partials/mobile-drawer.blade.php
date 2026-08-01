@@ -176,15 +176,17 @@ html.dark .kg-drawer-divider { background: #1e2330; }
 html.dark .kg-drawer-link { color: #f1f5f9; }
 html.dark .kg-drawer-link:hover { background: #1a2035; }
 
-/* Footer strip */
-#kg-mobile-footer {
-    margin-top: auto;
-    padding: 16px 20px;
-    border-top: 1px solid var(--color-border, #e5e7eb);
-    font-size: 11px;
-    color: var(--color-muted-foreground, #71717a);
+/* Store slider dark mode */
+html.dark #kg-drawer-store-slider > div {
+    background: #1a2035;
+    border-color: #1e2330 !important;
 }
-html.dark #kg-mobile-footer { border-top-color: #1e2330; }
+html.dark .kg-store-slide span {
+    color: #f1f5f9;
+}
+html.dark #kg-store-prev, html.dark #kg-store-next {
+    color: #94a3b8;
+}
 </style>
 
 <!-- Mobile Drawer HTML -->
@@ -194,8 +196,8 @@ html.dark #kg-mobile-footer { border-top-color: #1e2330; }
         <!-- Header -->
         <div id="kg-mobile-header">
             <img id="kg-drawer-logo"
-                 src="/media/b3ca13-kg-lockup-v2.png"
-                 alt="Khan Gadget"
+                 src="{{ $siteLogo }}"
+                 alt="{{ $siteName }}"
                  style="height:36px;width:auto;object-fit:contain;">
             <button id="kg-mobile-close" aria-label="Close menu">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
@@ -206,40 +208,30 @@ html.dark #kg-mobile-footer { border-top-color: #1e2330; }
             </button>
         </div>
 
-        <!-- Nav sections -->
+        <!-- Section 1: Main Navigation -->
         <div class="kg-drawer-section">
-            <p class="kg-drawer-section-title">Shop</p>
+            <a href="/" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                Home
+            </a>
+            <a href="/shop" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                All Products
+            </a>
 
             <!-- Laptop group -->
             <div class="kg-drawer-group">
                 <button class="kg-drawer-group-btn" data-target="submenu-laptop">
                     <span style="display:flex;align-items:center;gap:10px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m14 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m14 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>
                         Laptop
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2.5"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m6 9 6 6 6-6"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
-                <div class="kg-drawer-submenu open" id="submenu-laptop">
-                    <a href="/shop?condition=intact" class="kg-drawer-subitem">
-                        <span class="kg-drawer-subitem-dot"></span>
-                        BRAND NEW INTACT BOX
-                    </a>
-                    <a href="/shop?condition=without-box" class="kg-drawer-subitem">
-                        <span class="kg-drawer-subitem-dot"></span>
-                        BRAND NEW WITHOUT BOX
-                    </a>
-                    <a href="/shop?condition=pre-owned" class="kg-drawer-subitem">
-                        <span class="kg-drawer-subitem-dot"></span>
-                        PRE-OWNED
-                    </a>
+                <div class="kg-drawer-submenu" id="submenu-laptop">
+                    <a href="/shop?condition=intact" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>BRAND NEW INTACT BOX</a>
+                    <a href="/shop?condition=without-box" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>BRAND NEW WITHOUT BOX</a>
+                    <a href="/shop?condition=pre-owned" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>PRE-OWNED</a>
                 </div>
             </div>
 
@@ -247,19 +239,10 @@ html.dark #kg-mobile-footer { border-top-color: #1e2330; }
             <div class="kg-drawer-group">
                 <button class="kg-drawer-group-btn" data-target="submenu-brands">
                     <span style="display:flex;align-items:center;gap:10px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                             fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/>
-                            <path d="M7 7h.01"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
                         Brands
                     </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2.5"
-                         stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m6 9 6 6 6-6"/>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div class="kg-drawer-submenu" id="submenu-brands">
                     <a href="/shop?brand=acer" class="kg-drawer-subitem"><span class="kg-drawer-subitem-dot"></span>Acer</a>
@@ -280,50 +263,94 @@ html.dark #kg-mobile-footer { border-top-color: #1e2330; }
 
         <div class="kg-drawer-divider"></div>
 
-        <!-- Quick links -->
+        <!-- Section 2: Content Links -->
         <div class="kg-drawer-section" style="padding:0;">
-            <a href="/" class="kg-drawer-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/>
-                    <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                </svg>
-                Home
+            <a href="/blog" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+                Blog
             </a>
-            <a href="/shop" class="kg-drawer-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="7" height="7" x="3" y="3" rx="1"/>
-                    <rect width="7" height="7" x="14" y="3" rx="1"/>
-                    <rect width="7" height="7" x="14" y="14" rx="1"/>
-                    <rect width="7" height="7" x="3" y="14" rx="1"/>
-                </svg>
-                All Products
+            <a href="/customer-spotlight" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Customer Spotlight
+            </a>
+            <a href="/philanthropic-work" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                Philanthropic Work
             </a>
             <a href="/customer-feedback" class="kg-drawer-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/>
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg>
                 Customer Feedback
-            </a>
-            <a href="/about" class="kg-drawer-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 16v-4"/><path d="M12 8h.01"/>
-                </svg>
-                About Us
             </a>
         </div>
 
-        <!-- Footer -->
-        <div id="kg-mobile-footer">
-            Sat – Thu &nbsp;·&nbsp; 10:00 AM – 9:00 PM
+        <div class="kg-drawer-divider"></div>
+
+        <!-- Section 3: Info Links -->
+        <div class="kg-drawer-section" style="padding:0;">
+            <a href="/about" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                About Us
+            </a>
+            <a href="/contact" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Contact
+            </a>
+            <a href="/privacy-policy" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                Privacy & Policy
+            </a>
+            <a href="/terms-conditions" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Terms & Conditions
+            </a>
+            <a href="/complain-advice" class="kg-drawer-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Complain / Advice
+            </a>
+        </div>
+
+        <!-- Section 4: Store Location Slider -->
+        @if(isset($storeLocations) && $storeLocations->count() > 0)
+        <div id="kg-drawer-store-slider" style="padding:10px 20px 6px;">
+            <div style="position:relative;display:flex;align-items:center;background:var(--color-secondary, #f4f4f5);border:1px solid var(--color-border, #e5e7eb);border-radius:2px;padding:6px 8px;min-height:44px;">
+                @if($storeLocations->count() > 1)
+                <button id="kg-store-prev" aria-label="Previous store" style="background:none;border:none;color:var(--color-muted-foreground,#71717a);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;z-index:2;flex-shrink:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+                @endif
+
+                <div style="position:relative;flex:1;overflow:hidden;height:24px;">
+                    @foreach($storeLocations as $idx => $outlet)
+                    <div class="kg-store-slide" data-index="{{ $idx }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;opacity:{{ $idx === 0 ? '1' : '0' }};transition:opacity 0.4s ease;pointer-events:{{ $idx === 0 ? 'auto' : 'none' }};">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:var(--color-muted-foreground,#71717a);">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span style="font-size:13px;font-weight:600;color:var(--color-foreground,#09090b);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $outlet->name }}</span>
+                    </div>
+                    @endforeach
+                </div>
+
+                @if($storeLocations->count() > 1)
+                <button id="kg-store-next" aria-label="Next store" style="background:none;border:none;color:var(--color-muted-foreground,#71717a);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;z-index:2;flex-shrink:0;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <!-- Section 5: Call Button -->
+        @php
+            $mobileMenuContact = \App\Models\SiteSetting::getValue('mobile_menu_contact', $sitePhone ?? '+8801700000000');
+        @endphp
+        <div style="padding:6px 20px 16px;">
+            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $mobileMenuContact) }}"
+               style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 20px;border-radius:2px;background:#000000;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:0.01em;transition:background 0.2s ease;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                {{ $mobileMenuContact }}
+            </a>
         </div>
     </div>
 </div>
@@ -400,6 +427,83 @@ html.dark #kg-mobile-footer { border-top-color: #1e2330; }
             syncDrawerLogo();
             new MutationObserver(syncDrawerLogo)
                 .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        }
+    });
+
+    /* ── Store Location Slider ── */
+    document.addEventListener('DOMContentLoaded', function () {
+        var slides = document.querySelectorAll('.kg-store-slide');
+        if (slides.length > 1) {
+            var current = 0;
+            var total = slides.length;
+            var sliderContainer = document.getElementById('kg-drawer-store-slider');
+            var prevBtn = document.getElementById('kg-store-prev');
+            var nextBtn = document.getElementById('kg-store-next');
+            var startX = 0, diffX = 0;
+
+            function showSlide(index) {
+                slides.forEach(function(s, i) {
+                    s.style.opacity = i === index ? '1' : '0';
+                    s.style.pointerEvents = i === index ? 'auto' : 'none';
+                });
+            }
+
+            function resetTimer() {
+                clearInterval(autoSlide);
+                autoSlide = setInterval(function() {
+                    current = (current + 1) % total;
+                    showSlide(current);
+                }, 2000);
+            }
+
+            // Auto-slide every 2 seconds
+            var autoSlide = setInterval(function() {
+                current = (current + 1) % total;
+                showSlide(current);
+            }, 2000);
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    current = (current - 1 + total) % total;
+                    showSlide(current);
+                    resetTimer();
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    current = (current + 1) % total;
+                    showSlide(current);
+                    resetTimer();
+                });
+            }
+
+            // Touch/swipe support
+            if (sliderContainer) {
+                sliderContainer.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                    clearInterval(autoSlide);
+                }, { passive: true });
+
+                sliderContainer.addEventListener('touchmove', function(e) {
+                    diffX = e.touches[0].clientX - startX;
+                }, { passive: true });
+
+                sliderContainer.addEventListener('touchend', function() {
+                    if (Math.abs(diffX) > 40) {
+                        if (diffX < 0) {
+                            current = (current + 1) % total;
+                        } else {
+                            current = (current - 1 + total) % total;
+                        }
+                        showSlide(current);
+                    }
+                    diffX = 0;
+                    resetTimer();
+                });
+            }
         }
     });
 })();
@@ -492,6 +596,3 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(applySingleProductButtonStyles, 300);
 });
 </script>
-
-
-

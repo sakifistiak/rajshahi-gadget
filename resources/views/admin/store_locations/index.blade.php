@@ -47,7 +47,7 @@
                                     </div>
                                 </td>
                                 <td class="px-5 py-3.5 text-gray-700">
-                                    {{ $loc->address }}
+                                    {{ strip_tags($loc->address) }}
                                 </td>
                                 <td class="px-5 py-3.5 text-gray-700">
                                     {{ $loc->phone ?? 'N/A' }}
