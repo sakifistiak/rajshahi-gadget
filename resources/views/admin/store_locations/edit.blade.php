@@ -37,9 +37,39 @@
 
             <div class="space-y-1.5">
                 <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Physical Address <span class="text-rose-500">*</span></label>
-                <input type="text" name="address" value="{{ old('address', $storeLocation->address) }}" required
-                       class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+                <div id="quill-editor-address" class="bg-white rounded-sm text-xs border border-gray-200" style="min-height: 120px;">{!! old('address', $storeLocation->address) !!}</div>
+                <textarea name="address" id="address-hidden" class="hidden">{{ old('address', $storeLocation->address) }}</textarea>
             </div>
+
+            <!-- Include Quill.js CDN & Init -->
+            <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+            <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var quill = new Quill('#quill-editor-address', {
+                        theme: 'snow',
+                        placeholder: 'Enter physical address...',
+                        modules: {
+                            toolbar: [
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                [{ 'color': [] }, { 'background': [] }],
+                                ['clean']
+                            ]
+                        }
+                    });
+
+                    var hiddenInput = document.getElementById('address-hidden');
+                    quill.on('text-change', function() {
+                        hiddenInput.value = quill.root.innerHTML;
+                    });
+                    
+                    var form = hiddenInput.closest('form');
+                    form.addEventListener('submit', function() {
+                        hiddenInput.value = quill.root.innerHTML;
+                    });
+                });
+            </script>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">

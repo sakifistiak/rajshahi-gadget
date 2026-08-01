@@ -16,7 +16,7 @@
                             </svg>
                             <div class="min-w-0">
                                 <p class="text-sm font-medium leading-tight">{{ $outlet->name }}</p>
-                                <p class="mt-1 text-xs leading-relaxed text-muted-foreground">{{ $outlet->address }}</p>
+                                <div class="mt-1 text-xs leading-relaxed text-muted-foreground whitespace-pre-line">{!! nl2br($outlet->address) !!}</div>
                                 @if($outlet->phone)
                                     <a href="tel:{{ preg_replace('/[^0-9+]/', '', $outlet->phone) }}" class="mt-1 inline-block text-xs text-muted-foreground hover:text-foreground">{{ $outlet->phone }}</a>
                                 @endif

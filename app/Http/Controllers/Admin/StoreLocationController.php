@@ -25,7 +25,7 @@ class StoreLocationController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:500',
+            'address' => 'required|string',
             'phone' => 'nullable|string|max:100',
             'sort_order' => 'required|integer',
             'is_active' => 'boolean',
@@ -51,7 +51,7 @@ class StoreLocationController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:500',
+            'address' => 'required|string',
             'phone' => 'nullable|string|max:100',
             'sort_order' => 'required|integer',
             'is_active' => 'boolean',
