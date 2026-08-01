@@ -1,0 +1,76 @@
+<x-app-layout>
+    <div class="w-full space-y-6">
+        <!-- Page Header -->
+        <div class="flex items-center justify-between bg-white p-5 rounded-sm border border-gray-100 shadow-sm">
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">Add New Store Location</h1>
+                <p class="text-xs text-gray-500 mt-1">Fill in store outlet details for the website footer</p>
+            </div>
+            <a href="{{ route('admin.store-locations.index') }}" 
+               class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-sm transition-all">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                Back to Locations
+            </a>
+        </div>
+
+        @if($errors->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold rounded-sm space-y-1">
+                @foreach($errors->all() as $error)
+                    <p class="flex items-center gap-2">
+                        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0"></i>
+                        {{ $error }}
+                    </p>
+                @endforeach
+            </div>
+        @endif
+
+        <!-- Form Card -->
+        <form action="{{ route('admin.store-locations.store') }}" method="POST" class="bg-white p-6 rounded-sm border border-gray-100 shadow-sm space-y-5">
+            @csrf
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Store Name <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" value="{{ old('name') }}" placeholder="e.g. Dhanmondi" required
+                       class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Physical Address <span class="text-rose-500">*</span></label>
+                <input type="text" name="address" value="{{ old('address') }}" placeholder="e.g. House 12, Road 5, Dhanmondi, Dhaka 1205" required
+                       class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Contact Phone</label>
+                    <input type="text" name="phone" value="{{ old('phone') }}" placeholder="e.g. +8801700000001"
+                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Display Sort Order</label>
+                    <input type="number" name="sort_order" value="{{ old('sort_order', 1) }}" required
+                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center gap-2">
+                <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', 1) ? 'checked' : '' }}
+                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4" />
+                <label for="is_active" class="text-xs font-semibold text-gray-700 select-none cursor-pointer">
+                    Active (display in site footer)
+                </label>
+            </div>
+
+            <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
+                <a href="{{ route('admin.store-locations.index') }}" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-sm transition-all">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-sm shadow-sm transition-all flex items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    Save Store Location
+                </button>
+            </div>
+        </form>
+    </div>
+</x-app-layout>

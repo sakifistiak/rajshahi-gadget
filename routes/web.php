@@ -44,6 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('customers', AdminCustomerController::class);
         Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::resource('store-locations', \App\Http\Controllers\Admin\StoreLocationController::class);
 
         // Media Library
         Route::get('media', [AdminMediaController::class, 'index'])->name('media.index');
