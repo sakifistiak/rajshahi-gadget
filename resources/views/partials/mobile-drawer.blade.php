@@ -79,6 +79,85 @@ html.dark #kg-mobile-close {
 }
 html.dark #kg-mobile-close:hover { background: #252d3d; }
 
+/* ── Hotline Call Card Button ── */
+.kg-hotline-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e4e4e7;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.kg-hotline-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+.kg-hotline-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #000000;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #000000;
+}
+.kg-hotline-divider {
+    width: 1px;
+    height: 34px;
+    background: #e4e4e7;
+    margin: 0 16px;
+    flex-shrink: 0;
+}
+.kg-hotline-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.kg-hotline-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #52525b;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+.kg-hotline-number {
+    font-size: 18px;
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: 0.02em;
+    margin-top: 4px;
+    line-height: 1.15;
+}
+
+/* Dark theme for Hotline Button */
+html.dark .kg-hotline-btn {
+    background: #000000;
+    border-color: #27272a;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+html.dark .kg-hotline-icon {
+    background: #000000;
+    border-color: #3f3f46;
+    color: #ffffff;
+}
+html.dark .kg-hotline-divider {
+    background: #27272a;
+}
+html.dark .kg-hotline-label {
+    color: #a1a1aa;
+}
+html.dark .kg-hotline-number {
+    color: #ffffff;
+}
+
 /* Nav sections */
 .kg-drawer-section {
     padding: 0 12px;
@@ -309,47 +388,38 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
             </a>
         </div>
 
-        <!-- Section 4: Store Location Slider -->
-        @if(isset($storeLocations) && $storeLocations->count() > 0)
-        <div id="kg-drawer-store-slider" style="padding:10px 20px 6px;">
-            <div style="position:relative;display:flex;align-items:center;background:var(--color-secondary, #f4f4f5);border:1px solid var(--color-border, #e5e7eb);border-radius:2px;padding:6px 8px;min-height:44px;">
-                @if($storeLocations->count() > 1)
-                <button id="kg-store-prev" aria-label="Previous store" style="background:none;border:none;color:var(--color-muted-foreground,#71717a);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;z-index:2;flex-shrink:0;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                </button>
-                @endif
-
-                <div style="position:relative;flex:1;overflow:hidden;height:24px;">
-                    @foreach($storeLocations as $idx => $outlet)
-                    <div class="kg-store-slide" data-index="{{ $idx }}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:6px;opacity:{{ $idx === 0 ? '1' : '0' }};transition:opacity 0.4s ease;pointer-events:{{ $idx === 0 ? 'auto' : 'none' }};">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:var(--color-muted-foreground,#71717a);">
-                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-                        </svg>
-                        <span style="font-size:13px;font-weight:600;color:var(--color-foreground,#09090b);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ $outlet->name }}</span>
-                    </div>
-                    @endforeach
-                </div>
-
-                @if($storeLocations->count() > 1)
-                <button id="kg-store-next" aria-label="Next store" style="background:none;border:none;color:var(--color-muted-foreground,#71717a);cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;z-index:2;flex-shrink:0;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                </button>
-                @endif
+        <!-- Section 4: Store Location Info Text -->
+        @php
+            $drawerStoreText = \App\Models\SiteSetting::getValue('mobile_drawer_store_info', $mobileDrawerStoreInfo ?? 'Shop No: 136 | Ground Floor | Computer City Center (Ex Multiplan Center) | New Elephant Road, Dhaka-1205');
+        @endphp
+        @if(!empty($drawerStoreText))
+        <div style="padding:10px 20px 6px;">
+            <div style="background:var(--color-secondary, #f4f4f5);border:1px solid var(--color-border, #e5e7eb);border-radius:2px;padding:10px 14px;">
+                <p style="font-size:12.5px;font-weight:500;color:var(--color-foreground,#09090b);line-height:1.55;margin:0;">
+                    {{ $drawerStoreText }}
+                </p>
             </div>
         </div>
         @endif
 
-        <!-- Section 5: Call Button -->
+        <!-- Section 5: Hotline Call Card Button -->
         @php
             $mobileMenuContact = \App\Models\SiteSetting::getValue('mobile_menu_contact', $sitePhone ?? '+8801700000000');
         @endphp
-        <div style="padding:6px 20px 16px;">
-            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $mobileMenuContact) }}"
-               style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px 20px;border-radius:2px;background:#000000;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;letter-spacing:0.01em;transition:background 0.2s ease;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                </svg>
-                {{ $mobileMenuContact }}
+        <div style="padding:8px 16px 20px;">
+            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $mobileMenuContact) }}" class="kg-hotline-btn">
+                <div class="kg-hotline-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        <path d="M14.05 2a9 9 0 0 1 8 7.94"></path>
+                        <path d="M14.05 6a5 5 0 0 1 4 3.9"></path>
+                    </svg>
+                </div>
+                <div class="kg-hotline-divider"></div>
+                <div class="kg-hotline-text">
+                    <span class="kg-hotline-label">HOTLINE</span>
+                    <span class="kg-hotline-number">{{ $mobileMenuContact }}</span>
+                </div>
             </a>
         </div>
     </div>
@@ -430,82 +500,6 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
         }
     });
 
-    /* ── Store Location Slider ── */
-    document.addEventListener('DOMContentLoaded', function () {
-        var slides = document.querySelectorAll('.kg-store-slide');
-        if (slides.length > 1) {
-            var current = 0;
-            var total = slides.length;
-            var sliderContainer = document.getElementById('kg-drawer-store-slider');
-            var prevBtn = document.getElementById('kg-store-prev');
-            var nextBtn = document.getElementById('kg-store-next');
-            var startX = 0, diffX = 0;
-
-            function showSlide(index) {
-                slides.forEach(function(s, i) {
-                    s.style.opacity = i === index ? '1' : '0';
-                    s.style.pointerEvents = i === index ? 'auto' : 'none';
-                });
-            }
-
-            function resetTimer() {
-                clearInterval(autoSlide);
-                autoSlide = setInterval(function() {
-                    current = (current + 1) % total;
-                    showSlide(current);
-                }, 2000);
-            }
-
-            // Auto-slide every 2 seconds
-            var autoSlide = setInterval(function() {
-                current = (current + 1) % total;
-                showSlide(current);
-            }, 2000);
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    current = (current - 1 + total) % total;
-                    showSlide(current);
-                    resetTimer();
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    current = (current + 1) % total;
-                    showSlide(current);
-                    resetTimer();
-                });
-            }
-
-            // Touch/swipe support
-            if (sliderContainer) {
-                sliderContainer.addEventListener('touchstart', function(e) {
-                    startX = e.touches[0].clientX;
-                    clearInterval(autoSlide);
-                }, { passive: true });
-
-                sliderContainer.addEventListener('touchmove', function(e) {
-                    diffX = e.touches[0].clientX - startX;
-                }, { passive: true });
-
-                sliderContainer.addEventListener('touchend', function() {
-                    if (Math.abs(diffX) > 40) {
-                        if (diffX < 0) {
-                            current = (current + 1) % total;
-                        } else {
-                            current = (current - 1 + total) % total;
-                        }
-                        showSlide(current);
-                    }
-                    diffX = 0;
-                    resetTimer();
-                });
-            }
-        }
-    });
 })();
 </script>
 

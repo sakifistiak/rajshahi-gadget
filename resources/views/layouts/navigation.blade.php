@@ -8,7 +8,7 @@
         
         <!-- Site Logo Image -->
         <a href="{{ route('dashboard') }}" class="flex items-center py-1">
-            <img src="{{ \App\Models\SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}" class="h-8 w-auto object-contain" />
+            <img src="{{ \App\Models\SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}" class="h-8 w-auto object-contain" style="max-height:32px;width:auto;" />
         </a>
     </div>
 
