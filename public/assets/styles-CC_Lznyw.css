@@ -105,3 +105,130 @@ html.dark input, html.dark select, html.dark textarea {
 
 
 .product-card-badge { background-color: #0f172a !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.15) !important; } html.dark .product-card-badge, .dark .product-card-badge { background-color: #ffffff !important; color: #0f172a !important; border: 1px solid rgba(0,0,0,0.15) !important; }
+
+/* ══════════════ Khan Gadget – Global Theme Variables ══════════════ */
+:root {
+  --background: #fafafa;
+  --foreground: #171717;
+  --surface: #f5f5f5;
+  --surface-elevated: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --primary: #171717;
+  --primary-foreground: #fafafa;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #171717;
+  --muted: #f0f0f0;
+  --muted-foreground: #737373;
+  --accent: #171717;
+  --accent-foreground: #fafafa;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #171717;
+  --success: #16a34a;
+  --destructive: #dc2626;
+  --destructive-foreground: #fafafa;
+  color-scheme: light;
+}
+
+html.dark, .dark {
+  --background: #0a0a0b;
+  --foreground: #eaeaec;
+  --surface: #151518;
+  --surface-elevated: #1e1e22;
+  --card: #141417;
+  --card-foreground: #eaeaec;
+  --popover: #141417;
+  --popover-foreground: #eaeaec;
+  --primary: #eaeaec;
+  --primary-foreground: #141417;
+  --secondary: #232328;
+  --secondary-foreground: #eaeaec;
+  --muted: #232328;
+  --muted-foreground: #9e9eaa;
+  --accent: #eaeaec;
+  --accent-foreground: #141417;
+  --border: #2e2e35;
+  --input: #2e2e35;
+  --ring: #9e9eaa;
+  --success: #22c55e;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  color-scheme: dark;
+}
+
+/* ── Text Selection Highlight ── */
+::selection {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+/* ── Trust Bar Icon Circles (light mode: dark icon on light bg) ── */
+.bg-accent\/10 {
+  background-color: #f0f0f0 !important;
+}
+.text-accent {
+  color: #171717 !important;
+}
+html.dark .bg-accent\/10 {
+  background-color: #232328 !important;
+}
+html.dark .text-accent {
+  color: #eaeaec !important;
+}
+
+/* ── Flash Deals badge ── */
+.bg-accent\/15 {
+  background-color: #e8e8e8 !important;
+}
+html.dark .bg-accent\/15 {
+  background-color: #2a2a30 !important;
+}
+
+/* ── Save badge text color fix ── */
+.text-success {
+  color: #16a34a !important;
+}
+html.dark .text-success {
+  color: #22c55e !important;
+}
+
+/* ── Hide Compare & Wishlist hover overlays on product cards ── */
+button[aria-label="Compare"],
+button[aria-label="Add to wishlist"],
+button[aria-label="Save to wishlist"],
+a[aria-label="Compare"],
+a[aria-label="Add to wishlist"],
+[data-tsd-source*="ProductCard.tsx"] .absolute.top-2.right-2,
+[data-tsd-source*="ProductCard.tsx"] .absolute.top-3.right-3 {
+  display: none !important;
+}
+
+/* ── Dark Mode Overrides ── */
+html.dark body {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+html.dark .bg-background { background-color: var(--background) !important; }
+html.dark .bg-surface { background-color: var(--surface) !important; }
+html.dark .bg-card { background-color: var(--card) !important; }
+html.dark .bg-secondary, html.dark .bg-secondary\/60 { background-color: var(--secondary) !important; }
+html.dark .bg-muted { background-color: var(--muted) !important; }
+html.dark .text-foreground, html.dark .text-foreground\/80, html.dark .text-foreground\/90 { color: var(--foreground) !important; }
+html.dark .text-muted-foreground { color: var(--muted-foreground) !important; }
+html.dark .border-border { border-color: var(--border) !important; }
+html.dark header { background-color: rgba(10, 10, 11, 0.95) !important; border-color: var(--border) !important; }
+html.dark footer { background-color: var(--surface) !important; border-color: var(--border) !important; }
+html.dark input, html.dark select, html.dark textarea { background-color: var(--surface) !important; color: var(--foreground) !important; border-color: var(--border) !important; }
+
+/* ── Buy Now Button ── */
+.btn-buy-now { background-color: #24272c !important; color: #ffffff !important; border: 1px solid rgba(0,0,0,0.1) !important; }
+.btn-buy-now:hover { background-color: #000000 !important; color: #ffffff !important; }
+html.dark .btn-buy-now { background-color: #1f2428 !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.25) !important; }
+html.dark .btn-buy-now:hover { background-color: #2e343a !important; color: #ffffff !important; }
+
+/* ── Product Card Badge ── */
+.product-card-badge { background-color: #0f172a !important; color: #ffffff !important; border: 1px solid rgba(255,255,255,0.15) !important; }
+html.dark .product-card-badge, .dark .product-card-badge { background-color: #ffffff !important; color: #0f172a !important; border: 1px solid rgba(0,0,0,0.15) !important; }
