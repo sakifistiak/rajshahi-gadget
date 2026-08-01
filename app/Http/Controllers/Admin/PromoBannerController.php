@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PromoBanner;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
 class PromoBannerController extends Controller
@@ -24,26 +25,41 @@ class PromoBannerController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'image_path' => 'required|string|max:500',
-            'bg_color' => 'nullable|string|max:100',
+            'image_path' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'link' => 'nullable|string|max:255',
             'sort_order' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);
 
+        $imagePath = $request->image_path;
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+            $targetDir = public_path('uploads');
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
+            }
+            $file->move($targetDir, $filename);
+            $imagePath = '/uploads/' . $filename;
+        }
+
+        if (empty($imagePath)) {
+            return redirect()->back()->withInput()->withErrors(['image_path' => 'Please select or upload an image file.']);
+        }
+
         PromoBanner::create([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'image_path' => $request->image_path,
-            'bg_color' => $request->bg_color ?: 'from-sky-100 to-sky-50',
+            'title' => '',
+            'subtitle' => null,
+            'image_path' => $imagePath,
+            'bg_color' => 'from-sky-100 to-sky-50',
             'link' => $request->link ?: '/shop',
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? (bool)$request->is_active : true,
         ]);
 
-        return redirect()->route('admin.promos.index')->with('success', 'Promo Banner created successfully!');
+        return redirect()->route('admin.promos.index')->with('success', 'Side Promo Banner added successfully!');
     }
 
     public function edit(PromoBanner $promo): View
@@ -54,26 +70,35 @@ class PromoBannerController extends Controller
     public function update(Request $request, PromoBanner $promo): RedirectResponse
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'image_path' => 'required|string|max:500',
-            'bg_color' => 'nullable|string|max:100',
+            'image_path' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'link' => 'nullable|string|max:255',
             'sort_order' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);
 
+        $imagePath = $request->image_path ?: $promo->image_path;
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+            $targetDir = public_path('uploads');
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
+            }
+            $file->move($targetDir, $filename);
+            $imagePath = '/uploads/' . $filename;
+        }
+
         $promo->update([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'image_path' => $request->image_path,
-            'bg_color' => $request->bg_color ?: 'from-sky-100 to-sky-50',
+            'title' => '',
+            'image_path' => $imagePath,
             'link' => $request->link ?: '/shop',
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active'),
         ]);
 
-        return redirect()->route('admin.promos.index')->with('success', 'Promo Banner updated successfully!');
+        return redirect()->route('admin.promos.index')->with('success', 'Side Promo Banner updated successfully!');
     }
 
     public function toggle(PromoBanner $promo): RedirectResponse
@@ -82,12 +107,12 @@ class PromoBannerController extends Controller
             'is_active' => !$promo->is_active
         ]);
 
-        return redirect()->route('admin.promos.index')->with('success', 'Promo Banner status updated successfully!');
+        return redirect()->route('admin.promos.index')->with('success', 'Promo Banner status updated!');
     }
 
     public function destroy(PromoBanner $promo): RedirectResponse
     {
         $promo->delete();
-        return redirect()->route('admin.promos.index')->with('success', 'Promo Banner deleted successfully!');
+        return redirect()->route('admin.promos.index')->with('success', 'Promo Banner deleted!');
     }
 }

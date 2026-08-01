@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\HeroSliderController as AdminHeroSliderController;
 use App\Http\Controllers\Admin\PromoBannerController as AdminPromoBannerController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('customers', AdminCustomerController::class);
         Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+        // Media Library
+        Route::get('media', [AdminMediaController::class, 'index'])->name('media.index');
+        Route::post('media/upload', [AdminMediaController::class, 'upload'])->name('media.upload');
+        Route::get('media/list', [AdminMediaController::class, 'list'])->name('media.list');
+        Route::delete('media/{filename}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
     });
 });
 

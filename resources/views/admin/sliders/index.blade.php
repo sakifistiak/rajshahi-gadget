@@ -1,29 +1,34 @@
 <x-app-layout>
     <div class="p-6 space-y-6">
         <!-- Page Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-5 rounded-sm border border-gray-100 shadow-sm">
             <div>
-                <h1 class="text-xl font-bold text-gray-900">Homepage Sliders & Banners</h1>
-                <p class="text-xs text-gray-500 mt-1">Manage main hero slides and side promo banners for homepage</p>
+                <h1 class="text-xl font-bold text-gray-900">Home Sliders</h1>
+                <p class="text-xs text-gray-500 mt-1">Manage hero slider images, redirect links, and active status</p>
             </div>
             <a href="{{ route('admin.sliders.create') }}" 
-               class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-all">
+               class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-sm shadow-sm transition-all">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                Add Main Hero Banner
+                Add New Slider Image
             </a>
         </div>
 
         <!-- Navigation Tabs -->
-        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-1 flex border-b border-gray-100">
+        <div class="bg-white rounded-sm border border-gray-100 shadow-sm p-1 flex border-b border-gray-100 overflow-x-auto">
             <a href="{{ route('admin.sliders.index') }}" 
-               class="px-5 py-2.5 text-xs font-bold rounded-lg transition-all bg-blue-50 text-blue-600 flex items-center gap-1.5">
+               class="px-5 py-2.5 text-xs font-bold rounded-sm transition-all bg-blue-50 text-blue-600 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="sliders" class="w-4 h-4"></i>
-                Main Hero Slides
+                Home Slider
             </a>
             <a href="{{ route('admin.promos.index') }}" 
-               class="px-5 py-2.5 text-xs font-medium rounded-lg transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-50 flex items-center gap-1.5">
+               class="px-5 py-2.5 text-xs font-medium rounded-sm transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-50 flex items-center gap-1.5 whitespace-nowrap">
                 <i data-lucide="image" class="w-4 h-4"></i>
                 Side Promo Banners
+            </a>
+            <a href="{{ route('admin.media.index') }}" 
+               class="px-5 py-2.5 text-xs font-medium rounded-sm transition-all text-gray-500 hover:text-gray-900 hover:bg-gray-50 flex items-center gap-1.5 whitespace-nowrap">
+                <i data-lucide="folder-image" class="w-4 h-4"></i>
+                Media Library
             </a>
         </div>
 
@@ -43,10 +48,9 @@
                 <table class="w-full text-left text-xs text-gray-600">
                     <thead class="bg-gray-50/80 border-b border-gray-100 text-[11px] font-bold uppercase tracking-wider text-gray-500">
                         <tr>
-                            <th class="px-5 py-3.5">Banner Preview</th>
-                            <th class="px-5 py-3.5">Title & Subtitle</th>
-                            <th class="px-5 py-3.5">CTA Link</th>
-                            <th class="px-5 py-3.5 text-center">Order</th>
+                            <th class="px-5 py-3.5">Slider Image</th>
+                            <th class="px-5 py-3.5">Click Target Link</th>
+                            <th class="px-5 py-3.5 text-center">Display Order</th>
                             <th class="px-5 py-3.5 text-center">Status</th>
                             <th class="px-5 py-3.5 text-right">Actions</th>
                         </tr>
@@ -55,16 +59,12 @@
                         @forelse($sliders as $slider)
                             <tr class="hover:bg-gray-50/60 transition-colors">
                                 <td class="px-5 py-4">
-                                    <div class="w-28 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
-                                        <img src="{{ $slider->image_path }}" alt="{{ $slider->title }}" class="w-full h-full object-cover" />
+                                    <div class="w-32 h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
+                                        <img src="{{ $slider->image_path }}" alt="Slider Image" class="w-full h-full object-cover" />
                                     </div>
                                 </td>
-                                <td class="px-5 py-4 max-w-xs">
-                                    <div class="text-sm font-semibold text-gray-900 truncate">{{ $slider->title }}</div>
-                                    <div class="text-xs text-gray-500 truncate mt-0.5">{{ $slider->subtitle ?? 'No subtitle' }}</div>
-                                </td>
                                 <td class="px-5 py-4">
-                                    <span class="inline-flex items-center px-2 py-1 rounded bg-gray-100 text-gray-700 text-[11px] font-mono">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded bg-gray-100 text-gray-700 text-xs font-mono">
                                         {{ $slider->cta_link ?? '/shop' }}
                                     </span>
                                 </td>
@@ -77,7 +77,7 @@
                                     <form action="{{ route('admin.sliders.toggle', $slider) }}" method="POST" class="inline-block">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all {{ $slider->is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                                        <button type="submit" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all {{ $slider->is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
                                             {{ $slider->is_active ? 'Active' : 'Inactive' }}
                                         </button>
                                     </form>
@@ -86,15 +86,15 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="{{ route('admin.sliders.edit', $slider) }}" 
                                            class="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                           title="Edit Banner">
+                                           title="Edit Slider">
                                             <i data-lucide="edit-3" class="w-4 h-4"></i>
                                         </a>
-                                        <form action="{{ route('admin.sliders.destroy', $slider) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this banner?')">
+                                        <form action="{{ route('admin.sliders.destroy', $slider) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this slider?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
                                                     class="p-1.5 text-gray-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                                    title="Delete Banner">
+                                                    title="Delete Slider">
                                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                                             </button>
                                         </form>
@@ -103,8 +103,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-5 py-8 text-center text-gray-400">
-                                    No banners created yet. Click "Add Main Hero Banner" to create one.
+                                <td colspan="5" class="px-5 py-8 text-center text-gray-400">
+                                    No sliders created yet. Click "Add New Slider Image" to create one.
                                 </td>
                             </tr>
                         @endforelse

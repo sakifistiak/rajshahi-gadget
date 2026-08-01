@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HeroSlider;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
 
 class HeroSliderController extends Controller
@@ -24,26 +25,41 @@ class HeroSliderController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'image_path' => 'required|string|max:500',
+            'image_path' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'cta_link' => 'nullable|string|max:255',
-            'cta_text' => 'nullable|string|max:100',
             'sort_order' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);
 
+        $imagePath = $request->image_path;
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+            $targetDir = public_path('uploads');
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
+            }
+            $file->move($targetDir, $filename);
+            $imagePath = '/uploads/' . $filename;
+        }
+
+        if (empty($imagePath)) {
+            return redirect()->back()->withInput()->withErrors(['image_path' => 'Please select or upload an image file.']);
+        }
+
         HeroSlider::create([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'image_path' => $request->image_path,
+            'title' => null,
+            'subtitle' => null,
+            'image_path' => $imagePath,
             'cta_link' => $request->cta_link ?: '/shop',
-            'cta_text' => $request->cta_text ?: 'Shop Now',
+            'cta_text' => null,
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? (bool)$request->is_active : true,
         ]);
 
-        return redirect()->route('admin.sliders.index')->with('success', 'Hero Slider created successfully!');
+        return redirect()->route('admin.sliders.index')->with('success', 'Hero Slider added successfully!');
     }
 
     public function edit(HeroSlider $slider): View
@@ -54,21 +70,29 @@ class HeroSliderController extends Controller
     public function update(Request $request, HeroSlider $slider): RedirectResponse
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'subtitle' => 'nullable|string|max:255',
-            'image_path' => 'required|string|max:500',
+            'image_path' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'cta_link' => 'nullable|string|max:255',
-            'cta_text' => 'nullable|string|max:100',
             'sort_order' => 'integer|min:0',
             'is_active' => 'boolean',
         ]);
 
+        $imagePath = $request->image_path ?: $slider->image_path;
+
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+            $targetDir = public_path('uploads');
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
+            }
+            $file->move($targetDir, $filename);
+            $imagePath = '/uploads/' . $filename;
+        }
+
         $slider->update([
-            'title' => $request->title,
-            'subtitle' => $request->subtitle,
-            'image_path' => $request->image_path,
+            'image_path' => $imagePath,
             'cta_link' => $request->cta_link ?: '/shop',
-            'cta_text' => $request->cta_text ?: 'Shop Now',
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active'),
         ]);
@@ -82,12 +106,12 @@ class HeroSliderController extends Controller
             'is_active' => !$slider->is_active
         ]);
 
-        return redirect()->route('admin.sliders.index')->with('success', 'Slider status updated successfully!');
+        return redirect()->route('admin.sliders.index')->with('success', 'Slider status updated!');
     }
 
     public function destroy(HeroSlider $slider): RedirectResponse
     {
         $slider->delete();
-        return redirect()->route('admin.sliders.index')->with('success', 'Hero Slider deleted successfully!');
+        return redirect()->route('admin.sliders.index')->with('success', 'Hero Slider deleted!');
     }
 }
