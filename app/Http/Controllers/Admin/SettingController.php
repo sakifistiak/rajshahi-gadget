@@ -14,7 +14,7 @@ class SettingController extends Controller
     {
         $settings = [
             'site_name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
-            'site_slogan' => SiteSetting::getValue('site_slogan', 'Eternal Tech Companion'),
+            'site_slogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
             'site_description' => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
             'site_phone' => SiteSetting::getValue('site_phone', '+8801700000000'),
             'site_email' => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
