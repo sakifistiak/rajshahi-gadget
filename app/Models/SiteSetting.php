@@ -10,7 +10,8 @@ class SiteSetting extends Model
     public static function getValue(string $key, $default = null): ?string
     {
         try {
-            return static::where('key', $key)->value('value') ?? $default;
+            $val = static::where('key', $key)->value('value');
+            return ($val !== null && $val !== '') ? $val : $default;
         } catch (\Throwable $e) {
             return $default;
         }

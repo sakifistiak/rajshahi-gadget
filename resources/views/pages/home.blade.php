@@ -262,63 +262,24 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 @endif
 
-@if($homeSec1Active ?? true)
-<section class="container-page py-10">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div class="max-w-2xl">
-            <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Factory sealed. Full warranty.</p>
-            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {!! renderSectionTitle($homeSec1Title ?? 'BRAND NEW INTACT BOX', $homeSec1Highlight ?? 'INTACT BOX') !!}
-            </h2>
-        </div>
-        <a href="/shop?condition=intact" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">View all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
-    </div>
-    <div class="mt-8 grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        @foreach ($sec1Products as $product)
-            @include('partials.product-card', ['product' => $product])
-        @endforeach
-    </div>
-</section>
-@endif
-
-@if($homeSec2Active ?? true)
-<section class="container-page py-10 border-t border-border/50">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div class="max-w-2xl">
-            <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Open box savings. Genuine original.</p>
-            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {!! renderSectionTitle($homeSec2Title ?? 'BRAND NEW WITHOUT BOX', $homeSec2Highlight ?? 'WITHOUT BOX') !!}
-            </h2>
-        </div>
-        <a href="/shop?condition=without-box" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">View all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
-    </div>
-    <div class="mt-8 grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        @foreach ($sec2Products as $product)
-            @include('partials.product-card', ['product' => $product])
-        @endforeach
-    </div>
-</section>
-@endif
-
-
-
-@if($homeSec3Active ?? true)
-<section class="container-page py-10 border-t border-border/50">
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div class="max-w-2xl">
-            <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Certified pre-owned. Thoroughly tested.</p>
-            <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                {!! renderSectionTitle($homeSec3Title ?? 'PRE-OWNED GADGETS', $homeSec3Highlight ?? 'PRE-OWNED') !!}
-            </h2>
-        </div>
-        <a href="/shop?condition=pre-owned" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">View all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
-    </div>
-    <div class="mt-8 grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        @foreach ($sec3Products as $product)
-            @include('partials.product-card', ['product' => $product])
-        @endforeach
-    </div>
-</section>
+@if(isset($productSections) && count($productSections) > 0)
+    @foreach ($productSections as $index => $sec)
+        <section class="container-page py-10 {{ $index > 0 ? 'border-t border-border/50' : '' }}">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div class="max-w-2xl">
+                    <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+                        {!! renderSectionTitle($sec['title'], $sec['highlight']) !!}
+                    </h2>
+                </div>
+                <a href="{{ $sec['viewAllLink'] ?? '/shop' }}" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">View all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+            </div>
+            <div class="mt-8 grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                @foreach ($sec['products'] as $product)
+                    @include('partials.product-card', ['product' => $product])
+                @endforeach
+            </div>
+        </section>
+    @endforeach
 @endif
 
 @if($homeTestimonialsActive ?? true)

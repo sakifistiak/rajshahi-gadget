@@ -36,33 +36,59 @@ class PageController extends Controller
         $homeFlashActive       = SiteSetting::getValue('home_flash_active', '1') == '1';
         $homeFlashTitle        = SiteSetting::getValue('home_flash_title', 'Limited time deals');
         $homeFlashHighlight    = SiteSetting::getValue('home_flash_highlight', 'deals');
-
-        $homeSec1Active        = SiteSetting::getValue('home_sec1_active', '1') == '1';
-        $homeSec1Title         = SiteSetting::getValue('home_sec1_title', 'Brand new intact box');
-        $homeSec1Highlight     = SiteSetting::getValue('home_sec1_highlight', 'intact box');
-        $homeSec1Filter        = SiteSetting::getValue('home_sec1_filter', 'cond_intact');
-        $homeSec1Limit         = SiteSetting::getValue('home_sec1_limit', '4');
-
-        $homeSec2Active        = SiteSetting::getValue('home_sec2_active', '1') == '1';
-        $homeSec2Title         = SiteSetting::getValue('home_sec2_title', 'Brand new without box');
-        $homeSec2Highlight     = SiteSetting::getValue('home_sec2_highlight', 'without box');
-        $homeSec2Filter        = SiteSetting::getValue('home_sec2_filter', 'cond_without-box');
-        $homeSec2Limit         = SiteSetting::getValue('home_sec2_limit', '4');
-
-        $homeSec3Active        = SiteSetting::getValue('home_sec3_active', '1') == '1';
-        $homeSec3Title         = SiteSetting::getValue('home_sec3_title', 'Certified pre-owned');
-        $homeSec3Highlight     = SiteSetting::getValue('home_sec3_highlight', 'pre-owned');
-        $homeSec3Filter        = SiteSetting::getValue('home_sec3_filter', 'cond_pre-owned');
-        $homeSec3Limit         = SiteSetting::getValue('home_sec3_limit', '4');
-
         $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
         $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
 
-        $sec1Products = $this->getFilteredProducts($allProducts, $homeSec1Filter, $homeSec1Limit);
-        $sec2Products = $this->getFilteredProducts($allProducts, $homeSec2Filter, $homeSec2Limit);
-        $sec3Products = $this->getFilteredProducts($allProducts, $homeSec3Filter, $homeSec3Limit);
+        // Load dynamic product sections
+        $sectionsJson = SiteSetting::getValue('home_sections_json');
+        $sectionsList = [];
+        if ($sectionsJson) {
+            $decoded = json_decode($sectionsJson, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $sectionsList = $decoded;
+            }
+        }
 
-        // Backwards compatibility fallbacks
+        if (empty($sectionsList)) {
+            $sectionsList = \App\Http\Controllers\Admin\HomeSettingController::getDefaultSections();
+        }
+
+        $productSections = [];
+        foreach ($sectionsList as $sec) {
+            if (isset($sec['active']) && !$sec['active']) {
+                continue;
+            }
+            $filter = $sec['filter'] ?? 'all';
+            $limit  = (int)($sec['limit'] ?? 4);
+
+            $viewAllLink = '/shop';
+            if ($filter === 'cond_intact') {
+                $viewAllLink = '/shop?condition=intact';
+            } elseif ($filter === 'cond_without-box') {
+                $viewAllLink = '/shop?condition=without-box';
+            } elseif ($filter === 'cond_pre-owned') {
+                $viewAllLink = '/shop?condition=pre-owned';
+            } elseif (str_starts_with($filter, 'cat_')) {
+                $catId = (int) substr($filter, 4);
+                $cat = Category::find($catId);
+                if ($cat) {
+                    $viewAllLink = '/shop?category=' . $cat->slug;
+                }
+            }
+
+            $productSections[] = [
+                'id'          => $sec['id'] ?? uniqid('sec_'),
+                'title'       => $sec['title'] ?? 'Product Section',
+                'highlight'   => $sec['highlight'] ?? '',
+                'viewAllLink' => $viewAllLink,
+                'products'    => $this->getFilteredProducts($allProducts, $filter, $limit),
+            ];
+        }
+
+        // Legacy fallbacks
+        $sec1Products = $productSections[0]['products'] ?? collect();
+        $sec2Products = $productSections[1]['products'] ?? collect();
+        $sec3Products = $productSections[2]['products'] ?? collect();
         $intactProducts     = $sec1Products;
         $withoutBoxProducts = $sec2Products;
         $preOwnedProducts   = $sec3Products;
@@ -72,6 +98,7 @@ class PageController extends Controller
             'promoBanners',
             'allProducts',
             'flashDeals',
+            'productSections',
             'intactProducts',
             'withoutBoxProducts',
             'preOwnedProducts',
@@ -82,15 +109,6 @@ class PageController extends Controller
             'homeFlashActive',
             'homeFlashTitle',
             'homeFlashHighlight',
-            'homeSec1Active',
-            'homeSec1Title',
-            'homeSec1Highlight',
-            'homeSec2Active',
-            'homeSec2Title',
-            'homeSec2Highlight',
-            'homeSec3Active',
-            'homeSec3Title',
-            'homeSec3Highlight',
             'homePromosActive',
             'homeTestimonialsActive'
         ));

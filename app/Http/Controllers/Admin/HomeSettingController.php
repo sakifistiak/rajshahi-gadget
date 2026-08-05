@@ -11,6 +11,39 @@ use Illuminate\Http\Request;
 class HomeSettingController extends Controller
 {
     /**
+     * Get default product sections.
+     */
+    public static function getDefaultSections(): array
+    {
+        return [
+            [
+                'id' => 'sec_1',
+                'title' => 'Brand new intact box',
+                'highlight' => 'intact box',
+                'filter' => 'cond_intact',
+                'limit' => '4',
+                'active' => true,
+            ],
+            [
+                'id' => 'sec_2',
+                'title' => 'Brand new without box',
+                'highlight' => 'without box',
+                'filter' => 'cond_without-box',
+                'limit' => '4',
+                'active' => true,
+            ],
+            [
+                'id' => 'sec_3',
+                'title' => 'Certified pre-owned',
+                'highlight' => 'pre-owned',
+                'filter' => 'cond_pre-owned',
+                'limit' => '4',
+                'active' => true,
+            ],
+        ];
+    }
+
+    /**
      * Display the Homepage Settings interface.
      */
     public function index()
@@ -23,25 +56,6 @@ class HomeSettingController extends Controller
             'home_flash_active'         => '1',
             'home_flash_title'          => 'Limited time deals',
             'home_flash_highlight'      => 'deals',
-
-            'home_sec1_active'         => '1',
-            'home_sec1_title'          => 'Brand new intact box',
-            'home_sec1_highlight'      => 'intact box',
-            'home_sec1_filter'         => 'cond_intact',
-            'home_sec1_limit'          => '4',
-
-            'home_sec2_active'         => '1',
-            'home_sec2_title'          => 'Brand new without box',
-            'home_sec2_highlight'      => 'without box',
-            'home_sec2_filter'         => 'cond_without-box',
-            'home_sec2_limit'          => '4',
-
-            'home_sec3_active'         => '1',
-            'home_sec3_title'          => 'Certified pre-owned',
-            'home_sec3_highlight'      => 'pre-owned',
-            'home_sec3_filter'         => 'cond_pre-owned',
-            'home_sec3_limit'          => '4',
-
             'home_promos_active'        => '1',
             'home_testimonials_active'  => '1',
         ];
@@ -51,7 +65,43 @@ class HomeSettingController extends Controller
             $settings[$key] = SiteSetting::getValue($key, $default);
         }
 
-        return view('admin.home-settings.index', compact('categories', 'conditions', 'settings'));
+        // Get dynamic sections list
+        $sectionsJson = SiteSetting::getValue('home_sections_json');
+        $sectionsList = [];
+        if ($sectionsJson) {
+            $decoded = json_decode($sectionsJson, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $sectionsList = $decoded;
+            }
+        }
+
+        if (empty($sectionsList)) {
+            $sec1Title = SiteSetting::getValue('home_sec1_title', 'Brand new intact box');
+            $sec1Hl    = SiteSetting::getValue('home_sec1_highlight', 'intact box');
+            $sec1Filt  = SiteSetting::getValue('home_sec1_filter', 'cond_intact');
+            $sec1Lim   = SiteSetting::getValue('home_sec1_limit', '4');
+            $sec1Act   = SiteSetting::getValue('home_sec1_active', '1') == '1';
+
+            $sec2Title = SiteSetting::getValue('home_sec2_title', 'Brand new without box');
+            $sec2Hl    = SiteSetting::getValue('home_sec2_highlight', 'without box');
+            $sec2Filt  = SiteSetting::getValue('home_sec2_filter', 'cond_without-box');
+            $sec2Lim   = SiteSetting::getValue('home_sec2_limit', '4');
+            $sec2Act   = SiteSetting::getValue('home_sec2_active', '1') == '1';
+
+            $sec3Title = SiteSetting::getValue('home_sec3_title', 'Certified pre-owned');
+            $sec3Hl    = SiteSetting::getValue('home_sec3_highlight', 'pre-owned');
+            $sec3Filt  = SiteSetting::getValue('home_sec3_filter', 'cond_pre-owned');
+            $sec3Lim   = SiteSetting::getValue('home_sec3_limit', '4');
+            $sec3Act   = SiteSetting::getValue('home_sec3_active', '1') == '1';
+
+            $sectionsList = [
+                ['id' => 'sec_1', 'title' => $sec1Title, 'highlight' => $sec1Hl, 'filter' => $sec1Filt, 'limit' => $sec1Lim, 'active' => $sec1Act],
+                ['id' => 'sec_2', 'title' => $sec2Title, 'highlight' => $sec2Hl, 'filter' => $sec2Filt, 'limit' => $sec2Lim, 'active' => $sec2Act],
+                ['id' => 'sec_3', 'title' => $sec3Title, 'highlight' => $sec3Hl, 'filter' => $sec3Filt, 'limit' => $sec3Lim, 'active' => $sec3Act],
+            ];
+        }
+
+        return view('admin.home-settings.index', compact('categories', 'conditions', 'settings', 'sectionsList'));
     }
 
     /**
@@ -62,42 +112,27 @@ class HomeSettingController extends Controller
         $checkboxKeys = [
             'home_hero_active',
             'home_flash_active',
-            'home_sec1_active',
-            'home_sec2_active',
-            'home_sec3_active',
             'home_promos_active',
             'home_testimonials_active',
         ];
 
-        // Ensure all checkboxes default to '0' if unchecked in HTML form
         foreach ($checkboxKeys as $cb) {
             SiteSetting::setValue($cb, $request->has($cb) ? '1' : '0');
         }
 
-        // Save text & select inputs
-        $textKeys = [
-            'home_flash_title',
-            'home_flash_highlight',
+        if ($request->has('home_flash_title')) {
+            SiteSetting::setValue('home_flash_title', $request->input('home_flash_title', ''));
+        }
+        if ($request->has('home_flash_highlight')) {
+            SiteSetting::setValue('home_flash_highlight', $request->input('home_flash_highlight', ''));
+        }
 
-            'home_sec1_title',
-            'home_sec1_highlight',
-            'home_sec1_filter',
-            'home_sec1_limit',
-
-            'home_sec2_title',
-            'home_sec2_highlight',
-            'home_sec2_filter',
-            'home_sec2_limit',
-
-            'home_sec3_title',
-            'home_sec3_highlight',
-            'home_sec3_filter',
-            'home_sec3_limit',
-        ];
-
-        foreach ($textKeys as $key) {
-            if ($request->has($key)) {
-                SiteSetting::setValue($key, $request->input($key, ''));
+        // Save dynamic sections list
+        if ($request->has('home_sections_json')) {
+            $json = $request->input('home_sections_json');
+            $decoded = json_decode($json, true);
+            if (is_array($decoded)) {
+                SiteSetting::setValue('home_sections_json', json_encode(array_values($decoded)));
             }
         }
 
