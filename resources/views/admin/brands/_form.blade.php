@@ -1,0 +1,5 @@
+<div class="space-y-5">
+    <div><label class="mb-1 block text-xs font-bold text-slate-700">Brand Name <span class="text-rose-500">*</span></label><input type="text" name="name" value="{{ old('name', $brand->name ?? '') }}" required class="w-full rounded-sm border border-slate-200 px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500"></div>
+    <div><label class="mb-1 block text-xs font-bold text-slate-700">Slug <span class="font-normal text-slate-400">(optional)</span></label><input type="text" name="slug" value="{{ old('slug', $brand->slug ?? '') }}" placeholder="Auto-generated from name" class="w-full rounded-sm border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></div>
+    <div><label class="mb-1 block text-xs font-bold text-slate-700">Logo Image URL</label><input type="text" name="logo_path" value="{{ old('logo_path', $brand->logo_path ?? '') }}" placeholder="/media/brand-logo.png or https://..." class="w-full rounded-sm border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></div>
+</div>

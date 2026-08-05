@@ -40,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('products', AdminProductController::class);
         Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->except('show');
+        Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class)->except('show');
         Route::resource('sliders', AdminHeroSliderController::class);
         Route::patch('sliders/{slider}/toggle', [AdminHeroSliderController::class, 'toggle'])->name('sliders.toggle');
         Route::resource('promos', AdminPromoBannerController::class);
