@@ -288,11 +288,13 @@ document.addEventListener('DOMContentLoaded', function () {
         <h2 class="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">What Our Customers Say</h2>
         <p class="mt-2 text-sm text-muted-foreground">Real feedback from thousands of satisfied tech lovers across Bangladesh</p>
     </div>
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-xl border border-border bg-card p-6 shadow-xs">
-            <div class="flex items-center gap-1 text-amber-500">★★★★★</div>
-            <p class="mt-3 text-sm text-foreground/90">"Got my iPhone 15 Pro intact box from Khan Gadget. Delivery was super fast and authentic product!"</p>
-            <div class="mt-4 flex items-center gap-3">
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+                <p class="mt-3 text-sm text-foreground/90 leading-relaxed">"Got my iPhone 15 Pro intact box from Khan Gadget. Delivery was super fast and authentic product!"</p>
+            </div>
+            <div class="mt-4 flex items-center gap-3 pt-3 border-t border-border/40">
                 <div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xs text-foreground">RA</div>
                 <div>
                     <h4 class="text-xs font-semibold text-foreground">Rafiq Ahmed</h4>
@@ -300,10 +302,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="rounded-xl border border-border bg-card p-6 shadow-xs">
-            <div class="flex items-center gap-1 text-amber-500">★★★★★</div>
-            <p class="mt-3 text-sm text-foreground/90">"Bought a pre-owned MacBook Air M1. Condition was literally like brand new without a single scratch!"</p>
-            <div class="mt-4 flex items-center gap-3">
+        <div class="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+                <p class="mt-3 text-sm text-foreground/90 leading-relaxed">"Bought a pre-owned MacBook Air M1. Condition was literally like brand new without a single scratch!"</p>
+            </div>
+            <div class="mt-4 flex items-center gap-3 pt-3 border-t border-border/40">
                 <div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xs text-foreground">TI</div>
                 <div>
                     <h4 class="text-xs font-semibold text-foreground">Tariqul Islam</h4>
@@ -311,10 +315,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
         </div>
-        <div class="rounded-xl border border-border bg-card p-6 shadow-xs sm:col-span-2 lg:col-span-1">
-            <div class="flex items-center gap-1 text-amber-500">★★★★★</div>
-            <p class="mt-3 text-sm text-foreground/90">"Khan Gadget customer support is top tier. They answered all my queries patiently before purchase."</p>
-            <div class="mt-4 flex items-center gap-3">
+        <div class="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-1 text-amber-500 text-sm">★★★★★</div>
+                <p class="mt-3 text-sm text-foreground/90 leading-relaxed">"Khan Gadget customer support is top tier. They answered all my queries patiently before purchase."</p>
+            </div>
+            <div class="mt-4 flex items-center gap-3 pt-3 border-t border-border/40">
                 <div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-xs text-foreground">NK</div>
                 <div>
                     <h4 class="text-xs font-semibold text-foreground">Nusrat Khan</h4>
