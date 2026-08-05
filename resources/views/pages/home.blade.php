@@ -62,7 +62,7 @@ if (!function_exists('renderSectionTitle')) {
         $escapedFull = e($fullTitle);
         $escapedHl   = e($highlightWord);
         $quotedHl    = preg_quote($escapedHl, '/');
-        return preg_replace('/(' . $quotedHl . ')/i', '<span class="text-blue-600 dark:text-blue-400 font-extrabold">$1</span>', $escapedFull);
+        return preg_replace('/(' . $quotedHl . ')/i', '<span class="text-blue-600 dark:text-blue-400 font-bold bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-md inline-block">$1</span>', $escapedFull);
     }
 }
 @endphp
