@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use App\Models\CustomPage;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -12,6 +13,23 @@ class SettingController extends Controller
 {
     public function index(): View
     {
+        $defaultCol1Links = json_encode([
+            ['label' => 'BRAND NEW INTACT BOX', 'url' => '/shop?condition=intact'],
+            ['label' => 'BRAND NEW WITHOUT BOX', 'url' => '/shop?condition=without-box'],
+            ['label' => 'PRE-OWNED', 'url' => '/shop?condition=pre-owned'],
+            ['label' => 'All products', 'url' => '/shop'],
+            ['label' => 'Compare', 'url' => '/compare'],
+        ]);
+
+        $defaultCol2Links = json_encode([
+            ['label' => 'Blog', 'url' => '/blog'],
+            ['label' => 'Customer Spotlight', 'url' => '/customer-spotlight'],
+            ['label' => 'Philanthropic Work', 'url' => '/philanthropic-work'],
+            ['label' => 'Customer Feedback', 'url' => '/customer-feedback'],
+            ['label' => 'About us', 'url' => '/about'],
+            ['label' => 'Contact', 'url' => '/contact'],
+        ]);
+
         $settings = [
             'site_name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
             'site_slogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
@@ -29,9 +47,17 @@ class SettingController extends Controller
             'footer_copyright' => SiteSetting::getValue('footer_copyright', 'Khan Gadget. All rights reserved.'),
             'logo_light' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
             'logo_dark' => SiteSetting::getValue('logo_dark', '/media/b3ca13-kg-lockup-v2.png'),
+            'footer_col1_active' => SiteSetting::getValue('footer_col1_active', '1'),
+            'footer_col1_title' => SiteSetting::getValue('footer_col1_title', 'SHOP'),
+            'footer_col1_links' => SiteSetting::getValue('footer_col1_links', $defaultCol1Links),
+            'footer_col2_active' => SiteSetting::getValue('footer_col2_active', '1'),
+            'footer_col2_title' => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
+            'footer_col2_links' => SiteSetting::getValue('footer_col2_links', $defaultCol2Links),
         ];
 
-        return view('admin.settings.index', compact('settings'));
+        $customPages = CustomPage::where('is_active', true)->orderBy('title')->get();
+
+        return view('admin.settings.index', compact('settings', 'customPages'));
     }
 
     public function update(Request $request): RedirectResponse
@@ -51,6 +77,12 @@ class SettingController extends Controller
             'social_whatsapp' => 'nullable|string|max:500',
             'social_youtube' => 'nullable|string|max:500',
             'footer_copyright' => 'nullable|string|max:500',
+            'footer_col1_active' => 'nullable|string',
+            'footer_col1_title' => 'nullable|string|max:255',
+            'footer_col1_links' => 'nullable|string',
+            'footer_col2_active' => 'nullable|string',
+            'footer_col2_title' => 'nullable|string|max:255',
+            'footer_col2_links' => 'nullable|string',
             'logo_light_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'logo_dark_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
         ]);
@@ -69,7 +101,11 @@ class SettingController extends Controller
             'social_instagram',
             'social_whatsapp',
             'social_youtube',
-            'footer_copyright'
+            'footer_copyright',
+            'footer_col1_title',
+            'footer_col1_links',
+            'footer_col2_title',
+            'footer_col2_links',
         ];
 
         foreach ($keys as $key) {
@@ -80,6 +116,17 @@ class SettingController extends Controller
                 );
             }
         }
+
+        // Save column active toggles
+        SiteSetting::updateOrCreate(
+            ['key' => 'footer_col1_active'],
+            ['value' => $request->has('footer_col1_active') ? '1' : '0']
+        );
+
+        SiteSetting::updateOrCreate(
+            ['key' => 'footer_col2_active'],
+            ['value' => $request->has('footer_col2_active') ? '1' : '0']
+        );
 
         // Handle Light Mode Logo Upload
         if ($request->hasFile('logo_light_file')) {

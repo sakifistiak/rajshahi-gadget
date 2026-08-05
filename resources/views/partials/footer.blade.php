@@ -71,29 +71,28 @@
             </div>
 
             <!-- Shop Links Column -->
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.14em]">SHOP</p>
-                <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="/shop?condition=intact" class="text-muted-foreground hover:text-foreground">BRAND NEW INTACT BOX</a></li>
-                    <li><a href="/shop?condition=without-box" class="text-muted-foreground hover:text-foreground">BRAND NEW WITHOUT BOX</a></li>
-                    <li><a href="/shop?condition=pre-owned" class="text-muted-foreground hover:text-foreground">PRE-OWNED</a></li>
-                    <li><a href="/shop" class="text-muted-foreground hover:text-foreground">All products</a></li>
-                    <li><a href="/compare" class="text-muted-foreground hover:text-foreground">Compare</a></li>
-                </ul>
-            </div>
+            @if(($footerCol1Active ?? '1') == '1' && isset($footerCol1Links) && count($footerCol1Links))
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em]">{{ $footerCol1Title ?? 'SHOP' }}</p>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        @foreach($footerCol1Links as $link)
+                            <li><a href="{{ $link['url'] ?? '#' }}" class="text-muted-foreground hover:text-foreground">{{ $link['label'] ?? '' }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Explore Links Column -->
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.14em]">EXPLORE</p>
-                <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="/blog" class="text-muted-foreground hover:text-foreground">Blog</a></li>
-                    <li><a href="/customer-spotlight" class="text-muted-foreground hover:text-foreground">Customer Spotlight</a></li>
-                    <li><a href="/philanthropic-work" class="text-muted-foreground hover:text-foreground">Philanthropic Work</a></li>
-                    <li><a href="/customer-feedback" class="text-muted-foreground hover:text-foreground">Customer Feedback</a></li>
-                    <li><a href="/about" class="text-muted-foreground hover:text-foreground">About us</a></li>
-                    <li><a href="/contact" class="text-muted-foreground hover:text-foreground">Contact</a></li>
-                </ul>
-            </div>
+            @if(($footerCol2Active ?? '1') == '1' && isset($footerCol2Links) && count($footerCol2Links))
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em]">{{ $footerCol2Title ?? 'EXPLORE' }}</p>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        @foreach($footerCol2Links as $link)
+                            <li><a href="{{ $link['url'] ?? '#' }}" class="text-muted-foreground hover:text-foreground">{{ $link['label'] ?? '' }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Connect Column -->
             <div>

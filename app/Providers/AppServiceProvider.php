@@ -31,6 +31,31 @@ class AppServiceProvider extends ServiceProvider
                 // Fail gracefully if DB table doesn't exist yet
             }
 
+            $defaultCol1Links = [
+                ['label' => 'BRAND NEW INTACT BOX', 'url' => '/shop?condition=intact'],
+                ['label' => 'BRAND NEW WITHOUT BOX', 'url' => '/shop?condition=without-box'],
+                ['label' => 'PRE-OWNED', 'url' => '/shop?condition=pre-owned'],
+                ['label' => 'All products', 'url' => '/shop'],
+                ['label' => 'Compare', 'url' => '/compare'],
+            ];
+
+            $defaultCol2Links = [
+                ['label' => 'Blog', 'url' => '/blog'],
+                ['label' => 'Customer Spotlight', 'url' => '/customer-spotlight'],
+                ['label' => 'Philanthropic Work', 'url' => '/philanthropic-work'],
+                ['label' => 'Customer Feedback', 'url' => '/customer-feedback'],
+                ['label' => 'About us', 'url' => '/about'],
+                ['label' => 'Contact', 'url' => '/contact'],
+            ];
+
+            $col1Raw = SiteSetting::getValue('footer_col1_links');
+            $col1Decoded = !empty($col1Raw) ? json_decode($col1Raw, true) : null;
+            $col1Links = is_array($col1Decoded) ? $col1Decoded : $defaultCol1Links;
+
+            $col2Raw = SiteSetting::getValue('footer_col2_links');
+            $col2Decoded = !empty($col2Raw) ? json_decode($col2Raw, true) : null;
+            $col2Links = is_array($col2Decoded) ? $col2Decoded : $defaultCol2Links;
+
             $view->with([
                 'siteLogo'          => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
                 'siteLogoDark'      => SiteSetting::getValue('logo_dark',  '/media/b3ca13-kg-lockup-v2.png'),
@@ -48,6 +73,12 @@ class AppServiceProvider extends ServiceProvider
                 'socialWhatsapp'    => SiteSetting::getValue('social_whatsapp', 'https://bdstall.com/stall/2373'),
                 'socialYoutube'     => SiteSetting::getValue('social_youtube', 'https://youtube.com/@khansgadget'),
                 'footerCopyright'   => SiteSetting::getValue('footer_copyright', 'Khan Gadget. All rights reserved.'),
+                'footerCol1Active'  => SiteSetting::getValue('footer_col1_active', '1'),
+                'footerCol1Title'   => SiteSetting::getValue('footer_col1_title', 'SHOP'),
+                'footerCol1Links'   => $col1Links,
+                'footerCol2Active'  => SiteSetting::getValue('footer_col2_active', '1'),
+                'footerCol2Title'   => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
+                'footerCol2Links'   => $col2Links,
                 'storeLocations'    => $storeLocations,
             ]);
         });

@@ -9,6 +9,15 @@ class SiteSetting extends Model
 
     public static function getValue(string $key, $default = null): ?string
     {
-        return static::where('key', $key)->value('value') ?? $default;
+        try {
+            return static::where('key', $key)->value('value') ?? $default;
+        } catch (\Throwable $e) {
+            return $default;
+        }
+    }
+
+    public static function setValue(string $key, ?string $value): self
+    {
+        return static::updateOrCreate(['key' => $key], ['value' => $value]);
     }
 }

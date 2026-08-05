@@ -163,6 +163,184 @@
                 </div>
             </div>
 
+            <!-- Card 5: Footer Link Columns & Custom Page Links -->
+            <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5" 
+                 x-data="{
+                     col1Active: {{ $settings['footer_col1_active'] == '1' ? 'true' : 'false' }},
+                     col1Title: '{{ addslashes($settings['footer_col1_title']) }}',
+                     col1Links: [],
+                     col2Active: {{ $settings['footer_col2_active'] == '1' ? 'true' : 'false' }},
+                     col2Title: '{{ addslashes($settings['footer_col2_title']) }}',
+                     col2Links: [],
+                     init() {
+                         const raw1 = {{ $settings['footer_col1_links'] ?: '[]' }};
+                         this.col1Links = raw1.map((l, i) => ({ _id: Date.now() + Math.random() + i, label: l.label || '', url: l.url || '' }));
+                         
+                         const raw2 = {{ $settings['footer_col2_links'] ?: '[]' }};
+                         this.col2Links = raw2.map((l, i) => ({ _id: Date.now() + Math.random() + i + 1000, label: l.label || '', url: l.url || '' }));
+                     },
+                     addCol1Link() {
+                         this.col1Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/p/sample' });
+                     },
+                     removeCol1Link(idx) {
+                         this.col1Links = this.col1Links.filter((_, i) => i !== idx);
+                     },
+                     addCol2Link() {
+                         this.col2Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/p/sample' });
+                     },
+                     removeCol2Link(idx) {
+                         this.col2Links = this.col2Links.filter((_, i) => i !== idx);
+                     },
+                     selectCustomPage(type, index, slug, title) {
+                         if (type === 'col1') {
+                             this.col1Links[index].url = '/p/' + slug;
+                             if (!this.col1Links[index].label || this.col1Links[index].label === 'New Link') {
+                                 this.col1Links[index].label = title;
+                             }
+                         } else {
+                             this.col2Links[index].url = '/p/' + slug;
+                             if (!this.col2Links[index].label || this.col2Links[index].label === 'New Link') {
+                                 this.col2Links[index].label = title;
+                             }
+                         }
+                     }
+                 }">
+
+                <!-- Hidden Inputs to submit JSON strings & Toggles -->
+                <input type="hidden" name="footer_col1_title" :value="col1Title">
+                <input type="hidden" name="footer_col1_links" :value="JSON.stringify(col1Links.map(l => ({ label: l.label, url: l.url })))">
+                <input type="hidden" name="footer_col2_title" :value="col2Title">
+                <input type="hidden" name="footer_col2_links" :value="JSON.stringify(col2Links.map(l => ({ label: l.label, url: l.url })))">
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                    <div class="flex items-center gap-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
+                        <i data-lucide="link-2" class="h-4 w-4 text-blue-600"></i>
+                        <span>5. Footer Link Columns & Custom Page Navigation (ফুটার নেভিগেশন ও লিংক সেটিং)</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500">Customize or turn OFF Column 1 (SHOP) & Column 2 (EXPLORE)</span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- COLUMN 1 (SHOP) -->
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-sm space-y-4">
+                        <div class="flex items-center justify-between p-2 bg-white border border-slate-200 rounded-sm">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" name="footer_col1_active" value="1" x-model="col1Active" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-xs font-bold text-slate-800 uppercase">Show Column 1 in Footer</span>
+                            </label>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded" :class="col1Active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'" x-text="col1Active ? 'Enabled (Visible)' : 'Disabled (Hidden)'"></span>
+                        </div>
+
+                        <div x-show="col1Active" class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-slate-800 uppercase">Column 1 Header Title</label>
+                                <button type="button" @click.prevent="addCol1Link()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition-all flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="plus" class="h-3.5 w-3.5"></i>
+                                    <span>+ Add Link</span>
+                                </button>
+                            </div>
+                            <input type="text" x-model="col1Title" placeholder="e.g. SHOP" class="w-full text-xs font-bold px-3 py-2 border border-slate-300 rounded-sm bg-white focus:ring-1 focus:ring-blue-500">
+
+                            <div class="space-y-3 pt-2">
+                                <template x-for="(link, index) in col1Links" :key="link._id">
+                                    <div class="p-3 bg-white border border-slate-200 rounded-sm shadow-2xs space-y-2">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-[11px] font-bold text-slate-500" x-text="'Link #' + (index + 1)"></span>
+                                            
+                                            <!-- Custom Page Quick Select Dropdown -->
+                                            <div class="flex items-center gap-2">
+                                                <select @change="if ($event.target.value) { const parts = $event.target.value.split('|'); selectCustomPage('col1', index, parts[0], parts[1]); $event.target.value = ''; }" class="text-[11px] font-medium bg-blue-50/70 border border-blue-200 text-blue-700 px-2 py-1 rounded focus:outline-none cursor-pointer">
+                                                    <option value="">-- Attach Custom Page --</option>
+                                                    @foreach($customPages as $cp)
+                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/p/{{ $cp->slug }})</option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="button" @click.prevent.stop="removeCol1Link(index)" class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition-colors cursor-pointer" title="Delete Row">
+                                                    <span>Remove</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Label / Text</label>
+                                                <input type="text" x-model="link.label" placeholder="Link Display Text" class="w-full text-xs font-medium px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">URL / Path</label>
+                                                <input type="text" x-model="link.url" placeholder="e.g. /p/warranty-policy or /shop" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="col1Links.length === 0" class="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded bg-white">
+                                    No links in Column 1. Click "+ Add Link" above to add a link.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMN 2 (EXPLORE) -->
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-sm space-y-4">
+                        <div class="flex items-center justify-between p-2 bg-white border border-slate-200 rounded-sm">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" name="footer_col2_active" value="1" x-model="col2Active" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-xs font-bold text-slate-800 uppercase">Show Column 2 in Footer</span>
+                            </label>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded" :class="col2Active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'" x-text="col2Active ? 'Enabled (Visible)' : 'Disabled (Hidden)'"></span>
+                        </div>
+
+                        <div x-show="col2Active" class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-slate-800 uppercase">Column 2 Header Title</label>
+                                <button type="button" @click.prevent="addCol2Link()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition-all flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="plus" class="h-3.5 w-3.5"></i>
+                                    <span>+ Add Link</span>
+                                </button>
+                            </div>
+                            <input type="text" x-model="col2Title" placeholder="e.g. EXPLORE" class="w-full text-xs font-bold px-3 py-2 border border-slate-300 rounded-sm bg-white focus:ring-1 focus:ring-blue-500">
+
+                            <div class="space-y-3 pt-2">
+                                <template x-for="(link, index) in col2Links" :key="link._id">
+                                    <div class="p-3 bg-white border border-slate-200 rounded-sm shadow-2xs space-y-2">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-[11px] font-bold text-slate-500" x-text="'Link #' + (index + 1)"></span>
+                                            
+                                            <!-- Custom Page Quick Select Dropdown -->
+                                            <div class="flex items-center gap-2">
+                                                <select @change="if ($event.target.value) { const parts = $event.target.value.split('|'); selectCustomPage('col2', index, parts[0], parts[1]); $event.target.value = ''; }" class="text-[11px] font-medium bg-blue-50/70 border border-blue-200 text-blue-700 px-2 py-1 rounded focus:outline-none cursor-pointer">
+                                                    <option value="">-- Attach Custom Page --</option>
+                                                    @foreach($customPages as $cp)
+                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/p/{{ $cp->slug }})</option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="button" @click.prevent.stop="removeCol2Link(index)" class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition-colors cursor-pointer" title="Delete Row">
+                                                    <span>Remove</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Label / Text</label>
+                                                <input type="text" x-model="link.label" placeholder="Link Display Text" class="w-full text-xs font-medium px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">URL / Path</label>
+                                                <input type="text" x-model="link.url" placeholder="e.g. /p/warranty-policy or /blog" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="col2Links.length === 0" class="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded bg-white">
+                                    No links in Column 2. Click "+ Add Link" above to add a link.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="flex justify-end pt-2">
                 <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-sm shadow-sm transition-all cursor-pointer">

@@ -1,6 +1,6 @@
 <!-- Left Sidebar for Desktop -->
 <aside class="hidden lg:flex lg:w-64 lg:flex-col shrink-0 bg-white border-r border-slate-200"
-       x-data="{            openSection: '{{ request()->routeIs('admin.products.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}' 
+       x-data="{            openSection: '{{ request()->routeIs('admin.products.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}' 
        }">
 
     <!-- User Profile Card -->
@@ -25,6 +25,7 @@
             <i data-lucide="layout-dashboard" class="h-4.5 w-4.5 shrink-0 {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-slate-500' }}"></i>
             <span>Dashboard</span>
         </a>
+
 
         <!-- 2. Ecommerce -->
         <div class="pt-1">
@@ -87,6 +88,10 @@
                     <i data-lucide="sliders" class="h-3.5 w-3.5 {{ (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*')) ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Home Slider</span>
                 </a>
+                <a href="{{ route('admin.home-settings.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.home-settings.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="sliders-horizontal" class="h-3.5 w-3.5 {{ request()->routeIs('admin.home-settings.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                    <span>Home Settings</span>
+                </a>
             </div>
         </div>
 
@@ -133,6 +138,13 @@
                 </a>
             </div>
         </div>
+
+        <!-- Custom Pages -->
+        <a href="{{ route('admin.pages.index') }}" 
+           class="flex items-center gap-2.5 px-3 py-2.5 rounded-md font-bold transition-all {{ request()->routeIs('admin.pages.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-800 hover:bg-slate-50 hover:text-blue-600' }}">
+            <i data-lucide="file-text" class="h-4.5 w-4.5 shrink-0 {{ request()->routeIs('admin.pages.*') ? 'text-blue-600' : 'text-slate-500' }}"></i>
+            <span>Custom Pages</span>
+        </a>
 
         <!-- 5. Settings -->
         <div class="pt-1">

@@ -31,17 +31,41 @@ class PageController extends Controller
             $flashDeals = $allProducts->take(4);
         }
 
-        $intactProducts = $allProducts->filter(function($p) {
-            return optional($p->condition)->slug === 'intact';
-        })->take(4);
+        // Home settings
+        $homeHeroActive        = SiteSetting::getValue('home_hero_active', '1') == '1';
+        $homeFlashActive       = SiteSetting::getValue('home_flash_active', '1') == '1';
+        $homeFlashTitle        = SiteSetting::getValue('home_flash_title', 'Limited time deals');
+        $homeFlashHighlight    = SiteSetting::getValue('home_flash_highlight', 'deals');
 
-        $withoutBoxProducts = $allProducts->filter(function($p) {
-            return optional($p->condition)->slug === 'without-box';
-        })->take(4);
+        $homeSec1Active        = SiteSetting::getValue('home_sec1_active', '1') == '1';
+        $homeSec1Title         = SiteSetting::getValue('home_sec1_title', 'Brand new intact box');
+        $homeSec1Highlight     = SiteSetting::getValue('home_sec1_highlight', 'intact box');
+        $homeSec1Filter        = SiteSetting::getValue('home_sec1_filter', 'cond_intact');
+        $homeSec1Limit         = SiteSetting::getValue('home_sec1_limit', '4');
 
-        $preOwnedProducts = $allProducts->filter(function($p) {
-            return optional($p->condition)->slug === 'pre-owned';
-        })->take(4);
+        $homeSec2Active        = SiteSetting::getValue('home_sec2_active', '1') == '1';
+        $homeSec2Title         = SiteSetting::getValue('home_sec2_title', 'Brand new without box');
+        $homeSec2Highlight     = SiteSetting::getValue('home_sec2_highlight', 'without box');
+        $homeSec2Filter        = SiteSetting::getValue('home_sec2_filter', 'cond_without-box');
+        $homeSec2Limit         = SiteSetting::getValue('home_sec2_limit', '4');
+
+        $homeSec3Active        = SiteSetting::getValue('home_sec3_active', '1') == '1';
+        $homeSec3Title         = SiteSetting::getValue('home_sec3_title', 'Certified pre-owned');
+        $homeSec3Highlight     = SiteSetting::getValue('home_sec3_highlight', 'pre-owned');
+        $homeSec3Filter        = SiteSetting::getValue('home_sec3_filter', 'cond_pre-owned');
+        $homeSec3Limit         = SiteSetting::getValue('home_sec3_limit', '4');
+
+        $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
+        $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
+
+        $sec1Products = $this->getFilteredProducts($allProducts, $homeSec1Filter, $homeSec1Limit);
+        $sec2Products = $this->getFilteredProducts($allProducts, $homeSec2Filter, $homeSec2Limit);
+        $sec3Products = $this->getFilteredProducts($allProducts, $homeSec3Filter, $homeSec3Limit);
+
+        // Backwards compatibility fallbacks
+        $intactProducts     = $sec1Products;
+        $withoutBoxProducts = $sec2Products;
+        $preOwnedProducts   = $sec3Products;
 
         return view('pages.home', compact(
             'heroSliders',
@@ -50,8 +74,43 @@ class PageController extends Controller
             'flashDeals',
             'intactProducts',
             'withoutBoxProducts',
-            'preOwnedProducts'
+            'preOwnedProducts',
+            'sec1Products',
+            'sec2Products',
+            'sec3Products',
+            'homeHeroActive',
+            'homeFlashActive',
+            'homeFlashTitle',
+            'homeFlashHighlight',
+            'homeSec1Active',
+            'homeSec1Title',
+            'homeSec1Highlight',
+            'homeSec2Active',
+            'homeSec2Title',
+            'homeSec2Highlight',
+            'homeSec3Active',
+            'homeSec3Title',
+            'homeSec3Highlight',
+            'homePromosActive',
+            'homeTestimonialsActive'
         ));
+    }
+
+    private function getFilteredProducts($allProducts, $filter, $limit)
+    {
+        $limit = (int) ($limit ?: 4);
+        if (str_starts_with($filter, 'cond_')) {
+            $slug = substr($filter, 5);
+            return $allProducts->filter(function($p) use ($slug) {
+                return optional($p->condition)->slug === $slug;
+            })->take($limit);
+        } elseif (str_starts_with($filter, 'cat_')) {
+            $catId = (int) substr($filter, 4);
+            return $allProducts->filter(function($p) use ($catId) {
+                return $p->category_id == $catId;
+            })->take($limit);
+        }
+        return $allProducts->take($limit);
     }
 
     public function ajaxSearch(Request $request)

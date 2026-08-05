@@ -20,6 +20,8 @@ Route::get('/product/{slug}', [PageController::class, 'product'])->name('product
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
 
+Route::get('/p/{slug}', [\App\Http\Controllers\CustomPageController::class, 'show'])->name('pages.custom');
+
 /*
 |--------------------------------------------------------------------------
 | Khan Gadget — Secure Admin Panel (Laravel Breeze Auth Middleware)
@@ -42,8 +44,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('promos', AdminPromoBannerController::class);
         Route::patch('promos/{promo}/toggle', [AdminPromoBannerController::class, 'toggle'])->name('promos.toggle');
         Route::resource('customers', AdminCustomerController::class);
+        Route::resource('pages', \App\Http\Controllers\Admin\CustomPageController::class);
         Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::get('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'index'])->name('home-settings.index');
+        Route::post('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'update'])->name('home-settings.update');
         Route::resource('store-locations', \App\Http\Controllers\Admin\StoreLocationController::class);
 
         // Media Library
