@@ -63,6 +63,8 @@ class AppServiceProvider extends ServiceProvider
                 'siteSlogan'        => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
                 'siteDescription'   => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
                 'sitePhone'         => SiteSetting::getValue('site_phone', '+8801700000000'),
+                // Used by WhatsApp ordering now and by the live-chat integration later.
+                'whatsappNumber'    => SiteSetting::getValue('whatsapp_number', '8801700000001'),
                 'siteEmail'         => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
                 'siteAddress'       => SiteSetting::getValue('site_address', 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh'),
                 'siteBusinessHours' => SiteSetting::getValue('site_business_hours', 'Sat – Thu · 10:00 AM – 9:00 PM'),

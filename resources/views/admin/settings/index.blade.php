@@ -92,6 +92,15 @@
                     </div>
 
                     <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            WhatsApp Number
+                            <span class="text-slate-400 font-normal">(for single-product orders and live chat)</span>
+                        </label>
+                        <input type="text" name="whatsapp_number" value="{{ old('whatsapp_number', $settings['whatsapp_number']) }}" inputmode="numeric" pattern="[0-9]*" placeholder="e.g. 8801700000001" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                        <p class="mt-1 text-[11px] text-slate-400">Use English digits only, including country code; do not add +, spaces, or dashes.</p>
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Support Email Address</label>
                         <input type="email" name="site_email" value="{{ old('site_email', $settings['site_email']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>

@@ -11,6 +11,7 @@ class SiteSettingSeeder extends Seeder
         $settings = [
             'phone' => '+8801700000000',
             'whatsapp' => '8801700000000',
+            'whatsapp_number' => '8801700000001',
             'email' => 'khangadget.bd@gmail.com',
             'website' => 'khangadget.com',
             'address' => 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh',

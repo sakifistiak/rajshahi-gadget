@@ -541,9 +541,51 @@ a.bg-primary:hover {
     background-color: #1a1c20 !important;
     transform: translateY(-1px) !important;
 }
+
+/* The main product image follows the mouse position while zoomed. */
+@media (hover: hover) and (pointer: fine) {
+    .product-image-magnifier {
+        cursor: zoom-in;
+    }
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    var whatsappNumber = @json(preg_replace('/[^0-9]/', '', (string) ($whatsappNumber ?? '8801700000001')));
+
+    function enableProductImageMagnifier() {
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            return;
+        }
+
+        document.querySelectorAll('main img').forEach(function(image) {
+            var zoomArea = image.closest('.group.overflow-hidden.rounded-md.bg-surface');
+
+            // Limit the effect to the large image on a product detail page, not product cards.
+            if (!zoomArea || zoomArea.closest('article') || image.dataset.magnifierReady) {
+                return;
+            }
+
+            image.dataset.magnifierReady = 'true';
+            zoomArea.classList.add('product-image-magnifier');
+            image.style.transition = 'transform 80ms ease-out';
+
+            zoomArea.addEventListener('mousemove', function(event) {
+                var rect = zoomArea.getBoundingClientRect();
+                var x = ((event.clientX - rect.left) / rect.width) * 100;
+                var y = ((event.clientY - rect.top) / rect.height) * 100;
+
+                image.style.transformOrigin = x + '% ' + y + '%';
+                image.style.transform = 'scale(2)';
+            });
+
+            zoomArea.addEventListener('mouseleave', function() {
+                image.style.transformOrigin = '50% 50%';
+                image.style.transform = 'scale(1)';
+            });
+        });
+    }
+
     function applySingleProductButtonStyles() {
         document.querySelectorAll('button, a').forEach(function(el) {
             var text = (el.textContent || '').trim();
@@ -563,7 +605,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (!el.nextElementSibling || !el.nextElementSibling.classList.contains('whatsapp-btn')) {
                             var waBtn = document.createElement('a');
                             var productName = document.querySelector('h1') ? document.querySelector('h1').textContent : 'this product';
-                            waBtn.href = "https://wa.me/8801700000001?text=" + encodeURIComponent("I want to order " + productName);
+                            waBtn.href = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent("I want to order " + productName);
                             waBtn.target = "_blank";
                             waBtn.className = "whatsapp-btn inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-bold transition-colors shadow-sm h-12 px-6 flex-1 rounded-full sm:flex-none";
                             waBtn.style.backgroundColor = "#25D366";
@@ -602,6 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
         replaceDollarWithTaka(document.body);
     }
     applySingleProductButtonStyles();
+    enableProductImageMagnifier();
     setTimeout(applySingleProductButtonStyles, 300);
 });
 </script>

@@ -35,6 +35,7 @@ class SettingController extends Controller
             'site_slogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
             'site_description' => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
             'site_phone' => SiteSetting::getValue('site_phone', '+8801700000000'),
+            'whatsapp_number' => SiteSetting::getValue('whatsapp_number', '8801700000001'),
             'site_email' => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
             'site_address' => SiteSetting::getValue('site_address', 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh'),
             'site_business_hours' => SiteSetting::getValue('site_business_hours', 'Sat – Thu · 10:00 AM – 9:00 PM'),
@@ -62,11 +63,18 @@ class SettingController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        // WhatsApp wa.me links require an international number written with English digits only.
+        $whatsappNumber = preg_replace('/[^0-9]/', '', (string) $request->input('whatsapp_number', ''));
+        $request->merge([
+            'whatsapp_number' => $whatsappNumber !== '' ? $whatsappNumber : null,
+        ]);
+
         $request->validate([
             'site_name' => 'nullable|string|max:255',
             'site_slogan' => 'nullable|string|max:255',
             'site_description' => 'nullable|string|max:1000',
             'site_phone' => 'nullable|string|max:100',
+            'whatsapp_number' => ['nullable', 'regex:/^[0-9]{7,15}$/'],
             'site_email' => 'nullable|string|max:255',
             'site_address' => 'nullable|string|max:500',
             'site_business_hours' => 'nullable|string|max:255',
@@ -92,6 +100,7 @@ class SettingController extends Controller
             'site_slogan',
             'site_description',
             'site_phone',
+            'whatsapp_number',
             'site_email',
             'site_address',
             'site_business_hours',
