@@ -12,7 +12,7 @@
             return fullText;
         }
         const regex = new RegExp('(' + highlightWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-        return fullText.replace(regex, '<span class=&quot;text-blue-600 font-bold bg-blue-50 px-1 py-0.5 rounded&quot;>$1</span>');
+        return fullText.replace(regex, '<span style="color: #2563eb; background-color: rgba(37, 99, 235, 0.12); padding: 2px 8px; border-radius: 6px; display: inline-block; font-weight: 700;">$1</span>');
     }
 }">
 
