@@ -548,6 +548,72 @@ a.bg-primary:hover {
         cursor: zoom-in;
     }
 }
+
+/* Left-side expandable live chat widget. */
+#kg-live-chat {
+    position: fixed;
+    left: 1rem;
+    bottom: 1.5rem;
+    z-index: 60;
+}
+#kg-live-chat-menu {
+    position: absolute;
+    bottom: calc(100% + 0.75rem);
+    left: 0;
+    width: 220px;
+    padding: 0.5rem;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 0.75rem;
+    background: var(--color-background, #ffffff);
+    box-shadow: 0 12px 28px rgb(0 0 0 / 0.18);
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+#kg-live-chat.is-open #kg-live-chat-menu {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+.kg-live-chat-option {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    color: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: background-color 0.15s ease;
+}
+.kg-live-chat-option:hover { background: var(--color-secondary, #f1f5f9); }
+.kg-live-chat-icon {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 9999px;
+    color: #fff;
+}
+#kg-live-chat-toggle {
+    display: grid;
+    width: 4rem;
+    height: 4rem;
+    place-items: center;
+    border: 0;
+    border-radius: 9999px;
+    padding: 0;
+    color: #fff;
+    font-size: 1.75rem;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.2);
+}
+@media (max-width: 639px) {
+    #kg-live-chat { bottom: 5.5rem; }
+}
+
+.kg-live-chat-toggle-icon { display: grid; place-items: center; transition: opacity 0.18s ease, transform 0.18s ease; }
+.kg-live-chat-toggle-icon.is-changing { opacity: 0; transform: scale(0.65) rotate(-12deg); }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -645,6 +711,72 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     applySingleProductButtonStyles();
     enableProductImageMagnifier();
+
+    var liveChatWidget = document.getElementById('kg-live-chat');
+    if (liveChatWidget) {
+        var liveChatToggle = document.getElementById('kg-live-chat-toggle');
+        var liveChatToggleIcon = document.getElementById('kg-live-chat-toggle-icon');
+        var liveChatIcons = {
+            whatsapp: '<svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 9.5c.2 3 2.6 5.4 5.6 5.6l1.3-1.3a1 1 0 0 1 1-.2l2 .8a1 1 0 0 1 .6.9v2a1 1 0 0 1-1 1C11.4 18.3 5.7 12.6 5.7 6a1 1 0 0 1 1-1h2a1 1 0 0 1 .9.6l.8 2a1 1 0 0 1-.2 1Z"/></svg>',
+            call: '<svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.4 2.1L8.2 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.5 1.8Z"/></svg>'
+        };
+        liveChatToggle.addEventListener('click', function() {
+            var isOpen = liveChatWidget.classList.toggle('is-open');
+            liveChatToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        var showingWhatsApp = true;
+        window.setInterval(function() {
+            liveChatToggleIcon.classList.add('is-changing');
+            window.setTimeout(function() {
+                showingWhatsApp = !showingWhatsApp;
+                liveChatToggleIcon.innerHTML = showingWhatsApp ? liveChatIcons.whatsapp : liveChatIcons.call;
+                liveChatToggleIcon.classList.remove('is-changing');
+            }, 180);
+        }, 2500);
+    }
+
     setTimeout(applySingleProductButtonStyles, 300);
 });
 </script>
+
+@php
+    $liveChatWhatsapp = preg_replace('/[^0-9]/', '', (string) ($liveChatWhatsappNumber ?? ''));
+    $liveChatCall = preg_replace('/[^0-9+]/', '', (string) ($liveChatCallNumber ?? ''));
+    $showWhatsapp = ($liveChatWhatsappEnabled ?? '1') === '1' && $liveChatWhatsapp !== '';
+    $showMessenger = ($liveChatMessengerEnabled ?? '0') === '1' && !empty($liveChatMessengerUrl);
+    $showCall = ($liveChatCallEnabled ?? '1') === '1' && $liveChatCall !== '';
+@endphp
+
+@if (($liveChatEnabled ?? '1') === '1' && ($showWhatsapp || $showMessenger || $showCall))
+    <aside id="kg-live-chat" aria-label="Live chat options">
+        <div id="kg-live-chat-menu" role="menu">
+            <p class="px-2 py-1.5 text-xs font-bold text-muted-foreground">How can we help?</p>
+
+            @if ($showWhatsapp)
+                <a class="kg-live-chat-option" href="https://wa.me/{{ $liveChatWhatsapp }}?text={{ rawurlencode('Hello, I need help.') }}" target="_blank" rel="noopener noreferrer" role="menuitem">
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatWhatsappColor ?? '#25D366' }}" aria-hidden="true">⌕</span>
+                    <span>Chat on WhatsApp</span>
+                </a>
+            @endif
+
+            @if ($showMessenger)
+                <a class="kg-live-chat-option" href="{{ $liveChatMessengerUrl }}" target="_blank" rel="noopener noreferrer" role="menuitem">
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatMessengerColor ?? '#0084FF' }}" aria-hidden="true">✉</span>
+                    <span>Chat on Messenger</span>
+                </a>
+            @endif
+
+            @if ($showCall)
+                <a class="kg-live-chat-option" href="tel:{{ $liveChatCall }}" role="menuitem">
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatCallColor ?? '#4f46e5' }}" aria-hidden="true">☎</span>
+                    <span>Call us</span>
+                </a>
+            @endif
+        </div>
+
+        <button id="kg-live-chat-toggle" type="button" aria-label="Toggle live chat options" aria-expanded="false" aria-controls="kg-live-chat-menu" style="background:{{ $liveChatToggleColor ?? '#24272c' }}">
+            <span id="kg-live-chat-toggle-icon" class="kg-live-chat-toggle-icon" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 9.5c.2 3 2.6 5.4 5.6 5.6l1.3-1.3a1 1 0 0 1 1-.2l2 .8a1 1 0 0 1 .6.9v2a1 1 0 0 1-1 1C11.4 18.3 5.7 12.6 5.7 6a1 1 0 0 1 1-1h2a1 1 0 0 1 .9.6l.8 2a1 1 0 0 1-.2 1Z"/></svg></span>
+        </button>
+    </aside>
+@endif

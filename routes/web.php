@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin CRUDs
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('products', AdminProductController::class);
+        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->except('show');
         Route::resource('sliders', AdminHeroSliderController::class);
         Route::patch('sliders/{slider}/toggle', [AdminHeroSliderController::class, 'toggle'])->name('sliders.toggle');
         Route::resource('promos', AdminPromoBannerController::class);
@@ -47,6 +48,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('pages', \App\Http\Controllers\Admin\CustomPageController::class);
         Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::get('live-chat-settings', [\App\Http\Controllers\Admin\LiveChatSettingController::class, 'index'])->name('live-chat-settings.index');
+        Route::post('live-chat-settings', [\App\Http\Controllers\Admin\LiveChatSettingController::class, 'update'])->name('live-chat-settings.update');
         Route::get('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'index'])->name('home-settings.index');
         Route::post('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'update'])->name('home-settings.update');
         Route::resource('store-locations', \App\Http\Controllers\Admin\StoreLocationController::class);

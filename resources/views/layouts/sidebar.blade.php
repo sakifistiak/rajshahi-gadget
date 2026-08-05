@@ -1,6 +1,6 @@
 <!-- Left Sidebar for Desktop -->
 <aside class="hidden lg:flex lg:w-64 lg:flex-col shrink-0 bg-white border-r border-slate-200"
-       x-data="{            openSection: '{{ request()->routeIs('admin.products.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}' 
+       x-data="{            openSection: '{{ request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.live-chat-settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}'
        }">
 
     <!-- User Profile Card -->
@@ -58,8 +58,8 @@
                     <i data-lucide="package" class="h-3.5 w-3.5 {{ request()->routeIs('admin.products.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Products</span>
                 </a>
-                <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
-                    <i data-lucide="layers" class="h-3.5 w-3.5 text-slate-400"></i>
+                <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.categories.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="layers" class="h-3.5 w-3.5 {{ request()->routeIs('admin.categories.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Categories</span>
                 </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
@@ -160,6 +160,10 @@
                 <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
                     <i data-lucide="sliders" class="h-3.5 w-3.5 {{ request()->routeIs('admin.settings.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Site Settings</span>
+                </a>
+                <a href="{{ route('admin.live-chat-settings.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.live-chat-settings.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="messages-square" class="h-3.5 w-3.5 {{ request()->routeIs('admin.live-chat-settings.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                    <span>Live Chat Settings</span>
                 </a>
                 <a href="{{ route('admin.store-locations.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.store-locations.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
                     <i data-lucide="map-pin" class="h-3.5 w-3.5 {{ request()->routeIs('admin.store-locations.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
