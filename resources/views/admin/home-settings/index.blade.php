@@ -77,7 +77,30 @@
                     <input type="checkbox" name="home_testimonials_active" value="1" {{ ($settings['home_testimonials_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                 </label>
             </div>
+        <!-- 2. Notice Ticker Announcements -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                        <i data-lucide="megaphone" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">2. Notice Ticker Announcements</h3>
+                        <p class="text-xs text-slate-500">Manage marquee announcements shown on the homepage.</p>
+                    </div>
+                </div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    <input type="checkbox" name="home_ticker_active" value="1" {{ ($settings['home_ticker_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    <span>Enable Notice Ticker</span>
+                </label>
+            </div>
+            <div class="p-6">
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Notice Items (One announcement per line)</label>
+                <textarea name="home_ticker_text" rows="5" class="w-full px-4 py-3 rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed" placeholder="Type announcements here, one per line...">{{ $settings['home_ticker_text'] ?? '' }}</textarea>
+                <p class="text-[11px] text-slate-400 mt-2">Each line will be displayed as a scrolling announcement in the marquee bar.</p>
+            </div>
         </div>
+
 
         <!-- 2. Dynamic Product Sections List -->
         <div class="space-y-6">

@@ -10,9 +10,6 @@ use Illuminate\Http\Request;
 
 class HomeSettingController extends Controller
 {
-    /**
-     * Get default product sections.
-     */
     public static function getDefaultSections(): array
     {
         return [
@@ -43,13 +40,12 @@ class HomeSettingController extends Controller
         ];
     }
 
-    /**
-     * Display the Homepage Settings interface.
-     */
     public function index()
     {
         $categories = Category::orderBy('name')->get();
         $conditions = Condition::orderBy('label')->get();
+
+        $defaultTickerText = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
 
         $settingsKeys = [
             'home_hero_active'          => '1',
@@ -58,6 +54,8 @@ class HomeSettingController extends Controller
             'home_flash_highlight'      => 'deals',
             'home_promos_active'        => '1',
             'home_testimonials_active'  => '1',
+            'home_ticker_active'        => '1',
+            'home_ticker_text'          => $defaultTickerText,
         ];
 
         $settings = [];
@@ -65,7 +63,6 @@ class HomeSettingController extends Controller
             $settings[$key] = SiteSetting::getValue($key, $default);
         }
 
-        // Get dynamic sections list
         $sectionsJson = SiteSetting::getValue('home_sections_json');
         $sectionsList = [];
         if ($sectionsJson) {
@@ -104,9 +101,6 @@ class HomeSettingController extends Controller
         return view('admin.home-settings.index', compact('categories', 'conditions', 'settings', 'sectionsList'));
     }
 
-    /**
-     * Update Homepage Settings in database.
-     */
     public function update(Request $request)
     {
         $checkboxKeys = [
@@ -114,10 +108,15 @@ class HomeSettingController extends Controller
             'home_flash_active',
             'home_promos_active',
             'home_testimonials_active',
+            'home_ticker_active',
         ];
 
         foreach ($checkboxKeys as $cb) {
             SiteSetting::setValue($cb, $request->has($cb) ? '1' : '0');
+        }
+
+        if ($request->has('home_ticker_text')) {
+            SiteSetting::setValue('home_ticker_text', $request->input('home_ticker_text', ''));
         }
 
         if ($request->has('home_flash_title')) {
@@ -127,7 +126,6 @@ class HomeSettingController extends Controller
             SiteSetting::setValue('home_flash_highlight', $request->input('home_flash_highlight', ''));
         }
 
-        // Save dynamic sections list
         if ($request->has('home_sections_json')) {
             $json = $request->input('home_sections_json');
             $decoded = json_decode($json, true);

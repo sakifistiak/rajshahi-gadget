@@ -38,6 +38,11 @@ class PageController extends Controller
         $homeFlashHighlight    = SiteSetting::getValue('home_flash_highlight', 'deals');
         $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
         $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
+        $homeTickerActive       = SiteSetting::getValue('home_ticker_active', '1') == '1';
+        $defaultTickerText      = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
+        $homeTickerText         = SiteSetting::getValue('home_ticker_text', $defaultTickerText);
+        $homeTickerItems        = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $homeTickerText))));
+
 
         // Load dynamic product sections
         $sectionsJson = SiteSetting::getValue('home_sections_json');
@@ -110,7 +115,9 @@ class PageController extends Controller
             'homeFlashTitle',
             'homeFlashHighlight',
             'homePromosActive',
-            'homeTestimonialsActive'
+            'homeTestimonialsActive',
+            'homeTickerActive',
+            'homeTickerItems'
         ));
     }
 

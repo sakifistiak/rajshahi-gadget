@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -12,12 +13,10 @@ class OrderController extends Controller
     {
         $query = Order::with('items');
 
-        // Status Filter
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
         }
 
-        // Search Filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -29,13 +28,18 @@ class OrderController extends Controller
 
         $orders = $query->latest()->paginate(15)->withQueryString();
 
+        $groupedCounts = Order::select('status', DB::raw('count(*) as total'))
+            ->groupBy('status')
+            ->pluck('total', 'status')
+            ->toArray();
+
         $statusCounts = [
-            'all' => Order::count(),
-            'pending' => Order::where('status', 'pending')->count(),
-            'processing' => Order::where('status', 'processing')->count(),
-            'shipped' => Order::where('status', 'shipped')->count(),
-            'delivered' => Order::where('status', 'delivered')->count(),
-            'cancelled' => Order::where('status', 'cancelled')->count(),
+            'all' => array_sum($groupedCounts),
+            'pending' => $groupedCounts['pending'] ?? 0,
+            'processing' => $groupedCounts['processing'] ?? 0,
+            'shipped' => $groupedCounts['shipped'] ?? 0,
+            'delivered' => $groupedCounts['delivered'] ?? 0,
+            'cancelled' => $groupedCounts['cancelled'] ?? 0,
         ];
 
         return view('admin.orders.index', compact('orders', 'statusCounts'));
