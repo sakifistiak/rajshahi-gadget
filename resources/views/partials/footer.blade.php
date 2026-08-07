@@ -16,15 +16,15 @@
                     </div>
                 </div>
 
-                <ul class="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-5 max-w-5xl mx-auto">
+                <ul class="mt-5 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
                     @forelse($storeLocations as $outlet)
-                        <li class="flex gap-3 border-t border-border/60 pt-4 min-w-[240px] max-w-xs">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true">
+                        <li class="flex gap-2 border-t border-border/60 pt-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true">
                                 <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
                             <div class="min-w-0">
-                                <p class="text-sm font-semibold leading-tight text-foreground">{{ $outlet->name }}</p>
+                                <p class="text-sm font-medium leading-tight">{{ $outlet->name }}</p>
                                 <div class="mt-1 text-xs leading-relaxed text-muted-foreground whitespace-pre-line">{!! nl2br($outlet->address) !!}</div>
                                 @if($outlet->phone)
                                     <a href="tel:{{ preg_replace('/[^0-9+]/', '', $outlet->phone) }}" class="mt-1 inline-block text-xs text-muted-foreground hover:text-foreground">{{ $outlet->phone }}</a>
