@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\BlogPost;
 use App\Models\CustomerFeedback;
 use App\Models\HeroSlider;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -20,6 +21,11 @@ class DashboardController extends Controller
         $inStockProducts = Product::where('in_stock', true)->count();
         $outOfStockProducts = Product::where('in_stock', false)->count();
 
+        $todayOrders = Order::whereDate('created_at', now()->today())->count();
+        $totalOrders = Order::count();
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $totalRevenue = Order::where('status', 'delivered')->sum('total');
+
         $stats = [
             'total_products' => $totalProducts,
             'in_stock' => $inStockProducts,
@@ -29,10 +35,15 @@ class DashboardController extends Controller
             'total_blogs' => BlogPost::count(),
             'total_feedbacks' => CustomerFeedback::count(),
             'total_sliders' => HeroSlider::count(),
+            'today_orders' => $todayOrders,
+            'total_orders' => $totalOrders,
+            'pending_orders' => $pendingOrders,
+            'total_revenue' => $totalRevenue,
         ];
 
         $recentProducts = Product::with(['category', 'brand', 'condition'])->latest()->take(5)->get();
+        $recentOrders = Order::with('items')->latest()->take(5)->get();
 
-        return view('admin.dashboard', compact('stats', 'recentProducts'));
+        return view('admin.dashboard', compact('stats', 'recentProducts', 'recentOrders'));
     }
 }

@@ -1,47 +1,47 @@
 <!-- Left Sidebar for Desktop -->
 <aside class="hidden lg:flex lg:w-64 lg:flex-col shrink-0 bg-white border-r border-slate-200"
-       x-data="{            openSection: '{{ request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.live-chat-settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}'
-       }">
+       x-data="{            openSection: '{{ request()->routeIs('admin.orders.*') || request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.live-chat-settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}'
+        }">
+ 
+     <!-- User Profile Card -->
+     <div class="p-3">
+         <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white shadow-sm">
+             <div class="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+                 {{ substr(Auth::user()->name, 0, 2) }}
+             </div>
+             <div class="overflow-hidden">
+                 <h4 class="text-[13px] font-bold text-slate-900 truncate leading-tight">{{ Auth::user()->name }}</h4>
+                 <p class="text-[11px] font-medium text-slate-500 truncate mt-0.5 leading-tight">{{ Auth::user()->email }}</p>
+             </div>
+         </div>
+     </div>
 
-    <!-- User Profile Card -->
-    <div class="p-3">
-        <div class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 bg-white shadow-sm">
-            <div class="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                {{ substr(Auth::user()->name, 0, 2) }}
-            </div>
-            <div class="overflow-hidden">
-                <h4 class="text-[13px] font-bold text-slate-900 truncate leading-tight">{{ Auth::user()->name }}</h4>
-                <p class="text-[11px] font-medium text-slate-500 truncate mt-0.5 leading-tight">{{ Auth::user()->email }}</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Navigation List (Font size: 13.5px, slightly bolder font weight) -->
-    <nav class="flex-1 px-3 pb-6 overflow-y-auto space-y-1 text-[13.5px]">
-        
-        <!-- 1. Dashboard -->
-        <a href="{{ route('dashboard') }}" 
-           class="flex items-center gap-2.5 px-3 py-2.5 rounded-md font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-slate-800 hover:bg-slate-50 hover:text-blue-600' }}">
-            <i data-lucide="layout-dashboard" class="h-4.5 w-4.5 shrink-0 {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-slate-500' }}"></i>
-            <span>Dashboard</span>
-        </a>
+     <!-- Navigation List (Font size: 13.5px, slightly bolder font weight) -->
+     <nav class="flex-1 px-3 pb-6 overflow-y-auto space-y-1 text-[13.5px]">
+         
+         <!-- 1. Dashboard -->
+         <a href="{{ route('dashboard') }}" 
+            class="flex items-center gap-2.5 px-3 py-2.5 rounded-md font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-slate-800 hover:bg-slate-50 hover:text-blue-600' }}">
+             <i data-lucide="layout-dashboard" class="h-4.5 w-4.5 shrink-0 {{ request()->routeIs('dashboard') ? 'text-blue-600' : 'text-slate-500' }}"></i>
+             <span>Dashboard</span>
+         </a>
 
 
-        <!-- 2. Ecommerce -->
-        <div class="pt-1">
-            <button @click="openSection = (openSection === 'ecommerce' ? '' : 'ecommerce')" 
-                    class="w-full flex items-center justify-between px-3 py-2.5 rounded-md font-bold text-slate-800 hover:bg-slate-50 hover:text-blue-600 transition-all">
-                <span class="flex items-center gap-2.5">
-                    <i data-lucide="shopping-bag" class="h-4.5 w-4.5 text-slate-500"></i>
-                    <span>Ecommerce</span>
-                </span>
-                <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 transition-transform duration-200" :class="openSection === 'ecommerce' ? 'rotate-180 text-blue-600' : ''"></i>
-            </button>
-            <div x-show="openSection === 'ecommerce'" x-collapse class="pl-8 pr-2 py-1 space-y-1">
-                <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
-                    <i data-lucide="shopping-cart" class="h-3.5 w-3.5 text-slate-400"></i>
-                    <span>Orders</span>
-                </a>
+         <!-- 2. Ecommerce -->
+         <div class="pt-1">
+             <button @click="openSection = (openSection === 'ecommerce' ? '' : 'ecommerce')" 
+                     class="w-full flex items-center justify-between px-3 py-2.5 rounded-md font-bold text-slate-800 hover:bg-slate-50 hover:text-blue-600 transition-all">
+                 <span class="flex items-center gap-2.5">
+                     <i data-lucide="shopping-bag" class="h-4.5 w-4.5 text-slate-500"></i>
+                     <span>Ecommerce</span>
+                 </span>
+                 <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 transition-transform duration-200" :class="openSection === 'ecommerce' ? 'rotate-180 text-blue-600' : ''"></i>
+             </button>
+             <div x-show="openSection === 'ecommerce'" x-collapse class="pl-8 pr-2 py-1 space-y-1">
+                 <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.orders.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                     <i data-lucide="shopping-cart" class="h-3.5 w-3.5 {{ request()->routeIs('admin.orders.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                     <span>Orders</span>
+                 </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="credit-card" class="h-3.5 w-3.5 text-slate-400"></i>
                     <span>Payments</span>

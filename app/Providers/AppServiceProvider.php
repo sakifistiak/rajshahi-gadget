@@ -31,22 +31,10 @@ class AppServiceProvider extends ServiceProvider
                 // Fail gracefully if DB table doesn't exist yet
             }
 
-            $defaultCol1Links = [
-                ['label' => 'BRAND NEW INTACT BOX', 'url' => '/shop?condition=intact'],
-                ['label' => 'BRAND NEW WITHOUT BOX', 'url' => '/shop?condition=without-box'],
-                ['label' => 'PRE-OWNED', 'url' => '/shop?condition=pre-owned'],
-                ['label' => 'All products', 'url' => '/shop'],
-                ['label' => 'Compare', 'url' => '/compare'],
-            ];
-
-            $defaultCol2Links = [
-                ['label' => 'Blog', 'url' => '/blog'],
-                ['label' => 'Customer Spotlight', 'url' => '/customer-spotlight'],
-                ['label' => 'Philanthropic Work', 'url' => '/philanthropic-work'],
-                ['label' => 'Customer Feedback', 'url' => '/customer-feedback'],
-                ['label' => 'About us', 'url' => '/about'],
-                ['label' => 'Contact', 'url' => '/contact'],
-            ];
+            // Do not inject fallback navigation: the footer only displays links
+            // explicitly configured by the administrator.
+            $defaultCol1Links = [];
+            $defaultCol2Links = [];
 
             $col1Raw = SiteSetting::getValue('footer_col1_links');
             $col1Decoded = !empty($col1Raw) ? json_decode($col1Raw, true) : null;

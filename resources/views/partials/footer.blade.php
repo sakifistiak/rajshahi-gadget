@@ -32,7 +32,21 @@
         </section>
 
         <!-- 2. Main Footer Links & Information -->
-        <div class="mt-12 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        @php
+            // Build the grid from the columns that are actually visible. This prevents
+            // hidden link columns from leaving an empty slot at larger screen sizes.
+            // Visibility is controlled by the admin toggle. An enabled column with
+            // no links remains intentionally blank, rather than falling back to links.
+            $showFooterCol1 = ($footerCol1Active ?? '1') == '1';
+            $showFooterCol2 = ($footerCol2Active ?? '1') == '1';
+            $footerColumnCount = 2 + (int) $showFooterCol1 + (int) $showFooterCol2;
+            $footerGridClass = match ($footerColumnCount) {
+                2 => 'grid-cols-1 md:grid-cols-2',
+                3 => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+                default => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+            };
+        @endphp
+        <div class="mt-12 grid gap-10 {{ $footerGridClass }}">
             <!-- Brand Column -->
             <div>
                 <a aria-label="Khan Gadget home" href="/" class="inline-flex items-center">
@@ -71,7 +85,7 @@
             </div>
 
             <!-- Shop Links Column -->
-            @if(($footerCol1Active ?? '1') == '1' && isset($footerCol1Links) && count($footerCol1Links))
+            @if($showFooterCol1)
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.14em]">{{ $footerCol1Title ?? 'SHOP' }}</p>
                     <ul class="mt-4 space-y-3 text-sm">
@@ -83,7 +97,7 @@
             @endif
 
             <!-- Explore Links Column -->
-            @if(($footerCol2Active ?? '1') == '1' && isset($footerCol2Links) && count($footerCol2Links))
+            @if($showFooterCol2)
                 <div>
                     <p class="text-xs font-semibold uppercase tracking-[0.14em]">{{ $footerCol2Title ?? 'EXPLORE' }}</p>
                     <ul class="mt-4 space-y-3 text-sm">
@@ -129,4 +143,3 @@
     <div class="h-14 sm:hidden"></div>
 </footer>
 @include('partials.cart-script')
-

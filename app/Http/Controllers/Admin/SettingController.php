@@ -13,22 +13,9 @@ class SettingController extends Controller
 {
     public function index(): View
     {
-        $defaultCol1Links = json_encode([
-            ['label' => 'BRAND NEW INTACT BOX', 'url' => '/shop?condition=intact'],
-            ['label' => 'BRAND NEW WITHOUT BOX', 'url' => '/shop?condition=without-box'],
-            ['label' => 'PRE-OWNED', 'url' => '/shop?condition=pre-owned'],
-            ['label' => 'All products', 'url' => '/shop'],
-            ['label' => 'Compare', 'url' => '/compare'],
-        ]);
-
-        $defaultCol2Links = json_encode([
-            ['label' => 'Blog', 'url' => '/blog'],
-            ['label' => 'Customer Spotlight', 'url' => '/customer-spotlight'],
-            ['label' => 'Philanthropic Work', 'url' => '/philanthropic-work'],
-            ['label' => 'Customer Feedback', 'url' => '/customer-feedback'],
-            ['label' => 'About us', 'url' => '/about'],
-            ['label' => 'Contact', 'url' => '/contact'],
-        ]);
+        // Footer columns start empty. Only links entered in this screen are shown.
+        $defaultCol1Links = '[]';
+        $defaultCol2Links = '[]';
 
         $settings = [
             'site_name' => SiteSetting::getValue('site_name', 'Khan Gadget'),

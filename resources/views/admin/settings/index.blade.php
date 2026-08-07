@@ -173,28 +173,40 @@
             </div>
 
             <!-- Card 5: Footer Link Columns & Custom Page Links -->
-            <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5" 
+            <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
+                 data-col1-active="{{ $settings['footer_col1_active'] }}"
+                 data-col1-title="{{ $settings['footer_col1_title'] }}"
+                 data-col1-links='{{ json_encode(json_decode($settings['footer_col1_links'] ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
+                 data-col2-active="{{ $settings['footer_col2_active'] }}"
+                 data-col2-title="{{ $settings['footer_col2_title'] }}"
+                 data-col2-links='{{ json_encode(json_decode($settings['footer_col2_links'] ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
                  x-data="{
-                     col1Active: {{ $settings['footer_col1_active'] == '1' ? 'true' : 'false' }},
-                     col1Title: '{{ addslashes($settings['footer_col1_title']) }}',
+                     col1Active: false,
+                     col1Title: '',
                      col1Links: [],
-                     col2Active: {{ $settings['footer_col2_active'] == '1' ? 'true' : 'false' }},
-                     col2Title: '{{ addslashes($settings['footer_col2_title']) }}',
+                     col2Active: false,
+                     col2Title: '',
                      col2Links: [],
                      init() {
-                         const raw1 = {{ $settings['footer_col1_links'] ?: '[]' }};
+                         this.col1Active = this.$el.dataset.col1Active === '1';
+                         this.col1Title = this.$el.dataset.col1Title || '';
+                         const raw1 = JSON.parse(this.$el.dataset.col1Links || '[]');
                          this.col1Links = raw1.map((l, i) => ({ _id: Date.now() + Math.random() + i, label: l.label || '', url: l.url || '' }));
-                         
-                         const raw2 = {{ $settings['footer_col2_links'] ?: '[]' }};
+
+                         this.col2Active = this.$el.dataset.col2Active === '1';
+                         this.col2Title = this.$el.dataset.col2Title || '';
+                         const raw2 = JSON.parse(this.$el.dataset.col2Links || '[]');
                          this.col2Links = raw2.map((l, i) => ({ _id: Date.now() + Math.random() + i + 1000, label: l.label || '', url: l.url || '' }));
                      },
                      addCol1Link() {
+                         this.col1Active = true;
                          this.col1Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/p/sample' });
                      },
                      removeCol1Link(idx) {
                          this.col1Links = this.col1Links.filter((_, i) => i !== idx);
                      },
                      addCol2Link() {
+                         this.col2Active = true;
                          this.col2Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/p/sample' });
                      },
                      removeCol2Link(idx) {
@@ -240,7 +252,7 @@
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded" :class="col1Active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'" x-text="col1Active ? 'Enabled (Visible)' : 'Disabled (Hidden)'"></span>
                         </div>
 
-                        <div x-show="col1Active" class="space-y-4">
+                        <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <label class="text-xs font-bold text-slate-800 uppercase">Column 1 Header Title</label>
                                 <button type="button" @click.prevent="addCol1Link()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition-all flex items-center gap-1 cursor-pointer">
@@ -299,7 +311,7 @@
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded" :class="col2Active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'" x-text="col2Active ? 'Enabled (Visible)' : 'Disabled (Hidden)'"></span>
                         </div>
 
-                        <div x-show="col2Active" class="space-y-4">
+                        <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <label class="text-xs font-bold text-slate-800 uppercase">Column 2 Header Title</label>
                                 <button type="button" @click.prevent="addCol2Link()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition-all flex items-center gap-1 cursor-pointer">

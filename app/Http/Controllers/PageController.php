@@ -174,6 +174,28 @@ class PageController extends Controller
         return $this->render('pages.' . $page);
     }
 
+    public function checkout(Request $request)
+    {
+        $buyNowProduct = null;
+
+        if ($request->filled('product')) {
+            $buyNowProduct = Product::with('images')
+                ->where('slug', $request->string('product'))
+                ->where('in_stock', true)
+                ->firstOrFail();
+        }
+
+        $buyNow = $buyNowProduct ? [
+            'slug' => $buyNowProduct->slug,
+            'name' => $buyNowProduct->name,
+            'price' => $buyNowProduct->price,
+            'image' => $buyNowProduct->primaryImage(),
+            'quantity' => 1,
+        ] : null;
+
+        return view('pages.checkout', compact('buyNow'));
+    }
+
     public function shop(Request $request)
     {
         $query = Product::with(['category', 'brand', 'condition', 'images', 'highlights']);

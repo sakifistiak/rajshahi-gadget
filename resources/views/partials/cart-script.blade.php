@@ -190,6 +190,30 @@
     // ── Init ──
     function initCartButtons() {
         updateNavbarBadge(false);
+        // Buy Now always starts a single-product checkout.  Product cards in some
+        // legacy page templates are buttons, so resolve their product URL here.
+        document.addEventListener('click', function(e) {
+            var target = e.target.closest('.btn-buy-now, button, a');
+            if (!target || target.closest('header, footer, nav')) return;
+            var label = (target.textContent || '').trim().replace(/\s+/g, ' ');
+            if (!target.classList.contains('btn-buy-now') && !/^Buy Now(?:\s|$)/i.test(label)) return;
+
+            var checkoutLink = target.matches('a[href*="/checkout"]') ? target.getAttribute('href') : '';
+            if (!checkoutLink) {
+                var card = target.closest('article, .product-card, [data-tsd-source*="ProductCard"], .group');
+                var productLink = card && card.querySelector('a[href*="/product/"]');
+                var productPath = productLink && productLink.getAttribute('href');
+                if (!productPath && /^\/product\//.test(location.pathname)) productPath = location.pathname;
+                if (productPath) {
+                    var slug = productPath.split('/product/')[1].split('?')[0];
+                    checkoutLink = '/checkout?product=' + encodeURIComponent(slug);
+                }
+            }
+            if (!checkoutLink) return;
+            e.preventDefault();
+            e.stopPropagation();
+            location.href = checkoutLink;
+        });
         document.addEventListener('click', function(e) {
             var btn = e.target.closest('button[aria-label*="cart" i], a[aria-label*="Cart" i], a[title*="Cart" i], .btn-add-to-cart');
             if (!btn) return;

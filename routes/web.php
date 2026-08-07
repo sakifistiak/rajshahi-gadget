@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\HeroSliderController as AdminHeroSliderController
 use App\Http\Controllers\Admin\PromoBannerController as AdminPromoBannerController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,8 @@ use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 */
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
+Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
+Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
@@ -54,6 +57,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'index'])->name('home-settings.index');
         Route::post('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'update'])->name('home-settings.update');
         Route::resource('store-locations', \App\Http\Controllers\Admin\StoreLocationController::class);
+
+        // Orders
+        Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::delete('orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
 
         // Media Library
         Route::get('media', [AdminMediaController::class, 'index'])->name('media.index');
