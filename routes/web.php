@@ -23,7 +23,7 @@ Route::get('/product/{slug}', [PageController::class, 'product'])->name('product
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
 
-Route::get('/p/{slug}', [\App\Http\Controllers\CustomPageController::class, 'show'])->name('pages.custom');
+Route::get('/page/{slug}', [\App\Http\Controllers\CustomPageController::class, 'show'])->name('pages.custom');
 
 /*
 |--------------------------------------------------------------------------
