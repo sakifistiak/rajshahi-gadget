@@ -1,21 +1,30 @@
 <footer class="border-t border-border bg-surface" data-tsd-source="/src/components/site/Footer.tsx:35:5">
     <div class="container-page py-14" data-tsd-source="/src/components/site/Footer.tsx:36:7">
         <!-- 1. Store Locations (OUR OUTLETS) -->
-        <section aria-label="Our outlets" class="border-b border-border pb-10" data-tsd-source="/src/components/site/OutletsFooter.tsx:18:5">
-            <div data-tsd-source="/src/components/site/OutletsFooter.tsx:19:7">
-                <div class="flex items-baseline justify-between gap-4" data-tsd-source="/src/components/site/OutletsFooter.tsx:20:9">
-                    <p class="text-xs font-semibold uppercase tracking-[0.14em]" data-tsd-source="/src/components/site/OutletsFooter.tsx:21:11">OUR OUTLETS</p>
-                    <span class="text-xs text-muted-foreground" data-tsd-source="/src/components/site/OutletsFooter.tsx:22:11">{{ $storeLocations->count() }} Locations</span>
+        <section aria-label="Our outlets" class="border-b border-border pb-10">
+            <div>
+                <!-- Centered Header with Full-Width Lines and Dots -->
+                <div class="relative flex items-center justify-center my-8 py-2 w-full">
+                    <div class="flex-1 flex items-center justify-end">
+                        <div class="h-[1px] w-full bg-foreground/40"></div>
+                        <div class="h-2 w-2 rounded-full bg-foreground shrink-0 -ml-1"></div>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-foreground px-4 sm:px-6 whitespace-nowrap">Our Outlets</h3>
+                    <div class="flex-1 flex items-center justify-start">
+                        <div class="h-2 w-2 rounded-full bg-foreground shrink-0 -mr-1"></div>
+                        <div class="h-[1px] w-full bg-foreground/40"></div>
+                    </div>
                 </div>
-                <ul class="mt-5 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4" data-tsd-source="/src/components/site/OutletsFooter.tsx:26:9">
+
+                <ul class="mt-6 flex flex-wrap justify-center gap-x-8 gap-y-5 max-w-5xl mx-auto">
                     @forelse($storeLocations as $outlet)
-                        <li class="flex gap-2 border-t border-border/60 pt-4" data-tsd-source="/src/components/site/OutletsFooter.tsx:28:13">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true">
+                        <li class="flex gap-3 border-t border-border/60 pt-4 min-w-[240px] max-w-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true">
                                 <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
                             <div class="min-w-0">
-                                <p class="text-sm font-medium leading-tight">{{ $outlet->name }}</p>
+                                <p class="text-sm font-semibold leading-tight text-foreground">{{ $outlet->name }}</p>
                                 <div class="mt-1 text-xs leading-relaxed text-muted-foreground whitespace-pre-line">{!! nl2br($outlet->address) !!}</div>
                                 @if($outlet->phone)
                                     <a href="tel:{{ preg_replace('/[^0-9+]/', '', $outlet->phone) }}" class="mt-1 inline-block text-xs text-muted-foreground hover:text-foreground">{{ $outlet->phone }}</a>
@@ -41,12 +50,12 @@
             $showFooterCol2 = ($footerCol2Active ?? '1') == '1';
             $footerColumnCount = 2 + (int) $showFooterCol1 + (int) $showFooterCol2;
             $footerGridClass = match ($footerColumnCount) {
-                2 => 'grid-cols-1 md:grid-cols-2',
-                3 => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-                default => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+                2 => 'grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto',
+                3 => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto',
+                default => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto',
             };
         @endphp
-        <div class="mt-12 grid gap-10 {{ $footerGridClass }}">
+        <div class="mt-12 grid gap-10 md:gap-16 {{ $footerGridClass }}">
             <!-- Brand Column -->
             <div>
                 <a aria-label="Khan Gadget home" href="/" class="inline-flex items-center">
