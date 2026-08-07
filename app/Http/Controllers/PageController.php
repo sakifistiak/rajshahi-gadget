@@ -44,6 +44,21 @@ class PageController extends Controller
         $homeTickerItems        = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $homeTickerText))));
 
 
+
+        // Popup Offer Settings
+        $popupOfferSettings = [
+            'active'        => SiteSetting::getValue('popup_offer_active', '0') == '1',
+            'image'         => SiteSetting::getValue('popup_offer_image', ''),
+            'image_mobile'  => SiteSetting::getValue('popup_offer_image_mobile', ''),
+            'link'          => SiteSetting::getValue('popup_offer_link', '/shop'),
+            'target'        => SiteSetting::getValue('popup_offer_target', '_self'),
+            'frequency'     => SiteSetting::getValue('popup_offer_frequency', 'session'),
+            'delay'         => (float) SiteSetting::getValue('popup_offer_delay', '1'),
+            'backdrop_blur' => SiteSetting::getValue('popup_offer_backdrop_blur', 'md'),
+        ];
+
+
+
         // Load dynamic product sections
         $sectionsJson = SiteSetting::getValue('home_sections_json');
         $sectionsList = [];
@@ -117,7 +132,8 @@ class PageController extends Controller
             'homePromosActive',
             'homeTestimonialsActive',
             'homeTickerActive',
-            'homeTickerItems'
+            'homeTickerItems',
+            'popupOfferSettings'
         ));
     }
 

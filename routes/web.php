@@ -56,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('live-chat-settings', [\App\Http\Controllers\Admin\LiveChatSettingController::class, 'update'])->name('live-chat-settings.update');
         Route::get('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'index'])->name('home-settings.index');
         Route::post('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'update'])->name('home-settings.update');
+        Route::get('popup-offer', [\App\Http\Controllers\Admin\PopupOfferController::class, 'index'])->name('popup-offer.index');
+        Route::post('popup-offer', [\App\Http\Controllers\Admin\PopupOfferController::class, 'update'])->name('popup-offer.update');
         Route::resource('store-locations', \App\Http\Controllers\Admin\StoreLocationController::class);
 
         // Orders

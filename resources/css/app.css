@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Alpine.js - hide elements until Alpine initializes to prevent FOUC */
+[x-cloak] { display: none !important; }
+
 :root {
   --background: #fafafa;
   --foreground: #171717;

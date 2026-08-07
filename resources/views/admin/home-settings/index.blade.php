@@ -46,7 +46,18 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.home-settings.update') }}" method="POST" class="space-y-6">
+    @if($errors->any())
+        <div class="p-4 bg-rose-50 text-rose-800 border border-rose-200 rounded-sm text-xs font-bold space-y-1">
+            @foreach($errors->all() as $error)
+                <div class="flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="h-4 w-4 text-rose-600"></i>
+                    <span>{{ $error }}</span>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    <form action="{{ route('admin.home-settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
         <input type="hidden" name="home_sections_json" :value="JSON.stringify(sections)">
 
@@ -77,6 +88,8 @@
                     <input type="checkbox" name="home_testimonials_active" value="1" {{ ($settings['home_testimonials_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                 </label>
             </div>
+        </div>
+
         <!-- 2. Notice Ticker Announcements -->
         <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
@@ -100,6 +113,7 @@
                 <p class="text-[11px] text-slate-400 mt-2">Each line will be displayed as a scrolling announcement in the marquee bar.</p>
             </div>
         </div>
+
 
 
         <!-- 2. Dynamic Product Sections List -->

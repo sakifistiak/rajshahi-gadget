@@ -446,6 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 @include('partials.footer')
 @include('partials.mobile-drawer')
+@include('partials.popup-offer')
 </body></html>
 
 
