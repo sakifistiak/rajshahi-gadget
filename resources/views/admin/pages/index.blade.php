@@ -66,7 +66,7 @@
                                 </td>
                                 <td class="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
                                     <div class="flex items-center gap-1.5">
-                                        <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">/p/{{ $page->slug }}</span>
+                                        <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">/page/{{ $page->slug }}</span>
                                         <a href="{{ route('pages.custom', $page->slug) }}" target="_blank" class="text-blue-600 hover:text-blue-800 p-1" title="View Public Page">
                                             <i data-lucide="external-link" class="h-3.5 w-3.5"></i>
                                         </a>
