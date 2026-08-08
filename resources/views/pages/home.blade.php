@@ -213,12 +213,13 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
     (function () {
         var items = @json($homeTickerItems);
+        var effect = @json($homeTickerEffect);
         var track = document.getElementById('home-ticker-track');
         if (!track || !items.length) return;
 
         var index = 0;
 
-        function showNext() {
+        function showNextFade() {
             var el = document.createElement('span');
             el.textContent = items[index % items.length];
             index++;
@@ -244,12 +245,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 el.style.opacity = '0';
                 setTimeout(function () {
                     el.remove();
-                    showNext();
+                    showNextFade();
                 }, 700);
             }, 3500);
         }
 
-        showNext();
+        function showNextScroll() {
+            var el = document.createElement('span');
+            el.textContent = items[index % items.length];
+            index++;
+
+            el.style.position = 'absolute';
+            el.style.left = '0';
+            el.style.top = '0';
+            el.style.whiteSpace = 'nowrap';
+            el.style.transform = 'translateX(100%)';
+            el.style.transition = 'transform 7s linear';
+            track.appendChild(el);
+
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    el.style.transform = 'translateX(-100%)';
+                });
+            });
+
+            el.addEventListener('transitionend', function handler() {
+                el.removeEventListener('transitionend', handler);
+                el.remove();
+                showNextScroll();
+            });
+        }
+
+        if (effect === 'scroll') {
+            showNextScroll();
+        } else {
+            showNextFade();
+        }
     })();
 </script>
 @endif

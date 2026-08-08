@@ -42,6 +42,9 @@ class PageController extends Controller
         $defaultTickerText      = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
         $homeTickerText         = SiteSetting::getValue('home_ticker_text', $defaultTickerText);
         $homeTickerItems        = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $homeTickerText))));
+        $homeTickerEffect       = in_array(SiteSetting::getValue('home_ticker_effect', 'fade'), ['fade', 'scroll'], true)
+            ? SiteSetting::getValue('home_ticker_effect', 'fade')
+            : 'fade';
 
 
 
@@ -133,6 +136,7 @@ class PageController extends Controller
             'homeTestimonialsActive',
             'homeTickerActive',
             'homeTickerItems',
+            'homeTickerEffect',
             'popupOfferSettings'
         ));
     }

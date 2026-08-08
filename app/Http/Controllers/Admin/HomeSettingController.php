@@ -56,6 +56,7 @@ class HomeSettingController extends Controller
             'home_testimonials_active'  => '1',
             'home_ticker_active'        => '1',
             'home_ticker_text'          => $defaultTickerText,
+            'home_ticker_effect'        => 'fade',
             'popup_offer_active'        => '0',
             'popup_offer_image'         => '',
             'popup_offer_image_mobile'  => '',
@@ -163,6 +164,13 @@ class HomeSettingController extends Controller
 
         if ($request->has('home_ticker_text')) {
             SiteSetting::setValue('home_ticker_text', $request->input('home_ticker_text', ''));
+        }
+
+        if ($request->has('home_ticker_effect')) {
+            $effect = in_array($request->input('home_ticker_effect'), ['fade', 'scroll'], true)
+                ? $request->input('home_ticker_effect')
+                : 'fade';
+            SiteSetting::setValue('home_ticker_effect', $effect);
         }
 
         if ($request->has('home_flash_title')) {

@@ -107,10 +107,21 @@
                     <span>Enable Notice Ticker</span>
                 </label>
             </div>
-            <div class="p-6">
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Notice Items (One announcement per line)</label>
-                <textarea name="home_ticker_text" rows="5" class="w-full px-4 py-3 rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed" placeholder="Type announcements here, one per line...">{{ $settings['home_ticker_text'] ?? '' }}</textarea>
-                <p class="text-[11px] text-slate-400 mt-2">Each line will be displayed as a scrolling announcement in the marquee bar.</p>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Notice Items (One announcement per line)</label>
+                    <textarea name="home_ticker_text" rows="5" class="w-full px-4 py-3 rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed" placeholder="Type announcements here, one per line...">{{ $settings['home_ticker_text'] ?? '' }}</textarea>
+                    <p class="text-[11px] text-slate-400 mt-2">Each line will be displayed as a scrolling announcement in the marquee bar.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Notice Animation Style</label>
+                    <select name="home_ticker_effect" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="fade" {{ ($settings['home_ticker_effect'] ?? 'fade') === 'fade' ? 'selected' : '' }}>Effect 1 — Fade &amp; Slide (quick, fades in/out)</option>
+                        <option value="scroll" {{ ($settings['home_ticker_effect'] ?? 'fade') === 'scroll' ? 'selected' : '' }}>Effect 2 — Slow Scroll (glides across, one at a time)</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-2">Effect 1: each notice fades in from the right and fades out. Effect 2: each notice slowly glides all the way across, like a scroller, before the next one starts.</p>
+                </div>
             </div>
         </div>
 
