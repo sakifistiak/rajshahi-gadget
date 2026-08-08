@@ -1,4 +1,8 @@
 <x-app-layout>
+    <!-- Include Quill.js CDN for Rich Text Visual Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
     <div class="space-y-6 max-w-5xl mx-auto">
         <!-- Top Navigation Header -->
         <div class="flex items-center justify-between p-5 bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -19,7 +23,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('admin.pages.update', $page->id) }}" class="space-y-6" x-data="{ editorMode: 'html' }">
+        <form method="POST" action="{{ route('admin.pages.update', $page->id) }}" class="space-y-6" x-data="customPageEditor()">
             @csrf
             @method('PUT')
 
@@ -48,34 +52,64 @@
                         </div>
                     </div>
 
-                    <!-- Page Content Editor Card -->
+                    <!-- Page Content Editor Card (3 Modes: Visual, HTML, Preview) -->
                     <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
-                        <div class="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between">
+                        <div class="p-4 border-b border-slate-200 bg-slate-50/80 flex items-center justify-between flex-wrap gap-2">
                             <label class="block text-xs font-bold text-slate-800 flex items-center gap-2">
-                                <i data-lucide="code" class="h-4 w-4 text-blue-600"></i>
-                                Page Content (HTML / Rich Text)
+                                <i data-lucide="edit-3" class="h-4 w-4 text-blue-600"></i>
+                                Page Content
                             </label>
-                            <!-- Switch Mode Tabs -->
-                            <div class="flex items-center bg-slate-200/80 p-0.5 rounded-lg text-xs">
-                                <button type="button" @click="editorMode = 'html'" :class="editorMode === 'html' ? 'bg-white text-blue-600 font-bold shadow-xs' : 'text-slate-600 font-medium'" class="px-3 py-1 rounded-md transition-all">
+                            <!-- 3 Mode Switch Tabs -->
+                            <div class="flex items-center bg-slate-200/80 p-0.5 rounded-lg text-xs font-medium">
+                                <button type="button" 
+                                        @click="setMode('visual')" 
+                                        :class="editorMode === 'visual' ? 'bg-white text-blue-600 font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'" 
+                                        class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                                    <i data-lucide="type" class="h-3.5 w-3.5"></i>
+                                    Visual Editor
+                                </button>
+                                <button type="button" 
+                                        @click="setMode('html')" 
+                                        :class="editorMode === 'html' ? 'bg-white text-blue-600 font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'" 
+                                        class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                                    <i data-lucide="code" class="h-3.5 w-3.5"></i>
                                     HTML / Source Code
                                 </button>
-                                <button type="button" @click="editorMode = 'preview'" :class="editorMode === 'preview' ? 'bg-white text-blue-600 font-bold shadow-xs' : 'text-slate-600 font-medium'" class="px-3 py-1 rounded-md transition-all">
+                                <button type="button" 
+                                        @click="setMode('preview')" 
+                                        :class="editorMode === 'preview' ? 'bg-white text-blue-600 font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'" 
+                                        class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+                                    <i data-lucide="eye" class="h-3.5 w-3.5"></i>
                                     Live Preview
                                 </button>
                             </div>
                         </div>
 
                         <div class="p-4">
-                            <!-- HTML Code Mode -->
-                            <div x-show="editorMode === 'html'">
-                                <p class="text-xs text-slate-500 mb-2">Write standard text or edit raw HTML code directly.</p>
-                                <textarea name="content" id="content" rows="18" placeholder="<h1>Welcome</h1>..." class="w-full p-4 text-xs font-mono bg-slate-900 text-emerald-400 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 leading-relaxed tracking-wide shadow-inner" style="tab-size: 4;">{{ old('content', $page->content) }}</textarea>
+                            <!-- 1. Visual Editor Mode (Quill WYSIWYG) -->
+                            <div x-show="editorMode === 'visual'" class="space-y-2">
+                                <p class="text-xs text-slate-500">Format text visually with bold, italic, headings, lists, colors, alignment, links, etc.</p>
+                                <div class="bg-white border border-slate-300 rounded-lg overflow-hidden">
+                                    <div id="quill-editor" style="min-height: 280px; font-size: 14px;"></div>
+                                </div>
                             </div>
 
-                            <!-- Live Preview Mode -->
-                            <div x-show="editorMode === 'preview'" class="min-h-[350px] p-4 border border-slate-200 rounded-lg bg-white prose prose-slate max-w-none">
-                                <div x-html="document.getElementById('content').value || '<p class=\'text-slate-400 italic text-xs\'>No content to preview.</p>'"></div>
+                            <!-- 2. HTML Source Code Mode -->
+                            <div x-show="editorMode === 'html'" class="space-y-2">
+                                <p class="text-xs text-slate-500">Write standard text or edit raw HTML code directly.</p>
+                                <textarea name="content" 
+                                          id="content" 
+                                          x-ref="htmlTextarea"
+                                          @input="syncFromHtml()"
+                                          rows="18" 
+                                          placeholder="<h1>Welcome</h1>..." 
+                                          class="w-full p-4 text-xs font-mono bg-slate-900 text-emerald-400 border border-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 leading-relaxed tracking-wide shadow-inner" 
+                                          style="tab-size: 4;">{{ old('content', $page->content) }}</textarea>
+                            </div>
+
+                            <!-- 3. Live Preview Mode -->
+                            <div x-show="editorMode === 'preview'" class="min-h-[350px] p-5 border border-slate-200 rounded-lg bg-white prose prose-slate max-w-none">
+                                <div x-html="previewHtml || '<p class=\'text-slate-400 italic text-xs\'>No content to preview.</p>'"></div>
                             </div>
                         </div>
                     </div>
@@ -132,4 +166,74 @@
             </div>
         </form>
     </div>
+
+    <script>
+        function customPageEditor() {
+            return {
+                editorMode: 'visual',
+                previewHtml: '',
+                quill: null,
+                init() {
+                    this.$nextTick(() => {
+                        const hiddenTextarea = this.$refs.htmlTextarea;
+                        const editorElem = document.getElementById('quill-editor');
+
+                        if (editorElem && typeof Quill !== 'undefined') {
+                            this.quill = new Quill('#quill-editor', {
+                                theme: 'snow',
+                                placeholder: 'Write and format your page content here...',
+                                modules: {
+                                    toolbar: [
+                                        [{ 'header': [1, 2, 3, 4, false] }],
+                                        ['bold', 'italic', 'underline', 'strike'],
+                                        [{ 'color': [] }, { 'background': [] }],
+                                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                        [{ 'align': [] }],
+                                        ['link', 'blockquote', 'code-block'],
+                                        ['clean']
+                                    ]
+                                }
+                            });
+
+                            if (hiddenTextarea && hiddenTextarea.value) {
+                                this.quill.root.innerHTML = hiddenTextarea.value;
+                            }
+                            this.previewHtml = hiddenTextarea ? hiddenTextarea.value : '';
+
+                            this.quill.on('text-change', () => {
+                                if (hiddenTextarea) {
+                                    hiddenTextarea.value = this.quill.root.innerHTML;
+                                }
+                                this.previewHtml = this.quill.root.innerHTML;
+                            });
+                        }
+                    });
+                },
+                setMode(mode) {
+                    const hiddenTextarea = this.$refs.htmlTextarea;
+                    if (this.editorMode === 'html' && mode !== 'html') {
+                        if (this.quill && hiddenTextarea) {
+                            this.quill.root.innerHTML = hiddenTextarea.value;
+                        }
+                    } else if (this.quill && hiddenTextarea) {
+                        hiddenTextarea.value = this.quill.root.innerHTML;
+                    }
+
+                    if (hiddenTextarea) {
+                        this.previewHtml = hiddenTextarea.value;
+                    }
+                    this.editorMode = mode;
+                },
+                syncFromHtml() {
+                    const hiddenTextarea = this.$refs.htmlTextarea;
+                    if (hiddenTextarea) {
+                        this.previewHtml = hiddenTextarea.value;
+                        if (this.quill) {
+                            this.quill.root.innerHTML = hiddenTextarea.value;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </x-app-layout>
