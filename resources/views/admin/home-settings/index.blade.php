@@ -114,6 +114,69 @@
             </div>
         </div>
 
+        <!-- Stock & Price Disclaimer Notice Card -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden" x-data="{ noticeLength: '{{ mb_strlen($settings['stock_price_notice_text'] ?? 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে') }}' }">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Stock & Price Disclaimer Notice</h3>
+                        <p class="text-xs text-slate-500">Configure disclaimer notice displayed on Product Detail and Cart pages.</p>
+                    </div>
+                </div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    <input type="checkbox" name="stock_price_notice_active" value="1" {{ ($settings['stock_price_notice_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    <span>Enable Notice Banner</span>
+                </label>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Notice Text Message (Bengali / English)</label>
+                        <span class="text-[11px] text-slate-400 font-mono"><span x-text="noticeLength"></span>/255</span>
+                    </div>
+                    <textarea name="stock_price_notice_text" 
+                              rows="2" 
+                              maxlength="255"
+                              @input="noticeLength = $event.target.value.length"
+                              class="w-full px-4 py-3 rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed" 
+                              placeholder="e.g. অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে">{{ $settings['stock_price_notice_text'] ?? 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে' }}</textarea>
+                    <p class="text-[11px] text-slate-400 mt-1">Shown below price on Product detail page and near Order Summary on Cart page.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Banner Color & Style</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="stock_price_notice_type" value="warning" {{ ($settings['stock_price_notice_type'] ?? 'warning') === 'warning' ? 'checked' : '' }} class="text-amber-600 focus:ring-amber-500">
+                            <div class="flex items-center gap-2 text-xs font-bold text-amber-800">
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                Warning (Amber / 🟡)
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="stock_price_notice_type" value="info" {{ ($settings['stock_price_notice_type'] ?? 'warning') === 'info' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                            <div class="flex items-center gap-2 text-xs font-bold text-blue-800">
+                                <span class="w-3 h-3 rounded-full bg-blue-500"></span>
+                                Info (Blue / 🔵)
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="stock_price_notice_type" value="danger" {{ ($settings['stock_price_notice_type'] ?? 'warning') === 'danger' ? 'checked' : '' }} class="text-rose-600 focus:ring-rose-500">
+                            <div class="flex items-center gap-2 text-xs font-bold text-rose-800">
+                                <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                Danger (Red / 🔴)
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <!-- 2. Dynamic Product Sections List -->

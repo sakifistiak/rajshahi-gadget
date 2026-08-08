@@ -102,7 +102,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Support Email Address</label>
-                        <input type="email" name="site_email" value="{{ old('site_email', $settings['site_email']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                        <input type="email" id="site_email_main" name="site_email" value="{{ old('site_email', $settings['site_email']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>
                 </div>
 
@@ -130,12 +130,13 @@
                 </div>
             </div>
 
-            <!-- Card 4: Social Links & Copyright -->
+            <!-- Card 4: Footer Social & Contact Icons -->
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-4">
                 <div class="flex items-center gap-2 pb-3 border-b border-slate-100 text-slate-800 font-bold text-xs uppercase tracking-wider">
                     <i data-lucide="share-2" class="h-4 w-4 text-blue-600"></i>
-                    <span>4. Social Links & Copyright Text</span>
+                    <span>4. Footer Social &amp; Contact Icons</span>
                 </div>
+                <p class="text-[11px] text-slate-400 -mt-2">These links power the row of official icon buttons shown under the footer's contact info.</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -144,18 +145,31 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Instagram Link</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">YouTube Channel Link</label>
+                        <input type="text" name="social_youtube" value="{{ old('social_youtube', $settings['social_youtube']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Bikroy Shop Link</label>
                         <input type="text" name="social_instagram" value="{{ old('social_instagram', $settings['social_instagram']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">WhatsApp Support Link or Number</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">BD Stall Link</label>
                         <input type="text" name="social_whatsapp" value="{{ old('social_whatsapp', $settings['social_whatsapp']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">YouTube Channel Link</label>
-                        <input type="text" name="social_youtube" value="{{ old('social_youtube', $settings['social_youtube']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Daraz Shop Link</label>
+                        <input type="text" name="social_daraz" value="{{ old('social_daraz', $settings['social_daraz']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            Email Icon Address
+                            <span class="text-slate-400 font-normal">(synced with Support Email Address in Card 3)</span>
+                        </label>
+                        <input type="email" id="site_email_footer" value="{{ old('site_email', $settings['site_email']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
                     </div>
                 </div>
 
@@ -193,26 +207,26 @@
                      },
                      addCol1Link() {
                          this.col1Active = true;
-                         this.col1Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/p/sample' });
+                         this.col1Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/page/sample' });
                      },
                      removeCol1Link(idx) {
                          this.col1Links = this.col1Links.filter((_, i) => i !== idx);
                      },
                      addCol2Link() {
                          this.col2Active = true;
-                         this.col2Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/p/sample' });
+                         this.col2Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/page/sample' });
                      },
                      removeCol2Link(idx) {
                          this.col2Links = this.col2Links.filter((_, i) => i !== idx);
                      },
                      selectCustomPage(type, index, slug, title) {
                          if (type === 'col1') {
-                             this.col1Links[index].url = '/p/' + slug;
+                             this.col1Links[index].url = '/page/' + slug;
                              if (!this.col1Links[index].label || this.col1Links[index].label === 'New Link') {
                                  this.col1Links[index].label = title;
                              }
                          } else {
-                             this.col2Links[index].url = '/p/' + slug;
+                             this.col2Links[index].url = '/page/' + slug;
                              if (!this.col2Links[index].label || this.col2Links[index].label === 'New Link') {
                                  this.col2Links[index].label = title;
                              }
@@ -266,7 +280,7 @@
                                                 <select @change="if ($event.target.value) { const parts = $event.target.value.split('|'); selectCustomPage('col1', index, parts[0], parts[1]); $event.target.value = ''; }" class="text-[11px] font-medium bg-blue-50/70 border border-blue-200 text-blue-700 px-2 py-1 rounded focus:outline-none cursor-pointer">
                                                     <option value="">-- Attach Custom Page --</option>
                                                     @foreach($customPages as $cp)
-                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/p/{{ $cp->slug }})</option>
+                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/page/{{ $cp->slug }})</option>
                                                     @endforeach
                                                 </select>
                                                 <button type="button" @click.prevent.stop="removeCol1Link(index)" class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition-colors cursor-pointer" title="Delete Row">
@@ -282,7 +296,7 @@
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-bold text-slate-500 uppercase">URL / Path</label>
-                                                <input type="text" x-model="link.url" placeholder="e.g. /p/warranty-policy or /shop" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                                <input type="text" x-model="link.url" placeholder="e.g. /page/warranty-policy or /shop" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
                                             </div>
                                         </div>
                                     </div>
@@ -325,7 +339,7 @@
                                                 <select @change="if ($event.target.value) { const parts = $event.target.value.split('|'); selectCustomPage('col2', index, parts[0], parts[1]); $event.target.value = ''; }" class="text-[11px] font-medium bg-blue-50/70 border border-blue-200 text-blue-700 px-2 py-1 rounded focus:outline-none cursor-pointer">
                                                     <option value="">-- Attach Custom Page --</option>
                                                     @foreach($customPages as $cp)
-                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/p/{{ $cp->slug }})</option>
+                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/page/{{ $cp->slug }})</option>
                                                     @endforeach
                                                 </select>
                                                 <button type="button" @click.prevent.stop="removeCol2Link(index)" class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition-colors cursor-pointer" title="Delete Row">
@@ -341,7 +355,7 @@
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-bold text-slate-500 uppercase">URL / Path</label>
-                                                <input type="text" x-model="link.url" placeholder="e.g. /p/warranty-policy or /blog" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                                <input type="text" x-model="link.url" placeholder="e.g. /page/warranty-policy or /blog" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
                                             </div>
                                         </div>
                                     </div>
@@ -364,4 +378,17 @@
             </div>
         </form>
     </div>
+
+    <script>
+        // Card 3 "Support Email Address" and Card 4 "Email Icon Address" show the same
+        // setting (site_email). Only the Card 3 input has a name= attribute and is submitted;
+        // this keeps the Card 4 preview field in sync so it never silently overwrites it.
+        (function () {
+            var main = document.getElementById('site_email_main');
+            var footer = document.getElementById('site_email_footer');
+            if (!main || !footer) return;
+            main.addEventListener('input', function () { footer.value = main.value; });
+            footer.addEventListener('input', function () { main.value = footer.value; });
+        })();
+    </script>
 </x-app-layout>

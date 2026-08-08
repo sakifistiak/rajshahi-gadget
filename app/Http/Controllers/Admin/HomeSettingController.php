@@ -63,6 +63,9 @@ class HomeSettingController extends Controller
             'popup_offer_target'        => '_self',
             'popup_offer_frequency'     => 'session',
             'popup_offer_delay'         => '1',
+            'stock_price_notice_active' => '1',
+            'stock_price_notice_text'   => 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে',
+            'stock_price_notice_type'   => 'warning',
         ];
 
         $settings = [];
@@ -175,6 +178,19 @@ class HomeSettingController extends Controller
             if (is_array($decoded)) {
                 SiteSetting::setValue('home_sections_json', json_encode(array_values($decoded)));
             }
+        }
+
+        // Save Stock & Price Notice Disclaimer settings
+        SiteSetting::setValue('stock_price_notice_active', $request->has('stock_price_notice_active') ? '1' : '0');
+        if ($request->has('stock_price_notice_text')) {
+            $noticeText = mb_substr(trim($request->input('stock_price_notice_text', '')), 0, 255);
+            SiteSetting::setValue('stock_price_notice_text', $noticeText);
+        }
+        if ($request->has('stock_price_notice_type')) {
+            $type = in_array($request->input('stock_price_notice_type'), ['info', 'warning', 'danger']) 
+                ? $request->input('stock_price_notice_type') 
+                : 'warning';
+            SiteSetting::setValue('stock_price_notice_type', $type);
         }
 
         return redirect()->back()->with('success', 'Homepage settings updated successfully!');

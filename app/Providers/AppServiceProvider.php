@@ -22,6 +22,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Share Stock & Price Disclaimer Notice settings ONLY with relevant views
+        View::composer(['pages.product.detail', 'pages.cart', 'admin.home-settings.index'], function ($view) {
+            $view->with([
+                'stockPriceNoticeActive' => SiteSetting::getValue('stock_price_notice_active', '1'),
+                'stockPriceNoticeText'   => SiteSetting::getValue('stock_price_notice_text', 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে'),
+                'stockPriceNoticeType'   => SiteSetting::getValue('stock_price_notice_type', 'warning'),
+            ]);
+        });
+
         // Share site & footer settings and store locations with ALL views dynamically
         View::composer('*', function ($view) {
             $storeLocations = collect();
@@ -73,6 +82,7 @@ class AppServiceProvider extends ServiceProvider
                 'socialInstagram'   => SiteSetting::getValue('social_instagram', 'https://bikroy.com/en/shops/khangadgets'),
                 'socialWhatsapp'    => SiteSetting::getValue('social_whatsapp', 'https://bdstall.com/stall/2373'),
                 'socialYoutube'     => SiteSetting::getValue('social_youtube', 'https://youtube.com/@khansgadget'),
+                'socialDaraz'       => SiteSetting::getValue('social_daraz', 'https://daraz.com.bd/shop/ki2kz4ne'),
                 'footerCopyright'   => SiteSetting::getValue('footer_copyright', 'Khan Gadget. All rights reserved.'),
                 'footerCol1Active'  => SiteSetting::getValue('footer_col1_active', '1'),
                 'footerCol1Title'   => SiteSetting::getValue('footer_col1_title', 'SHOP'),

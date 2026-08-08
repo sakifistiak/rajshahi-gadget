@@ -40,7 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Admin CRUDs
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::resource('products', AdminProductController::class);
         Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->except('show');
         Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class)->except('show');

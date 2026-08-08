@@ -91,6 +91,30 @@
                         </a>
                     </div>
                 </address>
+
+                <div class="mt-5 flex flex-wrap items-center gap-2">
+                    <a href="{{ $socialFacebook ?? 'https://facebook.com/khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" style="background-color:#1877F2" class="grid h-10 w-10 place-items-center rounded-full text-white shadow-sm transition-transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="h-4 w-auto" aria-hidden="true"><path fill="currentColor" d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z"/></svg>
+                    </a>
+                    <a href="{{ $socialYoutube ?? 'https://youtube.com/@khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" style="background-color:#FF0000" class="grid h-10 w-10 place-items-center rounded-full text-white shadow-sm transition-transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="h-4 w-auto" aria-hidden="true"><path fill="currentColor" d="M549.7 124.1C543.5 100.4 524.9 81.8 501.4 75.5 458.9 64 288.1 64 288.1 64S117.3 64 74.7 75.5C51.2 81.8 32.7 100.4 26.4 124.1 15 167 15 256.4 15 256.4s0 89.4 11.4 132.3c6.3 23.6 24.8 41.5 48.3 47.8 42.6 11.5 213.4 11.5 213.4 11.5s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zM232.2 337.6l0-162.4 142.7 81.2-142.7 81.2z"/></svg>
+                    </a>
+                    <a href="{{ $socialInstagram ?? 'https://bikroy.com/en/shops/khangadgets' }}" target="_blank" rel="noopener noreferrer" aria-label="Bikroy" title="Bikroy" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
+                        <img src="/media/icon-bikroy.ico" alt="Bikroy" class="h-full w-full object-contain">
+                    </a>
+                    <a href="{{ $socialWhatsapp ?? 'https://bdstall.com/stall/2373' }}" target="_blank" rel="noopener noreferrer" aria-label="BD Stall" title="BD Stall" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
+                        <img src="/media/icon-bdstall.png" alt="BD Stall" class="h-full w-full object-contain rounded-full">
+                    </a>
+                    <a href="{{ $socialDaraz ?? 'https://daraz.com.bd/shop/ki2kz4ne' }}" target="_blank" rel="noopener noreferrer" aria-label="Daraz" title="Daraz" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
+                        <img src="/media/icon-daraz.ico" alt="Daraz" class="h-full w-full object-contain">
+                    </a>
+                    <a href="mailto:{{ $siteEmail ?? 'khangadget.bd@gmail.com' }}" aria-label="Email" title="Email" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail h-4 w-4" aria-hidden="true">
+                            <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
+                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        </svg>
+                    </a>
+                </div>
             </div>
 
             <!-- Shop Links Column -->
@@ -123,23 +147,6 @@
                 <p class="mt-4 text-sm text-muted-foreground">
                     Website: <a href="https://khangadget.com" class="underline-offset-4 hover:underline">khangadget.com</a>
                 </p>
-                <div class="mt-5 flex flex-wrap gap-2">
-                    <a href="{{ $socialFacebook ?? 'https://facebook.com/khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook h-4 w-4" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                    </a>
-                    <a href="{{ $socialYoutube ?? 'https://youtube.com/@khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-youtube h-4 w-4" aria-hidden="true"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"></path><path d="m10 15 5-3-5-3z"></path></svg>
-                    </a>
-                    <a href="{{ $socialInstagram ?? 'https://bikroy.com/en/shops/khangadgets' }}" target="_blank" rel="noopener noreferrer" aria-label="Bikroy" title="Bikroy" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag h-4 w-4" aria-hidden="true"><path d="M16 10a4 4 0 0 1-8 0"></path><path d="M3.103 6.034h17.794"></path><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"></path></svg>
-                    </a>
-                    <a href="{{ $socialWhatsapp ?? 'https://bdstall.com/stall/2373' }}" target="_blank" rel="noopener noreferrer" aria-label="BD Stall" title="BD Stall" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-store h-4 w-4" aria-hidden="true"><path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"></path><path d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"></path><path d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"></path></svg>
-                    </a>
-                    <a href="https://daraz.com.bd/shop/ki2kz4ne" target="_blank" rel="noopener noreferrer" aria-label="Daraz" title="Daraz" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
-                    </a>
-                </div>
             </div>
         </div>
 
