@@ -123,7 +123,6 @@
                 <p class="mt-4 text-sm text-muted-foreground">
                     Website: <a href="https://khangadget.com" class="underline-offset-4 hover:underline">khangadget.com</a>
                 </p>
-                <p class="mt-2 text-sm text-muted-foreground">{{ $siteBusinessHours ?? 'Sat – Thu · 10:00 AM – 9:00 PM' }}</p>
                 <div class="mt-5 flex flex-wrap gap-2">
                     <a href="{{ $socialFacebook ?? 'https://facebook.com/khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" class="grid h-10 w-10 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-foreground hover:text-background">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook h-4 w-4" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
