@@ -59,8 +59,8 @@
             <!-- Brand Column -->
             <div>
                 <a aria-label="Khan Gadget home" href="/" class="inline-flex items-center">
-                    <img src="{{ $siteLogo ?? '/media/b3ca13-kg-lockup-v2.png' }}" alt="{{ $siteName ?? 'Khan Gadget — Eternal Tech Companion' }}" class="h-14 w-auto object-contain dark:hidden" />
-                    <img src="{{ $siteLogoDark ?? ($siteLogo ?? '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ $siteName ?? 'Khan Gadget — Eternal Tech Companion' }}" class="h-14 w-auto object-contain hidden dark:block" />
+                    <img src="{{ $siteLogo ?? '/media/b3ca13-kg-lockup-v2.png' }}" alt="{{ $siteName ?? 'Khan Gadget - Eternal Tech Companion' }}" class="h-14 w-auto object-contain dark:hidden" />
+                    <img src="{{ $siteLogoDark ?? ($siteLogo ?? '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ $siteName ?? 'Khan Gadget - Eternal Tech Companion' }}" class="h-14 w-auto object-contain hidden dark:block" />
                 </a>
                 <p class="mt-4 text-sm text-muted-foreground">
                     {{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}

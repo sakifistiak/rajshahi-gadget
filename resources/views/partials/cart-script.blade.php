@@ -1,4 +1,4 @@
-<!-- Global Interactive Shopping Cart System — Premium Fly-to-Cart Animation -->
+<!-- Global Interactive Shopping Cart System - Premium Fly-to-Cart Animation -->
 <style>
 @keyframes kgFloatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }

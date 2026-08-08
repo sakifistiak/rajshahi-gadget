@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>{{ $page->meta_title ?? $page->title }} — {{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}</title>
+    <title>{{ $page->meta_title ?? $page->title }} - {{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}</title>
     @if($page->meta_description)
         <meta name="description" content="{{ $page->meta_description }}"/>
     @endif

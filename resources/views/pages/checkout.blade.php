@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Checkout — {{ $siteName ?? 'Khan Gadget' }}</title>
+    <title>Checkout - {{ $siteName ?? 'Khan Gadget' }}</title>
     <link rel="stylesheet" href="/assets/styles-CC_Lznyw.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/assets/theme.js"></script>

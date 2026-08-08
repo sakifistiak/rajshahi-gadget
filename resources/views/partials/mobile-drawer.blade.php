@@ -390,7 +390,7 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
 
         <!-- Section 4: Store Location Info Text -->
         @php
-            $drawerStoreText = \App\Models\SiteSetting::getValue('mobile_drawer_store_info', $mobileDrawerStoreInfo ?? 'Shop No: 136 | Ground Floor | Computer City Center (Ex Multiplan Center) | New Elephant Road, Dhaka-1205');
+            $drawerStoreText = \App\Models\SiteSetting::getValue('mobile_drawer_store_info', $mobileDrawerStoreInfo ?? 'Shop No: 136 - Ground Floor - Computer City Center (Ex Multiplan Center) - New Elephant Road, Dhaka-1205');
         @endphp
         @if(!empty($drawerStoreText))
         <div style="padding:10px 20px 6px;">
@@ -456,7 +456,7 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
         document.body.style.overflow = '';
     }
 
-    // Hamburger button — works for both home and shop pages
+    // Hamburger button - works for both home and shop pages
     document.querySelectorAll('button[aria-label="Menu"]').forEach(function (btn) {
         btn.addEventListener('click', openDrawer);
     });

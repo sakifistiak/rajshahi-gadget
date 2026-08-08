@@ -169,10 +169,10 @@
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
                  data-col1-active="{{ $settings['footer_col1_active'] }}"
                  data-col1-title="{{ $settings['footer_col1_title'] }}"
-                 data-col1-links='{{ json_encode(json_decode($settings['footer_col1_links'] ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
+                 data-col1-links='{{ json_encode(json_decode($settings['footer_col1_links'] ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
                  data-col2-active="{{ $settings['footer_col2_active'] }}"
                  data-col2-title="{{ $settings['footer_col2_title'] }}"
-                 data-col2-links='{{ json_encode(json_decode($settings['footer_col2_links'] ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
+                 data-col2-links='{{ json_encode(json_decode($settings['footer_col2_links'] ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
                  x-data="{
                      col1Active: false,
                      col1Title: '',
