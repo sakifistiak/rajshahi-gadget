@@ -203,19 +203,55 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="rounded-md border border-border bg-secondary/60 text-foreground/80">
             <div class="flex items-center gap-3 px-5 py-2 text-xs">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-megaphone h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"></path><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"></path><path d="M8 6v8"></path></svg>
-                <div class="relative flex-1 overflow-hidden">
-                    <div class="marquee flex gap-10 whitespace-nowrap">
-                        @for ($i = 0; $i < 2; $i++)
-                            @foreach ($homeTickerItems as $tickerItem)
-                                <span>{{ $tickerItem }}</span>
-                            @endforeach
-                        @endfor
-                    </div>
+                <div class="relative flex-1 overflow-hidden" style="height:1.25rem;">
+                    <div id="home-ticker-track" style="position:relative; height:100%;"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        var items = @json($homeTickerItems);
+        var track = document.getElementById('home-ticker-track');
+        if (!track || !items.length) return;
+
+        var index = 0;
+
+        function showNext() {
+            var el = document.createElement('span');
+            el.textContent = items[index % items.length];
+            index++;
+
+            el.style.position = 'absolute';
+            el.style.left = '0';
+            el.style.top = '0';
+            el.style.whiteSpace = 'nowrap';
+            el.style.transform = 'translateX(100%)';
+            el.style.opacity = '0';
+            el.style.transition = 'transform 0.7s ease, opacity 0.7s ease';
+            track.appendChild(el);
+
+            requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                    el.style.transform = 'translateX(0)';
+                    el.style.opacity = '1';
+                });
+            });
+
+            setTimeout(function () {
+                el.style.transform = 'translateX(-100%)';
+                el.style.opacity = '0';
+                setTimeout(function () {
+                    el.remove();
+                    showNext();
+                }, 700);
+            }, 3500);
+        }
+
+        showNext();
+    })();
+</script>
 @endif
 
 <section aria-label="Store benefits" class="container-page pt-6"><div class="rounded-md border border-border bg-surface px-3 py-4 sm:px-8 sm:py-5" data-tsd-source="/src/components/site/TrustBar.tsx:14:7"><ul class="-mx-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5" data-tsd-source="/src/components/site/TrustBar.tsx:15:9"><li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left" data-tsd-source="/src/components/site/TrustBar.tsx:17:13"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11" data-tsd-source="/src/components/site/TrustBar.tsx:21:15"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/TrustBar.tsx:22:17"><rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line></svg></span><span class="text-[11px] font-semibold leading-tight text-foreground sm:text-sm" data-tsd-source="/src/components/site/TrustBar.tsx:24:15">36 Months EMI</span></li><li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left" data-tsd-source="/src/components/site/TrustBar.tsx:17:13"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11" data-tsd-source="/src/components/site/TrustBar.tsx:21:15"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-truck h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/TrustBar.tsx:22:17"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg></span><span class="text-[11px] font-semibold leading-tight text-foreground sm:text-sm" data-tsd-source="/src/components/site/TrustBar.tsx:24:15">Fastest Home Delivery</span></li><li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left" data-tsd-source="/src/components/site/TrustBar.tsx:17:13"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11" data-tsd-source="/src/components/site/TrustBar.tsx:21:15"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/TrustBar.tsx:22:17"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg></span><span class="text-[11px] font-semibold leading-tight text-foreground sm:text-sm" data-tsd-source="/src/components/site/TrustBar.tsx:24:15">Exchange Facility</span></li><li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left" data-tsd-source="/src/components/site/TrustBar.tsx:17:13"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11" data-tsd-source="/src/components/site/TrustBar.tsx:21:15"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/TrustBar.tsx:22:17"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"></path><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"></circle></svg></span><span class="text-[11px] font-semibold leading-tight text-foreground sm:text-sm" data-tsd-source="/src/components/site/TrustBar.tsx:24:15">Best Price Deals</span></li><li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left" data-tsd-source="/src/components/site/TrustBar.tsx:17:13"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11" data-tsd-source="/src/components/site/TrustBar.tsx:21:15"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-headphones h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/TrustBar.tsx:22:17"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"></path></svg></span><span class="text-[11px] font-semibold leading-tight text-foreground sm:text-sm" data-tsd-source="/src/components/site/TrustBar.tsx:24:15">After‑Sales Service</span></li></ul></div></section>@if($homeFlashActive ?? true)
