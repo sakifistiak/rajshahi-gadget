@@ -1,6 +1,9 @@
 <x-app-layout>
 <div class="w-full space-y-6" x-data="{
     sections: {{ json_encode($sectionsList) }},
+    titleStyleDefaults: {{ json_encode($titleStyleDefaults) }},
+    titleStyleFonts: {{ json_encode($titleStyleFonts) }},
+    titleStyleShadows: {{ json_encode($titleStyleShadows) }},
     addSection() {
         this.sections.push({
             id: 'sec_' + Date.now(),
@@ -8,7 +11,11 @@
             highlight: 'Product',
             filter: 'all',
             limit: '4',
-            active: true
+            active: true,
+            style: {
+                base: { ...this.titleStyleDefaults.base },
+                highlight: { ...this.titleStyleDefaults.highlight }
+            }
         });
     },
     removeSection(index) {
@@ -16,14 +23,46 @@
             this.sections.splice(index, 1);
         }
     },
-    formatTitle(fullText, highlightWord) {
+    styleToCss(style) {
+        if (!style) return '';
+        const rules = [];
+        if (style.text_color !== 'inherit') {
+            rules.push('color: ' + style.text_color);
+        }
+        const hasBg = style.bg_type !== 'none';
+        if (style.bg_type === 'solid') {
+            rules.push('background-color: ' + style.bg_color);
+        } else if (style.bg_type === 'gradient') {
+            rules.push('background-image: linear-gradient(' + style.bg_gradient_angle + 'deg, ' + style.bg_gradient_from + ', ' + style.bg_gradient_to + ')');
+        }
+        if (hasBg) {
+            rules.push('padding: 2px 8px');
+            rules.push('border-radius: 6px');
+            rules.push('display: inline-block');
+            rules.push('font-weight: 700');
+        }
+        const font = this.titleStyleFonts[style.font];
+        if (font && font.stack) {
+            rules.push('font-family: ' + font.stack);
+        }
+        const shadow = this.titleStyleShadows[style.shadow];
+        if (shadow && shadow.css) {
+            rules.push('text-shadow: ' + shadow.css);
+        }
+        return rules.length ? rules.join('; ') + ';' : '';
+    },
+    formatTitle(fullText, highlightWord, style) {
         if (!fullText) return '';
+        style = style || this.titleStyleDefaults;
+        const baseCss = this.styleToCss(style.base);
         if (!highlightWord || !fullText.toLowerCase().includes(highlightWord.toLowerCase())) {
-            return fullText;
+            return baseCss ? '<span style=&quot;' + baseCss + '&quot;>' + fullText + '</span>' : fullText;
         }
         const escapedHl = highlightWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const regex = new RegExp('(' + escapedHl + ')', 'gi');
-        return fullText.replace(regex, '<span style=&quot;color: #2563eb; background-color: rgba(37, 99, 235, 0.12); padding: 2px 8px; border-radius: 6px; display: inline-block; font-weight: 700;&quot;>$1</span>');
+        const hlCss = this.styleToCss(style.highlight);
+        const inner = fullText.replace(regex, '<span style=&quot;' + hlCss + '&quot;>$1</span>');
+        return baseCss ? '<span style=&quot;' + baseCss + '&quot;>' + inner + '</span>' : inner;
     }
 }">
 
@@ -251,8 +290,83 @@
                         <!-- Live Title Preview -->
                         <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Live Title Preview:</span>
-                            <h2 class="text-xl font-bold text-slate-900" x-html="formatTitle(sec.title, sec.highlight)"></h2>
+                            <h2 class="text-xl font-bold text-slate-900" x-html="formatTitle(sec.title, sec.highlight, sec.style)"></h2>
                         </div>
+
+                        <!-- Highlight Word + Rest-of-Title Style Customization -->
+                        <template x-for="scope in ['highlight', 'base']" :key="scope">
+                            <div class="border border-slate-200 rounded-lg" x-data="{ open: false }">
+                                <button type="button" @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-xs font-bold text-slate-700 uppercase tracking-wider hover:bg-slate-50 transition-colors">
+                                    <span class="flex items-center gap-2">
+                                        <i data-lucide="palette" class="w-4 h-4"></i>
+                                        <span x-text="scope === 'highlight' ? 'Customize Highlight Word Style' : 'Customize Rest-of-Title Style'"></span>
+                                    </span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''"></i>
+                                </button>
+                                <div x-show="open" x-cloak class="p-4 pt-0 space-y-4 border-t border-slate-100">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Text Color</label>
+                                            <div class="flex items-center gap-2">
+                                                <input type="color" x-model="sec.style[scope].text_color" class="w-10 h-9 rounded border border-slate-300 cursor-pointer shrink-0">
+                                                <input type="text" x-model="sec.style[scope].text_color" maxlength="7" class="flex-1 min-w-0 px-3 py-2 rounded-lg border border-slate-300 text-xs font-mono">
+                                            </div>
+                                            <label class="flex items-center gap-1.5 mt-1.5 text-[11px] font-semibold text-slate-500 cursor-pointer w-fit">
+                                                <input type="checkbox" :checked="sec.style[scope].text_color === 'inherit'" @change="sec.style[scope].text_color = $event.target.checked ? 'inherit' : titleStyleDefaults.highlight.text_color" class="w-3.5 h-3.5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                                                Inherit theme color (no override)
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Font</label>
+                                            <select x-model="sec.style[scope].font" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
+                                                <template x-for="(font, key) in titleStyleFonts" :key="key">
+                                                    <option :value="key" x-text="font.label"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Text Shadow</label>
+                                            <select x-model="sec.style[scope].shadow" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
+                                                <template x-for="(shadow, key) in titleStyleShadows" :key="key">
+                                                    <option :value="key" x-text="shadow.label"></option>
+                                                </template>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Background Style</label>
+                                            <div class="flex items-center gap-3 text-xs font-semibold text-slate-700 h-9">
+                                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" value="none" x-model="sec.style[scope].bg_type" class="text-blue-600 focus:ring-blue-500"> None</label>
+                                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" value="solid" x-model="sec.style[scope].bg_type" class="text-blue-600 focus:ring-blue-500"> Solid</label>
+                                                <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" value="gradient" x-model="sec.style[scope].bg_type" class="text-blue-600 focus:ring-blue-500"> Gradient</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div x-show="sec.style[scope].bg_type === 'solid'" x-cloak class="max-w-xs">
+                                        <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Background Color</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="color" x-model="sec.style[scope].bg_color" class="w-10 h-9 rounded border border-slate-300 cursor-pointer shrink-0">
+                                            <input type="text" x-model="sec.style[scope].bg_color" maxlength="7" class="flex-1 min-w-0 px-3 py-2 rounded-lg border border-slate-300 text-xs font-mono">
+                                        </div>
+                                    </div>
+
+                                    <div x-show="sec.style[scope].bg_type === 'gradient'" x-cloak class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Gradient From</label>
+                                            <input type="color" x-model="sec.style[scope].bg_gradient_from" class="w-full h-9 rounded border border-slate-300 cursor-pointer">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Gradient To</label>
+                                            <input type="color" x-model="sec.style[scope].bg_gradient_to" class="w-full h-9 rounded border border-slate-300 cursor-pointer">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Angle (<span x-text="sec.style[scope].bg_gradient_angle"></span>&deg;)</label>
+                                            <input type="range" min="0" max="360" x-model.number="sec.style[scope].bg_gradient_angle" class="w-full accent-blue-600">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>

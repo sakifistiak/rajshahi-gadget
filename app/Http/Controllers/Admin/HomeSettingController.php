@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
 use App\Models\Category;
 use App\Models\Condition;
+use App\Support\SectionTitleStyle;
 use Illuminate\Http\Request;
 
 class HomeSettingController extends Controller
@@ -110,7 +111,22 @@ class HomeSettingController extends Controller
             ];
         }
 
-        return view('admin.home-settings.index', compact('categories', 'conditions', 'settings', 'sectionsList'));
+        foreach ($sectionsList as &$sec) {
+            $sec['style'] = SectionTitleStyle::sanitizeFull($sec['style'] ?? null);
+        }
+        unset($sec);
+
+        $titleStyleFonts = SectionTitleStyle::FONTS;
+        $titleStyleShadows = SectionTitleStyle::SHADOWS;
+        $titleStyleDefaults = [
+            'base'      => SectionTitleStyle::BASE_DEFAULTS,
+            'highlight' => SectionTitleStyle::DEFAULTS,
+        ];
+
+        return view('admin.home-settings.index', compact(
+            'categories', 'conditions', 'settings', 'sectionsList',
+            'titleStyleFonts', 'titleStyleShadows', 'titleStyleDefaults'
+        ));
     }
 
     public function update(Request $request)
@@ -191,6 +207,12 @@ class HomeSettingController extends Controller
             $json = $request->input('home_sections_json');
             $decoded = json_decode($json, true);
             if (is_array($decoded)) {
+                foreach ($decoded as &$sectionItem) {
+                    if (is_array($sectionItem)) {
+                        $sectionItem['style'] = SectionTitleStyle::sanitizeFull($sectionItem['style'] ?? null);
+                    }
+                }
+                unset($sectionItem);
                 SiteSetting::setValue('home_sections_json', json_encode(array_values($decoded)));
             }
         }

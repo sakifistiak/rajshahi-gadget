@@ -14,6 +14,7 @@ use App\Models\CustomerSpotlight;
 use App\Models\PhilanthropicWork;
 use App\Models\SiteSetting;
 use App\Models\Condition;
+use App\Support\SectionTitleStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -104,6 +105,7 @@ class PageController extends Controller
                 'id'          => $sec['id'] ?? uniqid('sec_'),
                 'title'       => $sec['title'] ?? 'Product Section',
                 'highlight'   => $sec['highlight'] ?? '',
+                'style'       => SectionTitleStyle::sanitizeFull($sec['style'] ?? null),
                 'viewAllLink' => $viewAllLink,
                 'products'    => $this->getFilteredProducts($allProducts, $filter, $limit),
             ];
