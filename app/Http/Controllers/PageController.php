@@ -45,6 +45,7 @@ class PageController extends Controller
         $homeTickerEffect       = in_array(SiteSetting::getValue('home_ticker_effect', 'fade'), ['fade', 'scroll'], true)
             ? SiteSetting::getValue('home_ticker_effect', 'fade')
             : 'fade';
+        $homeTickerSpeed        = (float) SiteSetting::getValue('home_ticker_speed', '6');
 
 
 
@@ -137,6 +138,7 @@ class PageController extends Controller
             'homeTickerActive',
             'homeTickerItems',
             'homeTickerEffect',
+            'homeTickerSpeed',
             'popupOfferSettings'
         ));
     }

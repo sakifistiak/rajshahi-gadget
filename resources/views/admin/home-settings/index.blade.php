@@ -122,6 +122,19 @@
                     </select>
                     <p class="text-[11px] text-slate-400 mt-2">Effect 1: each notice fades in from the right and fades out. Effect 2: each notice slowly glides all the way across, like a scroller, before the next one starts.</p>
                 </div>
+
+                <div x-data="{ speed: {{ (float) ($settings['home_ticker_speed'] ?? 6) }} }">
+                    <label class="flex items-center justify-between text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        <span>Scrolling Speed</span>
+                        <span class="text-blue-600 font-mono normal-case" x-text="speed + 's'"></span>
+                    </label>
+                    <input type="range" name="home_ticker_speed" min="2" max="20" step="0.5" x-model.number="speed" class="w-full accent-blue-600">
+                    <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                        <span>Fast (2s)</span>
+                        <span>Slow (20s)</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-2">Controls how long each notice stays on screen (Effect 1) or how long it takes to glide across (Effect 2). Lower = faster.</p>
+                </div>
             </div>
         </div>
 

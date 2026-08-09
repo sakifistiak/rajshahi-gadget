@@ -214,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
     (function () {
         var items = @json($homeTickerItems);
         var effect = @json($homeTickerEffect);
+        var speed = @json($homeTickerSpeed);
         var track = document.getElementById('home-ticker-track');
         if (!track || !items.length) return;
 
@@ -247,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     el.remove();
                     showNextFade();
                 }, 700);
-            }, 3500);
+            }, speed * 1000);
         }
 
         function showNextScroll() {
@@ -260,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
             el.style.top = '0';
             el.style.whiteSpace = 'nowrap';
             el.style.transform = 'translateX(100%)';
-            el.style.transition = 'transform 7s linear';
+            el.style.transition = 'transform ' + speed + 's linear';
             track.appendChild(el);
 
             requestAnimationFrame(function () {
