@@ -89,6 +89,17 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Support Phone Number</label>
                         <input type="text" name="site_phone" value="{{ old('site_phone', $settings['site_phone']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                        <div class="mt-2 flex items-center gap-4 text-xs font-semibold text-slate-700">
+                            <span class="text-slate-400 font-normal">Footer link opens:</span>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="footer_phone_link_type" value="tel" {{ old('footer_phone_link_type', $settings['footer_phone_link_type']) === 'tel' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                                Phone dialer
+                            </label>
+                            <label class="flex items-center gap-1.5 cursor-pointer">
+                                <input type="radio" name="footer_phone_link_type" value="whatsapp" {{ old('footer_phone_link_type', $settings['footer_phone_link_type']) === 'whatsapp' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                                WhatsApp
+                            </label>
+                        </div>
                     </div>
 
                     <div>

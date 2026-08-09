@@ -123,9 +123,13 @@ class HomeSettingController extends Controller
             'highlight' => SectionTitleStyle::DEFAULTS,
         ];
 
+        $flashTitleStyle = SectionTitleStyle::sanitizeFull(
+            json_decode(SiteSetting::getValue('home_flash_title_style', '{}'), true)
+        );
+
         return view('admin.home-settings.index', compact(
             'categories', 'conditions', 'settings', 'sectionsList',
-            'titleStyleFonts', 'titleStyleShadows', 'titleStyleDefaults'
+            'titleStyleFonts', 'titleStyleShadows', 'titleStyleDefaults', 'flashTitleStyle'
         ));
     }
 
@@ -201,6 +205,13 @@ class HomeSettingController extends Controller
         }
         if ($request->has('home_flash_highlight')) {
             SiteSetting::setValue('home_flash_highlight', $request->input('home_flash_highlight', ''));
+        }
+        if ($request->has('home_flash_title_style')) {
+            $decodedFlashStyle = json_decode($request->input('home_flash_title_style', '{}'), true);
+            SiteSetting::setValue(
+                'home_flash_title_style',
+                json_encode(SectionTitleStyle::sanitizeFull(is_array($decodedFlashStyle) ? $decodedFlashStyle : null))
+            );
         }
 
         if ($request->has('home_sections_json')) {

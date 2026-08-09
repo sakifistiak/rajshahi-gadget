@@ -10,6 +10,7 @@ class StoreLocation extends Model
         'name',
         'address',
         'phone',
+        'phone_link_type',
         'sort_order',
         'is_active',
     ];

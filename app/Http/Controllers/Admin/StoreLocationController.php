@@ -27,6 +27,7 @@ class StoreLocationController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'required|string',
             'phone' => 'nullable|string|max:100',
+            'phone_link_type' => 'nullable|in:tel,whatsapp',
             'sort_order' => 'required|integer',
             'is_active' => 'boolean',
         ]);
@@ -35,6 +36,7 @@ class StoreLocationController extends Controller
             'name' => $request->input('name'),
             'address' => $request->input('address'),
             'phone' => $request->input('phone'),
+            'phone_link_type' => $request->input('phone_link_type', 'tel'),
             'sort_order' => $request->input('sort_order', 0),
             'is_active' => $request->has('is_active'),
         ]);
@@ -53,6 +55,7 @@ class StoreLocationController extends Controller
             'name' => 'required|string|max:255',
             'address' => 'required|string',
             'phone' => 'nullable|string|max:100',
+            'phone_link_type' => 'nullable|in:tel,whatsapp',
             'sort_order' => 'required|integer',
             'is_active' => 'boolean',
         ]);
@@ -61,6 +64,7 @@ class StoreLocationController extends Controller
             'name' => $request->input('name'),
             'address' => $request->input('address'),
             'phone' => $request->input('phone'),
+            'phone_link_type' => $request->input('phone_link_type', 'tel'),
             'sort_order' => $request->input('sort_order', 0),
             'is_active' => $request->has('is_active'),
         ]);

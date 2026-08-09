@@ -27,7 +27,13 @@
                                 <p class="text-sm font-medium leading-tight">{{ $outlet->name }}</p>
                                 <div class="mt-1 text-xs leading-relaxed text-muted-foreground whitespace-pre-line">{!! nl2br($outlet->address) !!}</div>
                                 @if($outlet->phone)
-                                    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $outlet->phone) }}" class="mt-1 inline-block text-xs text-muted-foreground hover:text-foreground">{{ $outlet->phone }}</a>
+                                    @php
+                                        $outletPhoneIsWhatsapp = ($outlet->phone_link_type ?? 'tel') === 'whatsapp';
+                                        $outletPhoneHref = $outletPhoneIsWhatsapp
+                                            ? 'https://wa.me/' . preg_replace('/[^0-9]/', '', $outlet->phone)
+                                            : 'tel:' . preg_replace('/[^0-9+]/', '', $outlet->phone);
+                                    @endphp
+                                    <a href="{{ $outletPhoneHref }}" @if($outletPhoneIsWhatsapp) target="_blank" rel="noopener noreferrer" @endif class="mt-1 inline-block text-xs text-muted-foreground hover:text-foreground">{{ $outlet->phone }}</a>
                                 @endif
                             </div>
                         </li>
@@ -48,11 +54,11 @@
             // no links remains intentionally blank, rather than falling back to links.
             $showFooterCol1 = ($footerCol1Active ?? '1') == '1';
             $showFooterCol2 = ($footerCol2Active ?? '1') == '1';
-            $footerColumnCount = 2 + (int) $showFooterCol1 + (int) $showFooterCol2;
+            $footerColumnCount = 1 + (int) $showFooterCol1 + (int) $showFooterCol2;
             $footerGridClass = match ($footerColumnCount) {
+                1 => 'grid-cols-1 max-w-md mx-auto',
                 2 => 'grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto',
-                3 => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto',
-                default => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto',
+                default => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto',
             };
         @endphp
         <div class="mt-12 grid gap-10 md:gap-16 {{ $footerGridClass }}">
@@ -73,11 +79,18 @@
                         </svg>
                         <span>{{ $siteAddress ?? 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh' }}</span>
                     </div>
+                    @php
+                        $footerPhoneDigits = preg_replace('/[^0-9]/', '', $sitePhone ?? '+8801700000000');
+                        $footerPhoneIsWhatsapp = ($footerPhoneLinkType ?? 'tel') === 'whatsapp';
+                        $footerPhoneHref = $footerPhoneIsWhatsapp
+                            ? 'https://wa.me/' . $footerPhoneDigits
+                            : 'tel:' . preg_replace('/[^0-9+]/', '', $sitePhone ?? '+8801700000000');
+                    @endphp
                     <div class="flex items-start gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone mt-0.5 h-4 w-4 shrink-0" aria-hidden="true">
                             <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path>
                         </svg>
-                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $sitePhone ?? '+8801700000000') }}" class="hover:text-foreground">
+                        <a href="{{ $footerPhoneHref }}" @if($footerPhoneIsWhatsapp) target="_blank" rel="noopener noreferrer" @endif class="hover:text-foreground">
                             {{ $sitePhone ?? '+8801700000000' }}
                         </a>
                     </div>
@@ -141,13 +154,6 @@
                 </div>
             @endif
 
-            <!-- Connect Column -->
-            <div>
-                <p class="text-xs font-semibold uppercase tracking-[0.14em]">CONNECT</p>
-                <p class="mt-4 text-sm text-muted-foreground">
-                    Website: <a href="https://khangadget.com" class="underline-offset-4 hover:underline">khangadget.com</a>
-                </p>
-            </div>
         </div>
 
         <!-- 3. Centered Dynamic Copyright Bar -->

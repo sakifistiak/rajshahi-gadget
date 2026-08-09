@@ -60,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
                 'siteSlogan'        => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
                 'siteDescription'   => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
                 'sitePhone'         => SiteSetting::getValue('site_phone', '+8801700000000'),
+                'footerPhoneLinkType' => SiteSetting::getValue('footer_phone_link_type', 'tel'),
                 // Used by WhatsApp ordering now and by the live-chat integration later.
                 'whatsappNumber'    => SiteSetting::getValue('whatsapp_number', '8801700000001'),
                 'liveChatEnabled'   => SiteSetting::getValue('live_chat_enabled', '1'),

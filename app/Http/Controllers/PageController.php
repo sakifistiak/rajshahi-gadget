@@ -37,6 +37,9 @@ class PageController extends Controller
         $homeFlashActive       = SiteSetting::getValue('home_flash_active', '1') == '1';
         $homeFlashTitle        = SiteSetting::getValue('home_flash_title', 'Limited time deals');
         $homeFlashHighlight    = SiteSetting::getValue('home_flash_highlight', 'deals');
+        $homeFlashTitleStyle   = SectionTitleStyle::sanitizeFull(
+            json_decode(SiteSetting::getValue('home_flash_title_style', '{}'), true)
+        );
         $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
         $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
         $homeTickerActive       = SiteSetting::getValue('home_ticker_active', '1') == '1';
@@ -135,6 +138,7 @@ class PageController extends Controller
             'homeFlashActive',
             'homeFlashTitle',
             'homeFlashHighlight',
+            'homeFlashTitleStyle',
             'homePromosActive',
             'homeTestimonialsActive',
             'homeTickerActive',

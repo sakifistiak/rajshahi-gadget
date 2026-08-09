@@ -9,8 +9,10 @@ use App\Models\Condition;
 use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -44,7 +46,15 @@ class ProductController extends Controller
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
-            'image_url' => 'nullable|string',
+            'colors_hex' => 'nullable|array',
+            'colors_hex.*' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'colors_name' => 'nullable|array',
+            'image_path' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
+            'gallery_paths' => 'nullable|array',
+            'gallery_paths.*' => 'nullable|string|max:500',
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);
 
         $slug = Str::slug($request->name);
@@ -69,13 +79,32 @@ class ProductController extends Controller
             'reviews_count' => 0,
         ]);
 
-        // Add primary image if provided, otherwise default
-        $imagePath = $request->image_url ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg';
+        // Add featured (primary) image
+        $imagePath = $request->image_path;
+        if ($request->hasFile('image_file')) {
+            $imagePath = $this->storeUploadedImage($request->file('image_file'));
+        }
         $product->images()->create([
-            'image_path' => $imagePath,
+            'image_path' => $imagePath ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg',
             'is_primary' => true,
             'sort_order' => 0
         ]);
+
+        // Add gallery images
+        $galleryFiles = $request->file('gallery_files', []);
+        foreach ($request->input('gallery_paths', []) as $index => $path) {
+            $finalPath = $path;
+            if (isset($galleryFiles[$index]) && $galleryFiles[$index] instanceof UploadedFile && $galleryFiles[$index]->isValid()) {
+                $finalPath = $this->storeUploadedImage($galleryFiles[$index]);
+            }
+            if (!empty($finalPath)) {
+                $product->images()->create([
+                    'image_path' => $finalPath,
+                    'is_primary' => false,
+                    'sort_order' => $index + 1,
+                ]);
+            }
+        }
 
         // Add highlights
         if ($request->has('highlights')) {
@@ -101,6 +130,18 @@ class ProductController extends Controller
             }
         }
 
+        // Add colors
+        if ($request->has('colors_hex')) {
+            foreach ($request->colors_hex as $index => $hex) {
+                if ($hex) {
+                    $product->colors()->create([
+                        'hex_code' => $hex,
+                        'name' => $request->colors_name[$index] ?? null,
+                    ]);
+                }
+            }
+        }
+
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
     }
 
@@ -109,7 +150,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $conditions = Condition::all();
         $brands = Brand::all();
-        $product->load(['highlights', 'specs', 'images']);
+        $product->load(['highlights', 'specs', 'images', 'colors']);
         return view('admin.products.edit', compact('product', 'categories', 'conditions', 'brands'));
     }
 
@@ -129,6 +170,15 @@ class ProductController extends Controller
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
+            'colors_hex' => 'nullable|array',
+            'colors_hex.*' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
+            'colors_name' => 'nullable|array',
+            'image_path' => 'nullable|string|max:500',
+            'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
+            'gallery_paths' => 'nullable|array',
+            'gallery_paths.*' => 'nullable|string|max:500',
+            'gallery_files' => 'nullable|array',
+            'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);
 
         $product->update([
@@ -170,6 +220,52 @@ class ProductController extends Controller
             }
         }
 
+        // Sync colors
+        $product->colors()->delete();
+        if ($request->has('colors_hex')) {
+            foreach ($request->colors_hex as $index => $hex) {
+                if ($hex) {
+                    $product->colors()->create([
+                        'hex_code' => $hex,
+                        'name' => $request->colors_name[$index] ?? null,
+                    ]);
+                }
+            }
+        }
+
+        // Update featured (primary) image
+        $imagePath = $request->image_path ?: $product->primaryImage();
+        if ($request->hasFile('image_file')) {
+            $imagePath = $this->storeUploadedImage($request->file('image_file'));
+        }
+        $primaryImage = $product->images()->where('is_primary', true)->first();
+        if ($primaryImage) {
+            $primaryImage->update(['image_path' => $imagePath]);
+        } else {
+            $product->images()->create([
+                'image_path' => $imagePath,
+                'is_primary' => true,
+                'sort_order' => 0,
+            ]);
+        }
+
+        // Sync gallery images (delete old non-primary images and insert new)
+        $product->images()->where('is_primary', false)->delete();
+        $galleryFiles = $request->file('gallery_files', []);
+        foreach ($request->input('gallery_paths', []) as $index => $path) {
+            $finalPath = $path;
+            if (isset($galleryFiles[$index]) && $galleryFiles[$index] instanceof UploadedFile && $galleryFiles[$index]->isValid()) {
+                $finalPath = $this->storeUploadedImage($galleryFiles[$index]);
+            }
+            if (!empty($finalPath)) {
+                $product->images()->create([
+                    'image_path' => $finalPath,
+                    'is_primary' => false,
+                    'sort_order' => $index + 1,
+                ]);
+            }
+        }
+
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully!');
     }
 
@@ -177,5 +273,16 @@ class ProductController extends Controller
     {
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully!');
+    }
+
+    private function storeUploadedImage(UploadedFile $file): string
+    {
+        $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+        $targetDir = public_path('uploads');
+        if (!File::exists($targetDir)) {
+            File::makeDirectory($targetDir, 0755, true);
+        }
+        $file->move($targetDir, $filename);
+        return '/uploads/' . $filename;
     }
 }

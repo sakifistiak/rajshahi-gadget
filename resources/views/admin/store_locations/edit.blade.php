@@ -76,6 +76,17 @@
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Contact Phone</label>
                     <input type="text" name="phone" value="{{ old('phone', $storeLocation->phone) }}"
                            class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
+                    <div class="flex items-center gap-4 text-xs font-semibold text-gray-700">
+                        <span class="text-gray-400 font-normal">Link opens:</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="radio" name="phone_link_type" value="tel" {{ old('phone_link_type', $storeLocation->phone_link_type ?? 'tel') === 'tel' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                            Phone dialer
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="radio" name="phone_link_type" value="whatsapp" {{ old('phone_link_type', $storeLocation->phone_link_type ?? 'tel') === 'whatsapp' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                            WhatsApp
+                        </label>
+                    </div>
                 </div>
 
                 <div class="space-y-1.5">

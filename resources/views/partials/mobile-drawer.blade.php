@@ -558,45 +558,80 @@ a.bg-primary:hover {
 }
 #kg-live-chat-menu {
     position: absolute;
-    bottom: calc(100% + 0.75rem);
+    bottom: calc(100% + 1rem);
     left: 0;
-    width: 220px;
-    padding: 0.5rem;
+    width: 236px;
+    padding: 0.65rem;
     border: 1px solid var(--color-border, #e5e7eb);
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     background: var(--color-background, #ffffff);
-    box-shadow: 0 12px 28px rgb(0 0 0 / 0.18);
+    box-shadow: 0 20px 40px -8px rgb(0 0 0 / 0.24), 0 2px 10px rgb(0 0 0 / 0.08);
     opacity: 0;
-    transform: translateY(8px) scale(0.97);
+    transform: translateY(10px) scale(0.96);
     pointer-events: none;
-    transition: opacity 0.18s ease, transform 0.18s ease;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#kg-live-chat-menu::after {
+    content: '';
+    position: absolute;
+    left: 1.7rem;
+    top: 100%;
+    width: 14px;
+    height: 14px;
+    margin-top: -8px;
+    background: inherit;
+    border-right: 1px solid var(--color-border, #e5e7eb);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    border-bottom-right-radius: 3px;
+    transform: rotate(45deg);
 }
 #kg-live-chat.is-open #kg-live-chat-menu {
     opacity: 1;
     transform: translateY(0) scale(1);
     pointer-events: auto;
 }
+.kg-live-chat-heading {
+    margin: 0.1rem 0.5rem 0.55rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
 .kg-live-chat-option {
     display: flex;
     align-items: center;
-    gap: 0.7rem;
-    padding: 0.7rem;
-    border-radius: 0.5rem;
+    gap: 0.75rem;
+    padding: 0.65rem 0.6rem;
+    border-radius: 0.7rem;
     color: inherit;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    transition: background-color 0.15s ease;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: background-color 0.15s ease, transform 0.15s ease, opacity 0.2s ease;
 }
-.kg-live-chat-option:hover { background: var(--color-secondary, #f1f5f9); }
+#kg-live-chat.is-open .kg-live-chat-option {
+    opacity: 1;
+    transform: translateX(0);
+}
+.kg-live-chat-option:nth-of-type(1) { transition-delay: 0.04s; }
+.kg-live-chat-option:nth-of-type(2) { transition-delay: 0.09s; }
+.kg-live-chat-option:nth-of-type(3) { transition-delay: 0.14s; }
+.kg-live-chat-option:hover {
+    background: var(--color-secondary, #f1f5f9);
+    transform: translateX(3px);
+}
 .kg-live-chat-icon {
     display: grid;
-    width: 2rem;
-    height: 2rem;
+    width: 2.25rem;
+    height: 2.25rem;
     place-items: center;
     border-radius: 9999px;
     color: #fff;
+    box-shadow: 0 4px 10px -2px rgb(0 0 0 / 0.4);
+    transition: transform 0.15s ease;
 }
+.kg-live-chat-option:hover .kg-live-chat-icon { transform: scale(1.08); }
 #kg-live-chat-toggle {
+    position: relative;
     display: grid;
     width: 4rem;
     height: 4rem;
@@ -606,7 +641,23 @@ a.bg-primary:hover {
     padding: 0;
     color: #fff;
     font-size: 1.75rem;
-    box-shadow: 0 6px 18px rgb(0 0 0 / 0.2);
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.35), 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+#kg-live-chat-toggle::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 9999px;
+    background: var(--kg-chat-pulse-color, #25D366);
+    opacity: 0;
+    animation: kg-live-chat-pulse 2.8s ease-out infinite;
+    pointer-events: none;
+    z-index: -1;
+}
+@keyframes kg-live-chat-pulse {
+    0% { opacity: 0.45; transform: scale(0.82); }
+    65% { opacity: 0; transform: scale(1.5); }
+    100% { opacity: 0; transform: scale(1.5); }
 }
 @media (max-width: 639px) {
     #kg-live-chat { bottom: 5.5rem; }
@@ -614,6 +665,44 @@ a.bg-primary:hover {
 
 .kg-live-chat-toggle-icon { display: grid; place-items: center; transition: opacity 0.18s ease, transform 0.18s ease; }
 .kg-live-chat-toggle-icon.is-changing { opacity: 0; transform: scale(0.65) rotate(-12deg); }
+
+.kg-live-chat-tooltip {
+    position: absolute;
+    left: calc(100% + 0.85rem);
+    bottom: 0.85rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border, #e5e7eb);
+    background: var(--color-background, #ffffff);
+    box-shadow: 0 10px 24px rgb(0 0 0 / 0.16);
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: inherit;
+    opacity: 0;
+    transform: translateX(-6px) scale(0.96);
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    cursor: pointer;
+    z-index: 61;
+}
+.kg-live-chat-tooltip.is-visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+}
+.kg-live-chat-tooltip::after {
+    content: '';
+    position: absolute;
+    left: -5px;
+    bottom: 1.3rem;
+    width: 10px;
+    height: 10px;
+    background: inherit;
+    border-left: 1px solid var(--color-border, #e5e7eb);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    transform: rotate(45deg);
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -717,12 +806,19 @@ document.addEventListener('DOMContentLoaded', function() {
         var liveChatToggle = document.getElementById('kg-live-chat-toggle');
         var liveChatToggleIcon = document.getElementById('kg-live-chat-toggle-icon');
         var liveChatIcons = {
-            whatsapp: '<svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 9.5c.2 3 2.6 5.4 5.6 5.6l1.3-1.3a1 1 0 0 1 1-.2l2 .8a1 1 0 0 1 .6.9v2a1 1 0 0 1-1 1C11.4 18.3 5.7 12.6 5.7 6a1 1 0 0 1 1-1h2a1 1 0 0 1 .9.6l.8 2a1 1 0 0 1-.2 1Z"/></svg>',
+            whatsapp: '<svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>',
             call: '<svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.4 2.1L8.2 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.5 1.8Z"/></svg>'
         };
-        liveChatToggle.addEventListener('click', function() {
+        liveChatToggle.addEventListener('click', function(event) {
+            event.stopPropagation();
             var isOpen = liveChatWidget.classList.toggle('is-open');
             liveChatToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+        document.addEventListener('click', function(event) {
+            if (liveChatWidget.classList.contains('is-open') && !liveChatWidget.contains(event.target)) {
+                liveChatWidget.classList.remove('is-open');
+                liveChatToggle.setAttribute('aria-expanded', 'false');
+            }
         });
 
         var showingWhatsApp = true;
@@ -734,6 +830,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 liveChatToggleIcon.classList.remove('is-changing');
             }, 180);
         }, 2500);
+
+        function playLiveChatChime() {
+            try {
+                var AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                var ctx = new AudioCtx();
+                [880, 1108.73].forEach(function(freq, i) {
+                    var osc = ctx.createOscillator();
+                    var gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    var startTime = ctx.currentTime + i * 0.12;
+                    gain.gain.setValueAtTime(0, startTime);
+                    gain.gain.linearRampToValueAtTime(0.18, startTime + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.35);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.4);
+                });
+                window.setTimeout(function() { ctx.close(); }, 800);
+            } catch (e) {}
+        }
+
+        var liveChatTooltip = document.getElementById('kg-live-chat-tooltip');
+        if (liveChatTooltip) {
+            if (sessionStorage.getItem('kg_chat_tooltip_shown')) {
+                liveChatTooltip.remove();
+            } else {
+                var dismissLiveChatTooltip = function() {
+                    liveChatTooltip.classList.remove('is-visible');
+                    window.setTimeout(function() { liveChatTooltip.remove(); }, 260);
+                };
+                window.setTimeout(function() {
+                    if (liveChatWidget.classList.contains('is-open')) return;
+                    liveChatTooltip.classList.add('is-visible');
+                    playLiveChatChime();
+                    sessionStorage.setItem('kg_chat_tooltip_shown', '1');
+                    window.setTimeout(dismissLiveChatTooltip, 5000);
+                }, 2500);
+                liveChatTooltip.addEventListener('click', function() {
+                    dismissLiveChatTooltip();
+                    liveChatToggle.click();
+                });
+                liveChatToggle.addEventListener('click', dismissLiveChatTooltip);
+            }
+        }
     }
 
     setTimeout(applySingleProductButtonStyles, 300);
@@ -749,34 +892,35 @@ document.addEventListener('DOMContentLoaded', function() {
 @endphp
 
 @if (($liveChatEnabled ?? '1') === '1' && ($showWhatsapp || $showMessenger || $showCall))
-    <aside id="kg-live-chat" aria-label="Live chat options">
+    <aside id="kg-live-chat" aria-label="Live chat options" style="--kg-chat-pulse-color: {{ $liveChatWhatsappColor ?? '#25D366' }}">
+        <div id="kg-live-chat-tooltip" class="kg-live-chat-tooltip" role="status">Chat with us 👋</div>
         <div id="kg-live-chat-menu" role="menu">
-            <p class="px-2 py-1.5 text-xs font-bold text-muted-foreground">How can we help?</p>
+            <p class="kg-live-chat-heading px-2 text-xs font-bold text-muted-foreground">How can we help? 💬</p>
 
             @if ($showWhatsapp)
                 <a class="kg-live-chat-option" href="https://wa.me/{{ $liveChatWhatsapp }}?text={{ rawurlencode('Hello, I need help.') }}" target="_blank" rel="noopener noreferrer" role="menuitem">
-                    <span class="kg-live-chat-icon" style="background:{{ $liveChatWhatsappColor ?? '#25D366' }}" aria-hidden="true">⌕</span>
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatWhatsappColor ?? '#25D366' }}" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></span>
                     <span>Chat on WhatsApp</span>
                 </a>
             @endif
 
             @if ($showMessenger)
                 <a class="kg-live-chat-option" href="{{ $liveChatMessengerUrl }}" target="_blank" rel="noopener noreferrer" role="menuitem">
-                    <span class="kg-live-chat-icon" style="background:{{ $liveChatMessengerColor ?? '#0084FF' }}" aria-hidden="true">✉</span>
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatMessengerColor ?? '#0084FF' }}" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span>
                     <span>Chat on Messenger</span>
                 </a>
             @endif
 
             @if ($showCall)
                 <a class="kg-live-chat-option" href="tel:{{ $liveChatCall }}" role="menuitem">
-                    <span class="kg-live-chat-icon" style="background:{{ $liveChatCallColor ?? '#4f46e5' }}" aria-hidden="true">☎</span>
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatCallColor ?? '#4f46e5' }}" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.4 2.1L8.2 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.5 1.8Z"/></svg></span>
                     <span>Call us</span>
                 </a>
             @endif
         </div>
 
         <button id="kg-live-chat-toggle" type="button" aria-label="Toggle live chat options" aria-expanded="false" aria-controls="kg-live-chat-menu" style="background:{{ $liveChatToggleColor ?? '#24272c' }}">
-            <span id="kg-live-chat-toggle-icon" class="kg-live-chat-toggle-icon" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8.5 9.5c.2 3 2.6 5.4 5.6 5.6l1.3-1.3a1 1 0 0 1 1-.2l2 .8a1 1 0 0 1 .6.9v2a1 1 0 0 1-1 1C11.4 18.3 5.7 12.6 5.7 6a1 1 0 0 1 1-1h2a1 1 0 0 1 .9.6l.8 2a1 1 0 0 1-.2 1Z"/></svg></span>
+            <span id="kg-live-chat-toggle-icon" class="kg-live-chat-toggle-icon" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></span>
         </button>
     </aside>
 @endif
