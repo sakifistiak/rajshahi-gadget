@@ -200,6 +200,14 @@ class PageController extends Controller
         return response()->json(['products' => $products]);
     }
 
+    public function siteFonts()
+    {
+        return response()->json([
+            'english' => SiteSetting::getValue('site_font_english', 'Inter'),
+            'bangla'  => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
+        ]);
+    }
+
     public function page(string $page, Request $request)
     {
         if ($page === 'shop') {

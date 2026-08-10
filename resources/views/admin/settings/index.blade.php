@@ -190,6 +190,35 @@
                 </div>
             </div>
 
+            <!-- Card 4b: Typography — Site Fonts -->
+            <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-4">
+                <div class="flex items-center gap-2 pb-3 border-b border-slate-100 text-slate-800 font-bold text-xs uppercase tracking-wider">
+                    <i data-lucide="type" class="h-4 w-4 text-blue-600"></i>
+                    <span>4b. Site Fonts (English &amp; Bangla)</span>
+                </div>
+                <p class="text-[11px] text-slate-400 -mt-2">Selected fonts apply site-wide. English text uses the English font; Bangla text automatically uses the Bangla font.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">English Font</label>
+                        <select name="site_font_english" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                            @foreach(['Inter', 'Poppins'] as $font)
+                                <option value="{{ $font }}" {{ old('site_font_english', $settings['site_font_english']) === $font ? 'selected' : '' }}>{{ $font }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Bangla Font</label>
+                        <select name="site_font_bangla" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                            @foreach(['Noto Serif Bengali', 'Hind Siliguri', 'Tiro Bangla', 'Anek Bangla'] as $font)
+                                <option value="{{ $font }}" {{ old('site_font_bangla', $settings['site_font_bangla']) === $font ? 'selected' : '' }}>{{ $font }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Card 5: Footer Link Columns & Custom Page Links -->
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
                  data-col1-active="{{ $settings['footer_col1_active'] }}"

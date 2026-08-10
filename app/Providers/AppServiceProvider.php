@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
                 'stockPriceNoticeActive' => SiteSetting::getValue('stock_price_notice_active', '1'),
                 'stockPriceNoticeText'   => SiteSetting::getValue('stock_price_notice_text', 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে'),
                 'stockPriceNoticeType'   => SiteSetting::getValue('stock_price_notice_type', 'warning'),
+                'productTrustBadgesActive' => SiteSetting::getValue('product_trust_badges_active', '1'),
             ]);
         });
 

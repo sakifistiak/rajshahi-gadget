@@ -69,6 +69,7 @@ class HomeSettingController extends Controller
             'stock_price_notice_active' => '1',
             'stock_price_notice_text'   => 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে',
             'stock_price_notice_type'   => 'warning',
+            'product_trust_badges_active' => '1',
         ];
 
         $settings = [];
@@ -235,11 +236,13 @@ class HomeSettingController extends Controller
             SiteSetting::setValue('stock_price_notice_text', $noticeText);
         }
         if ($request->has('stock_price_notice_type')) {
-            $type = in_array($request->input('stock_price_notice_type'), ['info', 'warning', 'danger']) 
-                ? $request->input('stock_price_notice_type') 
+            $type = in_array($request->input('stock_price_notice_type'), ['info', 'warning', 'danger'])
+                ? $request->input('stock_price_notice_type')
                 : 'warning';
             SiteSetting::setValue('stock_price_notice_type', $type);
         }
+
+        SiteSetting::setValue('product_trust_badges_active', $request->has('product_trust_badges_active') ? '1' : '0');
 
         return redirect()->back()->with('success', 'Homepage settings updated successfully!');
     }

@@ -43,6 +43,8 @@ class SettingController extends Controller
             'footer_col2_active' => SiteSetting::getValue('footer_col2_active', '1'),
             'footer_col2_title' => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
             'footer_col2_links' => SiteSetting::getValue('footer_col2_links', $defaultCol2Links),
+            'site_font_english' => SiteSetting::getValue('site_font_english', 'Inter'),
+            'site_font_bangla' => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
         ];
 
         $customPages = CustomPage::where('is_active', true)->orderBy('title')->get();
@@ -84,6 +86,8 @@ class SettingController extends Controller
             'footer_col2_links' => 'nullable|string',
             'logo_light_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'logo_dark_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
+            'site_font_english' => 'nullable|in:Inter,Poppins',
+            'site_font_bangla' => 'nullable|in:Noto Serif Bengali,Hind Siliguri,Tiro Bangla,Anek Bangla',
         ]);
 
         $keys = [
@@ -108,6 +112,8 @@ class SettingController extends Controller
             'footer_col1_links',
             'footer_col2_title',
             'footer_col2_links',
+            'site_font_english',
+            'site_font_bangla',
         ];
 
         foreach ($keys as $key) {

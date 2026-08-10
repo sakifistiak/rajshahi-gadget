@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 */
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
+Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');

@@ -114,21 +114,6 @@
             <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $product->brand->name ?? '' }}</p>
             <h1 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{{ $product->name }}</h1>
 
-            <div class="mt-3 flex items-center gap-3 text-sm">
-                <span class="inline-flex items-center gap-1">
-                    @for($i = 1; $i <= 5; $i++)
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 {{ $i <= round($product->rating) ? 'fill-foreground text-foreground' : 'text-muted-foreground/40' }}" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
-                    @endfor
-                    <span class="font-medium">{{ number_format((float) $product->rating, 1) }}</span>
-                </span>
-                <span class="text-muted-foreground">{{ $product->reviews_count }} reviews</span>
-                @if($product->in_stock)
-                    <span class="inline-flex items-center gap-1 text-success"><span class="h-1.5 w-1.5 rounded-full bg-success"></span>In stock</span>
-                @else
-                    <span class="inline-flex items-center gap-1 text-destructive"><span class="h-1.5 w-1.5 rounded-full bg-destructive"></span>Out of stock</span>
-                @endif
-            </div>
-
             <div class="mt-6 flex items-baseline gap-3">
                 <span class="text-3xl font-semibold text-foreground">৳ {{ number_format($product->price) }}</span>
                 @if($product->compare_at_price && $product->compare_at_price > $product->price)
@@ -169,11 +154,13 @@
                 <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 px-8 h-12 flex-1 rounded-full sm:flex-none sm:min-w-40" aria-label="Add to Cart">Add to cart</button>
             </div>
 
-            <ul class="mt-8 grid gap-4 rounded-md border border-border bg-card p-5 text-sm sm:grid-cols-3">
-                <li class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-truck h-4 w-4" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg></span><div class="min-w-0"><p class="font-medium text-foreground">Fast delivery</p><p class="text-xs text-muted-foreground">Dhaka: 1–2 days · Nationwide: 2–5 days</p></div></li>
-                <li class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check h-4 w-4" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="min-w-0"><p class="font-medium text-foreground">{{ $product->warranty ?: 'Standard warranty' }}</p><p class="text-xs text-muted-foreground">On every product</p></div></li>
-                <li class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw h-4 w-4" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg></span><div class="min-w-0"><p class="font-medium text-foreground">7-day easy replacement</p><p class="text-xs text-muted-foreground">Unused, original condition</p></div></li>
-            </ul>
+            @if(($productTrustBadgesActive ?? '1') == '1')
+                <ul class="mt-8 grid gap-4 rounded-md border border-border bg-card p-5 text-sm sm:grid-cols-3">
+                    <li class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-truck h-4 w-4" aria-hidden="true"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path><path d="M15 18H9"></path><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path><circle cx="17" cy="18" r="2"></circle><circle cx="7" cy="18" r="2"></circle></svg></span><div class="min-w-0"><p class="font-medium text-foreground">Fast delivery</p><p class="text-xs text-muted-foreground">Dhaka: 1–2 days · Nationwide: 2–5 days</p></div></li>
+                    <li class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check h-4 w-4" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg></span><div class="min-w-0"><p class="font-medium text-foreground">{{ $product->warranty ?: 'Standard warranty' }}</p><p class="text-xs text-muted-foreground">On every product</p></div></li>
+                    <li class="flex items-start gap-3"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-sm bg-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-ccw h-4 w-4" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path><path d="M16 16h5v5"></path></svg></span><div class="min-w-0"><p class="font-medium text-foreground">7-day easy replacement</p><p class="text-xs text-muted-foreground">Unused, original condition</p></div></li>
+                </ul>
+            @endif
         </div>
     </div>
 

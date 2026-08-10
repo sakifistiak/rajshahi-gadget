@@ -279,7 +279,24 @@
             </div>
         </div>
 
-
+        <!-- Product Detail Page - Delivery/Replacement Info Box -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-blue-100 text-blue-600 rounded-lg">
+                        <i data-lucide="truck" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Product Page — Delivery / Warranty / Replacement Box</h3>
+                        <p class="text-xs text-slate-500">Controls the "Fast delivery / Warranty / Easy replacement" info box shown below the Buy Now button on the product detail page.</p>
+                    </div>
+                </div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    <input type="checkbox" name="product_trust_badges_active" value="1" {{ ($settings['product_trust_badges_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    <span>Show Info Box</span>
+                </label>
+            </div>
+        </div>
 
         <!-- 2. Dynamic Product Sections List -->
         <div class="space-y-6">
