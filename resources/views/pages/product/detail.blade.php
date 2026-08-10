@@ -25,15 +25,17 @@
 
         {{-- Image gallery --}}
         <div>
-            <div class="group overflow-hidden rounded-md bg-surface">
-                <div class="aspect-square">
-                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="1200" height="1200" style="transform-origin:50% 50%" class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.8]" />
+            <div class="group overflow-hidden rounded-md border border-border bg-surface">
+                <div class="aspect-square" id="mainImageStage" style="position:relative;overflow:hidden">
+                    <div class="main-image-slide is-current">
+                        <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="1200" height="1200" style="transform-origin:50% 50%" class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.8]" />
+                    </div>
                 </div>
             </div>
             @if($product->images->count() > 1)
                 <div class="mt-4 grid grid-cols-4 gap-3">
                     @foreach($product->images->take(4) as $image)
-                        <div class="gallery-thumb overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}">
+                        <div class="gallery-thumb overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}">
                             <div class="aspect-square">
                                 <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="lazy" class="h-full w-full object-cover" />
                             </div>
@@ -43,16 +45,65 @@
                 <style>
                     .gallery-thumb { cursor: pointer; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .15s ease; }
                     .gallery-thumb.is-active { outline-color: var(--foreground); }
+                    .main-image-slide { position: absolute; inset: 0; transition: transform .4s ease; }
                 </style>
                 <script>
-                    document.querySelectorAll('.gallery-thumb').forEach(function (thumb) {
-                        thumb.addEventListener('click', function () {
-                            var mainImage = document.getElementById('mainProductImage');
-                            if (mainImage) mainImage.src = thumb.dataset.full;
-                            document.querySelectorAll('.gallery-thumb').forEach(function (t) { t.classList.remove('is-active'); });
-                            thumb.classList.add('is-active');
+                    (function () {
+                        var stage = document.getElementById('mainImageStage');
+                        var thumbs = Array.prototype.slice.call(document.querySelectorAll('.gallery-thumb'));
+                        var currentIndex = 0;
+                        thumbs.forEach(function (t) {
+                            if (t.classList.contains('is-active')) currentIndex = parseInt(t.dataset.index, 10) || 0;
                         });
-                    });
+
+                        thumbs.forEach(function (thumb) {
+                            thumb.addEventListener('click', function () {
+                                var newIndex = parseInt(thumb.dataset.index, 10) || 0;
+                                var newSrc = thumb.dataset.full;
+                                if (!stage || !newSrc || newIndex === currentIndex) return;
+
+                                // newIndex > currentIndex ("next") slides in from the right moving left;
+                                // newIndex < currentIndex ("previous") slides in from the left moving right.
+                                var direction = newIndex > currentIndex ? 1 : -1;
+                                var oldSlide = stage.querySelector('.main-image-slide.is-current');
+                                var oldImg = oldSlide ? oldSlide.querySelector('img') : null;
+
+                                var newSlide = document.createElement('div');
+                                newSlide.className = 'main-image-slide';
+                                newSlide.style.transform = 'translateX(' + (direction * 100) + '%)';
+
+                                var newImg = document.createElement('img');
+                                newImg.id = 'mainProductImage';
+                                newImg.src = newSrc;
+                                newImg.alt = oldImg ? oldImg.alt : '';
+                                newImg.width = 1200;
+                                newImg.height = 1200;
+                                newImg.style.transformOrigin = '50% 50%';
+                                newImg.className = oldImg ? oldImg.className : 'h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.8]';
+                                newSlide.appendChild(newImg);
+                                stage.appendChild(newSlide);
+
+                                if (oldImg) oldImg.removeAttribute('id');
+                                if (oldSlide) oldSlide.classList.remove('is-current');
+                                newSlide.classList.add('is-current');
+
+                                void newSlide.offsetWidth; // force reflow so the starting position is registered before animating
+
+                                requestAnimationFrame(function () {
+                                    newSlide.style.transform = 'translateX(0)';
+                                    if (oldSlide) oldSlide.style.transform = 'translateX(' + (-direction * 100) + '%)';
+                                });
+
+                                window.setTimeout(function () {
+                                    if (oldSlide && oldSlide.parentNode) oldSlide.parentNode.removeChild(oldSlide);
+                                }, 450);
+
+                                currentIndex = newIndex;
+                                thumbs.forEach(function (t) { t.classList.remove('is-active'); });
+                                thumb.classList.add('is-active');
+                            });
+                        });
+                    })();
                 </script>
             @endif
         </div>
