@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="w-full max-w-4xl space-y-6">
+    <div class="w-full space-y-6">
         <div class="flex items-center justify-between p-5 bg-white rounded-sm border border-slate-200 shadow-sm">
             <div>
                 <h2 class="text-xl font-bold text-slate-900">Live Chat Settings</h2>

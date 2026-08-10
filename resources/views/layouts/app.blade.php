@@ -60,7 +60,7 @@
 
             <!-- Main Content Scroll Area -->
             <main class="flex-1 overflow-y-auto p-5 md:p-6 bg-[#f1f5f9]/70">
-                <div class="max-w-[1600px] mx-auto space-y-6">
+                <div class="space-y-6">
                     @if (isset($header))
                         <header class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm">
                             {{ $header }}

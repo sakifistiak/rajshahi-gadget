@@ -3,7 +3,7 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
-    <div class="space-y-6 max-w-5xl mx-auto">
+    <div class="space-y-6 w-full">
         <!-- Top Navigation Header -->
         <div class="flex items-center justify-between p-5 bg-white rounded-xl border border-slate-200 shadow-sm">
             <div class="flex items-center gap-3">

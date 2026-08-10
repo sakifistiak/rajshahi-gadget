@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -26,6 +27,8 @@ class BrandController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validatedData($request);
+        unset($data['logo_file']);
+        $data['logo_path'] = $this->resolveLogoPath($request, null);
         $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['name']);
         Brand::create($data);
 
@@ -40,6 +43,8 @@ class BrandController extends Controller
     public function update(Request $request, Brand $brand): RedirectResponse
     {
         $data = $this->validatedData($request);
+        unset($data['logo_file']);
+        $data['logo_path'] = $this->resolveLogoPath($request, $brand->logo_path);
         $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['name'], $brand->id);
         $brand->update($data);
 
@@ -63,7 +68,25 @@ class BrandController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255',
             'logo_path' => 'nullable|string|max:500',
+            'logo_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);
+    }
+
+    private function resolveLogoPath(Request $request, ?string $existing): ?string
+    {
+        if ($request->hasFile('logo_file')) {
+            $file = $request->file('logo_file');
+            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+            $targetDir = public_path('uploads');
+            if (!File::exists($targetDir)) {
+                File::makeDirectory($targetDir, 0755, true);
+            }
+            $file->move($targetDir, $filename);
+
+            return '/uploads/' . $filename;
+        }
+
+        return $request->input('logo_path') ?: $existing;
     }
 
     private function uniqueSlug(string $value, ?int $exceptId = null): string
