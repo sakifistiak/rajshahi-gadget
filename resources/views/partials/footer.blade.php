@@ -109,6 +109,9 @@
                 </address>
 
                 <div class="mt-5 flex flex-wrap items-center gap-2">
+                    <a href="mailto:{{ $siteEmail ?? 'khangadget.bd@gmail.com' }}" aria-label="Gmail" title="Gmail" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-full w-full" aria-hidden="true"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.579.298-1.075.799-1.375A1.6 1.6 0 0 1 1.636 4c.318 0 .653.083.94.264L12 10.51l9.424-6.246a1.63 1.63 0 0 1 .94-.264c.837 0 1.636.694 1.636 1.457Z"/></svg>
+                    </a>
                     <a href="{{ $socialFacebook ?? 'https://facebook.com/khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" style="background-color:#1877F2" class="grid h-10 w-10 place-items-center rounded-full p-2 text-white shadow-sm transition-transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="h-full w-full" aria-hidden="true"><path fill="currentColor" d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z"/></svg>
                     </a>
@@ -123,9 +126,6 @@
                     </a>
                     <a href="{{ $socialDaraz ?? 'https://daraz.com.bd/shop/ki2kz4ne' }}" target="_blank" rel="noopener noreferrer" aria-label="Daraz" title="Daraz" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
                         <img src="/media/icon-daraz.ico" alt="Daraz" class="h-full w-full object-contain">
-                    </a>
-                    <a href="mailto:{{ $siteEmail ?? 'khangadget.bd@gmail.com' }}" aria-label="Gmail" title="Gmail" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-full w-full" aria-hidden="true"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.579.298-1.075.799-1.375A1.6 1.6 0 0 1 1.636 4c.318 0 .653.083.94.264L12 10.51l9.424-6.246a1.63 1.63 0 0 1 .94-.264c.837 0 1.636.694 1.636 1.457Z"/></svg>
                     </a>
                 </div>
             </div>

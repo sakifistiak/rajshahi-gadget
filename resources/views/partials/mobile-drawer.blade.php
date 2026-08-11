@@ -560,12 +560,11 @@ a.bg-primary:hover {
     position: absolute;
     bottom: calc(100% + 1rem);
     left: 0;
-    width: 236px;
-    padding: 0.65rem;
-    border: 1px solid var(--color-border, #e5e7eb);
-    border-radius: 1rem;
+    width: 272px;
+    padding: 1rem;
+    border-radius: 1.25rem;
     background: var(--color-background, #ffffff);
-    box-shadow: 0 20px 40px -8px rgb(0 0 0 / 0.24), 0 2px 10px rgb(0 0 0 / 0.08);
+    box-shadow: 0 24px 48px -12px rgb(0 0 0 / 0.28), 0 4px 16px rgb(0 0 0 / 0.1);
     opacity: 0;
     transform: translateY(10px) scale(0.96);
     pointer-events: none;
@@ -574,15 +573,13 @@ a.bg-primary:hover {
 #kg-live-chat-menu::after {
     content: '';
     position: absolute;
-    left: 1.7rem;
+    left: 2rem;
     top: 100%;
-    width: 14px;
-    height: 14px;
-    margin-top: -8px;
+    width: 16px;
+    height: 16px;
+    margin-top: -9px;
     background: inherit;
-    border-right: 1px solid var(--color-border, #e5e7eb);
-    border-bottom: 1px solid var(--color-border, #e5e7eb);
-    border-bottom-right-radius: 3px;
+    border-bottom-right-radius: 4px;
     transform: rotate(45deg);
 }
 #kg-live-chat.is-open #kg-live-chat-menu {
@@ -591,22 +588,26 @@ a.bg-primary:hover {
     pointer-events: auto;
 }
 .kg-live-chat-heading {
-    margin: 0.1rem 0.5rem 0.55rem;
-    padding-bottom: 0.55rem;
+    margin: 0.15rem 0.35rem 0.75rem;
+    padding-bottom: 0.65rem;
     border-bottom: 1px solid var(--color-border, #e5e7eb);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--color-foreground, #09090b);
+    letter-spacing: -0.01em;
 }
 .kg-live-chat-option {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.6rem;
-    border-radius: 0.7rem;
-    color: inherit;
-    font-size: 0.82rem;
+    gap: 0.85rem;
+    padding: 0.75rem 0.65rem;
+    border-radius: 0.9rem;
+    color: var(--color-foreground, #09090b);
+    font-size: 0.85rem;
     font-weight: 700;
     opacity: 0;
     transform: translateX(-8px);
-    transition: background-color 0.15s ease, transform 0.15s ease, opacity 0.2s ease;
+    transition: background-color 0.15s ease, transform 0.15s ease, opacity 0.2s ease, box-shadow 0.15s ease;
 }
 #kg-live-chat.is-open .kg-live-chat-option {
     opacity: 1;
@@ -618,15 +619,16 @@ a.bg-primary:hover {
 .kg-live-chat-option:hover {
     background: var(--color-secondary, #f1f5f9);
     transform: translateX(3px);
+    box-shadow: 0 2px 10px -3px rgb(0 0 0 / 0.1);
 }
 .kg-live-chat-icon {
     display: grid;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     place-items: center;
     border-radius: 9999px;
     color: #fff;
-    box-shadow: 0 4px 10px -2px rgb(0 0 0 / 0.4);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.4);
     transition: transform 0.15s ease;
 }
 .kg-live-chat-option:hover .kg-live-chat-icon { transform: scale(1.08); }
@@ -885,25 +887,25 @@ document.addEventListener('DOMContentLoaded', function() {
     <aside id="kg-live-chat" aria-label="Live chat options" style="--kg-chat-pulse-color: {{ $liveChatWhatsappColor ?? '#25D366' }}">
         <div id="kg-live-chat-tooltip" class="kg-live-chat-tooltip" role="status">Chat with us 👋</div>
         <div id="kg-live-chat-menu" role="menu">
-            <p class="kg-live-chat-heading px-2 text-xs font-bold text-muted-foreground">How can we help? 💬</p>
+            <p class="kg-live-chat-heading">How can we help? 💬</p>
 
             @if ($showWhatsapp)
                 <a class="kg-live-chat-option" href="https://wa.me/{{ $liveChatWhatsapp }}?text={{ rawurlencode('Hello, I need help.') }}" target="_blank" rel="noopener noreferrer" role="menuitem">
-                    <span class="kg-live-chat-icon" style="background:{{ $liveChatWhatsappColor ?? '#25D366' }}" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .105 5.36.103 11.943c0 2.105.549 4.16 1.595 5.973L0 24l6.335-1.652a11.882 11.882 0 005.71 1.447h.006c6.585 0 11.94-5.36 11.943-11.943a11.874 11.874 0 00-3.474-8.403"/></svg></span>
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatWhatsappColor ?? '#25D366' }}" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .105 5.36.103 11.943c0 2.105.549 4.16 1.595 5.973L0 24l6.335-1.652a11.882 11.882 0 005.71 1.447h.006c6.585 0 11.94-5.36 11.943-11.943a11.874 11.874 0 00-3.474-8.403"/></svg></span>
                     <span>Chat on WhatsApp</span>
                 </a>
             @endif
 
             @if ($showMessenger)
                 <a class="kg-live-chat-option" href="{{ $liveChatMessengerUrl }}" target="_blank" rel="noopener noreferrer" role="menuitem">
-                    <span class="kg-live-chat-icon" style="background:{{ $liveChatMessengerColor ?? '#0084FF' }}" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span>
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatMessengerColor ?? '#0084FF' }}" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span>
                     <span>Chat on Messenger</span>
                 </a>
             @endif
 
             @if ($showCall)
                 <a class="kg-live-chat-option" href="tel:{{ $liveChatCall }}" role="menuitem">
-                    <span class="kg-live-chat-icon" style="background:{{ $liveChatCallColor ?? '#4f46e5' }}" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.4 2.1L8.2 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.5 1.8Z"/></svg></span>
+                    <span class="kg-live-chat-icon" style="background:{{ $liveChatCallColor ?? '#4f46e5' }}" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.4 2.1L8.2 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.5 1.8Z"/></svg></span>
                     <span>Call us</span>
                 </a>
             @endif
