@@ -20,6 +20,12 @@
             .product-card { grid-template-columns: 460px 1fr; gap: 4rem; }
         }
 
+        /* Specifications + Recently Viewed sidebar, side by side on wider screens. */
+        .spec-recently-viewed-grid { display: grid; gap: 2.5rem; }
+        @media (min-width: 1024px) {
+            .spec-recently-viewed-grid { grid-template-columns: 1fr 360px; align-items: start; }
+        }
+
         /* Compact specification table with a fixed label column and zebra striping. */
         .spec-row { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; border-bottom: 1px solid var(--color-border, #e5e7eb); }
         .spec-table > .spec-row:last-child { border-bottom: none; }
@@ -220,7 +226,7 @@
         <a href="#reviews" class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-secondary text-foreground/80 border border-border">Reviews</a>
     </nav>
 
-    <div class="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:items-start">
+    <div class="mt-10 spec-recently-viewed-grid">
         <div>
             @if($product->specs->count())
                 <div id="specifications" style="scroll-margin-top: 120px">
@@ -369,12 +375,12 @@
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div class="max-w-2xl">
                 <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">You may also like</p>
-                <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">More from this category</h2>
+                <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Related Products</h2>
             </div>
             <a href="/shop" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">Browse all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
         </div>
         @if($relatedProducts->count())
-            <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-10 grid grid-cols-2 gap-8 lg:grid-cols-4">
                 @foreach($relatedProducts as $relatedProduct)
                     @include('partials.product-card', ['product' => $relatedProduct])
                 @endforeach
