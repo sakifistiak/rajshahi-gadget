@@ -122,16 +122,18 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Price -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Price (BDT) <span class="text-rose-500">*</span></label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Discount Price (BDT) <span class="text-rose-500">*</span></label>
                     <input id="price" type="number" name="price" value="{{ old('price') }}" required
                            class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                    <p class="mt-1 text-[11px] text-slate-400">The actual price customers pay.</p>
                 </div>
 
                 <!-- Compare Price -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Compare At Price (BDT)</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Regular Price (BDT)</label>
                     <input id="compare_at_price" type="number" name="compare_at_price" value="{{ old('compare_at_price') }}"
                            class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                    <p class="mt-1 text-[11px] text-slate-400">Optional — shown crossed out if higher than discount price.</p>
                 </div>
             </div>
 
@@ -260,11 +262,7 @@
             </div>
 
             <!-- Description -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Full Description <span class="text-rose-500">*</span></label>
-                <textarea id="description" name="description" required
-                          class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all h-32">{{ old('description') }}</textarea>
-            </div>
+            @include('admin.products._description_editor')
 
             <!-- In Stock Checkbox -->
             <div class="flex items-center gap-2">

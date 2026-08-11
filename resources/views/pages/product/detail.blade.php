@@ -8,6 +8,30 @@
 
 <div class="container-page py-10" data-tsd-source="/src/routes/product.$slug.tsx:46:5">
 
+    <style>
+        .product-rich-text a { text-decoration: underline; color: var(--color-foreground, #09090b); }
+        .product-rich-text img { max-width: 100%; height: auto; border-radius: 2px; }
+        .product-rich-text p { margin: 0 0 1em; }
+        .product-rich-text p:last-child { margin-bottom: 0; }
+        .product-rich-text ul, .product-rich-text ol { margin: 0 0 1em; padding-left: 1.25em; }
+
+        /* Compact, capped-width image column instead of scaling with viewport width. */
+        @media (min-width: 1024px) {
+            .product-card { grid-template-columns: 460px 1fr; gap: 4rem; }
+        }
+
+        /* Compact specification table with a fixed label column and zebra striping. */
+        .spec-row { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; border-bottom: 1px solid var(--color-border, #e5e7eb); }
+        .spec-table > .spec-row:last-child { border-bottom: none; }
+        .spec-table > .spec-row:nth-child(even) { background: var(--color-secondary, #f4f4f5); }
+        @media (max-width: 640px) {
+            .spec-row { grid-template-columns: 1fr; gap: 0.25rem; }
+        }
+
+        .recently-viewed-card { transition: border-color .15s ease, box-shadow .15s ease; }
+        .recently-viewed-card:hover { border-color: var(--color-foreground, #09090b); box-shadow: 0 1px 4px rgb(0 0 0 / 0.06); }
+    </style>
+
     {{-- Breadcrumb --}}
     <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted-foreground">
         <a href="/" class="hover:text-foreground">Home</a>
@@ -21,7 +45,7 @@
         <span class="truncate text-foreground">{{ $product->name }}</span>
     </nav>
 
-    <div class="mt-8 grid gap-10 lg:grid-cols-[1.15fr_1fr] lg:gap-16 product-card">
+    <div class="mt-8 grid gap-10 product-card">
 
         {{-- Image gallery --}}
         <div>
@@ -126,7 +150,19 @@
                 @endif
             </div>
 
-            <p class="mt-6 text-sm leading-relaxed text-muted-foreground sm:text-base">{{ $product->description }}</p>
+            @if($product->highlights->count())
+                <div class="mt-6">
+                    <p class="text-sm font-semibold text-foreground">Key Features</p>
+                    <ul class="mt-3 space-y-2">
+                        @foreach($product->highlights as $highlight)
+                            <li class="flex items-start gap-2 text-sm text-muted-foreground">
+                                <span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-muted-foreground"></span>
+                                <span>{{ $highlight->text }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             @if($product->colors->count())
                 <div class="mt-8">
@@ -184,40 +220,129 @@
         <a href="#reviews" class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-secondary text-foreground/80 border border-border">Reviews</a>
     </nav>
 
-    <div class="mt-10 grid gap-10 lg:grid-cols-2">
-        @if($product->highlights->count())
-            <div>
-                <h2 class="text-2xl font-semibold tracking-tight">Why we like it</h2>
-                <ul class="mt-6 grid gap-3">
-                    @foreach($product->highlights as $highlight)
-                        <li class="flex items-start gap-3 rounded-sm border border-border bg-surface p-4">
-                            <span class="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground"></span>
-                            <span class="text-sm text-foreground">{{ $highlight->text }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    <div class="mt-10 grid gap-10 lg:grid-cols-[1fr_360px] lg:items-start">
+        <div>
+            @if($product->specs->count())
+                <div id="specifications" style="scroll-margin-top: 120px">
+                    <h2 class="text-2xl font-semibold tracking-tight">Specifications</h2>
+                    <dl class="spec-table mt-6 rounded-md border border-border">
+                        @foreach($product->specs as $spec)
+                            <div class="spec-row px-5 py-3 text-sm">
+                                <dt class="text-muted-foreground">{{ $spec->label }}</dt>
+                                <dd class="font-medium text-foreground">{{ $spec->value }}</dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </div>
+            @endif
+        </div>
 
-        @if($product->specs->count())
-            <div id="specifications" style="scroll-margin-top: 120px">
-                <h2 class="text-2xl font-semibold tracking-tight">Specifications</h2>
-                <dl class="mt-6 divide-y divide-border rounded-sm border border-border bg-card">
-                    @foreach($product->specs as $spec)
-                        <div class="grid grid-cols-[1fr_1.6fr] gap-4 px-5 py-4 text-sm">
-                            <dt class="text-muted-foreground">{{ $spec->label }}</dt>
-                            <dd class="font-medium text-foreground">{{ $spec->value }}</dd>
-                        </div>
-                    @endforeach
-                </dl>
-            </div>
-        @endif
+        <aside id="recentlyViewedSidebar" style="display:none">
+            <h2 class="text-lg font-semibold tracking-tight">Recently Viewed</h2>
+            <div id="recentlyViewedList" class="mt-4 space-y-3"></div>
+        </aside>
     </div>
+
+    <script>
+        (function () {
+            var STORAGE_KEY = 'kg_recently_viewed';
+            var MAX_ITEMS = 8;
+            var SHOW_LIMIT = 5;
+
+            var currentProduct = {
+                slug: @json($product->slug),
+                name: @json($product->name),
+                image: @json($product->primaryImage()),
+                price: {{ (int) $product->price }},
+                compareAtPrice: {{ $product->compare_at_price ? (int) $product->compare_at_price : 'null' }},
+                url: @json(route('product', $product->slug))
+            };
+
+            function loadList() {
+                try {
+                    var raw = localStorage.getItem(STORAGE_KEY);
+                    var list = raw ? JSON.parse(raw) : [];
+                    return Array.isArray(list) ? list : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function formatTaka(amount) {
+                return '৳ ' + Number(amount).toLocaleString('en-US');
+            }
+
+            function buildCard(p) {
+                var card = document.createElement('a');
+                card.href = p.url;
+                card.className = 'recently-viewed-card flex gap-3 rounded-sm border border-border bg-card p-3';
+
+                var imgWrap = document.createElement('div');
+                imgWrap.className = 'h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-surface';
+                var img = document.createElement('img');
+                img.src = p.image;
+                img.alt = p.name;
+                img.loading = 'lazy';
+                img.className = 'h-full w-full object-cover';
+                imgWrap.appendChild(img);
+
+                var info = document.createElement('div');
+                info.className = 'min-w-0';
+
+                var name = document.createElement('p');
+                name.className = 'text-xs font-medium text-foreground line-clamp-2';
+                name.textContent = p.name;
+                info.appendChild(name);
+
+                var priceRow = document.createElement('div');
+                priceRow.className = 'mt-1 flex items-center gap-1.5';
+                var priceEl = document.createElement('span');
+                priceEl.className = 'text-xs font-semibold text-foreground';
+                priceEl.textContent = formatTaka(p.price);
+                priceRow.appendChild(priceEl);
+
+                var hasDiscount = p.compareAtPrice && p.compareAtPrice > p.price;
+                if (hasDiscount) {
+                    var compareEl = document.createElement('span');
+                    compareEl.className = 'text-[11px] text-muted-foreground line-through';
+                    compareEl.textContent = formatTaka(p.compareAtPrice);
+                    priceRow.appendChild(compareEl);
+                }
+                info.appendChild(priceRow);
+
+                if (hasDiscount) {
+                    var offBadge = document.createElement('span');
+                    offBadge.className = 'mt-1 inline-block rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success';
+                    offBadge.textContent = formatTaka(p.compareAtPrice - p.price) + ' OFF';
+                    info.appendChild(offBadge);
+                }
+
+                card.appendChild(imgWrap);
+                card.appendChild(info);
+                return card;
+            }
+
+            var list = loadList().filter(function (p) { return p && p.slug !== currentProduct.slug; });
+            list.unshift(currentProduct);
+            if (list.length > MAX_ITEMS) list = list.slice(0, MAX_ITEMS);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch (e) {}
+
+            var toShow = list.filter(function (p) { return p.slug !== currentProduct.slug; }).slice(0, SHOW_LIMIT);
+            if (toShow.length === 0) return;
+
+            var listEl = document.getElementById('recentlyViewedList');
+            var sidebarEl = document.getElementById('recentlyViewedSidebar');
+            if (!listEl || !sidebarEl) return;
+
+            toShow.forEach(function (p) { listEl.appendChild(buildCard(p)); });
+            sidebarEl.style.display = '';
+        })();
+    </script>
 
     <section id="description" class="mt-20" style="scroll-margin-top: 120px">
         <h2 class="text-2xl font-semibold tracking-tight">Description</h2>
         <div class="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            <p>{{ $product->description }}</p>
+            <div class="product-rich-text">{!! $product->description !!}</div>
             <p>ঢাকার ভেতরে দ্রুত হোম ডেলিভারি, সারা বাংলাদেশে কুরিয়ার সার্ভিস এবং bKash · Nagad · Card EMI পেমেন্ট সুবিধা রয়েছে। যেকোনো প্রশ্নে আমাদের লাইভ চ্যাটে মেসেজ দিন।</p>
         </div>
     </section>
