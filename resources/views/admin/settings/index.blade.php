@@ -18,6 +18,10 @@
 
         <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
+            {{-- Identifies old-input as belonging to THIS form, so a validation failure on some
+                 other admin page (e.g. Home Settings' popup-offer image check) doesn't cause the
+                 footer column fields below to be wrongly re-derived from unrelated stale old(). --}}
+            <input type="hidden" name="_settings_form" value="1">
 
             <!-- Card 1: Brand & Logo Management -->
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5">
@@ -227,7 +231,7 @@
                 // would silently fall back to the last-saved DB value — discarding whatever
                 // the admin had just changed in this card (checkbox toggles included, since
                 // an unchecked box is simply absent from old input rather than "false").
-                $hasOldInput = session()->hasOldInput();
+                $hasOldInput = session()->hasOldInput('_settings_form');
                 $col1ActiveVal = $hasOldInput ? (old('footer_col1_active') ? '1' : '0') : $settings['footer_col1_active'];
                 $col2ActiveVal = $hasOldInput ? (old('footer_col2_active') ? '1' : '0') : $settings['footer_col2_active'];
                 $col3ActiveVal = $hasOldInput ? (old('footer_col3_active') ? '1' : '0') : $settings['footer_col3_active'];
@@ -235,13 +239,13 @@
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
                  data-col1-active="{{ $col1ActiveVal }}"
                  data-col1-title="{{ old('footer_col1_title', $settings['footer_col1_title']) }}"
-                 data-col1-links='{{ json_encode(json_decode(old('footer_col1_links', $settings['footer_col1_links']) ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
+                 data-col1-links='{{ json_encode(json_decode(old('footer_col1_links', $settings['footer_col1_links']) ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
                  data-col2-active="{{ $col2ActiveVal }}"
                  data-col2-title="{{ old('footer_col2_title', $settings['footer_col2_title']) }}"
-                 data-col2-links='{{ json_encode(json_decode(old('footer_col2_links', $settings['footer_col2_links']) ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
+                 data-col2-links='{{ json_encode(json_decode(old('footer_col2_links', $settings['footer_col2_links']) ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
                  data-col3-active="{{ $col3ActiveVal }}"
                  data-col3-title="{{ old('footer_col3_title', $settings['footer_col3_title']) }}"
-                 data-col3-links='{{ json_encode(json_decode(old('footer_col3_links', $settings['footer_col3_links']) ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
+                 data-col3-links='{{ json_encode(json_decode(old('footer_col3_links', $settings['footer_col3_links']) ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
                  x-data="{
                      col1Active: false,
                      col1Title: '',
