@@ -220,13 +220,28 @@
             </div>
 
             <!-- Card 5: Footer Link Columns & Custom Page Links -->
+            @php
+                // If a PREVIOUS submission of this whole form failed validation on some
+                // unrelated field (e.g. whatsapp_number), Laravel flashes old input and
+                // redisplays this page. Without checking old() here, these data-* attributes
+                // would silently fall back to the last-saved DB value — discarding whatever
+                // the admin had just changed in this card (checkbox toggles included, since
+                // an unchecked box is simply absent from old input rather than "false").
+                $hasOldInput = session()->hasOldInput();
+                $col1ActiveVal = $hasOldInput ? (old('footer_col1_active') ? '1' : '0') : $settings['footer_col1_active'];
+                $col2ActiveVal = $hasOldInput ? (old('footer_col2_active') ? '1' : '0') : $settings['footer_col2_active'];
+                $col3ActiveVal = $hasOldInput ? (old('footer_col3_active') ? '1' : '0') : $settings['footer_col3_active'];
+            @endphp
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
-                 data-col1-active="{{ $settings['footer_col1_active'] }}"
-                 data-col1-title="{{ $settings['footer_col1_title'] }}"
-                 data-col1-links='{{ json_encode(json_decode($settings['footer_col1_links'] ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
-                 data-col2-active="{{ $settings['footer_col2_active'] }}"
-                 data-col2-title="{{ $settings['footer_col2_title'] }}"
-                 data-col2-links='{{ json_encode(json_decode($settings['footer_col2_links'] ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
+                 data-col1-active="{{ $col1ActiveVal }}"
+                 data-col1-title="{{ old('footer_col1_title', $settings['footer_col1_title']) }}"
+                 data-col1-links='{{ json_encode(json_decode(old('footer_col1_links', $settings['footer_col1_links']) ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
+                 data-col2-active="{{ $col2ActiveVal }}"
+                 data-col2-title="{{ old('footer_col2_title', $settings['footer_col2_title']) }}"
+                 data-col2-links='{{ json_encode(json_decode(old('footer_col2_links', $settings['footer_col2_links']) ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
+                 data-col3-active="{{ $col3ActiveVal }}"
+                 data-col3-title="{{ old('footer_col3_title', $settings['footer_col3_title']) }}"
+                 data-col3-links='{{ json_encode(json_decode(old('footer_col3_links', $settings['footer_col3_links']) ?: '[]', true) ?: [], JSON_HEX_TAG - JSON_HEX_AMP - JSON_HEX_APOS - JSON_HEX_QUOT) }}'
                  x-data="{
                      col1Active: false,
                      col1Title: '',
@@ -234,6 +249,9 @@
                      col2Active: false,
                      col2Title: '',
                      col2Links: [],
+                     col3Active: false,
+                     col3Title: '',
+                     col3Links: [],
                      init() {
                          this.col1Active = this.$el.dataset.col1Active === '1';
                          this.col1Title = this.$el.dataset.col1Title || '';
@@ -244,6 +262,11 @@
                          this.col2Title = this.$el.dataset.col2Title || '';
                          const raw2 = JSON.parse(this.$el.dataset.col2Links || '[]');
                          this.col2Links = raw2.map((l, i) => ({ _id: Date.now() + Math.random() + i + 1000, label: l.label || '', url: l.url || '' }));
+
+                         this.col3Active = this.$el.dataset.col3Active === '1';
+                         this.col3Title = this.$el.dataset.col3Title || '';
+                         const raw3 = JSON.parse(this.$el.dataset.col3Links || '[]');
+                         this.col3Links = raw3.map((l, i) => ({ _id: Date.now() + Math.random() + i + 2000, label: l.label || '', url: l.url || '' }));
                      },
                      addCol1Link() {
                          this.col1Active = true;
@@ -259,17 +282,18 @@
                      removeCol2Link(idx) {
                          this.col2Links = this.col2Links.filter((_, i) => i !== idx);
                      },
+                     addCol3Link() {
+                         this.col3Active = true;
+                         this.col3Links.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/page/sample' });
+                     },
+                     removeCol3Link(idx) {
+                         this.col3Links = this.col3Links.filter((_, i) => i !== idx);
+                     },
                      selectCustomPage(type, index, slug, title) {
-                         if (type === 'col1') {
-                             this.col1Links[index].url = '/page/' + slug;
-                             if (!this.col1Links[index].label || this.col1Links[index].label === 'New Link') {
-                                 this.col1Links[index].label = title;
-                             }
-                         } else {
-                             this.col2Links[index].url = '/page/' + slug;
-                             if (!this.col2Links[index].label || this.col2Links[index].label === 'New Link') {
-                                 this.col2Links[index].label = title;
-                             }
+                         var target = type === 'col1' ? this.col1Links : (type === 'col2' ? this.col2Links : this.col3Links);
+                         target[index].url = '/page/' + slug;
+                         if (!target[index].label || target[index].label === 'New Link') {
+                             target[index].label = title;
                          }
                      }
                  }">
@@ -279,16 +303,18 @@
                 <input type="hidden" name="footer_col1_links" :value="JSON.stringify(col1Links.map(l => ({ label: l.label, url: l.url })))">
                 <input type="hidden" name="footer_col2_title" :value="col2Title">
                 <input type="hidden" name="footer_col2_links" :value="JSON.stringify(col2Links.map(l => ({ label: l.label, url: l.url })))">
+                <input type="hidden" name="footer_col3_title" :value="col3Title">
+                <input type="hidden" name="footer_col3_links" :value="JSON.stringify(col3Links.map(l => ({ label: l.label, url: l.url })))">
 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
                     <div class="flex items-center gap-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
                         <i data-lucide="link-2" class="h-4 w-4 text-blue-600"></i>
                         <span>5. Footer Link Columns & Custom Page Navigation (ফুটার নেভিগেশন ও লিংক সেটিং)</span>
                     </div>
-                    <span class="text-[11px] text-slate-500">Customize or turn OFF Column 1 (SHOP) & Column 2 (EXPLORE)</span>
+                    <span class="text-[11px] text-slate-500">Turn Column 1, 2 & 3 on/off independently — the site info column on the left always stays put, and active columns automatically space themselves out (e.g. only one active column sits at the far right; two active columns sit middle + right).</span>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- COLUMN 1 (SHOP) -->
                     <div class="p-4 bg-slate-50 border border-slate-200 rounded-sm space-y-4">
                         <div class="flex items-center justify-between p-2 bg-white border border-slate-200 rounded-sm">
@@ -402,6 +428,65 @@
                                 </template>
                                 <div x-show="col2Links.length === 0" class="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded bg-white">
                                     No links in Column 2. Click "+ Add Link" above to add a link.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMN 3 -->
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-sm space-y-4">
+                        <div class="flex items-center justify-between p-2 bg-white border border-slate-200 rounded-sm">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input type="checkbox" name="footer_col3_active" value="1" x-model="col3Active" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-xs font-bold text-slate-800 uppercase">Show Column 3 in Footer</span>
+                            </label>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded" :class="col3Active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'" x-text="col3Active ? 'Enabled (Visible)' : 'Disabled (Hidden)'"></span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-slate-800 uppercase">Column 3 Header Title</label>
+                                <button type="button" @click.prevent="addCol3Link()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition-all flex items-center gap-1 cursor-pointer">
+                                    <i data-lucide="plus" class="h-3.5 w-3.5"></i>
+                                    <span>+ Add Link</span>
+                                </button>
+                            </div>
+                            <input type="text" x-model="col3Title" placeholder="e.g. MORE" class="w-full text-xs font-bold px-3 py-2 border border-slate-300 rounded-sm bg-white focus:ring-1 focus:ring-blue-500">
+
+                            <div class="space-y-3 pt-2">
+                                <template x-for="(link, index) in col3Links" :key="link._id">
+                                    <div class="p-3 bg-white border border-slate-200 rounded-sm shadow-2xs space-y-2">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-[11px] font-bold text-slate-500" x-text="'Link #' + (index + 1)"></span>
+
+                                            <!-- Custom Page Quick Select Dropdown -->
+                                            <div class="flex items-center gap-2">
+                                                <select @change="if ($event.target.value) { const parts = $event.target.value.split('|'); selectCustomPage('col3', index, parts[0], parts[1]); $event.target.value = ''; }" class="text-[11px] font-medium bg-blue-50/70 border border-blue-200 text-blue-700 px-2 py-1 rounded focus:outline-none cursor-pointer">
+                                                    <option value="">-- Attach Custom Page --</option>
+                                                    @foreach($customPages as $cp)
+                                                        <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/page/{{ $cp->slug }})</option>
+                                                    @endforeach
+                                                </select>
+                                                <button type="button" @click.prevent.stop="removeCol3Link(index)" class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition-colors cursor-pointer" title="Delete Row">
+                                                    <span>Remove</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Label / Text</label>
+                                                <input type="text" x-model="link.label" placeholder="Link Display Text" class="w-full text-xs font-medium px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-bold text-slate-500 uppercase">URL / Path</label>
+                                                <input type="text" x-model="link.url" placeholder="e.g. /page/warranty-policy" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="col3Links.length === 0" class="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded bg-white">
+                                    No links in Column 3. Click "+ Add Link" above to add a link.
                                 </div>
                             </div>
                         </div>

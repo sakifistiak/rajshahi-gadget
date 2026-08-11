@@ -16,6 +16,7 @@ class SettingController extends Controller
         // Footer columns start empty. Only links entered in this screen are shown.
         $defaultCol1Links = '[]';
         $defaultCol2Links = '[]';
+        $defaultCol3Links = '[]';
 
         $settings = [
             'site_name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
@@ -43,6 +44,9 @@ class SettingController extends Controller
             'footer_col2_active' => SiteSetting::getValue('footer_col2_active', '1'),
             'footer_col2_title' => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
             'footer_col2_links' => SiteSetting::getValue('footer_col2_links', $defaultCol2Links),
+            'footer_col3_active' => SiteSetting::getValue('footer_col3_active', '0'),
+            'footer_col3_title' => SiteSetting::getValue('footer_col3_title', 'MORE'),
+            'footer_col3_links' => SiteSetting::getValue('footer_col3_links', $defaultCol3Links),
             'site_font_english' => SiteSetting::getValue('site_font_english', 'Inter'),
             'site_font_bangla' => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
         ];
@@ -84,6 +88,9 @@ class SettingController extends Controller
             'footer_col2_active' => 'nullable|string',
             'footer_col2_title' => 'nullable|string|max:255',
             'footer_col2_links' => 'nullable|string',
+            'footer_col3_active' => 'nullable|string',
+            'footer_col3_title' => 'nullable|string|max:255',
+            'footer_col3_links' => 'nullable|string',
             'logo_light_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'logo_dark_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'site_font_english' => 'nullable|in:Inter,Poppins',
@@ -112,6 +119,8 @@ class SettingController extends Controller
             'footer_col1_links',
             'footer_col2_title',
             'footer_col2_links',
+            'footer_col3_title',
+            'footer_col3_links',
             'site_font_english',
             'site_font_bangla',
         ];
@@ -134,6 +143,11 @@ class SettingController extends Controller
         SiteSetting::updateOrCreate(
             ['key' => 'footer_col2_active'],
             ['value' => $request->has('footer_col2_active') ? '1' : '0']
+        );
+
+        SiteSetting::updateOrCreate(
+            ['key' => 'footer_col3_active'],
+            ['value' => $request->has('footer_col3_active') ? '1' : '0']
         );
 
         // Handle Light Mode Logo Upload

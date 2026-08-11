@@ -48,22 +48,25 @@
 
         <!-- 2. Main Footer Links & Information -->
         @php
-            // Build the grid from the columns that are actually visible. This prevents
-            // hidden link columns from leaving an empty slot at larger screen sizes.
-            // Visibility is controlled by the admin toggle. An enabled column with
-            // no links remains intentionally blank, rather than falling back to links.
+            // The brand column always stays pinned to the left. Optional columns 1-3
+            // are toggled independently from the admin panel and rendered in a fixed
+            // order (1, 2, 3); however many are active simply space themselves out
+            // evenly across the remaining width, so a single active column sits at
+            // the far right and two active columns sit at the middle + right.
             $showFooterCol1 = ($footerCol1Active ?? '1') == '1';
             $showFooterCol2 = ($footerCol2Active ?? '1') == '1';
-            $footerColumnCount = 1 + (int) $showFooterCol1 + (int) $showFooterCol2;
-            $footerGridClass = match ($footerColumnCount) {
-                1 => 'grid-cols-1 max-w-md mx-auto',
-                2 => 'grid-cols-1 md:grid-cols-2 max-w-3xl mx-auto',
-                default => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto',
-            };
+            $showFooterCol3 = ($footerCol3Active ?? '0') == '1';
         @endphp
-        <div class="mt-12 grid gap-10 md:gap-16 {{ $footerGridClass }}">
+        <style>
+            .footer-columns { display: flex; flex-direction: column; gap: 2.5rem; }
+            .footer-brand-col { max-width: 22rem; }
+            @media (min-width: 768px) {
+                .footer-columns { flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 4rem; }
+            }
+        </style>
+        <div class="mt-12 footer-columns">
             <!-- Brand Column -->
-            <div>
+            <div class="footer-brand-col">
                 <a aria-label="Khan Gadget home" href="/" class="inline-flex items-center">
                     <img src="{{ $siteLogo ?? '/media/b3ca13-kg-lockup-v2.png' }}" alt="{{ $siteName ?? 'Khan Gadget - Eternal Tech Companion' }}" class="h-14 w-auto object-contain dark:hidden" />
                     <img src="{{ $siteLogoDark ?? ($siteLogo ?? '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ $siteName ?? 'Khan Gadget - Eternal Tech Companion' }}" class="h-14 w-auto object-contain hidden dark:block" />
@@ -148,6 +151,18 @@
                     <p class="text-xs font-semibold uppercase tracking-[0.14em]">{{ $footerCol2Title ?? 'EXPLORE' }}</p>
                     <ul class="mt-4 space-y-3 text-sm">
                         @foreach($footerCol2Links as $link)
+                            <li><a href="{{ $link['url'] ?? '#' }}" class="text-muted-foreground hover:text-foreground">{{ $link['label'] ?? '' }}</a></li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- Column 3 -->
+            @if($showFooterCol3)
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em]">{{ $footerCol3Title ?? 'MORE' }}</p>
+                    <ul class="mt-4 space-y-3 text-sm">
+                        @foreach($footerCol3Links as $link)
                             <li><a href="{{ $link['url'] ?? '#' }}" class="text-muted-foreground hover:text-foreground">{{ $link['label'] ?? '' }}</a></li>
                         @endforeach
                     </ul>

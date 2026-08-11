@@ -54,6 +54,10 @@ class AppServiceProvider extends ServiceProvider
             $col2Decoded = !empty($col2Raw) ? json_decode($col2Raw, true) : null;
             $col2Links = is_array($col2Decoded) ? $col2Decoded : $defaultCol2Links;
 
+            $col3Raw = SiteSetting::getValue('footer_col3_links');
+            $col3Decoded = !empty($col3Raw) ? json_decode($col3Raw, true) : null;
+            $col3Links = is_array($col3Decoded) ? $col3Decoded : [];
+
             $view->with([
                 'siteLogo'          => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
                 'siteLogoDark'      => SiteSetting::getValue('logo_dark',  '/media/logo_dark_1786184552.png'),
@@ -92,6 +96,9 @@ class AppServiceProvider extends ServiceProvider
                 'footerCol2Active'  => SiteSetting::getValue('footer_col2_active', '1'),
                 'footerCol2Title'   => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
                 'footerCol2Links'   => $col2Links,
+                'footerCol3Active'  => SiteSetting::getValue('footer_col3_active', '0'),
+                'footerCol3Title'   => SiteSetting::getValue('footer_col3_title', 'MORE'),
+                'footerCol3Links'   => $col3Links,
                 'storeLocations'    => $storeLocations,
             ]);
         });
