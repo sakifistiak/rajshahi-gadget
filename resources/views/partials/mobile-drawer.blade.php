@@ -407,7 +407,7 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
             $mobileMenuContact = \App\Models\SiteSetting::getValue('mobile_menu_contact', $sitePhone ?? '+8801700000000');
         @endphp
         <div style="padding:8px 16px 20px;">
-            <a href="tel:{{ preg_replace('/[^0-9+]/', '', $mobileMenuContact) }}" class="kg-hotline-btn">
+            <a href="tel:{{ \App\Support\PhoneNumber::tel($mobileMenuContact) }}" class="kg-hotline-btn">
                 <div class="kg-hotline-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -708,8 +708,6 @@ a.bg-primary:hover {
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var whatsappNumber = @json(preg_replace('/[^0-9]/', '', (string) ($whatsappNumber ?? '8801700000001')));
-
     function enableProductImageMagnifier() {
         if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
             return;
@@ -876,8 +874,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 @php
-    $liveChatWhatsapp = preg_replace('/[^0-9]/', '', (string) ($liveChatWhatsappNumber ?? ''));
-    $liveChatCall = preg_replace('/[^0-9+]/', '', (string) ($liveChatCallNumber ?? ''));
+    $liveChatWhatsapp = \App\Support\PhoneNumber::whatsapp($liveChatWhatsappNumber ?? '');
+    $liveChatCall = \App\Support\PhoneNumber::tel($liveChatCallNumber ?? '');
     $showWhatsapp = ($liveChatWhatsappEnabled ?? '1') === '1' && $liveChatWhatsapp !== '';
     $showMessenger = ($liveChatMessengerEnabled ?? '0') === '1' && !empty($liveChatMessengerUrl);
     $showCall = ($liveChatCallEnabled ?? '1') === '1' && $liveChatCall !== '';
@@ -887,26 +885,26 @@ document.addEventListener('DOMContentLoaded', function() {
     <aside id="kg-live-chat" aria-label="Live chat options" style="--kg-chat-pulse-color: {{ $liveChatWhatsappColor ?? '#25D366' }}">
         <div id="kg-live-chat-tooltip" class="kg-live-chat-tooltip" role="status">Chat with us 👋</div>
         <div id="kg-live-chat-menu" role="menu">
-            <p class="kg-live-chat-heading">How can we help? 💬</p>
+            <p class="kg-live-chat-heading">How Can We Help? 💬</p>
 
             @if ($showWhatsapp)
                 <a class="kg-live-chat-option" href="https://wa.me/{{ $liveChatWhatsapp }}?text={{ rawurlencode('Hello, I need help.') }}" target="_blank" rel="noopener noreferrer" role="menuitem">
                     <span class="kg-live-chat-icon" style="background:{{ $liveChatWhatsappColor ?? '#25D366' }}" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .105 5.36.103 11.943c0 2.105.549 4.16 1.595 5.973L0 24l6.335-1.652a11.882 11.882 0 005.71 1.447h.006c6.585 0 11.94-5.36 11.943-11.943a11.874 11.874 0 00-3.474-8.403"/></svg></span>
-                    <span>Chat on WhatsApp</span>
+                    <span>Chat On WhatsApp</span>
                 </a>
             @endif
 
             @if ($showMessenger)
                 <a class="kg-live-chat-option" href="{{ $liveChatMessengerUrl }}" target="_blank" rel="noopener noreferrer" role="menuitem">
                     <span class="kg-live-chat-icon" style="background:{{ $liveChatMessengerColor ?? '#0084FF' }}" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></span>
-                    <span>Chat on Messenger</span>
+                    <span>Chat On Messenger</span>
                 </a>
             @endif
 
             @if ($showCall)
                 <a class="kg-live-chat-option" href="tel:{{ $liveChatCall }}" role="menuitem">
                     <span class="kg-live-chat-icon" style="background:{{ $liveChatCallColor ?? '#4f46e5' }}" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .8 2.9a2 2 0 0 1-.4 2.1L8.2 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.4 1.9.7 2.9.8a2 2 0 0 1 1.5 1.8Z"/></svg></span>
-                    <span>Call us</span>
+                    <span>Call Us</span>
                 </a>
             @endif
         </div>

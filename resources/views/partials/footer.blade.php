@@ -30,8 +30,8 @@
                                     @php
                                         $outletPhoneIsWhatsapp = ($outlet->phone_link_type ?? 'tel') === 'whatsapp';
                                         $outletPhoneHref = $outletPhoneIsWhatsapp
-                                            ? 'https://wa.me/' . preg_replace('/[^0-9]/', '', $outlet->phone)
-                                            : 'tel:' . preg_replace('/[^0-9+]/', '', $outlet->phone);
+                                            ? 'https://wa.me/' . \App\Support\PhoneNumber::whatsapp($outlet->phone)
+                                            : 'tel:' . \App\Support\PhoneNumber::tel($outlet->phone);
                                     @endphp
                                     <a href="{{ $outletPhoneHref }}" @if($outletPhoneIsWhatsapp) target="_blank" rel="noopener noreferrer" @endif class="mt-1 inline-block text-xs text-muted-foreground hover:text-foreground">{{ $outlet->phone }}</a>
                                 @endif
@@ -83,11 +83,10 @@
                         <span>{{ $siteAddress ?? 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh' }}</span>
                     </div>
                     @php
-                        $footerPhoneDigits = preg_replace('/[^0-9]/', '', $sitePhone ?? '+8801700000000');
                         $footerPhoneIsWhatsapp = ($footerPhoneLinkType ?? 'tel') === 'whatsapp';
                         $footerPhoneHref = $footerPhoneIsWhatsapp
-                            ? 'https://wa.me/' . $footerPhoneDigits
-                            : 'tel:' . preg_replace('/[^0-9+]/', '', $sitePhone ?? '+8801700000000');
+                            ? 'https://wa.me/' . \App\Support\PhoneNumber::whatsapp($sitePhone ?? '+8801700000000')
+                            : 'tel:' . \App\Support\PhoneNumber::tel($sitePhone ?? '+8801700000000');
                     @endphp
                     <div class="flex items-start gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone mt-0.5 h-4 w-4 shrink-0" aria-hidden="true">
