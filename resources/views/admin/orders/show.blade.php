@@ -80,14 +80,33 @@
                     </div>
 
                     <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">District</span>
-                        <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->district }}</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Method</span>
+                        <span class="text-xs font-semibold mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded {{ $order->delivery_method === 'store_pickup' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
+                            {{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Home Delivery' }}
+                        </span>
                     </div>
 
-                    <div class="sm:col-span-2">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Address</span>
-                        <span class="text-xs font-semibold text-slate-800 mt-1 block leading-relaxed">{{ $order->address }}</span>
-                    </div>
+                    @if($order->delivery_method === 'store_pickup')
+                        <div class="sm:col-span-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pickup Outlet</span>
+                            @if($order->storeLocation)
+                                <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->storeLocation->name }}</span>
+                                <span class="text-xs text-slate-600 mt-0.5 block leading-relaxed">{{ $order->storeLocation->address }}</span>
+                            @else
+                                <span class="text-xs text-slate-400 mt-1 block">Outlet no longer available</span>
+                            @endif
+                        </div>
+                    @else
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">District</span>
+                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->district }}</span>
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Address</span>
+                            <span class="text-xs font-semibold text-slate-800 mt-1 block leading-relaxed">{{ $order->address }}</span>
+                        </div>
+                    @endif
 
                     @if($order->note)
                         <div class="sm:col-span-2 p-3 bg-amber-50/60 border border-amber-100 rounded-md">

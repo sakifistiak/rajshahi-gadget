@@ -21,7 +21,7 @@ class OrderController extends Controller
 
     private function listOrders(Request $request, bool $preorderOnly)
     {
-        $query = Order::with('items');
+        $query = Order::with(['items', 'storeLocation']);
 
         if ($preorderOnly) {
             $query->where('is_preorder', true);
@@ -71,7 +71,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load('items');
+        $order->load(['items', 'storeLocation']);
         return view('admin.orders.show', compact('order'));
     }
 
