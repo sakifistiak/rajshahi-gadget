@@ -91,16 +91,33 @@
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pickup Outlet</span>
                             @if($order->storeLocation)
                                 <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->storeLocation->name }}</span>
-                                <span class="text-xs text-slate-600 mt-0.5 block leading-relaxed">{{ $order->storeLocation->address }}</span>
+                                <div class="text-xs text-slate-600 mt-0.5 leading-relaxed">{!! $order->storeLocation->address !!}</div>
                             @else
                                 <span class="text-xs text-slate-400 mt-1 block">Outlet no longer available</span>
                             @endif
                         </div>
                     @else
                         <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Division</span>
+                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->division }}</span>
+                        </div>
+
+                        <div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">District</span>
                             <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->district }}</span>
                         </div>
+
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Upazila / Thana</span>
+                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->upazila }}</span>
+                        </div>
+
+                        @if($order->union_area)
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Union / Area</span>
+                                <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->union_area }}</span>
+                            </div>
+                        @endif
 
                         <div class="sm:col-span-2">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Address</span>

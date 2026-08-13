@@ -48,6 +48,40 @@
         <form id="checkout-form" novalidate>
             <section class="space-y-6">
                 <div class="rounded-lg border border-border bg-card p-5">
+                    <h2 class="text-lg font-semibold">Delivery information</h2>
+                    <div class="mt-5 co-delivery-grid">
+                        <label class="co-field co-span-2 text-sm font-medium">Full name<input required name="customer_name" class="rounded-md border border-border bg-background font-normal" autocomplete="name"></label>
+                        <label class="co-field text-sm font-medium">Mobile number<input required name="phone" inputmode="tel" class="rounded-md border border-border bg-background font-normal" placeholder="01XXXXXXXXX" autocomplete="tel"></label>
+                        <label class="co-field text-sm font-medium">Email <span class="font-normal text-muted-foreground">(optional)</span><input name="email" type="email" class="rounded-md border border-border bg-background font-normal" autocomplete="email"></label>
+                        <label class="co-field co-span-2 text-sm font-medium" id="pickup-field" style="display:none">Pickup outlet
+                            <select name="store_location_id" class="rounded-md border border-border bg-background font-normal">
+                                <option value="">Select an outlet</option>
+                                @foreach($storeLocations as $outlet)
+                                    <option value="{{ $outlet->id }}">{{ $outlet->name }} — {{ \Illuminate\Support\Str::limit(strip_tags($outlet->address), 60) }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <label class="co-field text-sm font-medium" id="division-field">Division
+                            <select name="division" class="rounded-md border border-border bg-background font-normal" id="division-select" disabled>
+                                <option value="">Loading…</option>
+                            </select>
+                        </label>
+                        <label class="co-field text-sm font-medium" id="district-field">District
+                            <select name="district" class="rounded-md border border-border bg-background font-normal" id="district-select" disabled>
+                                <option value="">Select district</option>
+                            </select>
+                        </label>
+                        <label class="co-field text-sm font-medium" id="upazila-field">Upazila / Thana
+                            <select name="upazila" class="rounded-md border border-border bg-background font-normal" id="upazila-select" disabled>
+                                <option value="">Select upazila</option>
+                            </select>
+                        </label>
+                        <label class="co-field text-sm font-medium" id="union-field">Union / Area <span class="font-normal text-muted-foreground">(optional)</span><input name="union_area" class="rounded-md border border-border bg-background font-normal" placeholder="e.g. Union name or locality"></label>
+                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Full address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, village/area details"></textarea></label>
+                        <label class="co-field co-span-2 text-sm font-medium">Order note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
+                    </div>
+                </div>
+                <div class="rounded-lg border border-border bg-card p-5">
                     <h2 class="text-lg font-semibold">Delivery method</h2>
                     <div class="mt-4 co-delivery-method">
                         <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
@@ -60,30 +94,10 @@
                         </label>
                     </div>
                 </div>
-                <div class="rounded-lg border border-border bg-card p-5">
-                    <h2 class="text-lg font-semibold">Delivery information</h2>
-                    <div class="mt-5 co-delivery-grid">
-                        <label class="co-field co-span-2 text-sm font-medium">Full name<input required name="customer_name" class="rounded-md border border-border bg-background font-normal" autocomplete="name"></label>
-                        <label class="co-field text-sm font-medium">Mobile number<input required name="phone" inputmode="tel" class="rounded-md border border-border bg-background font-normal" placeholder="01XXXXXXXXX" autocomplete="tel"></label>
-                        <label class="co-field text-sm font-medium">Email <span class="font-normal text-muted-foreground">(optional)</span><input name="email" type="email" class="rounded-md border border-border bg-background font-normal" autocomplete="email"></label>
-                        <label class="co-field co-span-2 text-sm font-medium" id="pickup-field" style="display:none">Pickup outlet
-                            <select name="store_location_id" class="rounded-md border border-border bg-background font-normal">
-                                <option value="">Select an outlet</option>
-                                @foreach($storeLocations as $outlet)
-                                    <option value="{{ $outlet->id }}">{{ $outlet->name }} — {{ $outlet->address }}</option>
-                                @endforeach
-                            </select>
-                        </label>
-                        <label class="co-field text-sm font-medium" id="district-field">District<input name="district" class="rounded-md border border-border bg-background font-normal"></label>
-                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Full address<textarea name="address" rows="3" class="rounded-md border border-border bg-background font-normal"></textarea></label>
-                        <label class="co-field co-span-2 text-sm font-medium">Order note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
-                    </div>
-                </div>
                 <div class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Payment method</h2><label class="mt-4 flex cursor-pointer items-center gap-3 rounded-md border border-border p-4"><input checked type="radio" name="payment_method" value="cod"><span><strong>Cash on Delivery</strong><br><span class="text-sm text-muted-foreground">Pay when your order arrives.</span></span></label></div>
             </section>
             <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong>Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place order</button></aside>
         </form>
-        <section id="order-success" class="hidden mx-auto max-w-xl rounded-lg border border-border bg-card p-8 text-center"><p class="text-2xl font-bold text-foreground">Order confirmed!</p><p class="mt-3">Your order number is <strong id="order-number"></strong>.</p><p class="mt-2 text-sm text-muted-foreground">We will contact you soon to confirm delivery.</p><a href="/" class="mt-6 inline-block font-semibold underline">Back to home</a></section>
     </main>
     @include('partials.footer')
     @include('partials.mobile-drawer')
@@ -102,19 +116,21 @@
         (function () {
             var dmHome = document.getElementById('dm-home');
             var dmPickup = document.getElementById('dm-pickup');
-            var districtField = document.getElementById('district-field');
-            var addressField = document.getElementById('address-field');
+            var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'union-field', 'address-field'].map(function (id) { return document.getElementById(id); });
             var pickupField = document.getElementById('pickup-field');
+            var divisionInput = document.querySelector('[name="division"]');
             var districtInput = document.querySelector('[name="district"]');
+            var upazilaInput = document.querySelector('[name="upazila"]');
             var addressInput = document.querySelector('[name="address"]');
             var storeSelect = document.querySelector('[name="store_location_id"]');
 
             function syncDeliveryMethod() {
                 var isPickup = dmPickup.checked;
-                districtField.style.display = isPickup ? 'none' : '';
-                addressField.style.display = isPickup ? 'none' : '';
+                homeOnlyFields.forEach(function (el) { el.style.display = isPickup ? 'none' : ''; });
                 pickupField.style.display = isPickup ? '' : 'none';
+                divisionInput.required = !isPickup;
                 districtInput.required = !isPickup;
+                upazilaInput.required = !isPickup;
                 addressInput.required = !isPickup;
                 storeSelect.required = isPickup;
             }
@@ -124,12 +140,51 @@
             syncDeliveryMethod();
         })();
 
+        (function () {
+            var divisionSelect = document.getElementById('division-select');
+            var districtSelect = document.getElementById('district-select');
+            var upazilaSelect = document.getElementById('upazila-select');
+
+            function fillOptions(select, list, placeholder) {
+                select.innerHTML = '<option value="">' + placeholder + '</option>' + list.map(function (item) {
+                    return '<option value="' + item.name.replace(/"/g, '&quot;') + '">' + item.name + '</option>';
+                }).join('');
+            }
+
+            fetch('/data/bd-geo.json').then(function (res) { return res.json(); }).then(function (geo) {
+                fillOptions(divisionSelect, geo.divisions, 'Select division');
+                divisionSelect.disabled = false;
+
+                divisionSelect.addEventListener('change', function () {
+                    var division = geo.divisions.find(function (d) { return d.name === divisionSelect.value; });
+                    districtSelect.innerHTML = '<option value="">Select district</option>';
+                    upazilaSelect.innerHTML = '<option value="">Select upazila</option>';
+                    districtSelect.disabled = !division;
+                    upazilaSelect.disabled = true;
+                    if (!division) return;
+                    var districts = geo.districts.filter(function (d) { return d.division_id === division.id; });
+                    fillOptions(districtSelect, districts, 'Select district');
+                });
+
+                districtSelect.addEventListener('change', function () {
+                    var district = geo.districts.find(function (d) { return d.name === districtSelect.value; });
+                    upazilaSelect.innerHTML = '<option value="">Select upazila</option>';
+                    upazilaSelect.disabled = !district;
+                    if (!district) return;
+                    var upazilas = geo.upazilas.filter(function (u) { return u.district_id === district.id; });
+                    fillOptions(upazilaSelect, upazilas, 'Select upazila');
+                });
+            }).catch(function () {
+                divisionSelect.innerHTML = '<option value="">Could not load — refresh the page</option>';
+            });
+        })();
+
         document.getElementById('checkout-form').addEventListener('submit', async function (event) {
             event.preventDefault(); var form = event.currentTarget, button = document.getElementById('place-order'), error = document.getElementById('checkout-error');
             if (!form.reportValidity()) return;
             error.classList.add('hidden'); button.disabled = true; button.textContent = 'Placing order…';
             var data = Object.fromEntries(new FormData(form).entries()); data.items = items.map(function (item) { return { slug: item.slug, quantity: Number(item.quantity || 1) }; });
-            try { var response = await fetch('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify(data) }); var payload = await response.json(); if (!response.ok) throw new Error(payload.message || Object.values(payload.errors || {})[0]?.[0] || 'Could not place the order.'); if (!buyNow) localStorage.removeItem(cartKey); document.getElementById('checkout-form').classList.add('hidden'); document.getElementById('order-number').textContent = payload.order_number; document.getElementById('order-success').classList.remove('hidden'); } catch (err) { error.textContent = err.message; error.classList.remove('hidden'); button.disabled = false; button.textContent = 'Place order'; }
+            try { var response = await fetch('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify(data) }); var payload = await response.json(); if (!response.ok) throw new Error(payload.message || Object.values(payload.errors || {})[0]?.[0] || 'Could not place the order.'); if (!buyNow) localStorage.removeItem(cartKey); window.location.href = '/thank-you?order=' + encodeURIComponent(payload.order_number); } catch (err) { error.textContent = err.message; error.classList.remove('hidden'); button.disabled = false; button.textContent = 'Place order'; }
         });
     })();
     </script>

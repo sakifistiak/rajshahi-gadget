@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
@@ -257,6 +258,19 @@ class PageController extends Controller
         ] : null;
 
         return view('pages.checkout', compact('buyNow'));
+    }
+
+    public function thankYou(Request $request)
+    {
+        $order = Order::with(['items.product.images', 'storeLocation'])
+            ->where('order_number', $request->query('order'))
+            ->first();
+
+        if (! $order) {
+            return redirect('/');
+        }
+
+        return view('pages.thank-you', compact('order'));
     }
 
     public function shop(Request $request)

@@ -19,6 +19,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
 Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
+Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
