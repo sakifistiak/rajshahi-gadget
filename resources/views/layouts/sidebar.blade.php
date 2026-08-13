@@ -1,6 +1,6 @@
 <!-- Left Sidebar for Desktop -->
 <aside class="hidden lg:flex lg:w-64 lg:flex-col shrink-0 bg-white border-r border-slate-200"
-       x-data="{ openSection: '{{ request()->routeIs('admin.orders.*') || request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.popup-offer.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.live-chat-settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}'
+       x-data="{ openSection: '{{ request()->routeIs('admin.orders.*') || request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.flash-sales.*') || request()->routeIs('admin.filter-attributes.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.popup-offer.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.live-chat-settings.*') || request()->routeIs('admin.store-locations.*') ? 'settings' : 'ecommerce'))) }}'
         }">
  
      <!-- User Profile Card -->
@@ -46,6 +46,10 @@
                      <i data-lucide="calendar-clock" class="h-3.5 w-3.5 {{ request()->routeIs('admin.orders.preorder') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                      <span>Pre-Order</span>
                  </a>
+                <a href="{{ route('admin.flash-sales.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.flash-sales.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="flame" class="h-3.5 w-3.5 {{ request()->routeIs('admin.flash-sales.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                    <span>Flash Sales</span>
+                </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="credit-card" class="h-3.5 w-3.5 text-slate-400"></i>
                     <span>Payments</span>
@@ -69,6 +73,10 @@
                 <a href="{{ route('admin.brands.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.brands.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
                     <i data-lucide="award" class="h-3.5 w-3.5 {{ request()->routeIs('admin.brands.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Brands</span>
+                </a>
+                <a href="{{ route('admin.filter-attributes.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.filter-attributes.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="sliders-horizontal" class="h-3.5 w-3.5 {{ request()->routeIs('admin.filter-attributes.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                    <span>Filter Attributes</span>
                 </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="truck" class="h-3.5 w-3.5 text-slate-400"></i>

@@ -51,6 +51,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('sliders/{slider}/toggle', [AdminHeroSliderController::class, 'toggle'])->name('sliders.toggle');
         Route::resource('promos', AdminPromoBannerController::class);
         Route::patch('promos/{promo}/toggle', [AdminPromoBannerController::class, 'toggle'])->name('promos.toggle');
+        Route::resource('flash-sales', \App\Http\Controllers\Admin\FlashSaleController::class)->except('show');
+        Route::resource('filter-attributes', \App\Http\Controllers\Admin\FilterAttributeController::class)->except('show');
+        Route::post('flash-sales/{flashSale}/products', [\App\Http\Controllers\Admin\FlashSaleController::class, 'addProduct'])->name('flash-sales.products.store');
+        Route::patch('flash-sales/{flashSale}/products/{flashSaleProduct}', [\App\Http\Controllers\Admin\FlashSaleController::class, 'updateProduct'])->name('flash-sales.products.update');
+        Route::delete('flash-sales/{flashSale}/products/{flashSaleProduct}', [\App\Http\Controllers\Admin\FlashSaleController::class, 'removeProduct'])->name('flash-sales.products.destroy');
         Route::resource('customers', AdminCustomerController::class);
         Route::resource('pages', \App\Http\Controllers\Admin\CustomPageController::class);
         Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

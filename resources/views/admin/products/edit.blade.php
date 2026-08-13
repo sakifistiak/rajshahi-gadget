@@ -294,6 +294,17 @@
                 </div>
             </div>
 
+            <!-- Buy Button Label -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Storefront Buy Button') }}</label>
+                <select name="button_type" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                    <option value="auto" {{ old('button_type', $product->button_type ?? 'auto') == 'auto' ? 'selected' : '' }}>Auto — follow the Pre-Order checkbox above</option>
+                    <option value="buy_now" {{ old('button_type', $product->button_type) == 'buy_now' ? 'selected' : '' }}>Always show "Buy Now"</option>
+                    <option value="preorder" {{ old('button_type', $product->button_type) == 'preorder' ? 'selected' : '' }}>Always show "Pre-Order"</option>
+                </select>
+                <p class="text-[11px] text-slate-500 mt-1.5">Controls only the button text on the product card and product page. Use this to override the button independently of the Pre-Order flag above.</p>
+            </div>
+
             <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
                 <a href="{{ route('admin.products.index') }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-sm transition-all">
                     {{ __('Cancel') }}

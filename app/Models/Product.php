@@ -12,7 +12,7 @@ class Product extends Model
         'slug', 'name', 'brand_id', 'category_id', 'condition_id',
         'price', 'compare_at_price', 'rating', 'reviews_count',
         'badge', 'description', 'in_stock', 'warranty',
-        'is_preorder', 'preorder_release_date', 'preorder_note',
+        'is_preorder', 'preorder_release_date', 'preorder_note', 'button_type',
     ];
 
     protected function casts(): array
@@ -68,6 +68,16 @@ class Product extends Model
         return $this->hasMany(ProductColor::class);
     }
 
+    public function flashSaleProducts(): HasMany
+    {
+        return $this->hasMany(FlashSaleProduct::class);
+    }
+
+    public function filterValues(): HasMany
+    {
+        return $this->hasMany(ProductFilterValue::class);
+    }
+
     public function primaryImage(): string
     {
         return $this->images()->where('is_primary', true)->first()?->image_path
@@ -81,5 +91,24 @@ class Product extends Model
             return null;
         }
         return $this->compare_at_price - $this->price;
+    }
+
+    /**
+     * The storefront buy-button label. 'button_type' lets an admin force
+     * "Buy Now" or "Pre-Order" per product; 'auto' (the default) falls back
+     * to the is_preorder flag so existing products keep working unchanged.
+     */
+    public function isPreorderButton(): bool
+    {
+        return match ($this->button_type) {
+            'preorder' => true,
+            'buy_now' => false,
+            default => (bool) $this->is_preorder,
+        };
+    }
+
+    public function buttonLabel(): string
+    {
+        return $this->isPreorderButton() ? 'Pre-Order' : 'Buy Now';
     }
 }

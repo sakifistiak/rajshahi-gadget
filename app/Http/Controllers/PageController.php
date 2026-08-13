@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FilterAttribute;
+use App\Models\FlashSale;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductFilterValue;
 use App\Models\Category;
 use App\Models\Brand;
 use App\Models\BlogPost;
@@ -27,11 +30,19 @@ class PageController extends Controller
         $heroSliders = HeroSlider::where('is_active', true)->orderBy('sort_order')->get();
         $promoBanners = PromoBanner::where('is_active', true)->orderBy('sort_order')->get();
         $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->where('in_stock', true)->latest()->get();
-        
-        $flashDeals = $allProducts->where('compare_at_price', '!=', null)->take(4);
-        if ($flashDeals->isEmpty()) {
-            $flashDeals = $allProducts->take(4);
-        }
+
+        // The flash sale shown on the homepage is whichever campaign is
+        // currently within its start/end window and marked active — there is
+        // no manual product picking here, it's fully driven by the admin's
+        // Flash Sales campaigns (see Admin\FlashSaleController).
+        $activeFlashSale = FlashSale::live()
+            ->with(['items' => function ($query) {
+                $query->orderBy('sort_order')->with(['product.images', 'product.highlights']);
+            }])
+            ->first();
+        $flashSaleItems = $activeFlashSale
+            ? $activeFlashSale->items->filter(fn ($item) => $item->product && ! $item->isSoldOut())
+            : collect();
 
         // Home settings
         $homeHeroActive        = SiteSetting::getValue('home_hero_active', '1') == '1';
@@ -41,11 +52,21 @@ class PageController extends Controller
         $homeFlashTitleStyle   = SectionTitleStyle::sanitizeFull(
             json_decode(SiteSetting::getValue('home_flash_title_style', '{}'), true)
         );
+        $homeFlashBadgeActive   = SiteSetting::getValue('home_flash_badge_active', '1') == '1';
+        $homeFlashBadgeIcon     = SiteSetting::getValue('home_flash_badge_icon', '');
+        $homeFlashBadgeText     = SiteSetting::getValue('home_flash_badge_text', 'Flash Deals');
+        $homeFlashSubtitleActive = SiteSetting::getValue('home_flash_subtitle_active', '1') == '1';
+        $homeFlashSubtitleText  = SiteSetting::getValue('home_flash_subtitle_text', 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery');
         $homePreorderActive     = SiteSetting::getValue('home_preorder_active', '0') == '1';
         $homePreorderTitle      = SiteSetting::getValue('home_preorder_title', 'Pre-Order Now');
         $homePreorderHighlight  = SiteSetting::getValue('home_preorder_highlight', 'Pre-Order');
         $homePreorderPosition   = SiteSetting::getValue('home_preorder_position', 'below_flash');
         $homePreorderLimit      = (int) SiteSetting::getValue('home_preorder_limit', '4');
+        $homePreorderBadgeActive   = SiteSetting::getValue('home_preorder_badge_active', '1') == '1';
+        $homePreorderBadgeIcon     = SiteSetting::getValue('home_preorder_badge_icon', '');
+        $homePreorderBadgeText     = SiteSetting::getValue('home_preorder_badge_text', 'Pre-Order');
+        $homePreorderSubtitleActive = SiteSetting::getValue('home_preorder_subtitle_active', '1') == '1';
+        $homePreorderSubtitleText  = SiteSetting::getValue('home_preorder_subtitle_text', 'Reserve now, get it as soon as it launches');
         // is_preorder is independent of in_stock — a pre-order product shows here
         // regardless of whether it's currently in stock.
         $preorderProducts       = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
@@ -140,7 +161,8 @@ class PageController extends Controller
             'heroSliders',
             'promoBanners',
             'allProducts',
-            'flashDeals',
+            'activeFlashSale',
+            'flashSaleItems',
             'productSections',
             'intactProducts',
             'withoutBoxProducts',
@@ -153,11 +175,21 @@ class PageController extends Controller
             'homeFlashTitle',
             'homeFlashHighlight',
             'homeFlashTitleStyle',
+            'homeFlashBadgeActive',
+            'homeFlashBadgeIcon',
+            'homeFlashBadgeText',
+            'homeFlashSubtitleActive',
+            'homeFlashSubtitleText',
             'homePreorderActive',
             'homePreorderTitle',
             'homePreorderHighlight',
             'homePreorderPosition',
             'preorderProducts',
+            'homePreorderBadgeActive',
+            'homePreorderBadgeIcon',
+            'homePreorderBadgeText',
+            'homePreorderSubtitleActive',
+            'homePreorderSubtitleText',
             'homePromosActive',
             'homeTestimonialsActive',
             'homeTickerActive',
@@ -277,28 +309,72 @@ class PageController extends Controller
     {
         $query = Product::with(['category', 'brand', 'condition', 'images', 'highlights']);
 
-        // Condition filter
-        if ($request->filled('condition')) {
-            $cond = $request->condition;
-            $query->whereHas('condition', function($q) use ($cond) {
-                $q->where('slug', $cond);
+        // Each filter accepts either a single value (?condition=intact, used by
+        // plain nav links) or multiple (?condition[]=intact&condition[]=pre-owned,
+        // used by the multi-select checkboxes) — (array) casting a string wraps
+        // it into a single-element array so both forms work identically.
+        $conditionSlugs = array_filter((array) $request->input('condition', []));
+        $categorySlugs  = array_filter((array) $request->input('category', []));
+        $brandSlugs     = array_filter((array) $request->input('brand', []));
+
+        if (! empty($conditionSlugs)) {
+            $query->whereHas('condition', function ($q) use ($conditionSlugs) {
+                $q->whereIn('slug', $conditionSlugs);
             });
         }
 
-        // Category filter
-        if ($request->filled('category')) {
-            $cat = $request->category;
-            $query->whereHas('category', function($q) use ($cat) {
-                $q->where('slug', $cat);
+        if (! empty($categorySlugs)) {
+            $query->whereHas('category', function ($q) use ($categorySlugs) {
+                $q->whereIn('slug', $categorySlugs);
             });
         }
 
-        // Brand filter
-        if ($request->filled('brand')) {
-            $b = $request->brand;
-            $query->whereHas('brand', function($q) use ($b) {
-                $q->where('slug', $b);
+        if (! empty($brandSlugs)) {
+            $query->whereHas('brand', function ($q) use ($brandSlugs) {
+                $q->whereIn('slug', $brandSlugs);
             });
+        }
+
+        // Spec filters (RAM, Storage, Connection, ...) only exist per category,
+        // so they only render — and only apply — once at least one category is
+        // selected. A mouse's category has no "Storage" attribute defined, so
+        // that filter simply never appears for it.
+        $filterAttributes = collect();
+        if (! empty($categorySlugs)) {
+            $filterAttributes = FilterAttribute::whereHas('category', function ($q) use ($categorySlugs) {
+                $q->whereIn('slug', $categorySlugs);
+            })->orderBy('sort_order')->get();
+
+            foreach ($filterAttributes as $attribute) {
+                $bounds = ProductFilterValue::where('filter_attribute_id', $attribute->id)
+                    ->selectRaw('MIN(numeric_value) as min_bound, MAX(numeric_value) as max_bound')
+                    ->first();
+                $attribute->min_bound = $bounds->min_bound;
+                $attribute->max_bound = $bounds->max_bound;
+
+                if ($attribute->type === 'range') {
+                    $min = $request->input("spec_min.{$attribute->id}");
+                    $max = $request->input("spec_max.{$attribute->id}");
+                    if (($min !== null && $min !== '') || ($max !== null && $max !== '')) {
+                        $query->whereHas('filterValues', function ($q) use ($attribute, $min, $max) {
+                            $q->where('filter_attribute_id', $attribute->id);
+                            if ($min !== null && $min !== '') {
+                                $q->where('numeric_value', '>=', (float) $min);
+                            }
+                            if ($max !== null && $max !== '') {
+                                $q->where('numeric_value', '<=', (float) $max);
+                            }
+                        });
+                    }
+                } else {
+                    $selected = array_filter((array) $request->input("spec_select.{$attribute->id}", []));
+                    if (! empty($selected)) {
+                        $query->whereHas('filterValues', function ($q) use ($attribute, $selected) {
+                            $q->where('filter_attribute_id', $attribute->id)->whereIn('text_value', $selected);
+                        });
+                    }
+                }
+            }
         }
 
         // Max Price filter
@@ -329,7 +405,10 @@ class PageController extends Controller
         $brands = Brand::all();
         $conditions = Condition::all();
 
-        return view('pages.shop', compact('products', 'categories', 'brands', 'conditions'));
+        return view('pages.shop', compact(
+            'products', 'categories', 'brands', 'conditions',
+            'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes'
+        ));
     }
 
     public function preorder(Request $request)

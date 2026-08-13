@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\Brand;
+use App\Support\ProductFilterSync;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
@@ -46,6 +47,7 @@ class ProductController extends Controller
             'is_preorder' => 'boolean',
             'preorder_release_date' => 'nullable|date',
             'preorder_note' => 'nullable|string|max:255',
+            'button_type' => 'nullable|in:auto,buy_now,preorder',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
@@ -81,6 +83,7 @@ class ProductController extends Controller
             'is_preorder' => $request->has('is_preorder'),
             'preorder_release_date' => $request->preorder_release_date,
             'preorder_note' => $request->preorder_note,
+            'button_type' => $request->input('button_type', 'auto'),
             'rating' => 4.5, // default for new
             'reviews_count' => 0,
         ]);
@@ -148,6 +151,8 @@ class ProductController extends Controller
             }
         }
 
+        ProductFilterSync::syncProduct($product);
+
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
     }
 
@@ -156,7 +161,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $conditions = Condition::all();
         $brands = Brand::all();
-        $product->load(['highlights', 'specs', 'images', 'colors']);
+        $product->load(['highlights', 'specs', 'images', 'colors', 'filterValues']);
         return view('admin.products.edit', compact('product', 'categories', 'conditions', 'brands'));
     }
 
@@ -176,6 +181,7 @@ class ProductController extends Controller
             'is_preorder' => 'boolean',
             'preorder_release_date' => 'nullable|date',
             'preorder_note' => 'nullable|string|max:255',
+            'button_type' => 'nullable|in:auto,buy_now,preorder',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
@@ -204,6 +210,7 @@ class ProductController extends Controller
             'is_preorder' => $request->has('is_preorder'),
             'preorder_release_date' => $request->preorder_release_date,
             'preorder_note' => $request->preorder_note,
+            'button_type' => $request->input('button_type', 'auto'),
         ]);
 
         // Sync highlights (delete old and insert new)
@@ -277,6 +284,8 @@ class ProductController extends Controller
                 ]);
             }
         }
+
+        ProductFilterSync::syncProduct($product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully!');
     }

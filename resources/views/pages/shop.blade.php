@@ -40,12 +40,12 @@
                     <div class="space-y-2">
                         @foreach($conditions as $cond)
                             <label class="flex cursor-pointer items-center gap-2 text-sm group">
-                                <input type="radio" name="condition" value="{{ $cond->slug }}" 
-                                       class="h-4 w-4 rounded-full border-border accent-foreground cursor-pointer"
-                                       {{ request('condition') === $cond->slug ? 'checked' : '' }}
+                                <input type="checkbox" name="condition[]" value="{{ $cond->slug }}"
+                                       class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
+                                       {{ in_array($cond->slug, $conditionSlugs) ? 'checked' : '' }}
                                        onchange="this.form.submit()" />
-                                <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ request('condition') === $cond->slug ? 'font-bold text-foreground' : '' }}">
-                                    {{ strtoupper($cond->name) }}
+                                <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($cond->slug, $conditionSlugs) ? 'font-bold text-foreground' : '' }}">
+                                    {{ strtoupper($cond->label) }}
                                 </span>
                             </label>
                         @endforeach
@@ -58,11 +58,11 @@
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
                         @foreach($categories as $cat)
                             <label class="flex cursor-pointer items-center gap-2 text-sm group">
-                                <input type="radio" name="category" value="{{ $cat->slug }}" 
-                                       class="h-4 w-4 rounded-full border-border accent-foreground cursor-pointer"
-                                       {{ request('category') === $cat->slug ? 'checked' : '' }}
+                                <input type="checkbox" name="category[]" value="{{ $cat->slug }}"
+                                       class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
+                                       {{ in_array($cat->slug, $categorySlugs) ? 'checked' : '' }}
                                        onchange="this.form.submit()" />
-                                <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ request('category') === $cat->slug ? 'font-bold text-foreground' : '' }}">
+                                <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($cat->slug, $categorySlugs) ? 'font-bold text-foreground' : '' }}">
                                     {{ $cat->name }}
                                 </span>
                             </label>
@@ -76,17 +76,58 @@
                     <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
                         @foreach($brands as $b)
                             <label class="flex cursor-pointer items-center gap-2 text-sm group">
-                                <input type="radio" name="brand" value="{{ $b->slug }}" 
-                                       class="h-4 w-4 rounded-full border-border accent-foreground cursor-pointer"
-                                       {{ request('brand') === $b->slug ? 'checked' : '' }}
+                                <input type="checkbox" name="brand[]" value="{{ $b->slug }}"
+                                       class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
+                                       {{ in_array($b->slug, $brandSlugs) ? 'checked' : '' }}
                                        onchange="this.form.submit()" />
-                                <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ request('brand') === $b->slug ? 'font-bold text-foreground' : '' }}">
+                                <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($b->slug, $brandSlugs) ? 'font-bold text-foreground' : '' }}">
                                     {{ $b->name }}
                                 </span>
                             </label>
                         @endforeach
                     </div>
                 </div>
+
+                <!-- Category-specific spec filters (RAM, Storage, Connection, ...) -->
+                @if($filterAttributes->count())
+                    @foreach($filterAttributes as $attr)
+                        <div>
+                            <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                                {{ $attr->label }}{{ $attr->unit ? ' (' . $attr->unit . ')' : '' }}
+                            </p>
+                            @if($attr->type === 'range')
+                                <div class="flex items-center gap-2">
+                                    <input type="number" name="spec_min[{{ $attr->id }}]"
+                                           value="{{ request("spec_min.{$attr->id}") }}"
+                                           placeholder="{{ $attr->min_bound !== null ? (int) $attr->min_bound : 'Min' }}"
+                                           class="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs"
+                                           onchange="this.form.submit()" />
+                                    <span class="text-xs text-muted-foreground">–</span>
+                                    <input type="number" name="spec_max[{{ $attr->id }}]"
+                                           value="{{ request("spec_max.{$attr->id}") }}"
+                                           placeholder="{{ $attr->max_bound !== null ? (int) $attr->max_bound : 'Max' }}"
+                                           class="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs"
+                                           onchange="this.form.submit()" />
+                                </div>
+                            @else
+                                <div class="space-y-2">
+                                    @foreach($attr->optionList() as $option)
+                                        @php $selectedOptions = (array) request("spec_select.{$attr->id}", []); @endphp
+                                        <label class="flex cursor-pointer items-center gap-2 text-sm group">
+                                            <input type="checkbox" name="spec_select[{{ $attr->id }}][]" value="{{ $option }}"
+                                                   class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
+                                                   {{ in_array($option, $selectedOptions) ? 'checked' : '' }}
+                                                   onchange="this.form.submit()" />
+                                            <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($option, $selectedOptions) ? 'font-bold text-foreground' : '' }}">
+                                                {{ $option }}
+                                            </span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                @endif
 
                 <!-- Max Price Filter -->
                 <div>

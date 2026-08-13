@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FlashSaleProduct;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -46,9 +47,33 @@ class OrderController extends Controller
             $isPreorder = false;
             foreach ($data['items'] as $item) {
                 $product = $products[$item['slug']];
-                $lineTotal = $product->price * $item['quantity'];
+                $quantity = $item['quantity'];
+
+                // Re-price from any live flash sale server-side — never trust a
+                // price the client submits. Lock the row so concurrent orders
+                // can't both claim the last few units of a limited stock deal.
+                $flashSaleItem = FlashSaleProduct::where('product_id', $product->id)
+                    ->whereHas('flashSale', fn ($q) => $q->live())
+                    ->lockForUpdate()
+                    ->first();
+
+                $unitPrice = $product->price;
+                if ($flashSaleItem) {
+                    $hasStock = $flashSaleItem->stock_limit === null
+                        || ($flashSaleItem->stock_limit - $flashSaleItem->sold_count) >= $quantity;
+
+                    // If the flash stock ran out between page load and checkout,
+                    // fall back to the regular price rather than blocking the
+                    // order outright — the customer still gets the product.
+                    if ($hasStock) {
+                        $unitPrice = $flashSaleItem->priceFor($product->price);
+                        $flashSaleItem->increment('sold_count', $quantity);
+                    }
+                }
+
+                $lineTotal = $unitPrice * $quantity;
                 $subtotal += $lineTotal;
-                $lines[] = compact('product', 'item', 'lineTotal');
+                $lines[] = compact('product', 'item', 'lineTotal', 'unitPrice', 'quantity');
                 if ($product->is_preorder) {
                     $isPreorder = true;
                 }
@@ -68,8 +93,8 @@ class OrderController extends Controller
                     'product_id' => $line['product']->id,
                     'product_name' => $line['product']->name,
                     'product_slug' => $line['product']->slug,
-                    'unit_price' => $line['product']->price,
-                    'quantity' => $line['item']['quantity'],
+                    'unit_price' => $line['unitPrice'],
+                    'quantity' => $line['quantity'],
                     'line_total' => $line['lineTotal'],
                 ]);
             }

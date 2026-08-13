@@ -53,11 +53,21 @@ class HomeSettingController extends Controller
             'home_flash_active'         => '1',
             'home_flash_title'          => 'Limited time deals',
             'home_flash_highlight'      => 'deals',
+            'home_flash_badge_active'   => '1',
+            'home_flash_badge_icon'     => '',
+            'home_flash_badge_text'     => 'Flash Deals',
+            'home_flash_subtitle_active' => '1',
+            'home_flash_subtitle_text'  => 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery',
             'home_preorder_active'      => '0',
             'home_preorder_title'       => 'Pre-Order Now',
             'home_preorder_highlight'   => 'Pre-Order',
             'home_preorder_position'    => 'below_flash',
             'home_preorder_limit'       => '4',
+            'home_preorder_badge_active'   => '1',
+            'home_preorder_badge_icon'     => '',
+            'home_preorder_badge_text'     => 'Pre-Order',
+            'home_preorder_subtitle_active' => '1',
+            'home_preorder_subtitle_text'  => 'Reserve now, get it as soon as it launches',
             'home_promos_active'        => '1',
             'home_testimonials_active'  => '1',
             'home_ticker_active'        => '1',
@@ -152,7 +162,11 @@ class HomeSettingController extends Controller
         $checkboxKeys = [
             'home_hero_active',
             'home_flash_active',
+            'home_flash_badge_active',
+            'home_flash_subtitle_active',
             'home_preorder_active',
+            'home_preorder_badge_active',
+            'home_preorder_subtitle_active',
             'home_promos_active',
             'home_testimonials_active',
             'home_ticker_active',
@@ -213,6 +227,15 @@ class HomeSettingController extends Controller
         if ($request->has('home_flash_highlight')) {
             SiteSetting::setValue('home_flash_highlight', $request->input('home_flash_highlight', ''));
         }
+        if ($request->has('home_flash_badge_icon')) {
+            SiteSetting::setValue('home_flash_badge_icon', mb_substr(trim($request->input('home_flash_badge_icon', '')), 0, 8));
+        }
+        if ($request->has('home_flash_badge_text')) {
+            SiteSetting::setValue('home_flash_badge_text', mb_substr(trim($request->input('home_flash_badge_text', '')), 0, 40));
+        }
+        if ($request->has('home_flash_subtitle_text')) {
+            SiteSetting::setValue('home_flash_subtitle_text', mb_substr(trim($request->input('home_flash_subtitle_text', '')), 0, 150));
+        }
         if ($request->has('home_flash_title_style')) {
             $decodedFlashStyle = json_decode($request->input('home_flash_title_style', '{}'), true);
             SiteSetting::setValue(
@@ -237,6 +260,15 @@ class HomeSettingController extends Controller
             $limit = (int) $request->input('home_preorder_limit', 4);
             $limit = max(1, min(12, $limit));
             SiteSetting::setValue('home_preorder_limit', (string) $limit);
+        }
+        if ($request->has('home_preorder_badge_icon')) {
+            SiteSetting::setValue('home_preorder_badge_icon', mb_substr(trim($request->input('home_preorder_badge_icon', '')), 0, 8));
+        }
+        if ($request->has('home_preorder_badge_text')) {
+            SiteSetting::setValue('home_preorder_badge_text', mb_substr(trim($request->input('home_preorder_badge_text', '')), 0, 40));
+        }
+        if ($request->has('home_preorder_subtitle_text')) {
+            SiteSetting::setValue('home_preorder_subtitle_text', mb_substr(trim($request->input('home_preorder_subtitle_text', '')), 0, 150));
         }
 
         if ($request->has('home_sections_json')) {

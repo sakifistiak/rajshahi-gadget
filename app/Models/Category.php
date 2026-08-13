@@ -23,4 +23,9 @@ class Category extends Model
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
+
+    public function filterAttributes(): HasMany
+    {
+        return $this->hasMany(FilterAttribute::class)->orderBy('sort_order');
+    }
 }

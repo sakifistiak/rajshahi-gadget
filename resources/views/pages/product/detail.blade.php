@@ -208,7 +208,7 @@
                     <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 group relative h-12 flex-1 overflow-hidden rounded-sm px-8 shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]">
                         <span class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></span>
                         <span class="relative flex items-center gap-3">
-                            <span class="text-xs font-bold uppercase tracking-[0.14em]">{{ $product->is_preorder ? 'Pre-Order Now' : 'Buy Now' }}</span>
+                            <span class="text-xs font-bold uppercase tracking-[0.14em]">{{ $product->isPreorderButton() ? 'Pre-Order Now' : 'Buy Now' }}</span>
                             <span class="h-4 w-px bg-current opacity-30"></span>
                             <span class="text-base font-semibold tabular-nums">৳ {{ number_format($product->price) }}</span>
                         </span>

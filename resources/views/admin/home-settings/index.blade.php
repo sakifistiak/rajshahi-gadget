@@ -4,6 +4,16 @@
     flashTitle: {{ json_encode($settings['home_flash_title'] ?? 'Limited time deals') }},
     flashHighlight: {{ json_encode($settings['home_flash_highlight'] ?? 'deals') }},
     flashStyle: {{ json_encode($flashTitleStyle) }},
+    flashBadgeActive: {{ ($settings['home_flash_badge_active'] ?? '1') == '1' ? 'true' : 'false' }},
+    flashBadgeIcon: {{ json_encode($settings['home_flash_badge_icon'] ?? '') }},
+    flashBadgeText: {{ json_encode($settings['home_flash_badge_text'] ?? 'Flash Deals') }},
+    flashSubtitleActive: {{ ($settings['home_flash_subtitle_active'] ?? '1') == '1' ? 'true' : 'false' }},
+    flashSubtitleText: {{ json_encode($settings['home_flash_subtitle_text'] ?? 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery') }},
+    preorderBadgeActive: {{ ($settings['home_preorder_badge_active'] ?? '1') == '1' ? 'true' : 'false' }},
+    preorderBadgeIcon: {{ json_encode($settings['home_preorder_badge_icon'] ?? '') }},
+    preorderBadgeText: {{ json_encode($settings['home_preorder_badge_text'] ?? 'Pre-Order') }},
+    preorderSubtitleActive: {{ ($settings['home_preorder_subtitle_active'] ?? '1') == '1' ? 'true' : 'false' }},
+    preorderSubtitleText: {{ json_encode($settings['home_preorder_subtitle_text'] ?? 'Reserve now, get it as soon as it launches') }},
     titleStyleDefaults: {{ json_encode($titleStyleDefaults) }},
     titleStyleFonts: {{ json_encode($titleStyleFonts) }},
     titleStyleShadows: {{ json_encode($titleStyleShadows) }},
@@ -169,6 +179,46 @@
                 </div>
 
                 <x-title-style-editor path="flashStyle" />
+
+                <!-- Badge pill ("🔥 Flash Deals") -->
+                <div class="pt-4 border-t border-slate-100">
+                    <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all mb-4">
+                        <div>
+                            <span class="text-sm font-bold text-slate-800 block">Badge Pill</span>
+                            <span class="text-xs text-slate-500">The small "Flash Deals" label shown above the title.</span>
+                        </div>
+                        <input type="checkbox" name="home_flash_badge_active" x-model="flashBadgeActive" value="1" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5" x-show="flashBadgeActive">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Icon / Emoji <span class="normal-case font-normal text-slate-400">(leave blank for default flame icon)</span></label>
+                            <input type="text" name="home_flash_badge_icon" x-model="flashBadgeIcon" maxlength="8" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. ⚡ or 🔥">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Badge Text</label>
+                            <input type="text" name="home_flash_badge_text" x-model="flashBadgeText" maxlength="40" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Flash Deals">
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200" x-show="flashBadgeActive">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Preview:</span>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-orange-50 px-3 py-1 text-xs font-medium text-orange-600" x-text="(flashBadgeIcon || '🔥') + ' ' + flashBadgeText"></span>
+                    </div>
+                </div>
+
+                <!-- Subtitle line under the title -->
+                <div class="pt-4 border-t border-slate-100">
+                    <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all mb-4">
+                        <div>
+                            <span class="text-sm font-bold text-slate-800 block">Subtitle Line</span>
+                            <span class="text-xs text-slate-500">The small description line under the title (e.g. delivery/EMI perks).</span>
+                        </div>
+                        <input type="checkbox" name="home_flash_subtitle_active" x-model="flashSubtitleActive" value="1" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    </label>
+                    <div x-show="flashSubtitleActive">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Subtitle Text</label>
+                        <input type="text" name="home_flash_subtitle_text" x-model="flashSubtitleText" maxlength="150" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Limited stock · 0% EMI up to 12 months · Free Dhaka delivery">
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -213,6 +263,46 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Products to Show</label>
                         <input type="number" name="home_preorder_limit" min="1" max="12" value="{{ $settings['home_preorder_limit'] ?? '4' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Badge pill ("Pre-Order") -->
+                <div class="pt-4 border-t border-slate-100">
+                    <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all mb-4">
+                        <div>
+                            <span class="text-sm font-bold text-slate-800 block">Badge Pill</span>
+                            <span class="text-xs text-slate-500">The small "Pre-Order" label shown above the title.</span>
+                        </div>
+                        <input type="checkbox" name="home_preorder_badge_active" x-model="preorderBadgeActive" value="1" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5" x-show="preorderBadgeActive">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Icon <span class="normal-case font-normal text-slate-400">(leave blank for default clock icon)</span></label>
+                            <input type="text" name="home_preorder_badge_icon" x-model="preorderBadgeIcon" maxlength="8" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Badge Text</label>
+                            <input type="text" name="home_preorder_badge_text" x-model="preorderBadgeText" maxlength="40" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Pre-Order">
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200" x-show="preorderBadgeActive">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Preview:</span>
+                        <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600" x-text="(preorderBadgeIcon ? preorderBadgeIcon + ' ' : '') + preorderBadgeText"></span>
+                    </div>
+                </div>
+
+                <!-- Subtitle line under the title -->
+                <div class="pt-4 border-t border-slate-100">
+                    <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all mb-4">
+                        <div>
+                            <span class="text-sm font-bold text-slate-800 block">Subtitle Line</span>
+                            <span class="text-xs text-slate-500">The small description line under the title.</span>
+                        </div>
+                        <input type="checkbox" name="home_preorder_subtitle_active" x-model="preorderSubtitleActive" value="1" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    </label>
+                    <div x-show="preorderSubtitleActive">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Subtitle Text</label>
+                        <input type="text" name="home_preorder_subtitle_text" x-model="preorderSubtitleText" maxlength="150" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Reserve now, get it as soon as it launches">
                     </div>
                 </div>
             </div>
