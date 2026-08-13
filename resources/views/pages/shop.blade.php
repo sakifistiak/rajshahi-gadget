@@ -108,63 +108,7 @@
                 </button>
             </form>
         </aside><div data-tsd-source="/src/routes/shop.tsx:132:9"><div class="flex flex-wrap items-center gap-3" data-tsd-source="/src/routes/shop.tsx:133:11"><button class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm lg:hidden" data-tsd-source="/src/routes/shop.tsx:134:13"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal h-4 w-4" aria-hidden="true" data-tsd-source="/src/routes/shop.tsx:138:15"><path d="M10 5H3"></path><path d="M12 19H3"></path><path d="M14 3v4"></path><path d="M16 17v4"></path><path d="M21 12h-9"></path><path d="M21 19h-5"></path><path d="M21 5h-7"></path><path d="M8 10v4"></path><path d="M8 12H3"></path></svg>Filters </button><div class="ms-auto flex flex-wrap items-center gap-2 text-xs" data-tsd-source="/src/routes/shop.tsx:141:13"><a data-tsd-source="/src/routes/shop.tsx:148:17" class="rounded-full px-3 py-1.5 bg-foreground text-background active" href="/shop?sort=featured&amp;condition=" data-status="active" aria-current="page">Featured</a><a data-tsd-source="/src/routes/shop.tsx:148:17" href="/shop?sort=price-asc&amp;condition=" class="rounded-full px-3 py-1.5 border border-border hover:bg-secondary">Price ↑</a><a data-tsd-source="/src/routes/shop.tsx:148:17" href="/shop?sort=price-desc&amp;condition=" class="rounded-full px-3 py-1.5 border border-border hover:bg-secondary">Price ↓</a><a data-tsd-source="/src/routes/shop.tsx:148:17" href="/shop?sort=rating&amp;condition=" class="rounded-full px-3 py-1.5 border border-border hover:bg-secondary">Top rated</a></div></div><p class="mt-4 text-sm text-muted-foreground">Showing <span class="font-medium text-foreground">{{ $products->total() ?? $products->count() }}</span> products</p><div class="mt-6 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 xl:grid-cols-3">@foreach ($products as $product)
-<article class="group flex h-full flex-col">
-    <div class="relative overflow-hidden rounded-md bg-surface">
-        <a href="/product/{{ $product->slug }}" class="block">
-            <div class="aspect-square w-full overflow-hidden">
-                <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="900" height="900" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
-            </div>
-        </a>
-        @if ($product->badge)
-            <span class="product-card-badge absolute left-1.5 top-1.5 rounded font-extrabold uppercase tracking-normal shadow-xs pointer-events-none z-10" style="font-size: 8px !important; line-height: 10px !important; padding: 1.5px 4px !important; width: max-content !important; max-width: calc(100% - 12px) !important;">
-                {{ $product->badge }}
-            </span>
-        @endif
-    </div>
-    <div class="flex flex-1 flex-col pt-2 sm:pt-3">
-        <h3 class="line-clamp-2 text-xs sm:text-sm font-semibold leading-snug tracking-tight text-foreground">
-            <a href="/product/{{ $product->slug }}" class="hover:underline">{{ $product->name }}</a>
-        </h3>
-        <ul class="mt-1.5 sm:mt-2 space-y-0.5 sm:space-y-1 text-[10px] sm:text-xs leading-tight text-muted-foreground">
-            @if($product->relationLoaded('highlights') && $product->highlights->count())
-                @foreach ($product->highlights->take(4) as $highlight)
-                    <li class="flex items-start gap-1.5">
-                        <span aria-hidden="true" class="mt-[4px] h-1 w-1 shrink-0 rounded-full bg-muted-foreground/60"></span>
-                        <span class="line-clamp-1">{{ $highlight->text }}</span>
-                    </li>
-                @endforeach
-            @else
-                @if($product->brand)
-                    <li class="flex items-start gap-1.5">
-                        <span aria-hidden="true" class="mt-[4px] h-1 w-1 shrink-0 rounded-full bg-muted-foreground/60"></span>
-                        <span class="line-clamp-1">{{ $product->brand->name }}</span>
-                    </li>
-                @endif
-                @if($product->category)
-                    <li class="flex items-start gap-1.5">
-                        <span aria-hidden="true" class="mt-[4px] h-1 w-1 shrink-0 rounded-full bg-muted-foreground/60"></span>
-                        <span class="line-clamp-1">{{ $product->category->name }}</span>
-                    </li>
-                @endif
-            @endif
-        </ul>
-        <div class="mt-2 sm:mt-3 flex flex-wrap items-baseline gap-x-1.5 sm:gap-x-2">
-            <span class="text-sm sm:text-base font-semibold text-foreground">৳ {{ number_format($product->price) }}</span>
-            @if ($product->compare_at_price)
-                <span class="text-xs sm:text-sm text-muted-foreground line-through">৳ {{ number_format($product->compare_at_price) }}</span>
-            @endif
-        </div>
-        <div class="mt-2 sm:mt-3 flex items-center justify-between gap-1.5 sm:gap-2">
-            <a href="/cart" class="h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center shrink-0 transition-colors shadow-sm" title="Add to Cart" aria-label="Add to Cart">
-                <i data-lucide="plus" class="h-4 w-4"></i>
-            </a>
-            <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now flex-1 inline-flex items-center justify-center h-8 sm:h-9 px-3 sm:px-4 rounded-full font-bold text-xs sm:text-sm transition-all shadow-sm active:scale-[0.98]" style="background-color: #24272c !important; color: #ffffff !important;">
-                Buy Now
-            </a>
-
-        </div>
-    </div>
-</article>
+@include('partials.product-card', ['product' => $product])
 @endforeach</div></div></div></div><!--/$--></main>@include('partials.footer')</div><nav aria-label="Mobile footer navigation" class="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur sm:hidden" data-tsd-source="/src/components/site/MobileFooterNav.tsx:14:5"><ul class="grid grid-cols-4" data-tsd-source="/src/components/site/MobileFooterNav.tsx:18:7"><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" href="/" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house h-5 w-5 opacity-80" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Home</a></li><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-foreground active" href="/shop" data-status="active" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>Explore</a></li><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" href="/customer-spotlight" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles h-5 w-5 opacity-80" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>Spotlight</a></li><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" href="/customer-feedback" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-heart h-5 w-5 opacity-80" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path><path d="M7.5 9.5c0 .687.265 1.383.697 1.844l3.009 3.264a1.14 1.14 0 0 0 .407.314 1 1 0 0 0 .783-.004 1.14 1.14 0 0 0 .398-.31l3.008-3.264A2.77 2.77 0 0 0 16.5 9.5 2.5 2.5 0 0 0 12 8a2.5 2.5 0 0 0-4.5 1.5"></path></svg>Feedback</a></li></ul></nav><div class="fixed bottom-20 right-4 z-50 flex flex-col items-center sm:bottom-6" data-tsd-source="/src/components/site/ChatWidget.tsx:214:7"><button class="flex flex-col items-center transition-transform hover:scale-105 active:scale-95" aria-label="Open live chat" title="Need help?" data-tsd-source="/src/components/site/ChatWidget.tsx:215:9"><img src="/assets/support-agent-BWJyOWv2.png" alt="Live chat support agent" width="512" height="512" loading="lazy" class="agent-float h-20 w-20 select-none object-contain drop-shadow-lg sm:h-24 sm:w-24" data-tsd-source="/src/components/site/ChatWidget.tsx:221:11"/><span class="-mt-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm" data-tsd-source="/src/components/site/ChatWidget.tsx:229:11">Live Chat</span></button></div><section aria-label="Notifications alt+T" tabindex="-1" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></section><script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInputs = document.querySelectorAll('input[type="search"]');

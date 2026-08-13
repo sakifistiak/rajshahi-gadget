@@ -1,5 +1,5 @@
-<article class="group flex h-full flex-col">
-    <div class="relative overflow-hidden rounded-md bg-surface">
+<article class="group flex h-full flex-col border border-border bg-secondary overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px">
+    <div class="relative overflow-hidden bg-surface">
         <a href="/product/{{ $product->slug }}" class="block">
             <div class="aspect-square w-full overflow-hidden">
                 <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="900" height="900" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
@@ -16,7 +16,7 @@
             </span>
         @endif
     </div>
-    <div class="flex flex-1 flex-col pt-3" style="padding-top:10px">
+    <div class="flex flex-1 flex-col" style="padding:10px 12px 12px">
         <h3 class="line-clamp-2 text-xs font-semibold leading-snug text-foreground" style="margin:0">
             <a href="/product/{{ $product->slug }}" style="text-decoration:none">{{ $product->name }}</a>
         </h3>
