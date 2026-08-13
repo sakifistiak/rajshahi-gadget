@@ -27,6 +27,9 @@
                     @elseif ($order->status === 'cancelled')
                         <span class="px-2.5 py-0.5 text-[10px] font-extrabold rounded-full bg-rose-50 text-rose-600 border border-rose-100">Cancelled</span>
                     @endif
+                    @if ($order->is_preorder)
+                        <span class="px-2.5 py-0.5 text-[10px] font-extrabold rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase">Pre-Order</span>
+                    @endif
                 </div>
                 <p class="text-xs text-slate-500 mt-0.5">Placed on {{ $order->created_at->format('F d, Y \a\t h:i A') }}</p>
             </div>

@@ -40,6 +40,19 @@ class PageController extends Controller
         $homeFlashTitleStyle   = SectionTitleStyle::sanitizeFull(
             json_decode(SiteSetting::getValue('home_flash_title_style', '{}'), true)
         );
+        $homePreorderActive     = SiteSetting::getValue('home_preorder_active', '0') == '1';
+        $homePreorderTitle      = SiteSetting::getValue('home_preorder_title', 'Pre-Order Now');
+        $homePreorderHighlight  = SiteSetting::getValue('home_preorder_highlight', 'Pre-Order');
+        $homePreorderPosition   = SiteSetting::getValue('home_preorder_position', 'below_flash');
+        $homePreorderLimit      = (int) SiteSetting::getValue('home_preorder_limit', '4');
+        // is_preorder is independent of in_stock — a pre-order product shows here
+        // regardless of whether it's currently in stock.
+        $preorderProducts       = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
+            ->preorder()
+            ->latest()
+            ->take($homePreorderLimit)
+            ->get();
+
         $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
         $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
         $homeTickerActive       = SiteSetting::getValue('home_ticker_active', '1') == '1';
@@ -139,6 +152,11 @@ class PageController extends Controller
             'homeFlashTitle',
             'homeFlashHighlight',
             'homeFlashTitleStyle',
+            'homePreorderActive',
+            'homePreorderTitle',
+            'homePreorderHighlight',
+            'homePreorderPosition',
+            'preorderProducts',
             'homePromosActive',
             'homeTestimonialsActive',
             'homeTickerActive',
@@ -224,7 +242,9 @@ class PageController extends Controller
         if ($request->filled('product')) {
             $buyNowProduct = Product::with('images')
                 ->where('slug', $request->string('product'))
-                ->where('in_stock', true)
+                ->where(function ($q) {
+                    $q->where('in_stock', true)->orWhere('is_preorder', true);
+                })
                 ->firstOrFail();
         }
 
@@ -296,6 +316,17 @@ class PageController extends Controller
         $conditions = Condition::all();
 
         return view('pages.shop', compact('products', 'categories', 'brands', 'conditions'));
+    }
+
+    public function preorder(Request $request)
+    {
+        $products = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
+            ->preorder()
+            ->latest()
+            ->paginate(48)
+            ->withQueryString();
+
+        return view('pages.preorder', compact('products'));
     }
 
     public function product(string $slug)

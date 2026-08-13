@@ -38,9 +38,13 @@
                  <i data-lucide="chevron-down" class="h-4 w-4 text-slate-400 transition-transform duration-200" :class="openSection === 'ecommerce' ? 'rotate-180 text-blue-600' : ''"></i>
              </button>
              <div x-show="openSection === 'ecommerce'" x-collapse class="pl-8 pr-2 py-1 space-y-1">
-                 <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.orders.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
-                     <i data-lucide="shopping-cart" class="h-3.5 w-3.5 {{ request()->routeIs('admin.orders.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                 <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.orders.index') || (request()->routeIs('admin.orders.show') && !request()->routeIs('admin.orders.preorder')) ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                     <i data-lucide="shopping-cart" class="h-3.5 w-3.5 {{ request()->routeIs('admin.orders.index') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                      <span>Orders</span>
+                 </a>
+                <a href="{{ route('admin.orders.preorder') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.orders.preorder') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                     <i data-lucide="calendar-clock" class="h-3.5 w-3.5 {{ request()->routeIs('admin.orders.preorder') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                     <span>Pre-Order</span>
                  </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="credit-card" class="h-3.5 w-3.5 text-slate-400"></i>

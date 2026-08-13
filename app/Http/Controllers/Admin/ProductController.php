@@ -43,6 +43,9 @@ class ProductController extends Controller
             'description' => 'required|string',
             'warranty' => 'nullable|string|max:255',
             'in_stock' => 'boolean',
+            'is_preorder' => 'boolean',
+            'preorder_release_date' => 'nullable|date',
+            'preorder_note' => 'nullable|string|max:255',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
@@ -75,6 +78,9 @@ class ProductController extends Controller
             'description' => $request->description,
             'warranty' => $request->warranty,
             'in_stock' => $request->has('in_stock') ? (bool)$request->in_stock : true,
+            'is_preorder' => $request->has('is_preorder'),
+            'preorder_release_date' => $request->preorder_release_date,
+            'preorder_note' => $request->preorder_note,
             'rating' => 4.5, // default for new
             'reviews_count' => 0,
         ]);
@@ -167,6 +173,9 @@ class ProductController extends Controller
             'description' => 'required|string',
             'warranty' => 'nullable|string|max:255',
             'in_stock' => 'boolean',
+            'is_preorder' => 'boolean',
+            'preorder_release_date' => 'nullable|date',
+            'preorder_note' => 'nullable|string|max:255',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
@@ -192,6 +201,9 @@ class ProductController extends Controller
             'description' => $request->description,
             'warranty' => $request->warranty,
             'in_stock' => $request->has('in_stock'),
+            'is_preorder' => $request->has('is_preorder'),
+            'preorder_release_date' => $request->preorder_release_date,
+            'preorder_note' => $request->preorder_note,
         ]);
 
         // Sync highlights (delete old and insert new)

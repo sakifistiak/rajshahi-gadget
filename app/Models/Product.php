@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +12,7 @@ class Product extends Model
         'slug', 'name', 'brand_id', 'category_id', 'condition_id',
         'price', 'compare_at_price', 'rating', 'reviews_count',
         'badge', 'description', 'in_stock', 'warranty',
+        'is_preorder', 'preorder_release_date', 'preorder_note',
     ];
 
     protected function casts(): array
@@ -21,7 +23,14 @@ class Product extends Model
             'rating' => 'decimal:1',
             'reviews_count' => 'integer',
             'in_stock' => 'boolean',
+            'is_preorder' => 'boolean',
+            'preorder_release_date' => 'date',
         ];
+    }
+
+    public function scopePreorder(Builder $query): Builder
+    {
+        return $query->where('is_preorder', true);
     }
 
     public function brand(): BelongsTo

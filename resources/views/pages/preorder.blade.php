@@ -1,0 +1,121 @@
+{{-- Dynamic Logo Swap from Site Settings --}}
+<script>
+    window.__SITE_LOGO_LIGHT = "{{ $siteLogo ?? '/media/b3ca13-kg-lockup-v2.png' }}";
+    window.__SITE_LOGO_DARK  = "{{ $siteLogoDark ?? '/media/b3ca13-kg-lockup-v2.png' }}";
+    window.__SITE_NAME       = "{{ $siteName ?? 'Khan Gadget' }}";
+    document.addEventListener('DOMContentLoaded', function () {
+        function swapLogos() {
+            var isDark = document.documentElement.classList.contains('dark');
+            var logoUrl = isDark ? window.__SITE_LOGO_DARK : window.__SITE_LOGO_LIGHT;
+            document.querySelectorAll('img[alt*="Khan Gadget"], img[alt*="' + window.__SITE_NAME + '"]').forEach(function(img) {
+                img.src = logoUrl;
+            });
+        }
+        swapLogos();
+        // Watch for theme changes
+        var observer = new MutationObserver(swapLogos);
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    });
+</script>
+
+<!DOCTYPE html><html lang="en" data-tsd-source="/src/routes/__root.tsx:133:5"><head data-tsd-source="/src/routes/__root.tsx:134:7"><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" as="image" href="/media/b3ca13-kg-lockup-v2.png"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" data-precedence="default"/><title>Pre-Order | {{ $siteName ?? 'Khan Gadget' }}</title><meta name="author" content="{{ $siteName ?? 'Khan Gadget' }}"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:site" content="{{ $siteName ?? 'Khan Gadget' }}"/><meta name="twitter:title" content="Pre-Order | {{ $siteName ?? 'Khan Gadget' }}"/><meta name="twitter:description" content="{{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}"/><meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e4f4ef3d-bc55-4272-bf8e-77a19f63e327/id-preview-59d9b9ce--d146692d-212a-4234-ab9b-1057d9ddd7d8.lovable.app-1785051870536.png"/><meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/e4f4ef3d-bc55-4272-bf8e-77a19f63e327/id-preview-59d9b9ce--d146692d-212a-4234-ab9b-1057d9ddd7d8.lovable.app-1785051870536.png"/><meta name="description" content="{{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}"/><meta property="og:title" content="Pre-Order | {{ $siteName ?? 'Khan Gadget' }}"/><meta property="og:description" content="{{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}"/><link rel="icon" href="/favicon.png" type="image/png"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/><link rel="stylesheet" href="/assets/styles-CC_Lznyw.css"><script src="https://unpkg.com/lucide@latest"></script><script src="/assets/theme.js"></script></head><body data-tsd-source="/src/routes/__root.tsx:138:7"><div class="flex min-h-screen flex-col bg-background" data-tsd-source="/src/routes/__root.tsx:154:13"><header class="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur" data-tsd-source="/src/components/site/Navbar.tsx:31:5"><div class="container-page flex h-20 items-center gap-3" data-tsd-source="/src/components/site/Navbar.tsx:33:7"><a aria-label="Khan Gadget home" data-tsd-source="/src/components/site/Navbar.tsx:34:9" href="/" class="flex shrink-0 items-center"><img src="/media/b3ca13-kg-lockup-v2.png" alt="Khan Gadget - Eternal Tech Companion" class="h-9 w-auto object-contain sm:h-12 lg:h-14" data-tsd-source="/src/components/site/Navbar.tsx:35:11"/></a><div class="hidden flex-1 sm:block" data-tsd-source="/src/components/site/Navbar.tsx:42:9"><label class="flex items-center gap-3 rounded-full border border-border bg-secondary/60 px-5 py-3 text-foreground transition-colors focus-within:border-foreground/30 focus-within:bg-secondary hover:bg-secondary" data-tsd-source="/src/components/site/Navbar.tsx:43:11"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search h-4 w-4 text-muted-foreground" aria-hidden="true" data-tsd-source="/src/components/site/Navbar.tsx:44:13"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><input type="search" placeholder="Search products, brands, categories…" class="w-full bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none" data-tsd-source="/src/components/site/Navbar.tsx:45:13"/></label></div><div class="flex-1 sm:hidden" aria-hidden="true" data-tsd-source="/src/components/site/Navbar.tsx:53:9"></div><div class="flex items-center gap-1.5 sm:gap-2" data-tsd-source="/src/components/site/Navbar.tsx:57:9"><button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-full" aria-label="Switch to dark mode" data-tsd-source="/src/components/site/ThemeToggle.tsx:8:5"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/ThemeToggle.tsx:15:60"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"></path></svg></button><a href="/compare" aria-label="Compare products" title="Compare products" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-git-compare h-5 w-5" aria-hidden="true"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><path d="M11 18H8a2 2 0 0 1-2-2V9"></path></svg></a><a href="/cart" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/Navbar.tsx:61:15"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg></a><button class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 rounded-full lg:hidden" aria-label="Menu" data-tsd-source="/src/components/site/Navbar.tsx:69:11"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/Navbar.tsx:76:49"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></button></div></div><div class="container-page pb-3 sm:hidden" data-tsd-source="/src/components/site/Navbar.tsx:82:7"><label class="flex items-center gap-3 rounded-full border border-border bg-secondary/60 px-4 py-2.5 text-foreground focus-within:border-foreground/30 focus-within:bg-secondary" data-tsd-source="/src/components/site/Navbar.tsx:83:9"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search h-4 w-4 text-muted-foreground" aria-hidden="true" data-tsd-source="/src/components/site/Navbar.tsx:84:11"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><input type="search" placeholder="Search products, brands, categories…" class="w-full bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none" data-tsd-source="/src/components/site/Navbar.tsx:85:11"/></label></div><div class="hidden border-t border-border lg:block" data-tsd-source="/src/components/site/Navbar.tsx:96:7"><div class="container-page flex h-11 items-center gap-6 text-xs" data-tsd-source="/src/components/site/Navbar.tsx:97:9"><nav class="flex items-center gap-1" data-tsd-source="/src/components/site/Navbar.tsx:98:11"><a data-tsd-source="/src/components/site/Navbar.tsx:102:17" href="/" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">HOME</a><a data-tsd-source="/src/components/site/Navbar.tsx:102:17" href="/shop?condition=intact" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground">BRAND NEW INTACT BOX</a><a data-tsd-source="/src/components/site/Navbar.tsx:102:17" href="/shop?condition=without-box" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground">BRAND NEW WITHOUT BOX</a><a data-tsd-source="/src/components/site/Navbar.tsx:102:17" href="/shop?condition=pre-owned" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground">PRE-OWNED</a><a data-tsd-source="/src/components/site/Navbar.tsx:102:17" href="/pre-order" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground active" aria-current="page">PRE-ORDER</a></nav><div class="flex-1" aria-hidden="true" data-tsd-source="/src/components/site/Navbar.tsx:115:11"></div><nav class="flex items-center gap-1" data-tsd-source="/src/components/site/Navbar.tsx:116:11"><a data-tsd-source="/src/components/site/Navbar.tsx:120:17" href="/blog" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">BLOG</a><a data-tsd-source="/src/components/site/Navbar.tsx:120:17" href="/customer-spotlight" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">CUSTOMER SPOTLIGHT</a><a data-tsd-source="/src/components/site/Navbar.tsx:120:17" href="/philanthropic-work" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">PHILANTHROPIC WORK</a><a data-tsd-source="/src/components/site/Navbar.tsx:120:17" href="/customer-feedback" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">CUSTOMER FEEDBACK</a></nav></div></div></header><main class="flex-1 pb-14 sm:pb-0" data-tsd-source="/src/routes/__root.tsx:156:15"><!--$--><div class="container-page py-14" data-tsd-source="/src/routes/shop.tsx:116:5"><div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between" data-tsd-source="/src/components/site/SectionHeader.tsx:23:5"><div class="max-w-2xl" data-tsd-source="/src/components/site/SectionHeader.tsx:28:7"><p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground" data-tsd-source="/src/components/site/SectionHeader.tsx:30:11">Pre-Order</p><h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl" data-tsd-source="/src/components/site/SectionHeader.tsx:34:9">Pre-Order Products</h2><p class="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base" data-tsd-source="/src/components/site/SectionHeader.tsx:38:11">Reserve upcoming gadgets now, get them as soon as they launch.</p></div></div><div class="mt-8" data-tsd-source="/src/routes/preorder.tsx"><div><p class="text-sm text-muted-foreground">Showing <span class="font-medium text-foreground">{{ $products->total() ?? $products->count() }}</span> pre-order products</p><div class="mt-6 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 xl:grid-cols-3">@forelse ($products as $product)
+@include('partials.product-card', ['product' => $product])
+@empty
+<p class="col-span-full text-sm text-muted-foreground">No pre-order products available right now — check back soon.</p>
+@endforelse</div>
+@if($products->hasPages())
+    <div class="mt-10 flex justify-center">{{ $products->links() }}</div>
+@endif
+</div></div></div><!--/$--></main>@include('partials.footer')</div><nav aria-label="Mobile footer navigation" class="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur sm:hidden" data-tsd-source="/src/components/site/MobileFooterNav.tsx:14:5"><ul class="grid grid-cols-4" data-tsd-source="/src/components/site/MobileFooterNav.tsx:18:7"><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" href="/" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house h-5 w-5 opacity-80" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Home</a></li><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-foreground active" href="/shop" data-status="active" aria-current="page"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid h-5 w-5" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><rect width="7" height="7" x="3" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="3" rx="1"></rect><rect width="7" height="7" x="14" y="14" rx="1"></rect><rect width="7" height="7" x="3" y="14" rx="1"></rect></svg>Explore</a></li><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" href="/customer-spotlight" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles h-5 w-5 opacity-80" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>Spotlight</a></li><li data-tsd-source="/src/components/site/MobileFooterNav.tsx:22:13"><a data-tsd-source="/src/components/site/MobileFooterNav.tsx:23:15" href="/customer-feedback" class="flex flex-col items-center gap-1 py-2 text-[10px] font-medium text-muted-foreground"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-heart h-5 w-5 opacity-80" aria-hidden="true" data-tsd-source="/src/components/site/MobileFooterNav.tsx:29:17"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path><path d="M7.5 9.5c0 .687.265 1.383.697 1.844l3.009 3.264a1.14 1.14 0 0 0 .407.314 1 1 0 0 0 .783-.004 1.14 1.14 0 0 0 .398-.31l3.008-3.264A2.77 2.77 0 0 0 16.5 9.5 2.5 2.5 0 0 0 12 8a2.5 2.5 0 0 0-4.5 1.5"></path></svg>Feedback</a></li></ul></nav><div class="fixed bottom-20 right-4 z-50 flex flex-col items-center sm:bottom-6" data-tsd-source="/src/components/site/ChatWidget.tsx:214:7"><button class="flex flex-col items-center transition-transform hover:scale-105 active:scale-95" aria-label="Open live chat" title="Need help?" data-tsd-source="/src/components/site/ChatWidget.tsx:215:9"><img src="/assets/support-agent-BWJyOWv2.png" alt="Live chat support agent" width="512" height="512" loading="lazy" class="agent-float h-20 w-20 select-none object-contain drop-shadow-lg sm:h-24 sm:w-24" data-tsd-source="/src/components/site/ChatWidget.tsx:221:11"/><span class="-mt-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm" data-tsd-source="/src/components/site/ChatWidget.tsx:229:11">Live Chat</span></button></div><section aria-label="Notifications alt+T" tabindex="-1" aria-live="polite" aria-relevant="additions text" aria-atomic="false"></section><script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInputs = document.querySelectorAll('input[type="search"]');
+
+    searchInputs.forEach(input => {
+        const parentContainer = input.closest('label') || input.parentElement;
+        if (!parentContainer) return;
+
+        // Make parent container relative for positioning search dropdown
+        parentContainer.classList.add('relative');
+
+        // Create results overlay element
+        const resultsBox = document.createElement('div');
+        resultsBox.className = 'absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden divide-y divide-gray-100 hidden text-left max-h-96 overflow-y-auto';
+        parentContainer.appendChild(resultsBox);
+
+        let debounceTimer = null;
+
+        input.addEventListener('input', function () {
+            const query = this.value.trim();
+            if (debounceTimer) clearTimeout(debounceTimer);
+
+            if (query.length < 3) {
+                resultsBox.innerHTML = '';
+                resultsBox.classList.add('hidden');
+                return;
+            }
+
+            // Show loading state
+            resultsBox.innerHTML = '<div class="p-4 text-xs text-gray-500 font-medium text-center">Searching gadgets for "' + escapeHtml(query) + '"...</div>';
+            resultsBox.classList.remove('hidden');
+
+            debounceTimer = setTimeout(() => {
+                fetch('/api/search?q=' + encodeURIComponent(query))
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.products || data.products.length === 0) {
+                            resultsBox.innerHTML = '<div class="p-4 text-xs text-gray-400 font-medium text-center">No products found matching "' + escapeHtml(query) + '"</div>';
+                            return;
+                        }
+
+                        let html = '<div class="p-2 text-[10px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50/80 px-4 py-2 border-b border-gray-100">Products (' + data.products.length + ')</div>';
+                        
+                        data.products.forEach(item => {
+                            html += `
+                                <a href="${item.url}" class="flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors text-slate-800 group">
+                                    <div class="h-12 w-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                                        <img src="${item.image}" alt="${escapeHtml(item.name)}" class="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-xs font-bold truncate text-gray-900 group-hover:text-blue-600 transition-colors">${escapeHtml(item.name)}</div>
+                                        <div class="text-[10px] text-gray-500 mt-0.5">${escapeHtml(item.category)}</div>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        <div class="text-xs font-bold text-gray-900">${item.price}</div>
+                                        ${item.compare_at_price ? `<div class="text-[10px] text-gray-400 line-through">${item.compare_at_price}</div>` : ''}
+                                    </div>
+                                </a>
+                            `;
+                        });
+
+                        resultsBox.innerHTML = html;
+                    })
+                    .catch(err => {
+                        console.error('Search error:', err);
+                        resultsBox.innerHTML = '<div class="p-4 text-xs text-rose-500 font-medium text-center">Search error. Please try again.</div>';
+                    });
+            }, 300);
+        });
+
+        // Close on clicking outside
+        document.addEventListener('click', function (e) {
+            if (!parentContainer.contains(e.target)) {
+                resultsBox.classList.add('hidden');
+            }
+        });
+
+        // Close on Escape key
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                resultsBox.classList.add('hidden');
+            }
+        });
+    });
+
+    function escapeHtml(str) {
+        return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+});
+</script>
+@include('partials.mobile-drawer')
+</body></html>
+

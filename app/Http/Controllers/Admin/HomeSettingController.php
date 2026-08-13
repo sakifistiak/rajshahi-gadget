@@ -53,6 +53,11 @@ class HomeSettingController extends Controller
             'home_flash_active'         => '1',
             'home_flash_title'          => 'Limited time deals',
             'home_flash_highlight'      => 'deals',
+            'home_preorder_active'      => '0',
+            'home_preorder_title'       => 'Pre-Order Now',
+            'home_preorder_highlight'   => 'Pre-Order',
+            'home_preorder_position'    => 'below_flash',
+            'home_preorder_limit'       => '4',
             'home_promos_active'        => '1',
             'home_testimonials_active'  => '1',
             'home_ticker_active'        => '1',
@@ -147,6 +152,7 @@ class HomeSettingController extends Controller
         $checkboxKeys = [
             'home_hero_active',
             'home_flash_active',
+            'home_preorder_active',
             'home_promos_active',
             'home_testimonials_active',
             'home_ticker_active',
@@ -213,6 +219,24 @@ class HomeSettingController extends Controller
                 'home_flash_title_style',
                 json_encode(SectionTitleStyle::sanitizeFull(is_array($decodedFlashStyle) ? $decodedFlashStyle : null))
             );
+        }
+
+        if ($request->has('home_preorder_title')) {
+            SiteSetting::setValue('home_preorder_title', $request->input('home_preorder_title', ''));
+        }
+        if ($request->has('home_preorder_highlight')) {
+            SiteSetting::setValue('home_preorder_highlight', $request->input('home_preorder_highlight', ''));
+        }
+        if ($request->has('home_preorder_position')) {
+            $position = in_array($request->input('home_preorder_position'), ['above_flash', 'below_flash'], true)
+                ? $request->input('home_preorder_position')
+                : 'below_flash';
+            SiteSetting::setValue('home_preorder_position', $position);
+        }
+        if ($request->has('home_preorder_limit')) {
+            $limit = (int) $request->input('home_preorder_limit', 4);
+            $limit = max(1, min(12, $limit));
+            SiteSetting::setValue('home_preorder_limit', (string) $limit);
         }
 
         if ($request->has('home_sections_json')) {

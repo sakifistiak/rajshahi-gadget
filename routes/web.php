@@ -23,6 +23,7 @@ Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])-
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
+Route::get('/pre-order', [PageController::class, 'preorder'])->name('preorder');
 
 Route::get('/page/{slug}', [\App\Http\Controllers\CustomPageController::class, 'show'])->name('pages.custom');
 
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Orders
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('orders-preorder', [AdminOrderController::class, 'preorderIndex'])->name('orders.preorder');
         Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::delete('orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');

@@ -271,6 +271,28 @@
                 <label for="in_stock" class="text-xs font-semibold text-slate-700 select-none cursor-pointer">{{ __('In Stock') }}</label>
             </div>
 
+            <!-- Pre-Order -->
+            <div class="p-4 bg-slate-50 rounded-sm border border-slate-200 space-y-3">
+                <div class="flex items-center gap-2">
+                    <input id="is_preorder" type="checkbox" name="is_preorder" value="1" {{ old('is_preorder') == '1' ? 'checked' : '' }}
+                           class="rounded-sm border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
+                    <label for="is_preorder" class="text-xs font-bold text-slate-800 uppercase tracking-wider select-none cursor-pointer">{{ __('This is a Pre-Order product') }}</label>
+                </div>
+                <p class="text-[11px] text-slate-500">Independent of "In Stock" above — a product can be marked pre-order whether it's currently in stock or not.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Expected Release Date') }}</label>
+                        <input type="date" name="preorder_release_date" value="{{ old('preorder_release_date') }}"
+                               class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Pre-Order Note') }}</label>
+                        <input type="text" name="preorder_note" value="{{ old('preorder_note') }}" placeholder="e.g. Ships within 30 days of launch"
+                               class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
             <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
                 <a href="{{ route('admin.products.index') }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-sm transition-all">
                     {{ __('Cancel') }}

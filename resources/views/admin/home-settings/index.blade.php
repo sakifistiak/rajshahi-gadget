@@ -126,6 +126,10 @@
                     <input type="checkbox" name="home_flash_active" value="1" {{ ($settings['home_flash_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                 </label>
                 <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all">
+                    <span class="text-sm font-bold text-slate-800">Pre-Order Widget</span>
+                    <input type="checkbox" name="home_preorder_active" value="1" {{ ($settings['home_preorder_active'] ?? '0') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                </label>
+                <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all">
                     <span class="text-sm font-bold text-slate-800">Customer Testimonials</span>
                     <input type="checkbox" name="home_testimonials_active" value="1" {{ ($settings['home_testimonials_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                 </label>
@@ -165,6 +169,52 @@
                 </div>
 
                 <x-title-style-editor path="flashStyle" />
+            </div>
+        </div>
+
+        <!-- Pre-Order Widget -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Pre-Order Widget</h3>
+                        <p class="text-xs text-slate-500">Shows products marked "Pre-Order" (set per-product in Products &gt; Edit). Position it above or below Flash Deals.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Section Title</label>
+                        <input type="text" name="home_preorder_title" value="{{ $settings['home_preorder_title'] ?? 'Pre-Order Now' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Pre-Order Now">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Highlight Word</label>
+                        <input type="text" name="home_preorder_highlight" value="{{ $settings['home_preorder_highlight'] ?? 'Pre-Order' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Pre-Order">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Position</label>
+                        <div class="flex gap-4 pt-1">
+                            <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                                <input type="radio" name="home_preorder_position" value="above_flash" {{ ($settings['home_preorder_position'] ?? 'below_flash') === 'above_flash' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                                Show above Flash Deals
+                            </label>
+                            <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                                <input type="radio" name="home_preorder_position" value="below_flash" {{ ($settings['home_preorder_position'] ?? 'below_flash') === 'below_flash' ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                                Show below Flash Deals
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Products to Show</label>
+                        <input type="number" name="home_preorder_limit" min="1" max="12" value="{{ $settings['home_preorder_limit'] ?? '4' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
             </div>
         </div>
 
