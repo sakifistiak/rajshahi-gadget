@@ -12,7 +12,7 @@ class Product extends Model
         'slug', 'name', 'brand_id', 'category_id', 'condition_id',
         'price', 'compare_at_price', 'rating', 'reviews_count',
         'badge', 'description', 'in_stock', 'warranty',
-        'is_preorder', 'preorder_release_date', 'preorder_note', 'button_type',
+        'is_new_arrival', 'price_is_tba',
     ];
 
     protected function casts(): array
@@ -23,14 +23,28 @@ class Product extends Model
             'rating' => 'decimal:1',
             'reviews_count' => 'integer',
             'in_stock' => 'boolean',
-            'is_preorder' => 'boolean',
-            'preorder_release_date' => 'date',
+            'is_new_arrival' => 'boolean',
+            'price_is_tba' => 'boolean',
         ];
     }
 
-    public function scopePreorder(Builder $query): Builder
+    public function scopeNewArrival(Builder $query): Builder
     {
-        return $query->where('is_preorder', true);
+        return $query->where('is_new_arrival', true);
+    }
+
+    /**
+     * New Arrival products are sourced on demand rather than kept in stock —
+     * the storefront shows "TBA" instead of In Stock/Stock Out and hides the
+     * Buy Now flow in favor of a WhatsApp-only order path.
+     */
+    public function stockStatusLabel(): string
+    {
+        if ($this->is_new_arrival) {
+            return 'TBA';
+        }
+
+        return $this->in_stock ? 'In Stock' : 'Stock Out';
     }
 
     public function brand(): BelongsTo
@@ -91,24 +105,5 @@ class Product extends Model
             return null;
         }
         return $this->compare_at_price - $this->price;
-    }
-
-    /**
-     * The storefront buy-button label. 'button_type' lets an admin force
-     * "Buy Now" or "Pre-Order" per product; 'auto' (the default) falls back
-     * to the is_preorder flag so existing products keep working unchanged.
-     */
-    public function isPreorderButton(): bool
-    {
-        return match ($this->button_type) {
-            'preorder' => true,
-            'buy_now' => false,
-            default => (bool) $this->is_preorder,
-        };
-    }
-
-    public function buttonLabel(): string
-    {
-        return $this->isPreorderButton() ? 'Pre-Order' : 'Buy Now';
     }
 }

@@ -11,21 +11,12 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        return $this->listOrders($request, false);
+        return $this->listOrders($request);
     }
 
-    public function preorderIndex(Request $request)
-    {
-        return $this->listOrders($request, true);
-    }
-
-    private function listOrders(Request $request, bool $preorderOnly)
+    private function listOrders(Request $request)
     {
         $query = Order::with(['items', 'storeLocation']);
-
-        if ($preorderOnly) {
-            $query->where('is_preorder', true);
-        }
 
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
@@ -42,11 +33,8 @@ class OrderController extends Controller
 
         $orders = $query->latest()->paginate(15)->withQueryString();
 
-        $countsQuery = Order::query();
-        if ($preorderOnly) {
-            $countsQuery->where('is_preorder', true);
-        }
-        $groupedCounts = $countsQuery->select('status', DB::raw('count(*) as total'))
+        $groupedCounts = Order::query()
+            ->select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
@@ -60,11 +48,9 @@ class OrderController extends Controller
             'cancelled' => $groupedCounts['cancelled'] ?? 0,
         ];
 
-        $routeName = $preorderOnly ? 'admin.orders.preorder' : 'admin.orders.index';
-        $pageTitle = $preorderOnly ? 'Pre-Order Management' : 'Order Management';
-        $pageSubtitle = $preorderOnly
-            ? 'Track and manage customer pre-orders.'
-            : 'Track and manage customer orders, update status and view details.';
+        $routeName = 'admin.orders.index';
+        $pageTitle = 'Order Management';
+        $pageSubtitle = 'Track and manage customer orders, update status and view details.';
 
         return view('admin.orders.index', compact('orders', 'statusCounts', 'routeName', 'pageTitle', 'pageSubtitle'));
     }

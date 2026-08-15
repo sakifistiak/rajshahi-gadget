@@ -57,22 +57,23 @@ class PageController extends Controller
         $homeFlashBadgeText     = SiteSetting::getValue('home_flash_badge_text', 'Flash Deals');
         $homeFlashSubtitleActive = SiteSetting::getValue('home_flash_subtitle_active', '1') == '1';
         $homeFlashSubtitleText  = SiteSetting::getValue('home_flash_subtitle_text', 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery');
-        $homePreorderActive     = SiteSetting::getValue('home_preorder_active', '0') == '1';
-        $homePreorderTitle      = SiteSetting::getValue('home_preorder_title', 'Pre-Order Now');
-        $homePreorderHighlight  = SiteSetting::getValue('home_preorder_highlight', 'Pre-Order');
-        $homePreorderPosition   = SiteSetting::getValue('home_preorder_position', 'below_flash');
-        $homePreorderLimit      = (int) SiteSetting::getValue('home_preorder_limit', '4');
-        $homePreorderBadgeActive   = SiteSetting::getValue('home_preorder_badge_active', '1') == '1';
-        $homePreorderBadgeIcon     = SiteSetting::getValue('home_preorder_badge_icon', '');
-        $homePreorderBadgeText     = SiteSetting::getValue('home_preorder_badge_text', 'Pre-Order');
-        $homePreorderSubtitleActive = SiteSetting::getValue('home_preorder_subtitle_active', '1') == '1';
-        $homePreorderSubtitleText  = SiteSetting::getValue('home_preorder_subtitle_text', 'Reserve now, get it as soon as it launches');
-        // is_preorder is independent of in_stock — a pre-order product shows here
-        // regardless of whether it's currently in stock.
-        $preorderProducts       = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
-            ->preorder()
+        // is_new_arrival is independent of in_stock — these products are
+        // sourced on order rather than kept in stock, so they show here
+        // regardless of the in_stock flag.
+        $homeNewArrivalActive     = SiteSetting::getValue('home_new_arrival_active', '0') == '1';
+        $homeNewArrivalTitle      = SiteSetting::getValue('home_new_arrival_title', 'New Arrivals');
+        $homeNewArrivalHighlight  = SiteSetting::getValue('home_new_arrival_highlight', 'New');
+        $homeNewArrivalPosition   = SiteSetting::getValue('home_new_arrival_position', 'below_flash');
+        $homeNewArrivalLimit      = (int) SiteSetting::getValue('home_new_arrival_limit', '4');
+        $homeNewArrivalBadgeActive   = SiteSetting::getValue('home_new_arrival_badge_active', '1') == '1';
+        $homeNewArrivalBadgeIcon     = SiteSetting::getValue('home_new_arrival_badge_icon', '');
+        $homeNewArrivalBadgeText     = SiteSetting::getValue('home_new_arrival_badge_text', 'New Arrival');
+        $homeNewArrivalSubtitleActive = SiteSetting::getValue('home_new_arrival_subtitle_active', '1') == '1';
+        $homeNewArrivalSubtitleText  = SiteSetting::getValue('home_new_arrival_subtitle_text', 'Fresh stock, sourced on request — order now, get it soon');
+        $newArrivalProducts      = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
+            ->newArrival()
             ->latest()
-            ->take($homePreorderLimit)
+            ->take($homeNewArrivalLimit)
             ->get();
 
         $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
@@ -180,16 +181,16 @@ class PageController extends Controller
             'homeFlashBadgeText',
             'homeFlashSubtitleActive',
             'homeFlashSubtitleText',
-            'homePreorderActive',
-            'homePreorderTitle',
-            'homePreorderHighlight',
-            'homePreorderPosition',
-            'preorderProducts',
-            'homePreorderBadgeActive',
-            'homePreorderBadgeIcon',
-            'homePreorderBadgeText',
-            'homePreorderSubtitleActive',
-            'homePreorderSubtitleText',
+            'homeNewArrivalActive',
+            'homeNewArrivalTitle',
+            'homeNewArrivalHighlight',
+            'homeNewArrivalPosition',
+            'newArrivalProducts',
+            'homeNewArrivalBadgeActive',
+            'homeNewArrivalBadgeIcon',
+            'homeNewArrivalBadgeText',
+            'homeNewArrivalSubtitleActive',
+            'homeNewArrivalSubtitleText',
             'homePromosActive',
             'homeTestimonialsActive',
             'homeTickerActive',
@@ -275,9 +276,7 @@ class PageController extends Controller
         if ($request->filled('product')) {
             $buyNowProduct = Product::with('images')
                 ->where('slug', $request->string('product'))
-                ->where(function ($q) {
-                    $q->where('in_stock', true)->orWhere('is_preorder', true);
-                })
+                ->where('in_stock', true)
                 ->firstOrFail();
         }
 
@@ -409,17 +408,6 @@ class PageController extends Controller
             'products', 'categories', 'brands', 'conditions',
             'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes'
         ));
-    }
-
-    public function preorder(Request $request)
-    {
-        $products = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
-            ->preorder()
-            ->latest()
-            ->paginate(48)
-            ->withQueryString();
-
-        return view('pages.preorder', compact('products'));
     }
 
     public function product(string $slug)

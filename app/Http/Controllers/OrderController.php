@@ -32,9 +32,7 @@ class OrderController extends Controller
         ]);
 
         $products = Product::whereIn('slug', collect($data['items'])->pluck('slug'))
-            ->where(function ($q) {
-                $q->where('in_stock', true)->orWhere('is_preorder', true);
-            })
+            ->where('in_stock', true)
             ->get()->keyBy('slug');
 
         if ($products->count() !== count(collect($data['items'])->pluck('slug')->unique())) {
@@ -44,7 +42,6 @@ class OrderController extends Controller
         $order = DB::transaction(function () use ($data, $products) {
             $subtotal = 0;
             $lines = [];
-            $isPreorder = false;
             foreach ($data['items'] as $item) {
                 $product = $products[$item['slug']];
                 $quantity = $item['quantity'];
@@ -74,9 +71,6 @@ class OrderController extends Controller
                 $lineTotal = $unitPrice * $quantity;
                 $subtotal += $lineTotal;
                 $lines[] = compact('product', 'item', 'lineTotal', 'unitPrice', 'quantity');
-                if ($product->is_preorder) {
-                    $isPreorder = true;
-                }
             }
             $shippingFee = 0;
             $order = Order::create([
@@ -86,7 +80,6 @@ class OrderController extends Controller
                 'shipping_fee' => $shippingFee,
                 'total' => $subtotal + $shippingFee,
                 'status' => 'pending',
-                'is_preorder' => $isPreorder,
             ]);
             foreach ($lines as $line) {
                 $order->items()->create([

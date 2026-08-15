@@ -102,9 +102,6 @@
                                 <a href="{{ route('admin.orders.show', $order) }}" class="text-xs font-bold text-blue-600 hover:text-blue-800">
                                     {{ $order->order_number }}
                                 </a>
-                                @if($order->is_preorder)
-                                    <span class="ml-1 px-1.5 py-0.2 inline-flex text-[9px] leading-5 font-bold rounded bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase">Pre-Order</span>
-                                @endif
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap">
                                 <div class="text-xs font-semibold text-slate-800">{{ $order->customer_name }}</div>

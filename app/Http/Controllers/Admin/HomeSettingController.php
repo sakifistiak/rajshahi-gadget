@@ -58,16 +58,16 @@ class HomeSettingController extends Controller
             'home_flash_badge_text'     => 'Flash Deals',
             'home_flash_subtitle_active' => '1',
             'home_flash_subtitle_text'  => 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery',
-            'home_preorder_active'      => '0',
-            'home_preorder_title'       => 'Pre-Order Now',
-            'home_preorder_highlight'   => 'Pre-Order',
-            'home_preorder_position'    => 'below_flash',
-            'home_preorder_limit'       => '4',
-            'home_preorder_badge_active'   => '1',
-            'home_preorder_badge_icon'     => '',
-            'home_preorder_badge_text'     => 'Pre-Order',
-            'home_preorder_subtitle_active' => '1',
-            'home_preorder_subtitle_text'  => 'Reserve now, get it as soon as it launches',
+            'home_new_arrival_active'      => '0',
+            'home_new_arrival_title'       => 'New Arrivals',
+            'home_new_arrival_highlight'   => 'New',
+            'home_new_arrival_position'    => 'below_flash',
+            'home_new_arrival_limit'       => '4',
+            'home_new_arrival_badge_active'   => '1',
+            'home_new_arrival_badge_icon'     => '',
+            'home_new_arrival_badge_text'     => 'New Arrival',
+            'home_new_arrival_subtitle_active' => '1',
+            'home_new_arrival_subtitle_text'  => 'Fresh stock, sourced on request — order now, get it soon',
             'home_promos_active'        => '1',
             'home_testimonials_active'  => '1',
             'home_ticker_active'        => '1',
@@ -164,9 +164,9 @@ class HomeSettingController extends Controller
             'home_flash_active',
             'home_flash_badge_active',
             'home_flash_subtitle_active',
-            'home_preorder_active',
-            'home_preorder_badge_active',
-            'home_preorder_subtitle_active',
+            'home_new_arrival_active',
+            'home_new_arrival_badge_active',
+            'home_new_arrival_subtitle_active',
             'home_promos_active',
             'home_testimonials_active',
             'home_ticker_active',
@@ -244,31 +244,32 @@ class HomeSettingController extends Controller
             );
         }
 
-        if ($request->has('home_preorder_title')) {
-            SiteSetting::setValue('home_preorder_title', $request->input('home_preorder_title', ''));
+
+        if ($request->has('home_new_arrival_title')) {
+            SiteSetting::setValue('home_new_arrival_title', $request->input('home_new_arrival_title', ''));
         }
-        if ($request->has('home_preorder_highlight')) {
-            SiteSetting::setValue('home_preorder_highlight', $request->input('home_preorder_highlight', ''));
+        if ($request->has('home_new_arrival_highlight')) {
+            SiteSetting::setValue('home_new_arrival_highlight', $request->input('home_new_arrival_highlight', ''));
         }
-        if ($request->has('home_preorder_position')) {
-            $position = in_array($request->input('home_preorder_position'), ['above_flash', 'below_flash'], true)
-                ? $request->input('home_preorder_position')
+        if ($request->has('home_new_arrival_position')) {
+            $position = in_array($request->input('home_new_arrival_position'), ['above_flash', 'below_flash'], true)
+                ? $request->input('home_new_arrival_position')
                 : 'below_flash';
-            SiteSetting::setValue('home_preorder_position', $position);
+            SiteSetting::setValue('home_new_arrival_position', $position);
         }
-        if ($request->has('home_preorder_limit')) {
-            $limit = (int) $request->input('home_preorder_limit', 4);
+        if ($request->has('home_new_arrival_limit')) {
+            $limit = (int) $request->input('home_new_arrival_limit', 4);
             $limit = max(1, min(12, $limit));
-            SiteSetting::setValue('home_preorder_limit', (string) $limit);
+            SiteSetting::setValue('home_new_arrival_limit', (string) $limit);
         }
-        if ($request->has('home_preorder_badge_icon')) {
-            SiteSetting::setValue('home_preorder_badge_icon', mb_substr(trim($request->input('home_preorder_badge_icon', '')), 0, 8));
+        if ($request->has('home_new_arrival_badge_icon')) {
+            SiteSetting::setValue('home_new_arrival_badge_icon', mb_substr(trim($request->input('home_new_arrival_badge_icon', '')), 0, 8));
         }
-        if ($request->has('home_preorder_badge_text')) {
-            SiteSetting::setValue('home_preorder_badge_text', mb_substr(trim($request->input('home_preorder_badge_text', '')), 0, 40));
+        if ($request->has('home_new_arrival_badge_text')) {
+            SiteSetting::setValue('home_new_arrival_badge_text', mb_substr(trim($request->input('home_new_arrival_badge_text', '')), 0, 40));
         }
-        if ($request->has('home_preorder_subtitle_text')) {
-            SiteSetting::setValue('home_preorder_subtitle_text', mb_substr(trim($request->input('home_preorder_subtitle_text', '')), 0, 150));
+        if ($request->has('home_new_arrival_subtitle_text')) {
+            SiteSetting::setValue('home_new_arrival_subtitle_text', mb_substr(trim($request->input('home_new_arrival_subtitle_text', '')), 0, 150));
         }
 
         if ($request->has('home_sections_json')) {

@@ -11,16 +11,9 @@ class Order extends Model
     protected $fillable = [
         'order_number', 'customer_name', 'phone', 'email', 'address',
         'district', 'note', 'payment_method', 'subtotal', 'shipping_fee',
-        'total', 'status', 'is_preorder', 'delivery_method', 'store_location_id',
+        'total', 'status', 'delivery_method', 'store_location_id',
         'division', 'upazila', 'union_area',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'is_preorder' => 'boolean',
-        ];
-    }
 
     public function items(): HasMany
     {

@@ -272,37 +272,20 @@
                 <label for="in_stock" class="text-xs font-semibold text-slate-700 select-none cursor-pointer">{{ __('In Stock') }}</label>
             </div>
 
-            <!-- Pre-Order -->
-            <div class="p-4 bg-slate-50 rounded-sm border border-slate-200 space-y-3">
+            <!-- New Arrival -->
+            <div class="p-4 bg-amber-50 rounded-sm border border-amber-200 space-y-3">
                 <div class="flex items-center gap-2">
-                    <input id="is_preorder" type="checkbox" name="is_preorder" value="1" {{ old('is_preorder', $product->is_preorder) ? 'checked' : '' }}
-                           class="rounded-sm border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
-                    <label for="is_preorder" class="text-xs font-bold text-slate-800 uppercase tracking-wider select-none cursor-pointer">{{ __('This is a Pre-Order product') }}</label>
+                    <input id="is_new_arrival" type="checkbox" name="is_new_arrival" value="1" {{ old('is_new_arrival', $product->is_new_arrival) ? 'checked' : '' }}
+                           class="rounded-sm border-slate-300 text-amber-600 focus:ring-amber-500 h-4 w-4">
+                    <label for="is_new_arrival" class="text-xs font-bold text-slate-800 uppercase tracking-wider select-none cursor-pointer">{{ __('New Arrival Product (stock: TBA)') }}</label>
                 </div>
-                <p class="text-[11px] text-slate-500">Independent of "In Stock" above — a product can be marked pre-order whether it's currently in stock or not.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Expected Release Date') }}</label>
-                        <input type="date" name="preorder_release_date" value="{{ old('preorder_release_date', optional($product->preorder_release_date)->format('Y-m-d')) }}"
-                               class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Pre-Order Note') }}</label>
-                        <input type="text" name="preorder_note" value="{{ old('preorder_note', $product->preorder_note) }}" placeholder="e.g. Ships within 30 days of launch"
-                               class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                    </div>
+                <p class="text-[11px] text-slate-500">Not physically in stock — sourced on order. Shows in the homepage "New Arrival" section, the status badge shows "TBA" instead of In Stock/Stock Out, and the storefront hides Buy Now / Add to Cart in favor of an "Order on WhatsApp" button only.</p>
+                <div class="flex items-center gap-2 pt-2 border-t border-amber-200">
+                    <input id="price_is_tba" type="checkbox" name="price_is_tba" value="1" {{ old('price_is_tba', $product->price_is_tba) ? 'checked' : '' }}
+                           class="rounded-sm border-slate-300 text-amber-600 focus:ring-amber-500 h-4 w-4">
+                    <label for="price_is_tba" class="text-xs font-semibold text-slate-700 select-none cursor-pointer">{{ __('Price is TBA (hide the price, show "TBA" instead)') }}</label>
                 </div>
-            </div>
-
-            <!-- Buy Button Label -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Storefront Buy Button') }}</label>
-                <select name="button_type" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                    <option value="auto" {{ old('button_type', $product->button_type ?? 'auto') == 'auto' ? 'selected' : '' }}>Auto — follow the Pre-Order checkbox above</option>
-                    <option value="buy_now" {{ old('button_type', $product->button_type) == 'buy_now' ? 'selected' : '' }}>Always show "Buy Now"</option>
-                    <option value="preorder" {{ old('button_type', $product->button_type) == 'preorder' ? 'selected' : '' }}>Always show "Pre-Order"</option>
-                </select>
-                <p class="text-[11px] text-slate-500 mt-1.5">Controls only the button text on the product card and product page. Use this to override the button independently of the Pre-Order flag above.</p>
+                <p class="text-[11px] text-slate-500">Independent of the checkbox above — the Price field below is still required and still used at checkout, this only controls whether the number is shown on the storefront.</p>
             </div>
 
             <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
