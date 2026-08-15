@@ -259,7 +259,7 @@ class HomeSettingController extends Controller
         }
         if ($request->has('home_new_arrival_limit')) {
             $limit = (int) $request->input('home_new_arrival_limit', 4);
-            $limit = max(1, min(12, $limit));
+            $limit = in_array($limit, [4, 8, 12, 16], true) ? $limit : 4;
             SiteSetting::setValue('home_new_arrival_limit', (string) $limit);
         }
         if ($request->has('home_new_arrival_badge_icon')) {

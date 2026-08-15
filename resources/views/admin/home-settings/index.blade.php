@@ -23,7 +23,7 @@
             title: 'New Product Section',
             highlight: 'Product',
             filter: 'all',
-            limit: '4',
+            limit: '5',
             active: true,
             style: {
                 base: { ...this.titleStyleDefaults.base },
@@ -262,7 +262,11 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Products to Show</label>
-                        <input type="number" name="home_new_arrival_limit" min="1" max="12" value="{{ $settings['home_new_arrival_limit'] ?? '4' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select name="home_new_arrival_limit" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            @foreach ([4, 8, 12, 16] as $limitOption)
+                                <option value="{{ $limitOption }}" {{ ($settings['home_new_arrival_limit'] ?? '4') == $limitOption ? 'selected' : '' }}>{{ $limitOption }} Items</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
@@ -514,10 +518,9 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Product Limit</label>
                                 <select x-model="sec.limit" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="4">4 Items</option>
-                                    <option value="8">8 Items</option>
-                                    <option value="12">12 Items</option>
-                                    <option value="16">16 Items</option>
+                                    <option value="5">5 Items</option>
+                                    <option value="10">10 Items</option>
+                                    <option value="15">15 Items</option>
                                     <option value="20">20 Items</option>
                                 </select>
                             </div>
