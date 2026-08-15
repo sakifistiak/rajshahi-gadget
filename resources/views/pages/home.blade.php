@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         @endif
                         <div class="flex items-center" style="margin-top:12px">
                             <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now flex-1 inline-flex items-center justify-center rounded-full font-bold text-sm transition-all shadow-sm" style="background-color: #24272c !important; color: #ffffff !important; height:36px; padding:0 16px;">
-                                {{ $product->buttonLabel() }}
+                                Buy Now
                             </a>
                         </div>
                     </div>
