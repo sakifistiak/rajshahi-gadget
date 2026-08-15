@@ -264,11 +264,21 @@
             <!-- Description -->
             @include('admin.products._description_editor')
 
-            <!-- In Stock Checkbox -->
-            <div class="flex items-center gap-2">
-                <input id="in_stock" type="checkbox" name="in_stock" value="1" {{ old('in_stock', '1') == '1' ? 'checked' : '' }}
-                       class="rounded-sm border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
-                <label for="in_stock" class="text-xs font-semibold text-slate-700 select-none cursor-pointer">{{ __('In Stock') }}</label>
+            <!-- Stock Status -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Stock Status') }}</label>
+                <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="in_stock" value="1" {{ old('in_stock', '1') == '1' ? 'checked' : '' }}
+                               class="border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
+                        <span class="text-xs font-semibold text-slate-700 select-none">{{ __('In Stock') }}</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="in_stock" value="0" {{ old('in_stock', '1') == '0' ? 'checked' : '' }}
+                               class="border-slate-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
+                        <span class="text-xs font-semibold text-slate-700 select-none">{{ __('Out of Stock') }}</span>
+                    </label>
+                </div>
             </div>
 
             <!-- New Arrival -->

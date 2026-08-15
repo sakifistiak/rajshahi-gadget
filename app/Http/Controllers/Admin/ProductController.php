@@ -77,7 +77,7 @@ class ProductController extends Controller
             'badge' => $request->badge,
             'description' => $request->description,
             'warranty' => $request->warranty,
-            'in_stock' => $request->has('in_stock') ? (bool)$request->in_stock : true,
+            'in_stock' => $request->input('in_stock', '1') === '1',
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
             'rating' => 4.5, // default for new
@@ -200,7 +200,7 @@ class ProductController extends Controller
             'badge' => $request->badge,
             'description' => $request->description,
             'warranty' => $request->warranty,
-            'in_stock' => $request->has('in_stock'),
+            'in_stock' => $request->input('in_stock', '1') === '1',
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
         ]);
