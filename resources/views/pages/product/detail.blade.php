@@ -176,6 +176,9 @@
                     @if($product->compare_at_price && $product->compare_at_price > $product->price)
                         <span class="text-base text-muted-foreground line-through">৳ {{ number_format($product->compare_at_price) }}</span>
                     @endif
+                    @if($product->compare_at_price && $product->compare_at_price > $product->price)
+                        <span class="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">Save ৳ {{ number_format($product->discount()) }}</span>
+                    @endif
                     <span class="hidden h-5 w-px bg-border sm:inline-block"></span>
                     <span class="text-sm font-semibold text-foreground">
                         Status:
@@ -185,9 +188,6 @@
                             <span class="text-rose-600">Out of Stock</span>
                         @endif
                     </span>
-                    @if($product->compare_at_price && $product->compare_at_price > $product->price)
-                        <span class="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">Save ৳ {{ number_format($product->discount()) }}</span>
-                    @endif
                 </div>
             @endif
 
