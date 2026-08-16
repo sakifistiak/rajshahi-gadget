@@ -76,6 +76,12 @@
                 </div>
             </div>
 
+            <label class="flex items-center gap-2.5 p-3 bg-slate-50 rounded-sm border border-slate-200 cursor-pointer w-fit">
+                <input type="checkbox" name="is_featured" value="1" {{ old('is_featured', $post->is_featured) ? 'checked' : '' }}
+                       class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                <span class="text-xs font-semibold text-slate-700">Featured <span class="font-normal text-slate-400">— show as the hero banner at the top of /blog</span></span>
+            </label>
+
             <!-- Featured Image -->
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">
                 <label class="block font-bold text-xs text-slate-800 uppercase tracking-wider mb-2">Featured Image</label>

@@ -39,7 +39,12 @@
                                 <img src="{{ $post->featured_image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $post->title }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
                             <td class="px-6 py-3.5">
-                                <div class="text-xs font-semibold text-slate-800">{{ $post->title }}</div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-semibold text-slate-800">{{ $post->title }}</span>
+                                    @if ($post->is_featured)
+                                        <span class="px-1.5 py-0.5 inline-flex items-center gap-0.5 text-[9px] leading-4 font-bold rounded bg-amber-50 text-amber-600 border border-amber-100"><i data-lucide="star" class="h-2.5 w-2.5"></i>Featured</span>
+                                    @endif
+                                </div>
                                 <div class="text-[9px] text-slate-400">/blog/{{ $post->slug }}</div>
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $post->category_tag }}</td>

@@ -451,15 +451,24 @@ class PageController extends Controller
 
     public function blogIndex()
     {
-        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9);
+        $featuredPost = BlogPost::published()->where('is_featured', true)->orderByDesc('published_at')->first();
 
-        return view('pages.blog', compact('posts'));
+        $posts = BlogPost::published()
+            ->when($featuredPost, fn ($q) => $q->where('id', '!=', $featuredPost->id))
+            ->orderByDesc('published_at')
+            ->paginate(9);
+
+        return view('pages.blog', compact('posts', 'featuredPost'));
     }
 
     public function blogLoadMore(\Illuminate\Http\Request $request)
     {
         $page = max(1, (int) $request->query('page', 2));
-        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9, ['*'], 'page', $page);
+        $featuredPost = BlogPost::published()->where('is_featured', true)->orderByDesc('published_at')->first();
+        $posts = BlogPost::published()
+            ->when($featuredPost, fn ($q) => $q->where('id', '!=', $featuredPost->id))
+            ->orderByDesc('published_at')
+            ->paginate(9, ['*'], 'page', $page);
 
         return response()->json([
             'html' => view('partials.blog-cards', compact('posts'))->render(),

@@ -269,7 +269,7 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
 </style>
 
 <!-- Mobile Drawer HTML -->
-<div id="kg-mobile-drawer" role="dialog" aria-modal="true" aria-label="Main menu">
+<div id="kg-mobile-drawer" class="notranslate" translate="no" role="dialog" aria-modal="true" aria-label="Main menu">
     <div id="kg-mobile-backdrop"></div>
     <div id="kg-mobile-panel">
         <!-- Header -->

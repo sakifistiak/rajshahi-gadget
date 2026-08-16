@@ -1,4 +1,4 @@
-<footer class="border-t border-border bg-surface" data-tsd-source="/src/components/site/Footer.tsx:35:5">
+<footer class="notranslate border-t border-border bg-surface" translate="no" data-tsd-source="/src/components/site/Footer.tsx:35:5">
     <div class="container-page py-14" data-tsd-source="/src/components/site/Footer.tsx:36:7">
         <!-- 1. Store Locations (OUR OUTLETS) -->
         <section aria-label="Our outlets" class="border-b border-border pb-10">

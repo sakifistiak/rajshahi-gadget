@@ -102,10 +102,12 @@ class BlogPostController extends Controller
             'published_at' => 'nullable|date',
             'featured_image_path' => 'nullable|string|max:500',
             'featured_image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
+            'is_featured' => 'nullable|boolean',
         ]);
 
         unset($data['featured_image_path'], $data['featured_image_file']);
         $data['read_minutes'] = $data['read_minutes'] ?? 5;
+        $data['is_featured'] = $request->boolean('is_featured');
 
         return $data;
     }

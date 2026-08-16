@@ -8,13 +8,14 @@ class BlogPost extends Model
 {
     protected $fillable = [
         'slug', 'title', 'excerpt', 'content', 'category_tag',
-        'featured_image', 'read_minutes', 'author_name', 'author_role', 'published_at',
+        'featured_image', 'read_minutes', 'author_name', 'author_role', 'published_at', 'is_featured',
     ];
 
     protected function casts(): array
     {
         return [
             'published_at' => 'date',
+            'is_featured' => 'boolean',
         ];
     }
 
