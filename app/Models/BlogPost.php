@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class BlogPost extends Model
@@ -13,8 +14,20 @@ class BlogPost extends Model
     protected function casts(): array
     {
         return [
-            'content' => 'array',
             'published_at' => 'date',
         ];
+    }
+
+    public function scopePublished(Builder $query): Builder
+    {
+        return $query->whereNotNull('published_at')->where('published_at', '<=', now());
+    }
+
+    public function authorInitials(): string
+    {
+        $words = preg_split('/\s+/', trim($this->author_name));
+        $initials = array_map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)), array_slice($words, 0, 2));
+
+        return implode('', $initials) ?: '?';
     }
 }

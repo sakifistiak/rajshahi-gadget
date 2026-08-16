@@ -705,6 +705,110 @@ a.bg-primary:hover {
     border-bottom: 1px solid var(--color-border, #e5e7eb);
     transform: rotate(45deg);
 }
+
+/* ── Customer Chat Panel ── */
+#kg-customer-chat {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 80;
+    display: flex;
+    flex-direction: column;
+    width: min(360px, calc(100vw - 2rem));
+    border: 1px solid #e5e7eb;
+    border-radius: 1.1rem;
+    background: #fff;
+    box-shadow: 0 20px 50px rgb(0 0 0 / .25);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px) scale(.96);
+    pointer-events: none;
+    visibility: hidden;
+    transform-origin: bottom right;
+    transition: opacity .28s cubic-bezier(.16,1,.3,1), transform .28s cubic-bezier(.16,1,.3,1), visibility .28s;
+}
+#kg-customer-chat.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+    visibility: visible;
+}
+#kg-customer-chat-header {
+    padding: 1rem 1.1rem;
+    background: linear-gradient(135deg, #24272c, #14161a);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+}
+#kg-customer-chat-header-info { display: flex; align-items: center; gap: .65rem; min-width: 0; }
+#kg-customer-chat-avatar {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background: rgba(255,255,255,.12);
+    flex-shrink: 0;
+}
+#kg-customer-chat-status-dot {
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: .6rem;
+    height: .6rem;
+    border-radius: 9999px;
+    background: #22c55e;
+    border: 2px solid #24272c;
+}
+#kg-customer-chat-header-text { min-width: 0; }
+#kg-customer-chat-header-text strong { display: block; font-size: .85rem; font-weight: 700; line-height: 1.3; }
+#kg-customer-chat-header-text small { display: block; font-size: .7rem; color: rgba(255,255,255,.65); line-height: 1.3; margin-top: 1px; }
+#kg-close-customer-chat {
+    display: grid;
+    place-items: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    background: rgba(255,255,255,.1);
+    border: 0;
+    border-radius: 9999px;
+    color: #fff;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .15s;
+}
+#kg-close-customer-chat:hover { background: rgba(255,255,255,.2); }
+#kg-customer-chat-messages { height: 280px; overflow-y: auto; padding: .9rem; background: #f8fafc; display: flex; flex-direction: column; }
+.kg-chat-message { max-width: 80%; margin-bottom: .5rem; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; animation: kg-chat-msg-in .2s ease; }
+.kg-chat-message.customer { margin-left: auto; background: #24272c; color: #fff; border-bottom-right-radius: .25rem; }
+.kg-chat-message.agent { margin-right: auto; background: #fff; border: 1px solid #e5e7eb; color: #1f2937; border-bottom-left-radius: .25rem; }
+@keyframes kg-chat-msg-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+#kg-customer-chat-form { display: flex; align-items: center; gap: .5rem; padding: .7rem; border-top: 1px solid #e5e7eb; background: #fff; }
+#kg-customer-chat-form input { min-width: 0; flex: 1; border: 1px solid #e2e2e5; background: #f4f4f5; border-radius: 9999px; padding: .6rem 1rem; font-size: .82rem; outline: none; transition: border-color .15s, background .15s; }
+#kg-customer-chat-form input:focus { border-color: #24272c; background: #fff; }
+#kg-customer-chat-form button {
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 9999px;
+    background: #24272c;
+    color: #fff;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+}
+#kg-customer-chat-form button:hover { background: #14161a; transform: scale(1.05); }
+#kg-customer-chat-start { padding: 1rem; display: none; }
+#kg-customer-chat-start.is-visible { display: block; }
+#kg-customer-chat-start input { width: 100%; margin: .35rem 0; border: 1px solid #d1d5db; border-radius: .5rem; padding: .6rem; font-size: .8rem; box-sizing: border-box; }
+#kg-customer-chat-start button { width: 100%; margin-top: .5rem; border: 0; border-radius: .5rem; padding: .65rem; background: #24272c; color: #fff; font-weight: 700; cursor: pointer; }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -881,7 +985,8 @@ document.addEventListener('DOMContentLoaded', function() {
     $showCall = ($liveChatCallEnabled ?? '1') === '1' && $liveChatCall !== '';
 @endphp
 
-@if (($liveChatEnabled ?? '1') === '1' && ($showWhatsapp || $showMessenger || $showCall))
+@if (($liveChatEnabled ?? '1') === '1')
+@if ($showWhatsapp || $showMessenger || $showCall)
     <aside id="kg-live-chat" aria-label="Live chat options" style="--kg-chat-pulse-color: {{ $liveChatWhatsappColor ?? '#25D366' }}">
         <div id="kg-live-chat-tooltip" class="kg-live-chat-tooltip" role="status">Chat with us 👋</div>
         <div id="kg-live-chat-menu" role="menu">
@@ -913,4 +1018,102 @@ document.addEventListener('DOMContentLoaded', function() {
             <span id="kg-live-chat-toggle-icon" class="kg-live-chat-toggle-icon" aria-hidden="true"><svg width="29" height="29" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.372-.01-.571-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .105 5.36.103 11.943c0 2.105.549 4.16 1.595 5.973L0 24l6.335-1.652a11.882 11.882 0 005.71 1.447h.006c6.585 0 11.94-5.36 11.943-11.943a11.874 11.874 0 00-3.474-8.403"/></svg></span>
         </button>
     </aside>
+@endif
+
+    <section id="kg-customer-chat" aria-label="Customer chat">
+        <div id="kg-customer-chat-header">
+            <div id="kg-customer-chat-header-info">
+                <span id="kg-customer-chat-avatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                    <span id="kg-customer-chat-status-dot" aria-hidden="true"></span>
+                </span>
+                <span id="kg-customer-chat-header-text">
+                    <strong>{{ $siteName ?? 'Khan Gadget' }} Support</strong>
+                    <small>We usually reply in a few minutes</small>
+                </span>
+            </div>
+            <button type="button" id="kg-close-customer-chat" aria-label="Close chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
+        <div id="kg-customer-chat-start" class="is-visible">
+            <p class="text-sm">Start a conversation</p>
+            <input id="kg-chat-name" placeholder="Your name" maxlength="100">
+            <input id="kg-chat-phone" placeholder="Phone (optional)" maxlength="30">
+            <button type="button" id="kg-chat-start-button">Start Chat</button>
+        </div>
+        <div id="kg-customer-chat-body" style="display:none">
+            <div id="kg-customer-chat-messages"></div>
+            <form id="kg-customer-chat-form">
+                <input id="kg-chat-input" placeholder="Write a message..." maxlength="2000" autocomplete="off">
+                <button type="submit" aria-label="Send message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                </button>
+            </form>
+        </div>
+    </section>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const box = document.getElementById('kg-customer-chat'),
+              start = document.getElementById('kg-customer-chat-start'),
+              body = document.getElementById('kg-customer-chat-body'),
+              list = document.getElementById('kg-customer-chat-messages');
+        if (!box) return;
+        let timer;
+
+        function render(data) {
+            list.innerHTML = (data.messages || []).map(m =>
+                '<div class="kg-chat-message ' + m.sender_type + '">' + String(m.body).replace(/[&<>]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) + '</div>'
+            ).join('');
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function load() {
+            fetch('{{ route('chat.messages') }}').then(r => r.ok ? r.json() : null).then(d => {
+                if (d) { start.classList.remove('is-visible'); body.style.display = 'block'; render(d); }
+            }).catch(() => {});
+        }
+
+        function openCustomerChat() {
+            box.classList.add('is-visible');
+            load();
+            if (!timer) timer = setInterval(load, 4000);
+        }
+        window.kgOpenCustomerChat = openCustomerChat;
+        document.querySelectorAll('[aria-label="Open live chat"]').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                openCustomerChat();
+            });
+        });
+
+        document.getElementById('kg-close-customer-chat').addEventListener('click', () => box.classList.remove('is-visible'));
+
+        document.getElementById('kg-chat-start-button').addEventListener('click', () => {
+            let nameInput = document.getElementById('kg-chat-name');
+            if (!nameInput.value.trim()) { nameInput.focus(); return; }
+            fetch('{{ route('chat.start') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ name: nameInput.value, phone: document.getElementById('kg-chat-phone').value })
+            }).then(r => r.ok ? r.json() : Promise.reject()).then(d => {
+                start.classList.remove('is-visible');
+                body.style.display = 'block';
+                render(d);
+                if (!timer) timer = setInterval(load, 4000);
+            }).catch(() => {});
+        });
+
+        document.getElementById('kg-customer-chat-form').addEventListener('submit', e => {
+            e.preventDefault();
+            let input = document.getElementById('kg-chat-input');
+            if (!input.value.trim()) return;
+            fetch('{{ route('chat.messages.send') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ body: input.value })
+            }).then(r => r.json()).then(d => { input.value = ''; render(d); });
+        });
+    });
+    </script>
 @endif

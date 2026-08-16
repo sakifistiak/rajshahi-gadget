@@ -21,6 +21,16 @@
         'Anek Bangla': '400;500;600;700'
     };
 
+    function getCookie(name) {
+        var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return m ? decodeURIComponent(m.pop()) : '';
+    }
+
+    function isBanglaActive() {
+        var c = getCookie('googtrans');
+        return !!(c && c.indexOf('/bn') !== -1);
+    }
+
     function applyFonts(englishFont, banglaFont) {
         if (!englishFont || !banglaFont) return;
 
@@ -37,13 +47,19 @@
         }
         if (link.href !== href) link.href = href;
 
+        // Whichever language is currently active (via the blog page's EN/বাং
+        // translate toggle, tracked by Google's `googtrans` cookie) becomes the
+        // primary font site-wide; the other stays as the glyph-fallback.
+        var primaryFont = isBanglaActive() ? banglaFont : englishFont;
+        var secondaryFont = isBanglaActive() ? englishFont : banglaFont;
+
         var style = document.getElementById('site-font-vars');
         if (!style) {
             style = document.createElement('style');
             style.id = 'site-font-vars';
             document.head.appendChild(style);
         }
-        style.textContent = ':root{--font-sans:"' + englishFont + '","' + banglaFont + '",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;}';
+        style.textContent = ':root{--font-sans:"' + primaryFont + '","' + secondaryFont + '",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;}';
     }
 
     (function loadSiteFonts() {

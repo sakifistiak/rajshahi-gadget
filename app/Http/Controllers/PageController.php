@@ -266,6 +266,22 @@ class PageController extends Controller
             return $this->shop($request);
         }
 
+        if ($page === 'blog') {
+            return $this->blogIndex();
+        }
+
+        if ($page === 'customer-spotlight') {
+            return $this->customerSpotlightIndex();
+        }
+
+        if ($page === 'customer-feedback') {
+            return $this->customerFeedbackIndex();
+        }
+
+        if ($page === 'philanthropic-work') {
+            return $this->philanthropicWorkIndex();
+        }
+
         return $this->render('pages.' . $page);
     }
 
@@ -433,13 +449,67 @@ class PageController extends Controller
         throw new NotFoundHttpException();
     }
 
+    public function blogIndex()
+    {
+        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9);
+
+        return view('pages.blog', compact('posts'));
+    }
+
+    public function blogLoadMore(\Illuminate\Http\Request $request)
+    {
+        $page = max(1, (int) $request->query('page', 2));
+        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9, ['*'], 'page', $page);
+
+        return response()->json([
+            'html' => view('partials.blog-cards', compact('posts'))->render(),
+            'has_more' => $posts->hasMorePages(),
+        ]);
+    }
+
     public function blog(string $slug)
     {
-        $post = BlogPost::where('slug', $slug)->first();
+        $post = BlogPost::where('slug', $slug)->published()->first();
         if ($post) {
-            return view('pages.blog.detail', compact('post'));
+            $relatedPosts = BlogPost::published()
+                ->where('id', '!=', $post->id)
+                ->orderByDesc('published_at')
+                ->take(3)
+                ->get();
+
+            return view('pages.blog.detail', compact('post', 'relatedPosts'));
         }
         return $this->render('pages.blog.' . $slug);
+    }
+
+    public function customerSpotlightIndex()
+    {
+        $spotlights = CustomerSpotlight::orderByDesc('date')->get();
+
+        return view('pages.customer-spotlight', compact('spotlights'));
+    }
+
+    public function customerFeedbackIndex()
+    {
+        $feedbacks = CustomerFeedback::orderByDesc('date')->get();
+
+        return view('pages.customer-feedback', compact('feedbacks'));
+    }
+
+    public function philanthropicWorkIndex()
+    {
+        $works = PhilanthropicWork::orderByDesc('date')->get();
+
+        return view('pages.philanthropic-work', compact('works'));
+    }
+
+    public function philanthropicWork(string $slug)
+    {
+        $work = PhilanthropicWork::where('slug', $slug)->first();
+        if ($work) {
+            return view('pages.philanthropic-work.detail', compact('work'));
+        }
+        throw new NotFoundHttpException();
     }
 
     public function category(string $category, Request $request)

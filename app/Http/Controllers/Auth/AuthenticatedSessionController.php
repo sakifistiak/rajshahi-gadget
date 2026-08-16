@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()->is_live_chat_agent && ! $request->user()->is_admin) {
+            return redirect()->route('admin.live-chat.index');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

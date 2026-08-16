@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PhilanthropicWork extends Model
 {
-    protected $fillable = ['title', 'place', 'image', 'summary', 'date'];
+    protected $fillable = ['title', 'slug', 'place', 'image', 'summary', 'content', 'date'];
 
     protected function casts(): array
     {
