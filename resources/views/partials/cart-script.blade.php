@@ -195,6 +195,7 @@
         document.addEventListener('click', function(e) {
             var target = e.target.closest('.btn-buy-now, button, a');
             if (!target || target.closest('header, footer, nav')) return;
+            if (target.matches('a[href*="wa.me"]')) return;
             var label = (target.textContent || '').trim().replace(/\s+/g, ' ');
             if (!target.classList.contains('btn-buy-now') && !/^Buy Now(?:\s|$)/i.test(label)) return;
 
