@@ -52,9 +52,9 @@ class SectionTitleStyle
      *  as one size, only the color/font/shadow legitimately differ per word. */
     public const FONT_SIZE_DEFAULTS = ['mobile' => null, 'desktop' => null];
 
-    private const FONT_SIZE_MIN = 10;
+    private const FONT_SIZE_MIN = 6;
 
-    private const FONT_SIZE_MAX = 96;
+    private const FONT_SIZE_MAX = 120;
 
     /**
      * Validate/coerce an arbitrary (client-supplied) style blob into a safe

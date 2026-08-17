@@ -14,11 +14,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
             <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Mobile Size (px)</label>
-            <input type="number" min="10" max="96" x-model.number="{{ $path }}.font_size.mobile" placeholder="Default" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
+            <input type="number" min="6" max="120" x-model.number="{{ $path }}.font_size.mobile" placeholder="Default" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
         </div>
         <div>
             <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Desktop Size (px)</label>
-            <input type="number" min="10" max="96" x-model.number="{{ $path }}.font_size.desktop" placeholder="Default" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
+            <input type="number" min="6" max="120" x-model.number="{{ $path }}.font_size.desktop" placeholder="Default" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
         </div>
     </div>
     <button type="button" @click="{{ $path }}.font_size = { mobile: null, desktop: null }" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1">
