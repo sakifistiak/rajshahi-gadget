@@ -142,12 +142,20 @@
 
     Array.prototype.slice.call(document.querySelectorAll('.kg-compare-box')).forEach(function (box) {
         var input = box.querySelector('.kg-compare-search');
+        var requestId = 0;
         var onInput = debounce(function () {
             var q = input.value.trim();
-            if (q.length < 3) { renderResults(box, []); return; }
+            if (q.length < 3) { requestId++; renderResults(box, []); return; }
+            var thisRequestId = ++requestId;
             fetch('/api/search?q=' + encodeURIComponent(q))
                 .then(function (r) { return r.json(); })
-                .then(function (data) { renderResults(box, data.products || []); })
+                .then(function (data) {
+                    // Ignore this response if a newer keystroke has since fired another
+                    // request — otherwise a slower, stale response for an earlier/shorter
+                    // query could arrive after and overwrite the correct, fuller results.
+                    if (thisRequestId !== requestId) return;
+                    renderResults(box, data.products || []);
+                })
                 .catch(function () {});
         }, 300);
         input.addEventListener('input', onInput);
