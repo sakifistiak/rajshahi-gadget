@@ -84,14 +84,10 @@
                 <div class="rounded-lg border border-border bg-card p-5">
                     <h2 class="text-lg font-semibold">Delivery method</h2>
                     <div class="mt-4 co-delivery-method">
-                        <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
-                            <input checked type="radio" name="delivery_method" value="home_delivery" id="dm-home">
-                            <span><strong>Home Delivery</strong><br><span class="text-sm text-muted-foreground">Deliver to your address.</span></span>
-                        </label>
-                        <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
-                            <input type="radio" name="delivery_method" value="store_pickup" id="dm-pickup">
+                        <input type="hidden" name="delivery_method" value="store_pickup" id="dm-pickup">
+                        <div class="flex items-center gap-3 rounded-md border border-border p-4">
                             <span><strong>Store / Outlet Pickup</strong><br><span class="text-sm text-muted-foreground">Collect your order from one of our outlets, free of charge.</span></span>
-                        </label>
+                        </div>
                     </div>
                 </div>
                 <div class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Payment method</h2><label class="mt-4 flex cursor-pointer items-center gap-3 rounded-md border border-border p-4"><input checked type="radio" name="payment_method" value="cod"><span><strong>Cash on Delivery</strong><br><span class="text-sm text-muted-foreground">Pay when your order arrives.</span></span></label></div>
@@ -114,30 +110,16 @@
         document.getElementById('checkout-subtotal').textContent = money(total); document.getElementById('checkout-total').textContent = money(total);
 
         (function () {
-            var dmHome = document.getElementById('dm-home');
-            var dmPickup = document.getElementById('dm-pickup');
+            // Store/outlet pickup is the only delivery method now, so the
+            // home-address-only fields stay permanently hidden and not
+            // required, and the pickup outlet field is always shown/required.
             var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'union-field', 'address-field'].map(function (id) { return document.getElementById(id); });
             var pickupField = document.getElementById('pickup-field');
-            var divisionInput = document.querySelector('[name="division"]');
-            var districtInput = document.querySelector('[name="district"]');
-            var upazilaInput = document.querySelector('[name="upazila"]');
-            var addressInput = document.querySelector('[name="address"]');
             var storeSelect = document.querySelector('[name="store_location_id"]');
 
-            function syncDeliveryMethod() {
-                var isPickup = dmPickup.checked;
-                homeOnlyFields.forEach(function (el) { el.style.display = isPickup ? 'none' : ''; });
-                pickupField.style.display = isPickup ? '' : 'none';
-                divisionInput.required = !isPickup;
-                districtInput.required = !isPickup;
-                upazilaInput.required = !isPickup;
-                addressInput.required = !isPickup;
-                storeSelect.required = isPickup;
-            }
-
-            dmHome.addEventListener('change', syncDeliveryMethod);
-            dmPickup.addEventListener('change', syncDeliveryMethod);
-            syncDeliveryMethod();
+            homeOnlyFields.forEach(function (el) { el.style.display = 'none'; });
+            pickupField.style.display = '';
+            storeSelect.required = true;
         })();
 
         (function () {

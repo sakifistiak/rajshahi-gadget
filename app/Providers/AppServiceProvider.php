@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
 use App\Models\SiteSetting;
 use App\Models\StoreLocation;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['pages.product.detail', 'pages.cart', 'admin.home-settings.index'], function ($view) {
             $view->with([
                 'stockPriceNoticeActive' => SiteSetting::getValue('stock_price_notice_active', '1'),
-                'stockPriceNoticeText'   => SiteSetting::getValue('stock_price_notice_text', 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে'),
-                'stockPriceNoticeType'   => SiteSetting::getValue('stock_price_notice_type', 'warning'),
+                'stockPriceNoticeText' => SiteSetting::getValue('stock_price_notice_text', 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে'),
+                'stockPriceNoticeType' => SiteSetting::getValue('stock_price_notice_type', 'warning'),
                 'productTrustBadgesActive' => SiteSetting::getValue('product_trust_badges_active', '1'),
             ]);
         });
@@ -47,28 +47,29 @@ class AppServiceProvider extends ServiceProvider
             $defaultCol2Links = [];
 
             $col1Raw = SiteSetting::getValue('footer_col1_links');
-            $col1Decoded = !empty($col1Raw) ? json_decode($col1Raw, true) : null;
+            $col1Decoded = ! empty($col1Raw) ? json_decode($col1Raw, true) : null;
             $col1Links = is_array($col1Decoded) ? $col1Decoded : $defaultCol1Links;
 
             $col2Raw = SiteSetting::getValue('footer_col2_links');
-            $col2Decoded = !empty($col2Raw) ? json_decode($col2Raw, true) : null;
+            $col2Decoded = ! empty($col2Raw) ? json_decode($col2Raw, true) : null;
             $col2Links = is_array($col2Decoded) ? $col2Decoded : $defaultCol2Links;
 
             $col3Raw = SiteSetting::getValue('footer_col3_links');
-            $col3Decoded = !empty($col3Raw) ? json_decode($col3Raw, true) : null;
+            $col3Decoded = ! empty($col3Raw) ? json_decode($col3Raw, true) : null;
             $col3Links = is_array($col3Decoded) ? $col3Decoded : [];
 
             $view->with([
-                'siteLogo'          => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
-                'siteLogoDark'      => SiteSetting::getValue('logo_dark',  '/media/logo_dark_1786184552.png'),
-                'siteName'          => SiteSetting::getValue('site_name',  'Khan Gadget'),
-                'siteSlogan'        => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
-                'siteDescription'   => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
-                'sitePhone'         => SiteSetting::getValue('site_phone', '+8801700000000'),
+                'siteLogo' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
+                'siteLogoDark' => SiteSetting::getValue('logo_dark', '/media/logo_dark_1786184552.png'),
+                'siteFavicon' => SiteSetting::getValue('site_favicon', '/favicon.png'),
+                'siteName' => SiteSetting::getValue('site_name', 'Khan Gadget'),
+                'siteSlogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
+                'siteDescription' => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
+                'sitePhone' => SiteSetting::getValue('site_phone', '+8801700000000'),
                 'footerPhoneLinkType' => SiteSetting::getValue('footer_phone_link_type', 'tel'),
                 // Used by WhatsApp ordering now and by the live-chat integration later.
-                'whatsappNumber'    => SiteSetting::getValue('whatsapp_number', '8801700000001'),
-                'liveChatEnabled'   => SiteSetting::getValue('live_chat_enabled', '1'),
+                'whatsappNumber' => SiteSetting::getValue('whatsapp_number', '8801700000001'),
+                'liveChatEnabled' => SiteSetting::getValue('live_chat_enabled', '1'),
                 'liveChatWhatsappEnabled' => SiteSetting::getValue('live_chat_whatsapp_enabled', '1'),
                 'liveChatWhatsappNumber' => SiteSetting::getValue('live_chat_whatsapp_number', SiteSetting::getValue('whatsapp_number', '8801700000001')),
                 'liveChatMessengerEnabled' => SiteSetting::getValue('live_chat_messenger_enabled', '0'),
@@ -79,27 +80,27 @@ class AppServiceProvider extends ServiceProvider
                 'liveChatWhatsappColor' => SiteSetting::getValue('live_chat_whatsapp_color', '#25D366'),
                 'liveChatMessengerColor' => SiteSetting::getValue('live_chat_messenger_color', '#0084FF'),
                 'liveChatCallColor' => SiteSetting::getValue('live_chat_call_color', '#4f46e5'),
-                'siteEmail'         => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
-                'siteAddress'       => SiteSetting::getValue('site_address', 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh'),
+                'siteEmail' => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
+                'siteAddress' => SiteSetting::getValue('site_address', 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh'),
                 'siteBusinessHours' => SiteSetting::getValue('site_business_hours', 'Sat – Thu · 10:00 AM – 9:00 PM'),
-                'mobileMenuContact'     => SiteSetting::getValue('mobile_menu_contact', '+8801341246152'),
+                'mobileMenuContact' => SiteSetting::getValue('mobile_menu_contact', '+8801341246152'),
                 'mobileDrawerStoreInfo' => SiteSetting::getValue('mobile_drawer_store_info', 'Elephant Road Branch: Shop No: 136 | Ground Floor | Computer City Center (Ex Multiplan Center) | New Elephant Road, Dhaka-1205'),
-                'socialFacebook'    => SiteSetting::getValue('social_facebook', 'https://facebook.com/khansgadget'),
-                'socialInstagram'   => SiteSetting::getValue('social_instagram', 'https://bikroy.com/en/shops/khangadgets'),
-                'socialWhatsapp'    => SiteSetting::getValue('social_whatsapp', 'https://bdstall.com/stall/2373'),
-                'socialYoutube'     => SiteSetting::getValue('social_youtube', 'https://youtube.com/@khansgadget'),
-                'socialDaraz'       => SiteSetting::getValue('social_daraz', 'https://daraz.com.bd/shop/ki2kz4ne'),
-                'footerCopyright'   => SiteSetting::getValue('footer_copyright', 'Khan Gadget. All rights reserved.'),
-                'footerCol1Active'  => SiteSetting::getValue('footer_col1_active', '1'),
-                'footerCol1Title'   => SiteSetting::getValue('footer_col1_title', 'SHOP'),
-                'footerCol1Links'   => $col1Links,
-                'footerCol2Active'  => SiteSetting::getValue('footer_col2_active', '1'),
-                'footerCol2Title'   => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
-                'footerCol2Links'   => $col2Links,
-                'footerCol3Active'  => SiteSetting::getValue('footer_col3_active', '0'),
-                'footerCol3Title'   => SiteSetting::getValue('footer_col3_title', 'MORE'),
-                'footerCol3Links'   => $col3Links,
-                'storeLocations'    => $storeLocations,
+                'socialFacebook' => SiteSetting::getValue('social_facebook', 'https://facebook.com/khansgadget'),
+                'socialInstagram' => SiteSetting::getValue('social_instagram', 'https://bikroy.com/en/shops/khangadgets'),
+                'socialWhatsapp' => SiteSetting::getValue('social_whatsapp', 'https://bdstall.com/stall/2373'),
+                'socialYoutube' => SiteSetting::getValue('social_youtube', 'https://youtube.com/@khansgadget'),
+                'socialDaraz' => SiteSetting::getValue('social_daraz', 'https://daraz.com.bd/shop/ki2kz4ne'),
+                'footerCopyright' => SiteSetting::getValue('footer_copyright', 'Khan Gadget. All rights reserved.'),
+                'footerCol1Active' => SiteSetting::getValue('footer_col1_active', '1'),
+                'footerCol1Title' => SiteSetting::getValue('footer_col1_title', 'SHOP'),
+                'footerCol1Links' => $col1Links,
+                'footerCol2Active' => SiteSetting::getValue('footer_col2_active', '1'),
+                'footerCol2Title' => SiteSetting::getValue('footer_col2_title', 'EXPLORE'),
+                'footerCol2Links' => $col2Links,
+                'footerCol3Active' => SiteSetting::getValue('footer_col3_active', '0'),
+                'footerCol3Title' => SiteSetting::getValue('footer_col3_title', 'MORE'),
+                'footerCol3Links' => $col3Links,
+                'storeLocations' => $storeLocations,
             ]);
         });
     }

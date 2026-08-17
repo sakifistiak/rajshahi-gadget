@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\SiteSetting;
 use App\Models\CustomPage;
-use Illuminate\Http\Request;
+use App\Models\SiteSetting;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SettingController extends Controller
@@ -38,6 +38,7 @@ class SettingController extends Controller
             'footer_copyright' => SiteSetting::getValue('footer_copyright', 'Khan Gadget. All rights reserved.'),
             'logo_light' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
             'logo_dark' => SiteSetting::getValue('logo_dark', '/media/b3ca13-kg-lockup-v2.png'),
+            'site_favicon' => SiteSetting::getValue('site_favicon', '/favicon.png'),
             'footer_col1_active' => SiteSetting::getValue('footer_col1_active', '1'),
             'footer_col1_title' => SiteSetting::getValue('footer_col1_title', 'SHOP'),
             'footer_col1_links' => SiteSetting::getValue('footer_col1_links', $defaultCol1Links),
@@ -93,6 +94,7 @@ class SettingController extends Controller
             'footer_col3_links' => 'nullable|string',
             'logo_light_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'logo_dark_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
+            'favicon_file' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
             'site_font_english' => 'nullable|in:Inter,Poppins',
             'site_font_bangla' => 'nullable|in:Noto Serif Bengali,Hind Siliguri,Tiro Bangla,Anek Bangla',
         ]);
@@ -153,22 +155,33 @@ class SettingController extends Controller
         // Handle Light Mode Logo Upload
         if ($request->hasFile('logo_light_file')) {
             $file = $request->file('logo_light_file');
-            $filename = 'logo_light_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'logo_light_'.time().'.'.$file->getClientOriginalExtension();
             $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'logo_light'],
-                ['value' => '/media/' . $filename]
+                ['value' => '/media/'.$filename]
             );
         }
 
         // Handle Dark Mode Logo Upload
         if ($request->hasFile('logo_dark_file')) {
             $file = $request->file('logo_dark_file');
-            $filename = 'logo_dark_' . time() . '.' . $file->getClientOriginalExtension();
+            $filename = 'logo_dark_'.time().'.'.$file->getClientOriginalExtension();
             $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'logo_dark'],
-                ['value' => '/media/' . $filename]
+                ['value' => '/media/'.$filename]
+            );
+        }
+
+        // Handle Favicon Upload
+        if ($request->hasFile('favicon_file')) {
+            $file = $request->file('favicon_file');
+            $filename = 'favicon_'.time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('media'), $filename);
+            SiteSetting::updateOrCreate(
+                ['key' => 'site_favicon'],
+                ['value' => '/media/'.$filename]
             );
         }
 

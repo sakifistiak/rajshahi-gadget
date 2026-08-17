@@ -46,7 +46,7 @@
     <div class="hidden border-t border-border lg:block">
         <div class="container-page flex h-11 items-center gap-6 text-xs">
             <nav class="flex items-center gap-1">
-                <a href="/" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">HOME</a>
+                <a href="/shop" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">ALL PRODUCTS</a>
                 <a href="/shop?condition=intact" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">BRAND NEW INTACT BOX</a>
                 <a href="/shop?condition=without-box" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">BRAND NEW WITHOUT BOX</a>
                 <a href="/shop?condition=pre-owned" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">PRE-OWNED</a>

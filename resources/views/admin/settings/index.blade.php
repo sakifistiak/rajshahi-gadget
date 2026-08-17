@@ -55,6 +55,18 @@
                         <p class="text-[11px] text-slate-400">Used when Dark Mode is enabled across the site.</p>
                     </div>
                 </div>
+
+                <!-- Favicon Upload -->
+                <div class="space-y-2 pt-1">
+                    <label class="block text-xs font-bold text-slate-700">
+                        Favicon (Browser Tab Icon)
+                    </label>
+                    <div class="p-4 bg-slate-50 border border-dashed border-slate-300 rounded-sm flex items-center gap-4">
+                        <img src="{{ $settings['site_favicon'] }}" alt="Favicon Preview" class="h-8 w-8 object-contain bg-white p-1 border border-slate-200 rounded-sm shrink-0">
+                        <input type="file" name="favicon_file" accept="image/png,image/x-icon,image/svg+xml,image/webp,.ico" class="text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-sm file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    </div>
+                    <p class="text-[11px] text-slate-400">Square image shown in the browser tab. PNG or ICO recommended, 32×32px or larger.</p>
+                </div>
             </div>
 
             <!-- Card 2: General Information -->
