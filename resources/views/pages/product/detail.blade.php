@@ -84,24 +84,55 @@
                 </style>
                 <script>
                     (function () {
+                        var stage = document.getElementById('mainImageStage');
                         var mainImg = document.getElementById('mainProductImage');
                         var thumbs = Array.prototype.slice.call(document.querySelectorAll('.gallery-thumb'));
                         var currentIndex = 0;
+                        var animating = false;
                         thumbs.forEach(function (t) {
                             if (t.classList.contains('is-active')) currentIndex = parseInt(t.dataset.index, 10) || 0;
                         });
 
-                        // The <img> element itself is never destroyed/recreated on switch (the old
-                        // code rebuilt it for a slide animation, which is what left the hover-zoom
-                        // stuck after the first switch) — we just swap its `src` in place, so the
-                        // same group-hover CSS zoom keeps tracking correctly every time.
+                        // The persistent <img id="mainProductImage"> is never destroyed/recreated
+                        // or animated itself (that previously left the hover-zoom stuck) — instead
+                        // a temporary overlay image slides in on top of it from the left or right
+                        // depending on which thumbnail was clicked, and only once the slide finishes
+                        // do we swap the real image's `src` underneath and remove the overlay.
                         thumbs.forEach(function (thumb) {
                             thumb.addEventListener('click', function () {
                                 var newIndex = parseInt(thumb.dataset.index, 10) || 0;
                                 var newSrc = thumb.dataset.full;
-                                if (!mainImg || !newSrc || newIndex === currentIndex) return;
+                                if (!mainImg || !stage || !newSrc || newIndex === currentIndex || animating) return;
 
-                                mainImg.src = newSrc;
+                                var direction = newIndex > currentIndex ? 1 : -1;
+                                animating = true;
+
+                                var overlay = document.createElement('img');
+                                overlay.src = newSrc;
+                                overlay.alt = mainImg.alt;
+                                overlay.draggable = false;
+                                overlay.setAttribute('aria-hidden', 'true');
+                                overlay.className = 'h-full w-full object-cover';
+                                overlay.style.position = 'absolute';
+                                overlay.style.inset = '0';
+                                overlay.style.transform = 'translateX(' + (direction * 100) + '%)';
+                                overlay.style.transition = 'transform .38s cubic-bezier(.22,.61,.36,1)';
+                                overlay.style.willChange = 'transform';
+                                stage.appendChild(overlay);
+
+                                // Force a reflow so the starting transform is applied before animating to 0.
+                                void overlay.offsetWidth;
+
+                                requestAnimationFrame(function () {
+                                    overlay.style.transform = 'translateX(0)';
+                                });
+
+                                overlay.addEventListener('transitionend', function handler() {
+                                    overlay.removeEventListener('transitionend', handler);
+                                    mainImg.src = newSrc;
+                                    if (overlay.parentNode === stage) stage.removeChild(overlay);
+                                    animating = false;
+                                });
 
                                 currentIndex = newIndex;
                                 thumbs.forEach(function (t) { t.classList.remove('is-active'); });

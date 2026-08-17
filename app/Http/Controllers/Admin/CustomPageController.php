@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CustomPage;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class CustomPageController extends Controller
 {
@@ -18,10 +18,10 @@ class CustomPageController extends Controller
     {
         $query = CustomPage::query();
 
-        if ($request->has('search') && !empty($request->search)) {
+        if ($request->has('search') && ! empty($request->search)) {
             $search = $request->search;
             $query->where('title', 'like', "%{$search}%")
-                  ->orWhere('slug', 'like', "%{$search}%");
+                ->orWhere('slug', 'like', "%{$search}%");
         }
 
         $pages = $query->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->paginate(15);
@@ -50,6 +50,7 @@ class CustomPageController extends Controller
             'content' => 'nullable|string',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'show_title' => 'nullable|boolean',
         ]);
 
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->title);
@@ -62,6 +63,7 @@ class CustomPageController extends Controller
             'content' => $request->content,
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? true : false,
+            'show_title' => $request->has('show_title') ? true : false,
         ]);
 
         return redirect()->route('admin.pages.index')->with('success', 'Custom page created successfully!');
@@ -82,12 +84,13 @@ class CustomPageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:custom_pages,slug,' . $page->id,
+            'slug' => 'nullable|string|max:255|unique:custom_pages,slug,'.$page->id,
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'content' => 'nullable|string',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'show_title' => 'nullable|boolean',
         ]);
 
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->title);
@@ -100,6 +103,7 @@ class CustomPageController extends Controller
             'content' => $request->content,
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? true : false,
+            'show_title' => $request->has('show_title') ? true : false,
         ]);
 
         return redirect()->route('admin.pages.index')->with('success', 'Custom page updated successfully!');
@@ -111,6 +115,7 @@ class CustomPageController extends Controller
     public function destroy(CustomPage $page): RedirectResponse
     {
         $page->delete();
+
         return redirect()->route('admin.pages.index')->with('success', 'Custom page deleted successfully!');
     }
 }

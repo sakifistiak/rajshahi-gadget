@@ -17,11 +17,13 @@ class CustomPage extends Model
         'meta_description',
         'content',
         'is_active',
+        'show_title',
         'sort_order',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'show_title' => 'boolean',
     ];
 
     /**

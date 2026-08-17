@@ -138,22 +138,6 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Badge -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Badge <span class="font-normal normal-case text-slate-400">(e.g. Bestseller, Sale, New)</span></label>
-                    <input id="badge" type="text" name="badge" value="{{ old('badge', $product->badge) }}"
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-
-                <!-- Warranty -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Warranty</label>
-                    <input id="warranty" type="text" name="warranty" value="{{ old('warranty', $product->warranty) }}"
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
             <!-- Featured Image -->
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">
                 <div class="flex items-center justify-between mb-2">
@@ -222,24 +206,6 @@
                 <p class="text-[11px] text-slate-500 mb-3">Enter key specifications (e.g. "Apple M4 10-core", "16 GB RAM", "1 TB NVMe", "14.5\" FHD+ 120Hz"). These bullet points will show directly under the title on mobile & desktop shop cards. <strong>Tip:</strong> write as <strong>"Label: Value"</strong> (e.g. "RAM: 16 GB", "Display: 14.5\" FHD+ 120Hz") so it lines up as its own row on the <strong>/compare</strong> page — plain bullets without a colon still work, they just show as a simple checkmark feature there.</p>
 
                 <div id="highlights-container" class="space-y-2">
-                    <!-- JS will populate rows -->
-                </div>
-            </div>
-
-            <!-- Colors -->
-            <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">
-                <div class="flex items-center justify-between mb-2">
-                    <label class="block font-bold text-xs text-slate-800 uppercase tracking-wider">
-                        {{ __('Available Colors') }}
-                    </label>
-                    <button type="button" onclick="addColorRow()" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-sm border border-blue-200 transition-colors">
-                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-                        {{ __('+ Add Color') }}
-                    </button>
-                </div>
-                <p class="text-[11px] text-slate-500 mb-3">Shown as color swatches on the product page. Leave empty if this product has no color options.</p>
-
-                <div id="colors-container" class="space-y-2">
                     <!-- JS will populate rows -->
                 </div>
             </div>
@@ -406,21 +372,6 @@
             if (window.lucide) lucide.createIcons();
         }
 
-        function addColorRow(hex = '#1d1d1f', name = '') {
-            const container = document.getElementById('colors-container');
-            const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 color-row';
-            row.innerHTML = `
-                <input type="color" name="colors_hex[]" value="${hex}" class="h-9 w-10 rounded-sm border border-slate-200 cursor-pointer shrink-0" />
-                <input type="text" name="colors_name[]" value="${name.replace(/"/g, '&quot;')}" placeholder="e.g. Space Gray (optional label)" class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
-                <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-sm hover:bg-rose-50 transition-colors" title="Remove color">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-            `;
-            container.appendChild(row);
-            if (window.lucide) lucide.createIcons();
-        }
-
         function addSpecRow(label = '', value = '') {
             const container = document.getElementById('specs-container');
             const row = document.createElement('div');
@@ -454,14 +405,6 @@
                 addHighlightRow('');
                 addHighlightRow('');
             }
-
-            const existingColorsHex = @json($product->colors ? $product->colors->pluck('hex_code') : []);
-            const existingColorsName = @json($product->colors ? $product->colors->pluck('name') : []);
-            const oldColorsHex = @json(old('colors_hex', []));
-            const oldColorsName = @json(old('colors_name', []));
-            const colorsHex = oldColorsHex.length > 0 ? oldColorsHex : existingColorsHex;
-            const colorsName = oldColorsHex.length > 0 ? oldColorsName : existingColorsName;
-            colorsHex.forEach((hex, i) => addColorRow(hex, colorsName[i] || ''));
 
             const existingSpecsLabel = @json($product->specs ? $product->specs->pluck('label') : []);
             const existingSpecsValue = @json($product->specs ? $product->specs->pluck('value') : []);

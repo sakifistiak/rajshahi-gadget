@@ -42,18 +42,13 @@ class ProductController extends Controller
             'condition_id' => 'required|exists:conditions,id',
             'price' => 'required|integer|min:0',
             'compare_at_price' => 'nullable|integer|min:0',
-            'badge' => 'nullable|string|max:50',
             'description' => 'required|string',
-            'warranty' => 'nullable|string|max:255',
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
-            'colors_hex' => 'nullable|array',
-            'colors_hex.*' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
-            'colors_name' => 'nullable|array',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'gallery_paths' => 'nullable|array',
@@ -76,9 +71,7 @@ class ProductController extends Controller
             'condition_id' => $request->condition_id,
             'price' => $request->price,
             'compare_at_price' => $request->compare_at_price,
-            'badge' => $request->badge,
             'description' => $request->description,
-            'warranty' => $request->warranty,
             'in_stock' => $request->input('in_stock', '1') === '1',
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
@@ -137,18 +130,6 @@ class ProductController extends Controller
             }
         }
 
-        // Add colors
-        if ($request->has('colors_hex')) {
-            foreach ($request->colors_hex as $index => $hex) {
-                if ($hex) {
-                    $product->colors()->create([
-                        'hex_code' => $hex,
-                        'name' => $request->colors_name[$index] ?? null,
-                    ]);
-                }
-            }
-        }
-
         ProductFilterSync::syncProduct($product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
@@ -159,7 +140,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $conditions = Condition::all();
         $brands = Brand::all();
-        $product->load(['highlights', 'specs', 'images', 'colors', 'filterValues']);
+        $product->load(['highlights', 'specs', 'images', 'filterValues']);
 
         return view('admin.products.edit', compact('product', 'categories', 'conditions', 'brands'));
     }
@@ -173,18 +154,13 @@ class ProductController extends Controller
             'condition_id' => 'required|exists:conditions,id',
             'price' => 'required|integer|min:0',
             'compare_at_price' => 'nullable|integer|min:0',
-            'badge' => 'nullable|string|max:50',
             'description' => 'required|string',
-            'warranty' => 'nullable|string|max:255',
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
-            'colors_hex' => 'nullable|array',
-            'colors_hex.*' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
-            'colors_name' => 'nullable|array',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'gallery_paths' => 'nullable|array',
@@ -200,9 +176,7 @@ class ProductController extends Controller
             'condition_id' => $request->condition_id,
             'price' => $request->price,
             'compare_at_price' => $request->compare_at_price,
-            'badge' => $request->badge,
             'description' => $request->description,
-            'warranty' => $request->warranty,
             'in_stock' => $request->input('in_stock', '1') === '1',
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
@@ -229,19 +203,6 @@ class ProductController extends Controller
                         'label' => $label,
                         'value' => $val,
                         'sort_order' => $index,
-                    ]);
-                }
-            }
-        }
-
-        // Sync colors
-        $product->colors()->delete();
-        if ($request->has('colors_hex')) {
-            foreach ($request->colors_hex as $index => $hex) {
-                if ($hex) {
-                    $product->colors()->create([
-                        'hex_code' => $hex,
-                        'name' => $request->colors_name[$index] ?? null,
                     ]);
                 }
             }

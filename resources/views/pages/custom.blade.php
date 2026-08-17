@@ -30,12 +30,14 @@
             </nav>
 
             <!-- Page Header -->
-            <header class="border-b border-border pb-6 mb-8">
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-                    {{ $page->title }}
-                </h1>
-                <p class="text-xs text-muted-foreground mt-2">Last updated: {{ $page->updated_at->format('F d, Y') }}</p>
-            </header>
+            @if ($page->show_title)
+                <header class="border-b border-border pb-6 mb-8">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+                        {{ $page->title }}
+                    </h1>
+                    <p class="text-xs text-muted-foreground mt-2">Last updated: {{ $page->updated_at->format('F d, Y') }}</p>
+                </header>
+            @endif
 
             <!-- Render HTML Content -->
             <article class="prose dark:prose-invert prose-slate max-w-none text-foreground leading-relaxed text-sm sm:text-base space-y-4">
