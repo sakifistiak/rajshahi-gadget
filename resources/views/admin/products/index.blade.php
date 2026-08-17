@@ -42,6 +42,35 @@
             </div>
         </div>
 
+        <!-- Search & Filters -->
+        <form action="{{ route('admin.products.index') }}" method="GET" class="px-5 py-3 border-b border-slate-100 bg-white flex flex-wrap items-center gap-2">
+            <div class="relative flex-1 min-w-[200px]">
+                <i data-lucide="search" class="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="text" name="q" value="{{ request('q') }}" placeholder="Search by product name..." class="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+            </div>
+            <select name="category" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+                <option value="">{{ __('All Categories') }}</option>
+                @foreach ($categories as $cat)
+                    <option value="{{ $cat->id }}" {{ (string) request('category') === (string) $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                @endforeach
+            </select>
+            <select name="stock" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+                <option value="">{{ __('All Stock Status') }}</option>
+                <option value="in_stock" {{ request('stock') === 'in_stock' ? 'selected' : '' }}>{{ __('In Stock') }}</option>
+                <option value="out_of_stock" {{ request('stock') === 'out_of_stock' ? 'selected' : '' }}>{{ __('Out of Stock') }}</option>
+            </select>
+            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors">
+                <i data-lucide="filter" class="h-3.5 w-3.5"></i>
+                {{ __('Filter') }}
+            </button>
+            @if (request('q') || request('category') || request('stock'))
+                <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-800 text-[11px] font-bold uppercase rounded transition-colors">
+                    <i data-lucide="x" class="h-3.5 w-3.5"></i>
+                    {{ __('Clear') }}
+                </a>
+            @endif
+        </form>
+
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-100">
                 <thead class="bg-slate-50/20">
@@ -116,7 +145,11 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-4 text-center text-xs text-slate-400">
-                                {{ __('No products found') }}
+                                @if (request('q') || request('category') || request('stock'))
+                                    {{ __('No products match your search/filters') }}
+                                @else
+                                    {{ __('No products found') }}
+                                @endif
                             </td>
                         </tr>
                     @endforelse

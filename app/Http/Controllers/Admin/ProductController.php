@@ -17,11 +17,28 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $products = Product::with(['category', 'condition', 'brand'])->latest()->paginate(10);
+        $query = Product::with(['category', 'condition', 'brand']);
 
-        return view('admin.products.index', compact('products'));
+        if ($search = trim((string) $request->input('q'))) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->input('stock') === 'in_stock') {
+            $query->where('in_stock', true);
+        } elseif ($request->input('stock') === 'out_of_stock') {
+            $query->where('in_stock', false);
+        }
+
+        if ($categoryId = $request->input('category')) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $products = $query->latest()->paginate(10)->withQueryString();
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create(): View
