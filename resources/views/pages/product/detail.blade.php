@@ -35,11 +35,16 @@
         }
 
         /* Compact specification table with a fixed label column and zebra striping. */
+        .spec-table { position: relative; }
+        .spec-table::before { content: ''; position: absolute; top: 0; bottom: 0; left: calc(1.25rem + 160px + 1rem); width: 1px; background: var(--color-border, #e5e7eb); pointer-events: none; }
         .spec-row { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; border-bottom: 1px solid var(--color-border, #e5e7eb); }
+        .spec-row dd { padding-left: 1rem; }
         .spec-table > .spec-row:last-child { border-bottom: none; }
         .spec-table > .spec-row:nth-child(even) { background: var(--color-secondary, #f4f4f5); }
         @media (max-width: 640px) {
             .spec-row { grid-template-columns: 1fr; gap: 0.25rem; }
+            .spec-table::before { display: none; }
+            .spec-row dd { padding-left: 0; }
         }
 
         .recently-viewed-card { transition: border-color .15s ease, box-shadow .15s ease; }

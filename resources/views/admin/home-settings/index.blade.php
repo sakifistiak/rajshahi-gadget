@@ -27,7 +27,8 @@
             active: true,
             style: {
                 base: { ...this.titleStyleDefaults.base },
-                highlight: { ...this.titleStyleDefaults.highlight }
+                highlight: { ...this.titleStyleDefaults.highlight },
+                font_size: { ...this.titleStyleDefaults.font_size }
             }
         });
     },
@@ -76,6 +77,14 @@
         const hlCss = this.styleToCss(style.highlight);
         const inner = fullText.replace(regex, '<span style=&quot;' + hlCss + '&quot;>$1</span>');
         return baseCss ? '<span style=&quot;' + baseCss + '&quot;>' + inner + '</span>' : inner;
+    },
+    // Live-preview font size for a title's wrapping <h2> — the admin panel
+    // itself is only ever viewed on a desktop-width screen, so the preview
+    // shows the desktop size (falling back to mobile if only that is set)
+    // rather than trying to simulate both breakpoints at once.
+    titleSizeStyle(style) {
+        const size = style && style.font_size ? (style.font_size.desktop || style.font_size.mobile) : null;
+        return size ? ('font-size: ' + size + 'px;') : '';
     }
 }">
 
@@ -175,7 +184,7 @@
                 <!-- Live Title Preview -->
                 <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Live Title Preview:</span>
-                    <h2 class="text-xl font-bold text-slate-900" x-html="formatTitle(flashTitle, flashHighlight, flashStyle)"></h2>
+                    <h2 class="text-xl font-bold text-slate-900" :style="titleSizeStyle(flashStyle)" x-html="formatTitle(flashTitle, flashHighlight, flashStyle)"></h2>
                 </div>
 
                 <x-title-style-editor path="flashStyle" />
@@ -490,7 +499,7 @@
                         <!-- Live Title Preview -->
                         <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Live Title Preview:</span>
-                            <h2 class="text-xl font-bold text-slate-900" x-html="formatTitle(sec.title, sec.highlight, sec.style)"></h2>
+                            <h2 class="text-xl font-bold text-slate-900" :style="titleSizeStyle(sec.style)" x-html="formatTitle(sec.title, sec.highlight, sec.style)"></h2>
                         </div>
 
                         <!-- Highlight Word + Rest-of-Title Style Customization -->

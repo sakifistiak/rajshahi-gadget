@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\SiteSetting;
 use App\Models\Category;
 use App\Models\Condition;
+use App\Models\SiteSetting;
 use App\Support\SectionTitleStyle;
 use Illuminate\Http\Request;
 
@@ -49,41 +49,41 @@ class HomeSettingController extends Controller
         $defaultTickerText = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
 
         $settingsKeys = [
-            'home_hero_active'          => '1',
-            'home_flash_active'         => '1',
-            'home_flash_title'          => 'Limited time deals',
-            'home_flash_highlight'      => 'deals',
-            'home_flash_badge_active'   => '1',
-            'home_flash_badge_icon'     => '',
-            'home_flash_badge_text'     => 'Flash Deals',
+            'home_hero_active' => '1',
+            'home_flash_active' => '1',
+            'home_flash_title' => 'Limited time deals',
+            'home_flash_highlight' => 'deals',
+            'home_flash_badge_active' => '1',
+            'home_flash_badge_icon' => '',
+            'home_flash_badge_text' => 'Flash Deals',
             'home_flash_subtitle_active' => '1',
-            'home_flash_subtitle_text'  => 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery',
-            'home_new_arrival_active'      => '0',
-            'home_new_arrival_title'       => 'New Arrivals',
-            'home_new_arrival_highlight'   => 'New',
-            'home_new_arrival_position'    => 'below_flash',
-            'home_new_arrival_limit'       => '4',
-            'home_new_arrival_badge_active'   => '1',
-            'home_new_arrival_badge_icon'     => '',
-            'home_new_arrival_badge_text'     => 'New Arrival',
+            'home_flash_subtitle_text' => 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery',
+            'home_new_arrival_active' => '0',
+            'home_new_arrival_title' => 'New Arrivals',
+            'home_new_arrival_highlight' => 'New',
+            'home_new_arrival_position' => 'below_flash',
+            'home_new_arrival_limit' => '4',
+            'home_new_arrival_badge_active' => '1',
+            'home_new_arrival_badge_icon' => '',
+            'home_new_arrival_badge_text' => 'New Arrival',
             'home_new_arrival_subtitle_active' => '1',
-            'home_new_arrival_subtitle_text'  => 'Fresh stock, sourced on request — order now, get it soon',
-            'home_promos_active'        => '1',
-            'home_testimonials_active'  => '1',
-            'home_ticker_active'        => '1',
-            'home_ticker_text'          => $defaultTickerText,
-            'home_ticker_effect'        => 'fade',
-            'home_ticker_speed'         => '6',
-            'popup_offer_active'        => '0',
-            'popup_offer_image'         => '',
-            'popup_offer_image_mobile'  => '',
-            'popup_offer_link'          => '/shop',
-            'popup_offer_target'        => '_self',
-            'popup_offer_frequency'     => 'session',
-            'popup_offer_delay'         => '1',
+            'home_new_arrival_subtitle_text' => 'Fresh stock, sourced on request — order now, get it soon',
+            'home_promos_active' => '1',
+            'home_testimonials_active' => '1',
+            'home_ticker_active' => '1',
+            'home_ticker_text' => $defaultTickerText,
+            'home_ticker_effect' => 'fade',
+            'home_ticker_speed' => '6',
+            'popup_offer_active' => '0',
+            'popup_offer_image' => '',
+            'popup_offer_image_mobile' => '',
+            'popup_offer_link' => '/shop',
+            'popup_offer_target' => '_self',
+            'popup_offer_frequency' => 'session',
+            'popup_offer_delay' => '1',
             'stock_price_notice_active' => '1',
-            'stock_price_notice_text'   => 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে',
-            'stock_price_notice_type'   => 'warning',
+            'stock_price_notice_text' => 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে',
+            'stock_price_notice_type' => 'warning',
             'product_trust_badges_active' => '1',
         ];
 
@@ -103,22 +103,22 @@ class HomeSettingController extends Controller
 
         if (empty($sectionsList)) {
             $sec1Title = SiteSetting::getValue('home_sec1_title', 'Brand new intact box');
-            $sec1Hl    = SiteSetting::getValue('home_sec1_highlight', 'intact box');
-            $sec1Filt  = SiteSetting::getValue('home_sec1_filter', 'cond_intact');
-            $sec1Lim   = SiteSetting::getValue('home_sec1_limit', '4');
-            $sec1Act   = SiteSetting::getValue('home_sec1_active', '1') == '1';
+            $sec1Hl = SiteSetting::getValue('home_sec1_highlight', 'intact box');
+            $sec1Filt = SiteSetting::getValue('home_sec1_filter', 'cond_intact');
+            $sec1Lim = SiteSetting::getValue('home_sec1_limit', '4');
+            $sec1Act = SiteSetting::getValue('home_sec1_active', '1') == '1';
 
             $sec2Title = SiteSetting::getValue('home_sec2_title', 'Brand new without box');
-            $sec2Hl    = SiteSetting::getValue('home_sec2_highlight', 'without box');
-            $sec2Filt  = SiteSetting::getValue('home_sec2_filter', 'cond_without-box');
-            $sec2Lim   = SiteSetting::getValue('home_sec2_limit', '4');
-            $sec2Act   = SiteSetting::getValue('home_sec2_active', '1') == '1';
+            $sec2Hl = SiteSetting::getValue('home_sec2_highlight', 'without box');
+            $sec2Filt = SiteSetting::getValue('home_sec2_filter', 'cond_without-box');
+            $sec2Lim = SiteSetting::getValue('home_sec2_limit', '4');
+            $sec2Act = SiteSetting::getValue('home_sec2_active', '1') == '1';
 
             $sec3Title = SiteSetting::getValue('home_sec3_title', 'Certified pre-owned');
-            $sec3Hl    = SiteSetting::getValue('home_sec3_highlight', 'pre-owned');
-            $sec3Filt  = SiteSetting::getValue('home_sec3_filter', 'cond_pre-owned');
-            $sec3Lim   = SiteSetting::getValue('home_sec3_limit', '4');
-            $sec3Act   = SiteSetting::getValue('home_sec3_active', '1') == '1';
+            $sec3Hl = SiteSetting::getValue('home_sec3_highlight', 'pre-owned');
+            $sec3Filt = SiteSetting::getValue('home_sec3_filter', 'cond_pre-owned');
+            $sec3Lim = SiteSetting::getValue('home_sec3_limit', '4');
+            $sec3Act = SiteSetting::getValue('home_sec3_active', '1') == '1';
 
             $sectionsList = [
                 ['id' => 'sec_1', 'title' => $sec1Title, 'highlight' => $sec1Hl, 'filter' => $sec1Filt, 'limit' => $sec1Lim, 'active' => $sec1Act],
@@ -135,8 +135,9 @@ class HomeSettingController extends Controller
         $titleStyleFonts = SectionTitleStyle::FONTS;
         $titleStyleShadows = SectionTitleStyle::SHADOWS;
         $titleStyleDefaults = [
-            'base'      => SectionTitleStyle::BASE_DEFAULTS,
+            'base' => SectionTitleStyle::BASE_DEFAULTS,
             'highlight' => SectionTitleStyle::DEFAULTS,
+            'font_size' => SectionTitleStyle::FONT_SIZE_DEFAULTS,
         ];
 
         $flashTitleStyle = SectionTitleStyle::sanitizeFull(
@@ -154,7 +155,7 @@ class HomeSettingController extends Controller
         if ($request->has('popup_offer_active')) {
             $existingDesktopImage = SiteSetting::getValue('popup_offer_image');
             $hasNewDesktopImage = $request->hasFile('popup_offer_image_file') || $request->filled('popup_offer_image');
-            if (empty($existingDesktopImage) && !$hasNewDesktopImage) {
+            if (empty($existingDesktopImage) && ! $hasNewDesktopImage) {
                 return redirect()->back()->withErrors(['popup_offer_image' => 'Desktop banner image is required to enable popup offer.'])->withInput();
             }
         }
@@ -179,14 +180,14 @@ class HomeSettingController extends Controller
 
         if ($request->hasFile('popup_offer_image_file')) {
             $path = $request->file('popup_offer_image_file')->store('popups', 'public');
-            SiteSetting::setValue('popup_offer_image', '/storage/' . $path);
+            SiteSetting::setValue('popup_offer_image', '/storage/'.$path);
         } elseif ($request->has('popup_offer_image')) {
             SiteSetting::setValue('popup_offer_image', $request->input('popup_offer_image', ''));
         }
 
         if ($request->hasFile('popup_offer_image_mobile_file')) {
             $pathMobile = $request->file('popup_offer_image_mobile_file')->store('popups', 'public');
-            SiteSetting::setValue('popup_offer_image_mobile', '/storage/' . $pathMobile);
+            SiteSetting::setValue('popup_offer_image_mobile', '/storage/'.$pathMobile);
         } elseif ($request->has('popup_offer_image_mobile')) {
             SiteSetting::setValue('popup_offer_image_mobile', $request->input('popup_offer_image_mobile', ''));
         }
@@ -243,7 +244,6 @@ class HomeSettingController extends Controller
                 json_encode(SectionTitleStyle::sanitizeFull(is_array($decodedFlashStyle) ? $decodedFlashStyle : null))
             );
         }
-
 
         if ($request->has('home_new_arrival_title')) {
             SiteSetting::setValue('home_new_arrival_title', $request->input('home_new_arrival_title', ''));

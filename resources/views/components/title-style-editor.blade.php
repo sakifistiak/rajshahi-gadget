@@ -1,5 +1,32 @@
 @props(['path'])
 {{-- $path is a literal Alpine expression (e.g. "sec.style" or "flashStyle"), not user input --}}
+
+{{-- Title font size — one size for the whole heading (highlight word included),
+     not per base/highlight scope like the color/font/shadow options below,
+     since a title reads as one size. Leave a box blank to use the theme's
+     default size for that breakpoint. --}}
+<div class="border border-slate-200 rounded-lg p-4 space-y-3 bg-slate-50/60">
+    <label class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <i data-lucide="ruler" class="w-4 h-4"></i>
+        Title Font Size
+    </label>
+    <p class="text-[11px] text-slate-500 -mt-1.5">Set a fixed size for mobile and desktop screens. Leave either box blank to keep the theme's default size for that screen.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Mobile Size (px)</label>
+            <input type="number" min="10" max="96" x-model.number="{{ $path }}.font_size.mobile" placeholder="Default" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
+        </div>
+        <div>
+            <label class="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1.5">Desktop Size (px)</label>
+            <input type="number" min="10" max="96" x-model.number="{{ $path }}.font_size.desktop" placeholder="Default" class="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-xs font-semibold">
+        </div>
+    </div>
+    <button type="button" @click="{{ $path }}.font_size = { mobile: null, desktop: null }" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 inline-flex items-center gap-1">
+        <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+        Reset to default size
+    </button>
+</div>
+
 <template x-for="scope in ['highlight', 'base']" :key="scope">
     <div class="border border-slate-200 rounded-lg" x-data="{ open: false }">
         <button type="button" @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 text-xs font-bold text-slate-700 uppercase tracking-wider hover:bg-slate-50 transition-colors">
