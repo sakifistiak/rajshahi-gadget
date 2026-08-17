@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FilterAttribute;
-use App\Models\FlashSale;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\ProductFilterValue;
-use App\Models\Category;
-use App\Models\Brand;
+use App\Http\Controllers\Admin\HomeSettingController;
 use App\Models\BlogPost;
-use App\Models\HeroSlider;
-use App\Models\PromoBanner;
-use App\Models\Testimonial;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Condition;
 use App\Models\CustomerFeedback;
 use App\Models\CustomerSpotlight;
+use App\Models\FilterAttribute;
+use App\Models\FlashSale;
+use App\Models\HeroSlider;
+use App\Models\Order;
 use App\Models\PhilanthropicWork;
+use App\Models\Product;
+use App\Models\ProductFilterValue;
+use App\Models\PromoBanner;
 use App\Models\SiteSetting;
-use App\Models\Condition;
 use App\Support\SectionTitleStyle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -45,63 +45,59 @@ class PageController extends Controller
             : collect();
 
         // Home settings
-        $homeHeroActive        = SiteSetting::getValue('home_hero_active', '1') == '1';
-        $homeFlashActive       = SiteSetting::getValue('home_flash_active', '1') == '1';
-        $homeFlashTitle        = SiteSetting::getValue('home_flash_title', 'Limited time deals');
-        $homeFlashHighlight    = SiteSetting::getValue('home_flash_highlight', 'deals');
-        $homeFlashTitleStyle   = SectionTitleStyle::sanitizeFull(
+        $homeHeroActive = SiteSetting::getValue('home_hero_active', '1') == '1';
+        $homeFlashActive = SiteSetting::getValue('home_flash_active', '1') == '1';
+        $homeFlashTitle = SiteSetting::getValue('home_flash_title', 'Limited time deals');
+        $homeFlashHighlight = SiteSetting::getValue('home_flash_highlight', 'deals');
+        $homeFlashTitleStyle = SectionTitleStyle::sanitizeFull(
             json_decode(SiteSetting::getValue('home_flash_title_style', '{}'), true)
         );
-        $homeFlashBadgeActive   = SiteSetting::getValue('home_flash_badge_active', '1') == '1';
-        $homeFlashBadgeIcon     = SiteSetting::getValue('home_flash_badge_icon', '');
-        $homeFlashBadgeText     = SiteSetting::getValue('home_flash_badge_text', 'Flash Deals');
+        $homeFlashBadgeActive = SiteSetting::getValue('home_flash_badge_active', '1') == '1';
+        $homeFlashBadgeIcon = SiteSetting::getValue('home_flash_badge_icon', '');
+        $homeFlashBadgeText = SiteSetting::getValue('home_flash_badge_text', 'Flash Deals');
         $homeFlashSubtitleActive = SiteSetting::getValue('home_flash_subtitle_active', '1') == '1';
-        $homeFlashSubtitleText  = SiteSetting::getValue('home_flash_subtitle_text', 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery');
+        $homeFlashSubtitleText = SiteSetting::getValue('home_flash_subtitle_text', 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery');
         // is_new_arrival is independent of in_stock — these products are
         // sourced on order rather than kept in stock, so they show here
         // regardless of the in_stock flag.
-        $homeNewArrivalActive     = SiteSetting::getValue('home_new_arrival_active', '0') == '1';
-        $homeNewArrivalTitle      = SiteSetting::getValue('home_new_arrival_title', 'New Arrivals');
-        $homeNewArrivalHighlight  = SiteSetting::getValue('home_new_arrival_highlight', 'New');
-        $homeNewArrivalPosition   = SiteSetting::getValue('home_new_arrival_position', 'below_flash');
-        $homeNewArrivalLimit      = (int) SiteSetting::getValue('home_new_arrival_limit', '4');
-        $homeNewArrivalBadgeActive   = SiteSetting::getValue('home_new_arrival_badge_active', '1') == '1';
-        $homeNewArrivalBadgeIcon     = SiteSetting::getValue('home_new_arrival_badge_icon', '');
-        $homeNewArrivalBadgeText     = SiteSetting::getValue('home_new_arrival_badge_text', 'New Arrival');
+        $homeNewArrivalActive = SiteSetting::getValue('home_new_arrival_active', '0') == '1';
+        $homeNewArrivalTitle = SiteSetting::getValue('home_new_arrival_title', 'New Arrivals');
+        $homeNewArrivalHighlight = SiteSetting::getValue('home_new_arrival_highlight', 'New');
+        $homeNewArrivalPosition = SiteSetting::getValue('home_new_arrival_position', 'below_flash');
+        $homeNewArrivalLimit = (int) SiteSetting::getValue('home_new_arrival_limit', '4');
+        $homeNewArrivalBadgeActive = SiteSetting::getValue('home_new_arrival_badge_active', '1') == '1';
+        $homeNewArrivalBadgeIcon = SiteSetting::getValue('home_new_arrival_badge_icon', '');
+        $homeNewArrivalBadgeText = SiteSetting::getValue('home_new_arrival_badge_text', 'New Arrival');
         $homeNewArrivalSubtitleActive = SiteSetting::getValue('home_new_arrival_subtitle_active', '1') == '1';
-        $homeNewArrivalSubtitleText  = SiteSetting::getValue('home_new_arrival_subtitle_text', 'Fresh stock, sourced on request — order now, get it soon');
-        $newArrivalProducts      = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
+        $homeNewArrivalSubtitleText = SiteSetting::getValue('home_new_arrival_subtitle_text', 'Fresh stock, sourced on request — order now, get it soon');
+        $newArrivalProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
             ->newArrival()
             ->latest()
             ->take($homeNewArrivalLimit)
             ->get();
 
-        $homePromosActive       = SiteSetting::getValue('home_promos_active', '1') == '1';
+        $homePromosActive = SiteSetting::getValue('home_promos_active', '1') == '1';
         $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
-        $homeTickerActive       = SiteSetting::getValue('home_ticker_active', '1') == '1';
-        $defaultTickerText      = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
-        $homeTickerText         = SiteSetting::getValue('home_ticker_text', $defaultTickerText);
-        $homeTickerItems        = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $homeTickerText))));
-        $homeTickerEffect       = in_array(SiteSetting::getValue('home_ticker_effect', 'fade'), ['fade', 'scroll'], true)
+        $homeTickerActive = SiteSetting::getValue('home_ticker_active', '1') == '1';
+        $defaultTickerText = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
+        $homeTickerText = SiteSetting::getValue('home_ticker_text', $defaultTickerText);
+        $homeTickerItems = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $homeTickerText))));
+        $homeTickerEffect = in_array(SiteSetting::getValue('home_ticker_effect', 'fade'), ['fade', 'scroll'], true)
             ? SiteSetting::getValue('home_ticker_effect', 'fade')
             : 'fade';
-        $homeTickerSpeed        = (float) SiteSetting::getValue('home_ticker_speed', '6');
-
-
+        $homeTickerSpeed = (float) SiteSetting::getValue('home_ticker_speed', '6');
 
         // Popup Offer Settings
         $popupOfferSettings = [
-            'active'        => SiteSetting::getValue('popup_offer_active', '0') == '1',
-            'image'         => SiteSetting::getValue('popup_offer_image', ''),
-            'image_mobile'  => SiteSetting::getValue('popup_offer_image_mobile', ''),
-            'link'          => SiteSetting::getValue('popup_offer_link', '/shop'),
-            'target'        => SiteSetting::getValue('popup_offer_target', '_self'),
-            'frequency'     => SiteSetting::getValue('popup_offer_frequency', 'session'),
-            'delay'         => (float) SiteSetting::getValue('popup_offer_delay', '1'),
+            'active' => SiteSetting::getValue('popup_offer_active', '0') == '1',
+            'image' => SiteSetting::getValue('popup_offer_image', ''),
+            'image_mobile' => SiteSetting::getValue('popup_offer_image_mobile', ''),
+            'link' => SiteSetting::getValue('popup_offer_link', '/shop'),
+            'target' => SiteSetting::getValue('popup_offer_target', '_self'),
+            'frequency' => SiteSetting::getValue('popup_offer_frequency', 'session'),
+            'delay' => (float) SiteSetting::getValue('popup_offer_delay', '1'),
             'backdrop_blur' => SiteSetting::getValue('popup_offer_backdrop_blur', 'md'),
         ];
-
-
 
         // Load dynamic product sections
         $sectionsJson = SiteSetting::getValue('home_sections_json');
@@ -114,16 +110,16 @@ class PageController extends Controller
         }
 
         if (empty($sectionsList)) {
-            $sectionsList = \App\Http\Controllers\Admin\HomeSettingController::getDefaultSections();
+            $sectionsList = HomeSettingController::getDefaultSections();
         }
 
         $productSections = [];
         foreach ($sectionsList as $sec) {
-            if (isset($sec['active']) && !$sec['active']) {
+            if (isset($sec['active']) && ! $sec['active']) {
                 continue;
             }
             $filter = $sec['filter'] ?? 'all';
-            $limit  = (int)($sec['limit'] ?? 4);
+            $limit = (int) ($sec['limit'] ?? 4);
 
             $viewAllLink = '/shop';
             if ($filter === 'cond_intact') {
@@ -136,17 +132,17 @@ class PageController extends Controller
                 $catId = (int) substr($filter, 4);
                 $cat = Category::find($catId);
                 if ($cat) {
-                    $viewAllLink = '/shop?category=' . $cat->slug;
+                    $viewAllLink = '/shop?category='.$cat->slug;
                 }
             }
 
             $productSections[] = [
-                'id'          => $sec['id'] ?? uniqid('sec_'),
-                'title'       => $sec['title'] ?? 'Product Section',
-                'highlight'   => $sec['highlight'] ?? '',
-                'style'       => SectionTitleStyle::sanitizeFull($sec['style'] ?? null),
+                'id' => $sec['id'] ?? uniqid('sec_'),
+                'title' => $sec['title'] ?? 'Product Section',
+                'highlight' => $sec['highlight'] ?? '',
+                'style' => SectionTitleStyle::sanitizeFull($sec['style'] ?? null),
                 'viewAllLink' => $viewAllLink,
-                'products'    => $this->getFilteredProducts($allProducts, $filter, $limit),
+                'products' => $this->getFilteredProducts($allProducts, $filter, $limit),
             ];
         }
 
@@ -154,9 +150,9 @@ class PageController extends Controller
         $sec1Products = $productSections[0]['products'] ?? collect();
         $sec2Products = $productSections[1]['products'] ?? collect();
         $sec3Products = $productSections[2]['products'] ?? collect();
-        $intactProducts     = $sec1Products;
+        $intactProducts = $sec1Products;
         $withoutBoxProducts = $sec2Products;
-        $preOwnedProducts   = $sec3Products;
+        $preOwnedProducts = $sec3Products;
 
         return view('pages.home', compact(
             'heroSliders',
@@ -206,15 +202,18 @@ class PageController extends Controller
         $limit = (int) ($limit ?: 4);
         if (str_starts_with($filter, 'cond_')) {
             $slug = substr($filter, 5);
-            return $allProducts->filter(function($p) use ($slug) {
+
+            return $allProducts->filter(function ($p) use ($slug) {
                 return optional($p->condition)->slug === $slug;
             })->take($limit);
         } elseif (str_starts_with($filter, 'cat_')) {
             $catId = (int) substr($filter, 4);
-            return $allProducts->filter(function($p) use ($catId) {
+
+            return $allProducts->filter(function ($p) use ($catId) {
                 return $p->category_id == $catId;
             })->take($limit);
         }
+
         return $allProducts->take($limit);
     }
 
@@ -228,24 +227,55 @@ class PageController extends Controller
         $products = Product::with(['category', 'brand', 'images'])
             ->where('name', 'like', "%{$query}%")
             ->orWhere('description', 'like', "%{$query}%")
-            ->orWhereHas('category', function($q) use ($query) {
+            ->orWhereHas('category', function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%");
             })
-            ->orWhereHas('brand', function($q) use ($query) {
+            ->orWhereHas('brand', function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%");
             })
             ->take(8)
             ->get()
-            ->map(function($product) {
+            ->map(function ($product) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
                     'slug' => $product->slug,
-                    'price' => '৳ ' . number_format($product->price),
-                    'compare_at_price' => $product->compare_at_price ? '৳ ' . number_format($product->compare_at_price) : null,
+                    'price' => '৳ '.number_format($product->price),
+                    'compare_at_price' => $product->compare_at_price ? '৳ '.number_format($product->compare_at_price) : null,
                     'image' => $product->primaryImage(),
                     'category' => optional($product->category)->name ?? 'Gadget',
                     'url' => route('product', $product->slug),
+                ];
+            });
+
+        return response()->json(['products' => $products]);
+    }
+
+    public function compareData(Request $request)
+    {
+        $slugs = array_slice(array_filter(explode(',', $request->input('slugs', ''))), 0, 3);
+
+        $products = Product::with(['brand', 'category', 'condition', 'highlights'])
+            ->whereIn('slug', $slugs)
+            ->get()
+            ->sortBy(fn ($p) => array_search($p->slug, $slugs))
+            ->values()
+            ->map(function ($product) {
+                return [
+                    'slug' => $product->slug,
+                    'name' => $product->name,
+                    'image' => $product->primaryImage(),
+                    'price' => $product->price_is_tba ? 'TBA' : ('৳ '.number_format($product->price)),
+                    'compare_at_price' => $product->compare_at_price ? '৳ '.number_format($product->compare_at_price) : null,
+                    'brand' => optional($product->brand)->name,
+                    'category' => optional($product->category)->name,
+                    'condition' => optional($product->condition)->name,
+                    'stock_status' => $product->stockStatusLabel(),
+                    'warranty' => $product->warranty,
+                    'rating' => $product->rating,
+                    'reviews_count' => $product->reviews_count,
+                    'url' => route('product', $product->slug),
+                    'highlights' => $product->highlights->sortBy('sort_order')->pluck('text')->values(),
                 ];
             });
 
@@ -256,7 +286,7 @@ class PageController extends Controller
     {
         return response()->json([
             'english' => SiteSetting::getValue('site_font_english', 'Inter'),
-            'bangla'  => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
+            'bangla' => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
         ]);
     }
 
@@ -282,7 +312,7 @@ class PageController extends Controller
             return $this->philanthropicWorkIndex();
         }
 
-        return $this->render('pages.' . $page);
+        return $this->render('pages.'.$page);
     }
 
     public function checkout(Request $request)
@@ -329,8 +359,8 @@ class PageController extends Controller
         // used by the multi-select checkboxes) — (array) casting a string wraps
         // it into a single-element array so both forms work identically.
         $conditionSlugs = array_filter((array) $request->input('condition', []));
-        $categorySlugs  = array_filter((array) $request->input('category', []));
-        $brandSlugs     = array_filter((array) $request->input('brand', []));
+        $categorySlugs = array_filter((array) $request->input('category', []));
+        $brandSlugs = array_filter((array) $request->input('brand', []));
 
         if (! empty($conditionSlugs)) {
             $query->whereHas('condition', function ($q) use ($conditionSlugs) {
@@ -394,15 +424,15 @@ class PageController extends Controller
 
         // Max Price filter
         if ($request->filled('max_price')) {
-            $query->where('price', '<=', (float)$request->max_price);
+            $query->where('price', '<=', (float) $request->max_price);
         }
 
         // Search query
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -442,11 +472,11 @@ class PageController extends Controller
             return view('pages.product.detail', compact('product', 'relatedProducts'));
         }
 
-        if (View::exists('pages.product.' . $slug)) {
-            return view('pages.product.' . $slug);
+        if (View::exists('pages.product.'.$slug)) {
+            return view('pages.product.'.$slug);
         }
 
-        throw new NotFoundHttpException();
+        throw new NotFoundHttpException;
     }
 
     public function blogIndex()
@@ -461,7 +491,7 @@ class PageController extends Controller
         return view('pages.blog', compact('posts', 'featuredPost'));
     }
 
-    public function blogLoadMore(\Illuminate\Http\Request $request)
+    public function blogLoadMore(Request $request)
     {
         $page = max(1, (int) $request->query('page', 2));
         $featuredPost = BlogPost::published()->where('is_featured', true)->orderByDesc('published_at')->first();
@@ -488,7 +518,8 @@ class PageController extends Controller
 
             return view('pages.blog.detail', compact('post', 'relatedPosts'));
         }
-        return $this->render('pages.blog.' . $slug);
+
+        return $this->render('pages.blog.'.$slug);
     }
 
     public function customerSpotlightIndex()
@@ -518,19 +549,20 @@ class PageController extends Controller
         if ($work) {
             return view('pages.philanthropic-work.detail', compact('work'));
         }
-        throw new NotFoundHttpException();
+        throw new NotFoundHttpException;
     }
 
     public function category(string $category, Request $request)
     {
         $request->merge(['category' => $category]);
+
         return $this->shop($request);
     }
 
     private function render(string $view)
     {
         if (! View::exists($view)) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
 
         return view($view);

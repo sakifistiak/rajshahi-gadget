@@ -1,17 +1,32 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\Admin\HeroSliderController as AdminHeroSliderController;
-use App\Http\Controllers\Admin\PromoBannerController as AdminPromoBannerController;
+use App\Http\Controllers\Admin\BlogPostController;
+use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ChatAgentController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Admin\CustomerFeedbackController;
+use App\Http\Controllers\Admin\CustomerSpotlightController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FilterAttributeController;
+use App\Http\Controllers\Admin\FlashSaleController;
+use App\Http\Controllers\Admin\HeroSliderController as AdminHeroSliderController;
+use App\Http\Controllers\Admin\HomeSettingController;
+use App\Http\Controllers\Admin\LiveChatSettingController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PhilanthropicWorkController;
+use App\Http\Controllers\Admin\PopupOfferController;
+use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\PromoBannerController as AdminPromoBannerController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\StoreLocationController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\Admin\ChatController as AdminChatController;
-use App\Http\Controllers\Admin\ChatAgentController;
+use App\Http\Controllers\CustomPageController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +35,11 @@ use App\Http\Controllers\Admin\ChatAgentController;
 */
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
+Route::get('/api/compare', [PageController::class, 'compareData'])->name('api.compare');
 Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
-Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
+Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 Route::middleware('throttle:30,1')->group(function () {
     Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
     Route::get('/chat/messages', [ChatController::class, 'messages'])->name('chat.messages');
@@ -35,7 +51,7 @@ Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/philanthropic-work/{slug}', [PageController::class, 'philanthropicWork'])->name('philanthropic-work');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
 
-Route::get('/page/{slug}', [\App\Http\Controllers\CustomPageController::class, 'show'])->name('pages.custom');
+Route::get('/page/{slug}', [CustomPageController::class, 'show'])->name('pages.custom');
 
 /*
 |--------------------------------------------------------------------------
@@ -65,33 +81,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin CRUDs
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        Route::delete('products/bulk-destroy', [AdminProductController::class, 'bulkDestroy'])->name('products.bulk-destroy');
         Route::resource('products', AdminProductController::class);
-        Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->except('show');
-        Route::resource('brands', \App\Http\Controllers\Admin\BrandController::class)->except('show');
+        Route::resource('categories', CategoryController::class)->except('show');
+        Route::resource('brands', BrandController::class)->except('show');
         Route::resource('sliders', AdminHeroSliderController::class);
         Route::patch('sliders/{slider}/toggle', [AdminHeroSliderController::class, 'toggle'])->name('sliders.toggle');
         Route::resource('promos', AdminPromoBannerController::class);
         Route::patch('promos/{promo}/toggle', [AdminPromoBannerController::class, 'toggle'])->name('promos.toggle');
-        Route::resource('flash-sales', \App\Http\Controllers\Admin\FlashSaleController::class)->except('show');
-        Route::resource('filter-attributes', \App\Http\Controllers\Admin\FilterAttributeController::class)->except('show');
-        Route::resource('blog-posts', \App\Http\Controllers\Admin\BlogPostController::class)->except('show');
-        Route::resource('customer-spotlights', \App\Http\Controllers\Admin\CustomerSpotlightController::class)->except('show');
-        Route::resource('customer-feedbacks', \App\Http\Controllers\Admin\CustomerFeedbackController::class)->except('show');
-        Route::resource('philanthropic-works', \App\Http\Controllers\Admin\PhilanthropicWorkController::class)->except('show');
-        Route::post('flash-sales/{flashSale}/products', [\App\Http\Controllers\Admin\FlashSaleController::class, 'addProduct'])->name('flash-sales.products.store');
-        Route::patch('flash-sales/{flashSale}/products/{flashSaleProduct}', [\App\Http\Controllers\Admin\FlashSaleController::class, 'updateProduct'])->name('flash-sales.products.update');
-        Route::delete('flash-sales/{flashSale}/products/{flashSaleProduct}', [\App\Http\Controllers\Admin\FlashSaleController::class, 'removeProduct'])->name('flash-sales.products.destroy');
+        Route::resource('flash-sales', FlashSaleController::class)->except('show');
+        Route::resource('filter-attributes', FilterAttributeController::class)->except('show');
+        Route::resource('blog-posts', BlogPostController::class)->except('show');
+        Route::resource('customer-spotlights', CustomerSpotlightController::class)->except('show');
+        Route::resource('customer-feedbacks', CustomerFeedbackController::class)->except('show');
+        Route::resource('philanthropic-works', PhilanthropicWorkController::class)->except('show');
+        Route::post('flash-sales/{flashSale}/products', [FlashSaleController::class, 'addProduct'])->name('flash-sales.products.store');
+        Route::patch('flash-sales/{flashSale}/products/{flashSaleProduct}', [FlashSaleController::class, 'updateProduct'])->name('flash-sales.products.update');
+        Route::delete('flash-sales/{flashSale}/products/{flashSaleProduct}', [FlashSaleController::class, 'removeProduct'])->name('flash-sales.products.destroy');
         Route::resource('customers', AdminCustomerController::class);
-        Route::resource('pages', \App\Http\Controllers\Admin\CustomPageController::class);
-        Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
-        Route::post('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
-        Route::get('live-chat-settings', [\App\Http\Controllers\Admin\LiveChatSettingController::class, 'index'])->name('live-chat-settings.index');
-        Route::post('live-chat-settings', [\App\Http\Controllers\Admin\LiveChatSettingController::class, 'update'])->name('live-chat-settings.update');
-        Route::get('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'index'])->name('home-settings.index');
-        Route::post('home-settings', [\App\Http\Controllers\Admin\HomeSettingController::class, 'update'])->name('home-settings.update');
-        Route::get('popup-offer', [\App\Http\Controllers\Admin\PopupOfferController::class, 'index'])->name('popup-offer.index');
-        Route::post('popup-offer', [\App\Http\Controllers\Admin\PopupOfferController::class, 'update'])->name('popup-offer.update');
-        Route::resource('store-locations', \App\Http\Controllers\Admin\StoreLocationController::class);
+        Route::resource('pages', App\Http\Controllers\Admin\CustomPageController::class);
+        Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
+        Route::get('live-chat-settings', [LiveChatSettingController::class, 'index'])->name('live-chat-settings.index');
+        Route::post('live-chat-settings', [LiveChatSettingController::class, 'update'])->name('live-chat-settings.update');
+        Route::get('home-settings', [HomeSettingController::class, 'index'])->name('home-settings.index');
+        Route::post('home-settings', [HomeSettingController::class, 'update'])->name('home-settings.update');
+        Route::get('popup-offer', [PopupOfferController::class, 'index'])->name('popup-offer.index');
+        Route::post('popup-offer', [PopupOfferController::class, 'update'])->name('popup-offer.update');
+        Route::resource('store-locations', StoreLocationController::class);
 
         // Orders
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');

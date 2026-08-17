@@ -19,31 +19,14 @@
         <form action="{{ route('admin.customer-spotlights.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-sm border border-slate-200 shadow-sm space-y-6">
             @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Customer Name <span class="text-rose-500">*</span></label>
-                    <input type="text" name="name" value="{{ old('name') }}" required autofocus class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Location <span class="text-rose-500">*</span></label>
-                    <input type="text" name="location" value="{{ old('location') }}" required placeholder="e.g. Dhaka" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Product <span class="text-rose-500">*</span></label>
-                    <input type="text" name="product" value="{{ old('product') }}" required placeholder="e.g. MacBook Pro 14 M1 Pro" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date <span class="text-rose-500">*</span></label>
-                    <input type="date" name="date" value="{{ old('date') }}" required class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Title</label>
+                <input type="text" name="product" value="{{ old('product') }}" autofocus placeholder="e.g. MacBook Pro 14 M1 Pro" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Quote <span class="text-rose-500">*</span></label>
-                <textarea name="quote" rows="3" required maxlength="1000" placeholder="What did the customer say?" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">{{ old('quote') }}</textarea>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Quote</label>
+                <textarea name="quote" rows="3" maxlength="1000" placeholder="What did the customer say?" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">{{ old('quote') }}</textarea>
             </div>
 
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">

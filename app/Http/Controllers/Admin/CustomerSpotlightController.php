@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CustomerSpotlight;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\File;
+use Illuminate\View\View;
 
 class CustomerSpotlightController extends Controller
 {
@@ -40,7 +40,7 @@ class CustomerSpotlightController extends Controller
             $imagePath = $this->storeUploadedImage($request->file('image_file'));
         }
 
-        CustomerSpotlight::create([...$data, 'image' => $imagePath]);
+        CustomerSpotlight::create([...$data, 'image' => $imagePath, 'date' => now()]);
 
         return redirect()->route('admin.customer-spotlights.index')->with('success', 'Customer spotlight added successfully!');
     }
@@ -74,11 +74,8 @@ class CustomerSpotlightController extends Controller
     private function validated(Request $request): array
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'product' => 'required|string|max:255',
-            'quote' => 'required|string|max:1000',
-            'date' => 'required|date',
+            'product' => 'nullable|string|max:255',
+            'quote' => 'nullable|string|max:1000',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);
@@ -90,13 +87,13 @@ class CustomerSpotlightController extends Controller
 
     private function storeUploadedImage(UploadedFile $file): string
     {
-        $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+        $filename = time().'_'.str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
         $targetDir = public_path('uploads');
-        if (!File::exists($targetDir)) {
+        if (! File::exists($targetDir)) {
             File::makeDirectory($targetDir, 0755, true);
         }
         $file->move($targetDir, $filename);
 
-        return '/uploads/' . $filename;
+        return '/uploads/'.$filename;
     }
 }

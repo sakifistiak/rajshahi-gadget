@@ -3,23 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Condition;
-use App\Models\Brand;
+use App\Models\Product;
 use App\Support\ProductFilterSync;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
 
 class ProductController extends Controller
 {
     public function index(): View
     {
         $products = Product::with(['category', 'condition', 'brand'])->latest()->paginate(10);
+
         return view('admin.products.index', compact('products'));
     }
 
@@ -28,6 +29,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $conditions = Condition::all();
         $brands = Brand::all();
+
         return view('admin.products.create', compact('categories', 'conditions', 'brands'));
     }
 
@@ -63,7 +65,7 @@ class ProductController extends Controller
         $slug = Str::slug($request->name);
         $count = Product::where('slug', 'like', "{$slug}%")->count();
         if ($count > 0) {
-            $slug .= '-' . ($count + 1);
+            $slug .= '-'.($count + 1);
         }
 
         $product = Product::create([
@@ -92,7 +94,7 @@ class ProductController extends Controller
         $product->images()->create([
             'image_path' => $imagePath ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg',
             'is_primary' => true,
-            'sort_order' => 0
+            'sort_order' => 0,
         ]);
 
         // Add gallery images
@@ -102,7 +104,7 @@ class ProductController extends Controller
             if (isset($galleryFiles[$index]) && $galleryFiles[$index] instanceof UploadedFile && $galleryFiles[$index]->isValid()) {
                 $finalPath = $this->storeUploadedImage($galleryFiles[$index]);
             }
-            if (!empty($finalPath)) {
+            if (! empty($finalPath)) {
                 $product->images()->create([
                     'image_path' => $finalPath,
                     'is_primary' => false,
@@ -116,7 +118,7 @@ class ProductController extends Controller
             foreach (array_filter($request->highlights) as $index => $text) {
                 $product->highlights()->create([
                     'text' => $text,
-                    'sort_order' => $index
+                    'sort_order' => $index,
                 ]);
             }
         }
@@ -129,7 +131,7 @@ class ProductController extends Controller
                     $product->specs()->create([
                         'label' => $label,
                         'value' => $val,
-                        'sort_order' => $index
+                        'sort_order' => $index,
                     ]);
                 }
             }
@@ -158,6 +160,7 @@ class ProductController extends Controller
         $conditions = Condition::all();
         $brands = Brand::all();
         $product->load(['highlights', 'specs', 'images', 'colors', 'filterValues']);
+
         return view('admin.products.edit', compact('product', 'categories', 'conditions', 'brands'));
     }
 
@@ -211,7 +214,7 @@ class ProductController extends Controller
             foreach (array_filter($request->highlights) as $index => $text) {
                 $product->highlights()->create([
                     'text' => $text,
-                    'sort_order' => $index
+                    'sort_order' => $index,
                 ]);
             }
         }
@@ -225,7 +228,7 @@ class ProductController extends Controller
                     $product->specs()->create([
                         'label' => $label,
                         'value' => $val,
-                        'sort_order' => $index
+                        'sort_order' => $index,
                     ]);
                 }
             }
@@ -268,7 +271,7 @@ class ProductController extends Controller
             if (isset($galleryFiles[$index]) && $galleryFiles[$index] instanceof UploadedFile && $galleryFiles[$index]->isValid()) {
                 $finalPath = $this->storeUploadedImage($galleryFiles[$index]);
             }
-            if (!empty($finalPath)) {
+            if (! empty($finalPath)) {
                 $product->images()->create([
                     'image_path' => $finalPath,
                     'is_primary' => false,
@@ -284,18 +287,49 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
+        if ($product->orderItems()->exists()) {
+            return redirect()->route('admin.products.index')->with('error', "Cannot delete \"{$product->name}\" because it has existing orders.");
+        }
+
         $product->delete();
+
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully!');
+    }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:products,id',
+        ]);
+
+        $products = Product::whereIn('id', $request->input('ids'))->withCount('orderItems')->get();
+        $deletable = $products->where('order_items_count', 0);
+        $blocked = $products->where('order_items_count', '>', 0);
+
+        Product::whereIn('id', $deletable->pluck('id'))->delete();
+
+        if ($blocked->isEmpty()) {
+            return redirect()->route('admin.products.index')->with('success', 'Selected products deleted successfully!');
+        }
+
+        $message = $deletable->count() > 0
+            ? "{$deletable->count()} product(s) deleted. "
+            : '';
+        $message .= 'Could not delete '.$blocked->pluck('name')->implode(', ').' because they have existing orders.';
+
+        return redirect()->route('admin.products.index')->with($deletable->count() > 0 ? 'success' : 'error', $message);
     }
 
     private function storeUploadedImage(UploadedFile $file): string
     {
-        $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
+        $filename = time().'_'.str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
         $targetDir = public_path('uploads');
-        if (!File::exists($targetDir)) {
+        if (! File::exists($targetDir)) {
             File::makeDirectory($targetDir, 0755, true);
         }
         $file->move($targetDir, $filename);
-        return '/uploads/' . $filename;
+
+        return '/uploads/'.$filename;
     }
 }

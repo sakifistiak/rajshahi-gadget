@@ -497,7 +497,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Create results overlay element
         const resultsBox = document.createElement('div');
-        resultsBox.className = 'absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden divide-y divide-gray-100 hidden text-left max-h-96 overflow-y-auto';
+        resultsBox.className = 'absolute left-0 right-0 top-full mt-2 bg-background rounded-md shadow-lg border border-border z-50 overflow-hidden divide-y divide-border hidden text-left overflow-y-auto';
+        resultsBox.style.maxHeight = 'min(24rem, 70vh)';
         parentContainer.appendChild(resultsBox);
 
         let debounceTimer = null;

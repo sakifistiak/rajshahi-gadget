@@ -25,10 +25,8 @@
                 <thead class="bg-slate-50/20">
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Image') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Name') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Rating') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Location') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Date') }}</th>
+                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Message') }}</th>
                         <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -38,10 +36,8 @@
                             <td class="px-6 py-3.5 whitespace-nowrap">
                                 <img src="{{ $feedback->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $feedback->name }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs font-semibold text-slate-800">{{ $feedback->name }}</td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $feedback->rating }} / 5</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $feedback->location }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $feedback->date?->format('M d, Y') }}</td>
+                            <td class="px-6 py-3.5 text-xs text-slate-600 max-w-md truncate">{{ $feedback->message }}</td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
                                     <a href="{{ route('admin.customer-feedbacks.edit', $feedback) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
@@ -61,7 +57,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No customer feedback yet') }}</td>
+                            <td colspan="4" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No customer feedback yet') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

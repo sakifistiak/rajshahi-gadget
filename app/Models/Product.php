@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -92,6 +93,11 @@ class Product extends Model
         return $this->hasMany(ProductFilterValue::class);
     }
 
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function primaryImage(): string
     {
         return $this->images()->where('is_primary', true)->first()?->image_path
@@ -101,9 +107,10 @@ class Product extends Model
 
     public function discount(): ?int
     {
-        if (!$this->compare_at_price || $this->compare_at_price <= $this->price) {
+        if (! $this->compare_at_price || $this->compare_at_price <= $this->price) {
             return null;
         }
+
         return $this->compare_at_price - $this->price;
     }
 }

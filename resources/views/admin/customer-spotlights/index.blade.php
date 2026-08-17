@@ -25,10 +25,8 @@
                 <thead class="bg-slate-50/20">
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Image') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Name') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Product') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Location') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Date') }}</th>
+                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Title') }}</th>
+                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Quote') }}</th>
                         <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -36,12 +34,10 @@
                     @forelse ($spotlights as $spotlight)
                         <tr class="hover:bg-slate-50/30 transition-colors">
                             <td class="px-6 py-3.5 whitespace-nowrap">
-                                <img src="{{ $spotlight->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $spotlight->name }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
+                                <img src="{{ $spotlight->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $spotlight->product }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs font-semibold text-slate-800">{{ $spotlight->name }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $spotlight->product }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $spotlight->location }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $spotlight->date?->format('M d, Y') }}</td>
+                            <td class="px-6 py-3.5 whitespace-nowrap text-xs font-semibold text-slate-800">{{ $spotlight->product }}</td>
+                            <td class="px-6 py-3.5 text-xs text-slate-600 max-w-md truncate">{{ $spotlight->quote }}</td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
                                     <a href="{{ route('admin.customer-spotlights.edit', $spotlight) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
@@ -61,7 +57,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No customer spotlights yet') }}</td>
+                            <td colspan="4" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No customer spotlights yet') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -218,7 +218,7 @@
                         {{ __('+ Add Feature') }}
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mb-3">Enter key specifications (e.g. "Apple M4 10-core", "16 GB RAM", "1 TB NVMe", "14.5\" FHD+ 120Hz"). These bullet points will show directly under the title on mobile & desktop shop cards.</p>
+                <p class="text-[11px] text-slate-500 mb-3">Enter key specifications (e.g. "Apple M4 10-core", "16 GB RAM", "1 TB NVMe", "14.5\" FHD+ 120Hz"). These bullet points will show directly under the title on mobile & desktop shop cards. <strong>Tip:</strong> write as <strong>"Label: Value"</strong> (e.g. "RAM: 16 GB", "Display: 14.5\" FHD+ 120Hz") so it lines up as its own row on the <strong>/compare</strong> page — plain bullets without a colon still work, they just show as a simple checkmark feature there.</p>
 
                 <div id="highlights-container" class="space-y-2">
                     <!-- Rows injected by JavaScript below -->
