@@ -96,49 +96,92 @@
                         // The persistent <img id="mainProductImage"> is never destroyed/recreated
                         // or animated itself (that previously left the hover-zoom stuck) — instead
                         // a temporary overlay image slides in on top of it from the left or right
-                        // depending on which thumbnail was clicked, and only once the slide finishes
-                        // do we swap the real image's `src` underneath and remove the overlay.
+                        // depending on which thumbnail was clicked or which way the user swiped,
+                        // and only once the slide finishes do we swap the real image's `src`
+                        // underneath and remove the overlay.
+                        function goToIndex(newIndex) {
+                            if (newIndex < 0 || newIndex >= thumbs.length) return;
+                            var thumb = thumbs[newIndex];
+                            var newSrc = thumb.dataset.full;
+                            if (!mainImg || !stage || !newSrc || newIndex === currentIndex || animating) return;
+
+                            var direction = newIndex > currentIndex ? 1 : -1;
+                            animating = true;
+
+                            var overlay = document.createElement('img');
+                            overlay.src = newSrc;
+                            overlay.alt = mainImg.alt;
+                            overlay.draggable = false;
+                            overlay.setAttribute('aria-hidden', 'true');
+                            overlay.className = 'h-full w-full object-cover';
+                            overlay.style.position = 'absolute';
+                            overlay.style.inset = '0';
+                            overlay.style.transform = 'translateX(' + (direction * 100) + '%)';
+                            overlay.style.transition = 'transform .38s cubic-bezier(.22,.61,.36,1)';
+                            overlay.style.willChange = 'transform';
+                            stage.appendChild(overlay);
+
+                            // Force a reflow so the starting transform is applied before animating to 0.
+                            void overlay.offsetWidth;
+
+                            requestAnimationFrame(function () {
+                                overlay.style.transform = 'translateX(0)';
+                            });
+
+                            overlay.addEventListener('transitionend', function handler() {
+                                overlay.removeEventListener('transitionend', handler);
+                                mainImg.src = newSrc;
+                                if (overlay.parentNode === stage) stage.removeChild(overlay);
+                                animating = false;
+                            });
+
+                            currentIndex = newIndex;
+                            thumbs.forEach(function (t) { t.classList.remove('is-active'); });
+                            thumb.classList.add('is-active');
+                        }
+
                         thumbs.forEach(function (thumb) {
                             thumb.addEventListener('click', function () {
-                                var newIndex = parseInt(thumb.dataset.index, 10) || 0;
-                                var newSrc = thumb.dataset.full;
-                                if (!mainImg || !stage || !newSrc || newIndex === currentIndex || animating) return;
-
-                                var direction = newIndex > currentIndex ? 1 : -1;
-                                animating = true;
-
-                                var overlay = document.createElement('img');
-                                overlay.src = newSrc;
-                                overlay.alt = mainImg.alt;
-                                overlay.draggable = false;
-                                overlay.setAttribute('aria-hidden', 'true');
-                                overlay.className = 'h-full w-full object-cover';
-                                overlay.style.position = 'absolute';
-                                overlay.style.inset = '0';
-                                overlay.style.transform = 'translateX(' + (direction * 100) + '%)';
-                                overlay.style.transition = 'transform .38s cubic-bezier(.22,.61,.36,1)';
-                                overlay.style.willChange = 'transform';
-                                stage.appendChild(overlay);
-
-                                // Force a reflow so the starting transform is applied before animating to 0.
-                                void overlay.offsetWidth;
-
-                                requestAnimationFrame(function () {
-                                    overlay.style.transform = 'translateX(0)';
-                                });
-
-                                overlay.addEventListener('transitionend', function handler() {
-                                    overlay.removeEventListener('transitionend', handler);
-                                    mainImg.src = newSrc;
-                                    if (overlay.parentNode === stage) stage.removeChild(overlay);
-                                    animating = false;
-                                });
-
-                                currentIndex = newIndex;
-                                thumbs.forEach(function (t) { t.classList.remove('is-active'); });
-                                thumb.classList.add('is-active');
+                                goToIndex(parseInt(thumb.dataset.index, 10) || 0);
                             });
                         });
+
+                        // Touch swipe: drag the main image left/right on mobile to move
+                        // between gallery photos, same transition as tapping a thumbnail.
+                        if (stage && thumbs.length > 1) {
+                            var touchStartX = 0;
+                            var touchStartY = 0;
+                            var touchActive = false;
+
+                            stage.addEventListener('touchstart', function (e) {
+                                if (e.touches.length !== 1) return;
+                                touchStartX = e.touches[0].clientX;
+                                touchStartY = e.touches[0].clientY;
+                                touchActive = true;
+                            }, { passive: true });
+
+                            stage.addEventListener('touchmove', function (e) {
+                                if (!touchActive || e.touches.length !== 1) return;
+                                var dx = e.touches[0].clientX - touchStartX;
+                                var dy = e.touches[0].clientY - touchStartY;
+                                // Once the gesture is clearly more horizontal than vertical,
+                                // stop the page from scrolling so the swipe feels natural.
+                                if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) {
+                                    e.preventDefault();
+                                }
+                            }, { passive: false });
+
+                            stage.addEventListener('touchend', function (e) {
+                                if (!touchActive) return;
+                                touchActive = false;
+                                var touch = e.changedTouches[0];
+                                var dx = touch.clientX - touchStartX;
+                                var dy = touch.clientY - touchStartY;
+                                var SWIPE_THRESHOLD = 40;
+                                if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy)) return;
+                                goToIndex(currentIndex + (dx < 0 ? 1 : -1));
+                            });
+                        }
                     })();
                 </script>
             @endif
