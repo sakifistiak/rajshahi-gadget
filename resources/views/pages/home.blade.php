@@ -205,6 +205,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    if (slides.length > 1) {
+        startAutoSlide();
+    }
+});
 </script>
 
 @if(($homeTickerActive ?? true) && !empty($homeTickerItems))
