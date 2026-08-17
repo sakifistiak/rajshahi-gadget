@@ -663,6 +663,23 @@ a.bg-primary:hover {
 }
 @media (max-width: 639px) {
     #kg-live-chat { bottom: 5.5rem; }
+
+    /* Match the two floating chat buttons (WhatsApp/Call toggle on the left,
+       the agent avatar "Live Chat" button on the right) to the same, more
+       compact size on mobile so they look like a matched pair. */
+    #kg-live-chat-toggle {
+        width: 3rem;
+        height: 3rem;
+        font-size: 1.3rem;
+    }
+    #kg-live-chat-toggle svg {
+        width: 22px;
+        height: 22px;
+    }
+    .agent-float {
+        height: 3rem;
+        width: 3rem;
+    }
 }
 
 .kg-live-chat-toggle-icon { display: grid; place-items: center; transition: opacity 0.18s ease, transform 0.18s ease; }
