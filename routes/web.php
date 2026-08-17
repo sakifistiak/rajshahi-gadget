@@ -74,9 +74,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/agents', [ChatAgentController::class, 'index'])->middleware('admin')->name('agents.index');
         Route::post('/agents', [ChatAgentController::class, 'store'])->middleware('admin')->name('agents.store');
         Route::patch('/agents/{user}/toggle', [ChatAgentController::class, 'toggle'])->middleware('admin')->name('agents.toggle');
+        Route::delete('/bulk-destroy', [AdminChatController::class, 'bulkDestroy'])->middleware('admin')->name('bulk-destroy');
         Route::get('/{conversation}', [AdminChatController::class, 'show'])->name('show');
         Route::get('/{conversation}/messages', [AdminChatController::class, 'messages'])->name('messages');
         Route::post('/{conversation}/messages', [AdminChatController::class, 'send'])->name('messages.send');
+        Route::delete('/{conversation}', [AdminChatController::class, 'destroy'])->middleware('admin')->name('destroy');
     });
 
     // Admin CRUDs

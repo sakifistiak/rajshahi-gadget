@@ -41,6 +41,7 @@ class ChatController extends Controller
                 'unread_count' => $c->unread_count,
                 'time' => ($c->last_message_at ?? $c->created_at)->diffForHumans(),
                 'url' => route('admin.live-chat.show', $c),
+                'deleteUrl' => route('admin.live-chat.destroy', $c),
             ]);
 
         return response()->json(['conversations' => $conversations]);
@@ -65,7 +66,7 @@ class ChatController extends Controller
     {
         $data = $request->validate(['body' => 'required|string|max:2000']);
 
-        ChatMessage::create([
+        $message = ChatMessage::create([
             'conversation_id' => $conversation->id,
             'sender_type' => 'agent',
             'sender_id' => $request->user()->id,
@@ -73,6 +74,37 @@ class ChatController extends Controller
         ]);
         $conversation->update(['last_message_at' => now()]);
 
+        if ($request->wantsJson()) {
+            $message->load('sender:id,name');
+
+            return response()->json(['message' => [
+                'id' => $message->id,
+                'body' => $message->body,
+                'sender_type' => $message->sender_type,
+                'sender' => $message->sender ? ['name' => $message->sender->name] : null,
+                'created_at' => $message->created_at?->toIso8601String(),
+            ]]);
+        }
+
         return redirect()->route('admin.live-chat.show', $conversation);
+    }
+
+    public function destroy(ChatConversation $conversation)
+    {
+        $conversation->delete();
+
+        return redirect()->route('admin.live-chat.index')->with('success', 'Conversation deleted.');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:chat_conversations,id',
+        ]);
+
+        ChatConversation::whereIn('id', $request->input('ids'))->delete();
+
+        return redirect()->route('admin.live-chat.index')->with('success', 'Selected conversations deleted.');
     }
 }
