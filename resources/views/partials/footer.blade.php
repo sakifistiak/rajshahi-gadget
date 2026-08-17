@@ -168,10 +168,13 @@
         </div>
 
         <!-- 3. Centered Dynamic Copyright Bar -->
-        <div class="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground">
+        <div class="mt-6 border-t border-border pt-4 text-center text-xs text-muted-foreground">
             <p>© {{ date('Y') }} {{ $footerCopyright ?? 'Khan Gadget. All rights reserved.' }}</p>
         </div>
     </div>
-    <div class="h-14 sm:hidden"></div>
+    {{-- The container's own bottom padding (py-14) already clears the fixed
+         mobile nav bar underneath it, so this only needs a small visual gap
+         rather than a second full nav-height spacer stacked on top of it. --}}
+    <div class="h-2 sm:hidden"></div>
 </footer>
 @include('partials.cart-script')
