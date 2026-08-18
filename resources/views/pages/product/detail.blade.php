@@ -34,6 +34,19 @@
             .spec-recently-viewed-grid { grid-template-columns: 1fr 360px; align-items: start; }
         }
 
+        /* Mobile only: push Recently Viewed to the very bottom of the page,
+           after Description, Related Products and Reviews. Desktop keeps the
+           sidebar-beside-specifications layout above untouched. */
+        @media (max-width: 1023.98px) {
+            .product-flow { display: flex; flex-direction: column; }
+            .product-flow > .spec-recently-viewed-grid { display: contents; }
+            .specs-block { order: 0; margin-top: 2.5rem; }
+            .product-flow > #description { order: 1; }
+            .product-flow > #relatedProducts { order: 2; }
+            .product-flow > #reviews { order: 3; }
+            #recentlyViewedSidebar { order: 4; margin-top: 2.5rem; }
+        }
+
         /* Compact specification table with a fixed label column and zebra striping. */
         .spec-table { position: relative; }
         .spec-table::before { content: ''; position: absolute; top: 0; bottom: 0; left: calc(1.25rem + 160px + 1rem); width: 1px; background: var(--color-border, #e5e7eb); pointer-events: none; }
@@ -315,8 +328,9 @@
         <a href="#reviews" class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-secondary text-foreground/80 border border-border">Reviews</a>
     </nav>
 
+    <div class="product-flow">
     <div class="mt-10 spec-recently-viewed-grid">
-        <div>
+        <div class="specs-block">
             @if($product->specs->count())
                 <div id="specifications" style="scroll-margin-top: 120px">
                     <h2 class="text-2xl font-semibold tracking-tight">Specifications</h2>
@@ -459,7 +473,7 @@
         </div>
     </section>
 
-    <section class="mt-24">
+    <section id="relatedProducts" class="mt-24">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div class="max-w-2xl">
                 <p class="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">You may also like</p>
@@ -475,6 +489,7 @@
             </div>
         @endif
     </section>
+    </div>
 </div>
 <!--/$--></main>@include('partials.footer')</div>
 <script>
