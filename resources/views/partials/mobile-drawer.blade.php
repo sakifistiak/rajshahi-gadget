@@ -662,7 +662,7 @@ a.bg-primary:hover {
     100% { opacity: 0; transform: scale(1.5); }
 }
 @media (max-width: 639px) {
-    #kg-live-chat { bottom: 5.5rem; }
+    #kg-live-chat { bottom: 5rem; }
 
     /* Match the two floating chat buttons (WhatsApp/Call toggle on the left,
        the agent avatar "Live Chat" button on the right) to the same, more
