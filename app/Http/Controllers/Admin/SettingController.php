@@ -18,6 +18,16 @@ class SettingController extends Controller
         $defaultCol2Links = '[]';
         $defaultCol3Links = '[]';
 
+        // Mobile slide menu "Info Links" default to the site's original static
+        // link set so nothing changes on the storefront until an admin edits it.
+        $defaultMobileDrawerInfoLinks = json_encode([
+            ['label' => 'About Us', 'url' => '/about'],
+            ['label' => 'Contact', 'url' => '/contact'],
+            ['label' => 'Privacy & Policy', 'url' => '/privacy-policy'],
+            ['label' => 'Terms & Conditions', 'url' => '/terms-conditions'],
+            ['label' => 'Complain / Advice', 'url' => '/complain-advice'],
+        ]);
+
         $settings = [
             'site_name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
             'site_slogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
@@ -48,6 +58,7 @@ class SettingController extends Controller
             'footer_col3_active' => SiteSetting::getValue('footer_col3_active', '0'),
             'footer_col3_title' => SiteSetting::getValue('footer_col3_title', 'MORE'),
             'footer_col3_links' => SiteSetting::getValue('footer_col3_links', $defaultCol3Links),
+            'mobile_drawer_info_links' => SiteSetting::getValue('mobile_drawer_info_links', $defaultMobileDrawerInfoLinks),
             'site_font_english' => SiteSetting::getValue('site_font_english', 'Inter'),
             'site_font_bangla' => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
         ];
@@ -92,6 +103,7 @@ class SettingController extends Controller
             'footer_col3_active' => 'nullable|string',
             'footer_col3_title' => 'nullable|string|max:255',
             'footer_col3_links' => 'nullable|string',
+            'mobile_drawer_info_links' => 'nullable|string',
             'logo_light_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'logo_dark_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'favicon_file' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
@@ -123,6 +135,7 @@ class SettingController extends Controller
             'footer_col2_links',
             'footer_col3_title',
             'footer_col3_links',
+            'mobile_drawer_info_links',
             'site_font_english',
             'site_font_bangla',
         ];

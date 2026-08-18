@@ -58,6 +58,20 @@ class AppServiceProvider extends ServiceProvider
             $col3Decoded = ! empty($col3Raw) ? json_decode($col3Raw, true) : null;
             $col3Links = is_array($col3Decoded) ? $col3Decoded : [];
 
+            // Mobile slide menu's "Info Links" section (About Us, Contact, Privacy &
+            // Policy, ...) — admin-editable via Settings, defaulting to the site's
+            // original static link set so behavior is unchanged until edited.
+            $defaultMobileDrawerInfoLinks = [
+                ['label' => 'About Us', 'url' => '/about'],
+                ['label' => 'Contact', 'url' => '/contact'],
+                ['label' => 'Privacy & Policy', 'url' => '/privacy-policy'],
+                ['label' => 'Terms & Conditions', 'url' => '/terms-conditions'],
+                ['label' => 'Complain / Advice', 'url' => '/complain-advice'],
+            ];
+            $mobileDrawerInfoLinksRaw = SiteSetting::getValue('mobile_drawer_info_links');
+            $mobileDrawerInfoLinksDecoded = ! empty($mobileDrawerInfoLinksRaw) ? json_decode($mobileDrawerInfoLinksRaw, true) : null;
+            $mobileDrawerInfoLinks = is_array($mobileDrawerInfoLinksDecoded) ? $mobileDrawerInfoLinksDecoded : $defaultMobileDrawerInfoLinks;
+
             $view->with([
                 'siteLogo' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
                 'siteLogoDark' => SiteSetting::getValue('logo_dark', '/media/logo_dark_1786184552.png'),
@@ -100,6 +114,7 @@ class AppServiceProvider extends ServiceProvider
                 'footerCol3Active' => SiteSetting::getValue('footer_col3_active', '0'),
                 'footerCol3Title' => SiteSetting::getValue('footer_col3_title', 'MORE'),
                 'footerCol3Links' => $col3Links,
+                'mobileDrawerInfoLinks' => $mobileDrawerInfoLinks,
                 'storeLocations' => $storeLocations,
             ]);
         });

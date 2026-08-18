@@ -510,6 +510,87 @@
                 </div>
             </div>
 
+            <!-- Card 6: Mobile Slide Menu Info Links -->
+            <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
+                 data-mobile-drawer-links='{{ json_encode(json_decode(old('mobile_drawer_info_links', $settings['mobile_drawer_info_links']) ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
+                 x-data="{
+                     mobileDrawerLinks: [],
+                     init() {
+                         const raw = JSON.parse(this.$el.dataset.mobileDrawerLinks || '[]');
+                         this.mobileDrawerLinks = raw.map((l, i) => ({ _id: Date.now() + Math.random() + i, label: l.label || '', url: l.url || '' }));
+                     },
+                     addMobileDrawerLink() {
+                         this.mobileDrawerLinks.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/page/sample' });
+                     },
+                     removeMobileDrawerLink(idx) {
+                         this.mobileDrawerLinks = this.mobileDrawerLinks.filter((_, i) => i !== idx);
+                     },
+                     selectMobileDrawerCustomPage(index, slug, title) {
+                         this.mobileDrawerLinks[index].url = '/page/' + slug;
+                         if (!this.mobileDrawerLinks[index].label || this.mobileDrawerLinks[index].label === 'New Link') {
+                             this.mobileDrawerLinks[index].label = title;
+                         }
+                     }
+                 }">
+
+                <input type="hidden" name="mobile_drawer_info_links" :value="JSON.stringify(mobileDrawerLinks.map(l => ({ label: l.label, url: l.url })))">
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                    <div class="flex items-center gap-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
+                        <i data-lucide="menu" class="h-4 w-4 text-blue-600"></i>
+                        <span>6. Mobile Slide Menu Info Links (মোবাইল মেনুর "About Us / Contact / ..." লিংক সেটিং)</span>
+                    </div>
+                    <span class="text-[11px] text-slate-500">Controls the "About Us / Contact / Privacy &amp; Policy / ..." links shown near the bottom of the mobile (hamburger) slide-out menu. Add, remove, reorder or repoint them independently of the footer.</span>
+                </div>
+
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-bold text-slate-800 uppercase">Menu Links</label>
+                        <button type="button" @click.prevent="addMobileDrawerLink()" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded border border-blue-200 transition-all flex items-center gap-1 cursor-pointer">
+                            <i data-lucide="plus" class="h-3.5 w-3.5"></i>
+                            <span>+ Add Link</span>
+                        </button>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <template x-for="(link, index) in mobileDrawerLinks" :key="link._id">
+                            <div class="p-3 bg-white border border-slate-200 rounded-sm shadow-2xs space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[11px] font-bold text-slate-500" x-text="'Link #' + (index + 1)"></span>
+
+                                    <!-- Custom Page Quick Select Dropdown -->
+                                    <div class="flex items-center gap-2">
+                                        <select @change="if ($event.target.value) { const parts = $event.target.value.split('|'); selectMobileDrawerCustomPage(index, parts[0], parts[1]); $event.target.value = ''; }" class="text-[11px] font-medium bg-blue-50/70 border border-blue-200 text-blue-700 px-2 py-1 rounded focus:outline-none cursor-pointer">
+                                            <option value="">-- Attach Custom Page --</option>
+                                            @foreach($customPages as $cp)
+                                                <option value="{{ $cp->slug }}|{{ addslashes($cp->title) }}">{{ $cp->title }} (/page/{{ $cp->slug }})</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="button" @click.prevent.stop="removeMobileDrawerLink(index)" class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition-colors cursor-pointer" title="Delete Row">
+                                            <span>Remove</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Label / Text</label>
+                                        <input type="text" x-model="link.label" placeholder="Link Display Text" class="w-full text-xs font-medium px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">URL / Path</label>
+                                        <input type="text" x-model="link.url" placeholder="e.g. /about or /page/warranty-policy" class="w-full text-xs font-mono px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                        <div x-show="mobileDrawerLinks.length === 0" class="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded bg-white">
+                            No links configured. Click "+ Add Link" above to add one.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="flex justify-end pt-2">
                 <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-sm shadow-sm transition-all cursor-pointer">
