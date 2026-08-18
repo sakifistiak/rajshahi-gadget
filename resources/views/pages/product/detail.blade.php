@@ -35,7 +35,7 @@
         }
 
         /* Mobile only: push Recently Viewed to the very bottom of the page,
-           after Description, Related Products and Reviews. Desktop keeps the
+           after Description and Related Products. Desktop keeps the
            sidebar-beside-specifications layout above untouched. */
         @media (max-width: 1023.98px) {
             .product-flow { display: flex; flex-direction: column; }
@@ -43,8 +43,7 @@
             .specs-block { order: 0; margin-top: 2.5rem; }
             .product-flow > #description { order: 1; }
             .product-flow > #relatedProducts { order: 2; }
-            .product-flow > #reviews { order: 3; }
-            #recentlyViewedSidebar { order: 4; margin-top: 2.5rem; }
+            #recentlyViewedSidebar { order: 3; margin-top: 2.5rem; }
         }
 
         /* Compact specification table with a fixed label column and zebra striping. */
@@ -325,7 +324,6 @@
             <a href="#specifications" class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-secondary text-foreground/80 border border-border">Specifications</a>
         @endif
         <a href="#description" class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-secondary text-foreground/80 border border-border">Description</a>
-        <a href="#reviews" class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-secondary text-foreground/80 border border-border">Reviews</a>
     </nav>
 
     <div class="product-flow">
@@ -452,24 +450,6 @@
         <h2 class="text-2xl font-semibold tracking-tight">Description</h2>
         <div class="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
             <div class="product-rich-text">{!! $product->description !!}</div>
-        </div>
-    </section>
-
-    <section id="reviews" class="mt-16" style="scroll-margin-top: 120px">
-        <h2 class="text-2xl font-semibold tracking-tight">Customer reviews</h2>
-        <div class="mt-6 grid gap-8 lg:grid-cols-[240px_1fr]">
-            <div class="rounded-sm border border-border bg-card p-6 text-center">
-                <p class="text-4xl font-semibold tabular-nums">{{ number_format((float) $product->rating, 1) }}</p>
-                <div class="mt-2 flex justify-center gap-0.5">
-                    @for($i = 1; $i <= 5; $i++)
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-star h-4 w-4 {{ $i <= round($product->rating) ? 'fill-foreground text-foreground' : 'text-muted-foreground/40' }}" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
-                    @endfor
-                </div>
-                <p class="mt-2 text-xs text-muted-foreground">{{ $product->reviews_count }} reviews</p>
-            </div>
-            <div class="grid place-items-center rounded-sm border border-dashed border-border bg-surface p-8 text-center text-sm text-muted-foreground">
-                No written reviews yet for this product.
-            </div>
         </div>
     </section>
 
