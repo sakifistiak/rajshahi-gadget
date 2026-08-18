@@ -513,14 +513,21 @@
             <!-- Card 6: Mobile Slide Menu Info Links -->
             <div class="bg-white rounded-sm border border-slate-200 p-5 shadow-sm space-y-5"
                  data-mobile-drawer-links='{{ json_encode(json_decode(old('mobile_drawer_info_links', $settings['mobile_drawer_info_links']) ?: '[]', true) ?: [], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
+                 data-icon-svgs='{{ json_encode(array_map(fn ($i) => $i['svg'], $drawerIcons), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }}'
                  x-data="{
                      mobileDrawerLinks: [],
+                     iconSvgs: {},
                      init() {
+                         this.iconSvgs = JSON.parse(this.$el.dataset.iconSvgs || '{}');
                          const raw = JSON.parse(this.$el.dataset.mobileDrawerLinks || '[]');
-                         this.mobileDrawerLinks = raw.map((l, i) => ({ _id: Date.now() + Math.random() + i, label: l.label || '', url: l.url || '' }));
+                         this.mobileDrawerLinks = raw.map((l, i) => ({ _id: Date.now() + Math.random() + i, label: l.label || '', url: l.url || '', icon: l.icon || 'link' }));
+                     },
+                     drawerIconPreviewSvg(icon) {
+                         var inner = this.iconSvgs[icon] || this.iconSvgs['link'] || '';
+                         return '<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;16&quot; height=&quot;16&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;>' + inner + '</svg>';
                      },
                      addMobileDrawerLink() {
-                         this.mobileDrawerLinks.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/page/sample' });
+                         this.mobileDrawerLinks.push({ _id: Date.now() + Math.random(), label: 'New Link', url: '/page/sample', icon: 'link' });
                      },
                      removeMobileDrawerLink(idx) {
                          this.mobileDrawerLinks = this.mobileDrawerLinks.filter((_, i) => i !== idx);
@@ -533,7 +540,7 @@
                      }
                  }">
 
-                <input type="hidden" name="mobile_drawer_info_links" :value="JSON.stringify(mobileDrawerLinks.map(l => ({ label: l.label, url: l.url })))">
+                <input type="hidden" name="mobile_drawer_info_links" :value="JSON.stringify(mobileDrawerLinks.map(l => ({ label: l.label, url: l.url, icon: l.icon })))">
 
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
                     <div class="flex items-center gap-2 text-slate-800 font-bold text-xs uppercase tracking-wider">
@@ -572,7 +579,18 @@
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-[auto_1fr_1fr] gap-2">
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Icon</label>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="grid h-8 w-8 shrink-0 place-items-center rounded border border-slate-200 bg-slate-50 text-slate-600" x-html="drawerIconPreviewSvg(link.icon)"></span>
+                                            <select x-model="link.icon" class="w-full text-xs font-medium px-2 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">
+                                                @foreach($drawerIcons as $iconKey => $iconMeta)
+                                                    <option value="{{ $iconKey }}">{{ $iconMeta['label'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div>
                                         <label class="block text-[10px] font-bold text-slate-500 uppercase">Label / Text</label>
                                         <input type="text" x-model="link.label" placeholder="Link Display Text" class="w-full text-xs font-medium px-2.5 py-1.5 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500">

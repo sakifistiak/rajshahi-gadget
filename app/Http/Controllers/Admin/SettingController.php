@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\CustomPage;
 use App\Models\SiteSetting;
+use App\Support\DrawerIcons;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -21,11 +22,11 @@ class SettingController extends Controller
         // Mobile slide menu "Info Links" default to the site's original static
         // link set so nothing changes on the storefront until an admin edits it.
         $defaultMobileDrawerInfoLinks = json_encode([
-            ['label' => 'About Us', 'url' => '/about'],
-            ['label' => 'Contact', 'url' => '/contact'],
-            ['label' => 'Privacy & Policy', 'url' => '/privacy-policy'],
-            ['label' => 'Terms & Conditions', 'url' => '/terms-conditions'],
-            ['label' => 'Complain / Advice', 'url' => '/complain-advice'],
+            ['label' => 'About Us', 'url' => '/about', 'icon' => 'info'],
+            ['label' => 'Contact', 'url' => '/contact', 'icon' => 'phone'],
+            ['label' => 'Privacy & Policy', 'url' => '/privacy-policy', 'icon' => 'shield'],
+            ['label' => 'Terms & Conditions', 'url' => '/terms-conditions', 'icon' => 'file-text'],
+            ['label' => 'Complain / Advice', 'url' => '/complain-advice', 'icon' => 'alert-triangle'],
         ]);
 
         $settings = [
@@ -64,8 +65,9 @@ class SettingController extends Controller
         ];
 
         $customPages = CustomPage::where('is_active', true)->orderBy('title')->get();
+        $drawerIcons = DrawerIcons::ICONS;
 
-        return view('admin.settings.index', compact('settings', 'customPages'));
+        return view('admin.settings.index', compact('settings', 'customPages', 'drawerIcons'));
     }
 
     public function update(Request $request): RedirectResponse

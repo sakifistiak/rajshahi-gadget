@@ -62,11 +62,11 @@ class AppServiceProvider extends ServiceProvider
             // Policy, ...) — admin-editable via Settings, defaulting to the site's
             // original static link set so behavior is unchanged until edited.
             $defaultMobileDrawerInfoLinks = [
-                ['label' => 'About Us', 'url' => '/about'],
-                ['label' => 'Contact', 'url' => '/contact'],
-                ['label' => 'Privacy & Policy', 'url' => '/privacy-policy'],
-                ['label' => 'Terms & Conditions', 'url' => '/terms-conditions'],
-                ['label' => 'Complain / Advice', 'url' => '/complain-advice'],
+                ['label' => 'About Us', 'url' => '/about', 'icon' => 'info'],
+                ['label' => 'Contact', 'url' => '/contact', 'icon' => 'phone'],
+                ['label' => 'Privacy & Policy', 'url' => '/privacy-policy', 'icon' => 'shield'],
+                ['label' => 'Terms & Conditions', 'url' => '/terms-conditions', 'icon' => 'file-text'],
+                ['label' => 'Complain / Advice', 'url' => '/complain-advice', 'icon' => 'alert-triangle'],
             ];
             $mobileDrawerInfoLinksRaw = SiteSetting::getValue('mobile_drawer_info_links');
             $mobileDrawerInfoLinksDecoded = ! empty($mobileDrawerInfoLinksRaw) ? json_decode($mobileDrawerInfoLinksRaw, true) : null;
