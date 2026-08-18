@@ -13,8 +13,8 @@
                         {{ $homeNewArrivalBadgeText ?? 'New Arrival' }}
                     </span>
                 @endif
-                <h2 class="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-                    {!! renderSectionTitle($homeNewArrivalTitle ?? 'New Arrivals', $homeNewArrivalHighlight ?? 'New', null) !!}
+                <h2 class="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl {{ sectionTitleSizeClass($homeNewArrivalTitleStyle ?? null) }}"{!! sectionTitleSizeStyle($homeNewArrivalTitleStyle ?? null) !!}>
+                    {!! renderSectionTitle($homeNewArrivalTitle ?? 'New Arrivals', $homeNewArrivalHighlight ?? 'New', $homeNewArrivalTitleStyle ?? null) !!}
                 </h2>
                 @if(($homeNewArrivalSubtitleActive ?? true) && ($homeNewArrivalSubtitleText ?? ''))
                     <p class="mt-2 text-sm text-muted-foreground">{{ $homeNewArrivalSubtitleText }}</p>

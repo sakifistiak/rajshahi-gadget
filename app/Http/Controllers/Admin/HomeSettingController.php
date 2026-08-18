@@ -144,9 +144,13 @@ class HomeSettingController extends Controller
             json_decode(SiteSetting::getValue('home_flash_title_style', '{}'), true)
         );
 
+        $newArrivalTitleStyle = SectionTitleStyle::sanitizeFull(
+            json_decode(SiteSetting::getValue('home_new_arrival_title_style', '{}'), true)
+        );
+
         return view('admin.home-settings.index', compact(
             'categories', 'conditions', 'settings', 'sectionsList',
-            'titleStyleFonts', 'titleStyleShadows', 'titleStyleDefaults', 'flashTitleStyle'
+            'titleStyleFonts', 'titleStyleShadows', 'titleStyleDefaults', 'flashTitleStyle', 'newArrivalTitleStyle'
         ));
     }
 
@@ -270,6 +274,13 @@ class HomeSettingController extends Controller
         }
         if ($request->has('home_new_arrival_subtitle_text')) {
             SiteSetting::setValue('home_new_arrival_subtitle_text', mb_substr(trim($request->input('home_new_arrival_subtitle_text', '')), 0, 150));
+        }
+        if ($request->has('home_new_arrival_title_style')) {
+            $decodedNewArrivalStyle = json_decode($request->input('home_new_arrival_title_style', '{}'), true);
+            SiteSetting::setValue(
+                'home_new_arrival_title_style',
+                json_encode(SectionTitleStyle::sanitizeFull(is_array($decodedNewArrivalStyle) ? $decodedNewArrivalStyle : null))
+            );
         }
 
         if ($request->has('home_sections_json')) {

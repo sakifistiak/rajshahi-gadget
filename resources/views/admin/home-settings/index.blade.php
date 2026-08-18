@@ -9,6 +9,9 @@
     flashBadgeText: {{ json_encode($settings['home_flash_badge_text'] ?? 'Flash Deals') }},
     flashSubtitleActive: {{ ($settings['home_flash_subtitle_active'] ?? '1') == '1' ? 'true' : 'false' }},
     flashSubtitleText: {{ json_encode($settings['home_flash_subtitle_text'] ?? 'Limited stock · 0% EMI up to 12 months · Free Dhaka delivery') }},
+    newArrivalTitle: {{ json_encode($settings['home_new_arrival_title'] ?? 'New Arrivals') }},
+    newArrivalHighlight: {{ json_encode($settings['home_new_arrival_highlight'] ?? 'New') }},
+    newArrivalStyle: {{ json_encode($newArrivalTitleStyle) }},
     newArrivalBadgeActive: {{ ($settings['home_new_arrival_badge_active'] ?? '1') == '1' ? 'true' : 'false' }},
     newArrivalBadgeIcon: {{ json_encode($settings['home_new_arrival_badge_icon'] ?? '') }},
     newArrivalBadgeText: {{ json_encode($settings['home_new_arrival_badge_text'] ?? 'New Arrival') }},
@@ -232,6 +235,7 @@
         </div>
 
         <!-- New Arrival Widget -->
+        <input type="hidden" name="home_new_arrival_title_style" :value="JSON.stringify(newArrivalStyle)">
         <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-5 border-b border-slate-100 bg-slate-50/50">
                 <div class="flex items-center gap-3">
@@ -248,13 +252,22 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Section Title</label>
-                        <input type="text" name="home_new_arrival_title" value="{{ $settings['home_new_arrival_title'] ?? 'New Arrivals' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. New Arrivals">
+                        <input type="text" name="home_new_arrival_title" x-model="newArrivalTitle" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. New Arrivals">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Highlight Word</label>
-                        <input type="text" name="home_new_arrival_highlight" value="{{ $settings['home_new_arrival_highlight'] ?? 'New' }}" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. New">
+                        <input type="text" name="home_new_arrival_highlight" x-model="newArrivalHighlight" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. New">
                     </div>
                 </div>
+
+                <!-- Live Title Preview -->
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Live Title Preview:</span>
+                    <h2 class="text-xl font-bold text-slate-900" :style="titleSizeStyle(newArrivalStyle)" x-html="formatTitle(newArrivalTitle, newArrivalHighlight, newArrivalStyle)"></h2>
+                </div>
+
+                <x-title-style-editor path="newArrivalStyle" />
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Position</label>

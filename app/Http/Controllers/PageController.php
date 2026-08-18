@@ -63,6 +63,9 @@ class PageController extends Controller
         $homeNewArrivalActive = SiteSetting::getValue('home_new_arrival_active', '0') == '1';
         $homeNewArrivalTitle = SiteSetting::getValue('home_new_arrival_title', 'New Arrivals');
         $homeNewArrivalHighlight = SiteSetting::getValue('home_new_arrival_highlight', 'New');
+        $homeNewArrivalTitleStyle = SectionTitleStyle::sanitizeFull(
+            json_decode(SiteSetting::getValue('home_new_arrival_title_style', '{}'), true)
+        );
         $homeNewArrivalPosition = SiteSetting::getValue('home_new_arrival_position', 'below_flash');
         $homeNewArrivalLimit = (int) SiteSetting::getValue('home_new_arrival_limit', '4');
         $homeNewArrivalBadgeActive = SiteSetting::getValue('home_new_arrival_badge_active', '1') == '1';
@@ -180,6 +183,7 @@ class PageController extends Controller
             'homeNewArrivalActive',
             'homeNewArrivalTitle',
             'homeNewArrivalHighlight',
+            'homeNewArrivalTitleStyle',
             'homeNewArrivalPosition',
             'newArrivalProducts',
             'homeNewArrivalBadgeActive',
