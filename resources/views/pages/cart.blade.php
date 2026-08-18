@@ -56,7 +56,7 @@
         var html = '<div class="container-page py-12">' +
             '<h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Your cart</h1>' +
             '<p class="mt-2 text-sm text-muted-foreground">' + totalCount + ' item' + (totalCount === 1 ? '' : 's') + ' · Free next‑day delivery over ৳ 99,000</p>' +
-            '<div class="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">' +
+            '<div class="mt-10 grid items-start gap-10 lg:grid-cols-[1.5fr_1fr]">' +
                 '<ul class="divide-y divide-border rounded-md border border-border bg-card">';
 
         cart.forEach(function(item, idx) {
