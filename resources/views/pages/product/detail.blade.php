@@ -438,7 +438,6 @@
         <h2 class="text-2xl font-semibold tracking-tight">Description</h2>
         <div class="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
             <div class="product-rich-text">{!! $product->description !!}</div>
-            <p>ঢাকার ভেতরে দ্রুত হোম ডেলিভারি, সারা বাংলাদেশে কুরিয়ার সার্ভিস এবং bKash · Nagad · Card EMI পেমেন্ট সুবিধা রয়েছে। যেকোনো প্রশ্নে আমাদের লাইভ চ্যাটে মেসেজ দিন।</p>
         </div>
     </section>
 
