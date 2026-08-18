@@ -90,7 +90,7 @@
                     @foreach($product->images->take(4) as $image)
                         <div class="gallery-thumb overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}">
                             <div class="aspect-square">
-                                <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="lazy" class="h-full w-full object-cover" />
+                                <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-cover" />
                             </div>
                         </div>
                     @endforeach
