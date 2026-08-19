@@ -406,8 +406,12 @@
             if (oldSpecsLabel.length > 0) {
                 oldSpecsLabel.forEach((label, i) => addSpecRow(label, oldSpecsValue[i] || ''));
             } else {
-                addSpecRow('');
-                addSpecRow('');
+                addSpecRow('𝐌𝐎𝐃𝐄𝐋');
+                addSpecRow('𝐏𝐑𝐎𝐂𝐄𝐒𝐒𝐎𝐑');
+                addSpecRow('𝐒𝐏𝐄𝐄𝐃');
+                addSpecRow('𝐑𝐀𝐌');
+                addSpecRow('𝐒𝐒𝐃');
+                addSpecRow('𝐃𝐈𝐒𝐏𝐋𝐀𝐘');
             }
         });
     </script>

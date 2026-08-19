@@ -72,8 +72,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right h-3 w-3" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
             <a href="/shop?category={{ $product->category->slug }}" class="hover:text-foreground">{{ $product->category->name }}</a>
         @endif
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right h-3 w-3" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-        <span class="truncate text-foreground">{{ $product->name }}</span>
     </nav>
 
     <div class="mt-8 grid gap-10 product-card">
