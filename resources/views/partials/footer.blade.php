@@ -1,6 +1,7 @@
 <footer class="notranslate border-t border-border bg-surface" translate="no" data-tsd-source="/src/components/site/Footer.tsx:35:5">
     <div class="container-page py-14" data-tsd-source="/src/components/site/Footer.tsx:36:7">
         <!-- 1. Store Locations (OUR OUTLETS) -->
+        @if(!($hideOutlets ?? false))
         <section aria-label="Our outlets" class="border-b border-border pb-10">
             <div>
                 <!-- Centered Header with Full-Width Lines and Dots -->
@@ -45,6 +46,7 @@
                 </ul>
             </div>
         </section>
+        @endif
 
         <!-- 2. Main Footer Links & Information -->
         @php

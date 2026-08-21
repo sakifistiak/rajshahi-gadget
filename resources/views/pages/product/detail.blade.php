@@ -458,7 +458,7 @@
     </section>
     </div>
 </div>
-<!--/$--></main>@include('partials.footer')</div>
+<!--/$--></main>@include('partials.footer', ['hideOutlets' => true])</div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInputs = document.querySelectorAll('input[type="search"]');
