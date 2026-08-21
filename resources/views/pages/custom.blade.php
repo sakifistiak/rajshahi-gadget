@@ -22,14 +22,7 @@
     <!-- Main Content Container -->
     <main class="flex-1 py-10 sm:py-16">
         <div class="container-page max-w-4xl mx-auto">
-            <!-- Breadcrumbs -->
-            <nav class="flex items-center gap-2 text-xs text-muted-foreground mb-6">
-                <a href="/" class="hover:text-foreground transition-colors">Home</a>
-                <span>/</span>
-                <span class="text-foreground font-medium">{{ $page->title }}</span>
-            </nav>
-
-            <!-- Page Header -->
+<!-- Page Header -->
             @if ($page->show_title)
                 <header class="border-b border-border pb-6 mb-8">
                     <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">

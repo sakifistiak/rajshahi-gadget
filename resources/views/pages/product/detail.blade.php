@@ -63,18 +63,7 @@
         .recently-viewed-card:hover { border-color: var(--color-foreground, #09090b); box-shadow: 0 1px 4px rgb(0 0 0 / 0.06); }
     </style>
 
-    {{-- Breadcrumb --}}
-    <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <a href="/" class="hover:text-foreground">Home</a>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right h-3 w-3" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-        <a href="/shop" class="hover:text-foreground">Shop</a>
-        @if($product->category)
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right h-3 w-3" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
-            <a href="/shop?category={{ $product->category->slug }}" class="hover:text-foreground">{{ $product->category->name }}</a>
-        @endif
-    </nav>
-
-    <div class="mt-8 grid gap-10 product-card">
+<div class="mt-8 grid gap-10 product-card">
 
         {{-- Image gallery --}}
         <div>

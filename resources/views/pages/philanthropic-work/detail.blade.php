@@ -27,13 +27,7 @@
 </style>
 
 <div class="container-page py-10">
-    <nav class="text-xs text-muted-foreground" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-foreground">Home</a>
-        <span class="mx-1.5">&rsaquo;</span>
-        <a href="/philanthropic-work" class="hover:text-foreground">Philanthropic Work</a>
-        <span class="mx-1.5">&rsaquo;</span>
-        <span class="text-foreground">{{ \Illuminate\Support\Str::limit($work->title, 60) }}</span>
-    </nav>
+    
 
     <div class="mx-auto mt-6 max-w-3xl">
         <span class="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-secondary-foreground">

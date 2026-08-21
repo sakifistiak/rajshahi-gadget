@@ -31,13 +31,7 @@
 <script>document.addEventListener('DOMContentLoaded', function () { if (window.kgInitTranslateToggle) window.kgInitTranslateToggle('#blog-translate-scope'); });</script>
 
 <div class="container-page py-10" id="blog-translate-scope">
-    <nav class="text-xs text-muted-foreground" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-foreground">Home</a>
-        <span class="mx-1.5">&rsaquo;</span>
-        <a href="/blog" class="hover:text-foreground">Blog</a>
-        <span class="mx-1.5">&rsaquo;</span>
-        <span class="text-foreground">{{ \Illuminate\Support\Str::limit($post->title, 60) }}</span>
-    </nav>
+    
 
     <div class="notranslate mt-4 flex w-fit items-center gap-1 rounded-full border border-border bg-surface p-1" translate="no" id="kg-lang-toggle">
         <button type="button" data-lang="en" class="kg-lang-btn rounded-full px-3 py-1 text-xs font-medium transition-colors">EN</button>
