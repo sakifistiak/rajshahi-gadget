@@ -41,6 +41,17 @@ class HomeSettingController extends Controller
         ];
     }
 
+    public static function getDefaultTrustBarItems(): array
+    {
+        return [
+            ['id' => 'tb_1', 'icon_type' => 'lucide', 'icon_lucide' => 'credit-card', 'icon_image' => '', 'label' => '36 Months EMI', 'active' => true],
+            ['id' => 'tb_2', 'icon_type' => 'lucide', 'icon_lucide' => 'truck', 'icon_image' => '', 'label' => 'Fastest Home Delivery', 'active' => true],
+            ['id' => 'tb_3', 'icon_type' => 'lucide', 'icon_lucide' => 'refresh-ccw', 'icon_image' => '', 'label' => 'Exchange Facility', 'active' => true],
+            ['id' => 'tb_4', 'icon_type' => 'lucide', 'icon_lucide' => 'tag', 'icon_image' => '', 'label' => 'Best Price Deals', 'active' => true],
+            ['id' => 'tb_5', 'icon_type' => 'lucide', 'icon_lucide' => 'headphones', 'icon_image' => '', 'label' => 'After-Sales Service', 'active' => true],
+        ];
+    }
+
     public function index()
     {
         $categories = Category::orderBy('name')->get();
@@ -85,6 +96,7 @@ class HomeSettingController extends Controller
             'stock_price_notice_text' => 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে',
             'stock_price_notice_type' => 'warning',
             'product_trust_badges_active' => '1',
+            'home_trustbar_active' => '1',
         ];
 
         $settings = [];
@@ -132,6 +144,18 @@ class HomeSettingController extends Controller
         }
         unset($sec);
 
+        $trustbarJson = SiteSetting::getValue('home_trustbar_items_json');
+        $trustbarItems = [];
+        if ($trustbarJson) {
+            $decoded = json_decode($trustbarJson, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $trustbarItems = $decoded;
+            }
+        }
+        if (empty($trustbarItems)) {
+            $trustbarItems = self::getDefaultTrustBarItems();
+        }
+
         $titleStyleFonts = SectionTitleStyle::FONTS;
         $titleStyleShadows = SectionTitleStyle::SHADOWS;
         $titleStyleDefaults = [
@@ -149,7 +173,7 @@ class HomeSettingController extends Controller
         );
 
         return view('admin.home-settings.index', compact(
-            'categories', 'conditions', 'settings', 'sectionsList',
+            'categories', 'conditions', 'settings', 'sectionsList', 'trustbarItems',
             'titleStyleFonts', 'titleStyleShadows', 'titleStyleDefaults', 'flashTitleStyle', 'newArrivalTitleStyle'
         ));
     }
@@ -176,6 +200,7 @@ class HomeSettingController extends Controller
             'home_testimonials_active',
             'home_ticker_active',
             'popup_offer_active',
+            'home_trustbar_active',
         ];
 
         foreach ($checkboxKeys as $cb) {
@@ -294,6 +319,31 @@ class HomeSettingController extends Controller
                 }
                 unset($sectionItem);
                 SiteSetting::setValue('home_sections_json', json_encode(array_values($decoded)));
+            }
+        }
+
+        if ($request->has('home_trustbar_items_json')) {
+            $decoded = json_decode($request->input('home_trustbar_items_json'), true);
+            if (is_array($decoded)) {
+                $sanitized = [];
+                foreach ($decoded as $item) {
+                    if (! is_array($item)) {
+                        continue;
+                    }
+                    $iconType = ($item['icon_type'] ?? 'lucide') === 'image' ? 'image' : 'lucide';
+                    $iconLucide = mb_substr(preg_replace('/[^a-z0-9\-]/', '', strtolower(trim((string) ($item['icon_lucide'] ?? '')))), 0, 40);
+                    $iconImage = mb_substr(trim((string) ($item['icon_image'] ?? '')), 0, 500);
+                    $label = mb_substr(trim((string) ($item['label'] ?? '')), 0, 60);
+                    $sanitized[] = [
+                        'id' => mb_substr((string) ($item['id'] ?? uniqid('tb_')), 0, 40),
+                        'icon_type' => $iconType,
+                        'icon_lucide' => $iconLucide,
+                        'icon_image' => $iconImage,
+                        'label' => $label,
+                        'active' => ! empty($item['active']),
+                    ];
+                }
+                SiteSetting::setValue('home_trustbar_items_json', json_encode(array_values($sanitized)));
             }
         }
 

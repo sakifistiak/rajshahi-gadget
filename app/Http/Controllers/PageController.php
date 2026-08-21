@@ -102,6 +102,20 @@ class PageController extends Controller
             'backdrop_blur' => SiteSetting::getValue('popup_offer_backdrop_blur', 'md'),
         ];
 
+        $homeTrustbarActive = SiteSetting::getValue('home_trustbar_active', '1') == '1';
+        $trustbarJson = SiteSetting::getValue('home_trustbar_items_json');
+        $trustbarItems = [];
+        if ($trustbarJson) {
+            $decoded = json_decode($trustbarJson, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $trustbarItems = $decoded;
+            }
+        }
+        if (empty($trustbarItems)) {
+            $trustbarItems = HomeSettingController::getDefaultTrustBarItems();
+        }
+        $trustbarItems = array_values(array_filter($trustbarItems, fn ($item) => ! isset($item['active']) || $item['active']));
+
         // Load dynamic product sections
         $sectionsJson = SiteSetting::getValue('home_sections_json');
         $sectionsList = [];
@@ -197,7 +211,9 @@ class PageController extends Controller
             'homeTickerItems',
             'homeTickerEffect',
             'homeTickerSpeed',
-            'popupOfferSettings'
+            'popupOfferSettings',
+            'homeTrustbarActive',
+            'trustbarItems'
         ));
     }
 

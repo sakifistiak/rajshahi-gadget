@@ -20,6 +20,52 @@
     titleStyleDefaults: {{ json_encode($titleStyleDefaults) }},
     titleStyleFonts: {{ json_encode($titleStyleFonts) }},
     titleStyleShadows: {{ json_encode($titleStyleShadows) }},
+    trustbarItems: {{ json_encode($trustbarItems) }},
+    trustbarIconLibrary: ['credit-card', 'truck', 'refresh-ccw', 'tag', 'headphones', 'shield-check', 'badge-check', 'wallet', 'gift', 'clock', 'package', 'banknote', 'phone-call', 'message-circle', 'thumbs-up', 'star', 'award', 'lock', 'check-circle', 'zap', 'percent', 'calendar', 'map-pin', 'smartphone', 'wrench', 'heart-handshake', 'coins', 'rotate-ccw', 'box', 'circle-check'],
+    uploadingTrustbarIcon: null,
+    addTrustbarItem() {
+        this.trustbarItems.push({
+            id: 'tb_' + Date.now(),
+            icon_type: 'lucide',
+            icon_lucide: 'star',
+            icon_image: '',
+            label: 'New Benefit',
+            active: true
+        });
+    },
+    removeTrustbarItem(index) {
+        if (confirm('Remove this benefit item?')) {
+            this.trustbarItems.splice(index, 1);
+        }
+    },
+    trustbarIconPreviewUrl(name) {
+        return 'https://unpkg.com/lucide-static@latest/icons/' + (name || 'circle-help') + '.svg';
+    },
+    uploadTrustbarIcon(index, event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        this.uploadingTrustbarIcon = index;
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch('{{ route('admin.media.upload') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    this.trustbarItems[index].icon_image = data.url;
+                } else {
+                    alert(data.message || 'Upload failed.');
+                }
+            })
+            .catch(() => alert('Upload failed.'))
+            .finally(() => { this.uploadingTrustbarIcon = null; event.target.value = ''; });
+    },
     addSection() {
         this.sections.push({
             id: 'sec_' + Date.now(),
@@ -124,6 +170,7 @@
     <form action="{{ route('admin.home-settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
         <input type="hidden" name="home_sections_json" :value="JSON.stringify(sections)">
+        <input type="hidden" name="home_trustbar_items_json" :value="JSON.stringify(trustbarItems)">
 
         <!-- 1. Section Visibility Toggles -->
         <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
@@ -154,6 +201,10 @@
                 <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all">
                     <span class="text-sm font-bold text-slate-800">Customer Testimonials</span>
                     <input type="checkbox" name="home_testimonials_active" value="1" {{ ($settings['home_testimonials_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                </label>
+                <label class="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-blue-300 bg-slate-50/30 cursor-pointer transition-all">
+                    <span class="text-sm font-bold text-slate-800">Store Benefits Bar</span>
+                    <input type="checkbox" name="home_trustbar_active" value="1" {{ ($settings['home_trustbar_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                 </label>
             </div>
         </div>
@@ -461,6 +512,99 @@
                     <input type="checkbox" name="product_trust_badges_active" value="1" {{ ($settings['product_trust_badges_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                     <span>Show Info Box</span>
                 </label>
+            </div>
+        </div>
+
+        <!-- Store Benefits Bar (36 Months EMI / Delivery / Exchange / etc. row on homepage) -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <i data-lucide="badge-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Store Benefits Bar</h3>
+                        <p class="text-xs text-slate-500">The icon + text row near the top of the homepage (e.g. "36 Months EMI", "Fastest Home Delivery"). Add, remove, reorder items and pick an icon from the library or upload your own.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 space-y-4">
+                <template x-for="(item, index) in trustbarItems" :key="item.id">
+                    <div class="rounded-lg border border-slate-200 overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 font-extrabold text-xs" x-text="index + 1"></span>
+                                <span class="text-sm font-bold text-slate-800" x-text="item.label || 'Benefit item'"></span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <label class="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer select-none">
+                                    <input type="checkbox" x-model="item.active" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                                    <span>Show</span>
+                                </label>
+                                <button type="button" @click="removeTrustbarItem(index)" class="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors" title="Remove Item">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Label Text</label>
+                                <input type="text" x-model="item.label" maxlength="60" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. 36 Months EMI">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Icon Source</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                                        <input type="radio" :name="'trustbar_icon_type_' + item.id" value="lucide" x-model="item.icon_type" class="text-blue-600 focus:ring-blue-500">
+                                        Icon Library
+                                    </label>
+                                    <label class="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
+                                        <input type="radio" :name="'trustbar_icon_type_' + item.id" value="image" x-model="item.icon_type" class="text-blue-600 focus:ring-blue-500">
+                                        Upload Custom Icon
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div x-show="item.icon_type === 'lucide'" class="space-y-3">
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="iconName in trustbarIconLibrary" :key="iconName">
+                                        <button type="button" @click="item.icon_lucide = iconName"
+                                            class="p-2 rounded-lg border transition-all"
+                                            :class="item.icon_lucide === iconName ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 hover:border-blue-300'">
+                                            <img :src="trustbarIconPreviewUrl(iconName)" class="w-5 h-5" loading="lazy" alt="">
+                                        </button>
+                                    </template>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <img :src="trustbarIconPreviewUrl(item.icon_lucide)" class="w-8 h-8 p-1.5 rounded-lg bg-slate-100" alt="">
+                                    <input type="text" x-model="item.icon_lucide" class="flex-1 px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. credit-card (any lucide.dev icon name)">
+                                </div>
+                                <p class="text-[11px] text-slate-400">Type any icon name from <span class="font-semibold">lucide.dev/icons</span> if you don't see it in the quick list above.</p>
+                            </div>
+
+                            <div x-show="item.icon_type === 'image'" class="space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0">
+                                        <img :src="item.icon_image" x-show="item.icon_image" class="w-8 h-8 object-contain" alt="">
+                                        <i data-lucide="image" class="w-5 h-5 text-slate-300" x-show="!item.icon_image"></i>
+                                    </div>
+                                    <label class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-lg cursor-pointer transition-colors">
+                                        <i data-lucide="upload" class="w-4 h-4"></i>
+                                        <span x-text="uploadingTrustbarIcon === index ? 'Uploading…' : 'Choose Icon Image'"></span>
+                                        <input type="file" accept="image/*" class="hidden" @change="uploadTrustbarIcon(index, $event)">
+                                    </label>
+                                </div>
+                                <p class="text-[11px] text-slate-400">Square PNG/SVG works best (e.g. 64×64px).</p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <button type="button" @click="addTrustbarItem()" class="inline-flex items-center gap-2 px-6 py-3 border-2 border-dashed border-slate-300 hover:border-blue-500 text-slate-700 hover:text-blue-600 font-bold text-xs rounded-xl transition-all w-full justify-center bg-white shadow-xs">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>Add Benefit Item</span>
+                </button>
             </div>
         </div>
 
