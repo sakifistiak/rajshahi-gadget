@@ -12,7 +12,7 @@
         <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
                 <h3 class="text-[13px] font-bold text-slate-800">{{ __('Blog Posts') }}</h3>
-                <p class="text-[10px] text-slate-400 mt-0.5">Manage articles shown on the public /blog page. Leave "Publish Date" empty to keep a post as a draft.</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Manage articles shown on the public /blog page.</p>
             </div>
             <a href="{{ route('admin.blog-posts.create') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors">
                 <i data-lucide="plus" class="h-3.5 w-3.5"></i>
@@ -26,9 +26,6 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Image') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Title') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Category') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Author') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Status') }}</th>
                         <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -39,24 +36,8 @@
                                 <img src="{{ $post->featured_image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $post->title }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
                             <td class="px-6 py-3.5">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-xs font-semibold text-slate-800">{{ $post->title }}</span>
-                                    @if ($post->is_featured)
-                                        <span class="px-1.5 py-0.5 inline-flex items-center gap-0.5 text-[9px] leading-4 font-bold rounded bg-amber-50 text-amber-600 border border-amber-100"><i data-lucide="star" class="h-2.5 w-2.5"></i>Featured</span>
-                                    @endif
-                                </div>
+                                <span class="text-xs font-semibold text-slate-800">{{ $post->title }}</span>
                                 <div class="text-[9px] text-slate-400">/blog/{{ $post->slug }}</div>
-                            </td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $post->category_tag }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $post->author_name }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap">
-                                @if ($post->published_at && $post->published_at->lte(now()))
-                                    <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-emerald-50 text-emerald-600 border border-emerald-100">Published</span>
-                                @elseif ($post->published_at)
-                                    <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-amber-50 text-amber-600 border border-amber-100">Scheduled: {{ $post->published_at->format('M d, Y') }}</span>
-                                @else
-                                    <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-slate-100 text-slate-500 border border-slate-200/50">Draft</span>
-                                @endif
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
@@ -77,7 +58,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No blog posts yet') }}</td>
+                            <td colspan="3" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No blog posts yet') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

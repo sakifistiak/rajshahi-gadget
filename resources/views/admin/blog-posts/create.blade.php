@@ -31,55 +31,6 @@
                        class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
             </div>
 
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Slug <span class="font-normal normal-case text-slate-400">(optional — auto-generated from title if left blank)</span></label>
-                <input id="slug" type="text" name="slug" value="{{ old('slug') }}"
-                       class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Excerpt <span class="text-rose-500">*</span> <span class="font-normal normal-case text-slate-400">(short summary shown on the blog listing card)</span></label>
-                <textarea id="excerpt" name="excerpt" rows="2" required maxlength="500"
-                          class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">{{ old('excerpt') }}</textarea>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Category Tag <span class="text-rose-500">*</span></label>
-                    <input id="category_tag" type="text" name="category_tag" value="{{ old('category_tag') }}" required placeholder="e.g. Buying Guide"
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Read Minutes</label>
-                    <input id="read_minutes" type="number" name="read_minutes" min="1" max="60" value="{{ old('read_minutes', 5) }}"
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Publish Date <span class="font-normal normal-case text-slate-400">(blank = draft)</span></label>
-                    <input id="published_at" type="date" name="published_at" value="{{ old('published_at') }}"
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Author Name <span class="text-rose-500">*</span></label>
-                    <input id="author_name" type="text" name="author_name" value="{{ old('author_name') }}" required
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Author Role</label>
-                    <input id="author_role" type="text" name="author_role" value="{{ old('author_role') }}" placeholder="e.g. Reviewer"
-                           class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
-            <label class="flex items-center gap-2.5 p-3 bg-slate-50 rounded-sm border border-slate-200 cursor-pointer w-fit">
-                <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
-                       class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                <span class="text-xs font-semibold text-slate-700">Featured <span class="font-normal text-slate-400">— show as the hero banner at the top of /blog</span></span>
-            </label>
-
             <!-- Featured Image -->
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">
                 <label class="block font-bold text-xs text-slate-800 uppercase tracking-wider mb-2">Featured Image</label>
@@ -102,7 +53,7 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Content <span class="text-rose-500">*</span></label>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Description <span class="text-rose-500">*</span></label>
                 <div id="content-quill" style="min-height: 320px; background:#fff;"></div>
                 <textarea id="content" name="content" style="display:none">{{ old('content') }}</textarea>
             </div>

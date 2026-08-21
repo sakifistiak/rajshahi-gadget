@@ -501,24 +501,15 @@ class PageController extends Controller
 
     public function blogIndex()
     {
-        $featuredPost = BlogPost::published()->where('is_featured', true)->orderByDesc('published_at')->first();
+        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9);
 
-        $posts = BlogPost::published()
-            ->when($featuredPost, fn ($q) => $q->where('id', '!=', $featuredPost->id))
-            ->orderByDesc('published_at')
-            ->paginate(9);
-
-        return view('pages.blog', compact('posts', 'featuredPost'));
+        return view('pages.blog', compact('posts'));
     }
 
     public function blogLoadMore(Request $request)
     {
         $page = max(1, (int) $request->query('page', 2));
-        $featuredPost = BlogPost::published()->where('is_featured', true)->orderByDesc('published_at')->first();
-        $posts = BlogPost::published()
-            ->when($featuredPost, fn ($q) => $q->where('id', '!=', $featuredPost->id))
-            ->orderByDesc('published_at')
-            ->paginate(9, ['*'], 'page', $page);
+        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9, ['*'], 'page', $page);
 
         return response()->json([
             'html' => view('partials.blog-cards', compact('posts'))->render(),
@@ -530,13 +521,7 @@ class PageController extends Controller
     {
         $post = BlogPost::where('slug', $slug)->published()->first();
         if ($post) {
-            $relatedPosts = BlogPost::published()
-                ->where('id', '!=', $post->id)
-                ->orderByDesc('published_at')
-                ->take(3)
-                ->get();
-
-            return view('pages.blog.detail', compact('post', 'relatedPosts'));
+            return view('pages.blog.detail', compact('post'));
         }
 
         return $this->render('pages.blog.'.$slug);

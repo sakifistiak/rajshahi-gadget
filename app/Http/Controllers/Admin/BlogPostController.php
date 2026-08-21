@@ -36,7 +36,7 @@ class BlogPostController extends Controller
     {
         $data = $this->validated($request);
 
-        $slug = Str::slug($request->slug ?: $request->title);
+        $slug = Str::slug($data['title']);
         $count = BlogPost::where('slug', 'like', "{$slug}%")->count();
         if ($count > 0) {
             $slug .= '-' . ($count + 1);
@@ -51,6 +51,7 @@ class BlogPostController extends Controller
             ...$data,
             'slug' => $slug,
             'featured_image' => $imagePath,
+            'published_at' => now(),
         ]);
 
         return redirect()->route('admin.blog-posts.index')->with('success', 'Blog post created successfully!');
@@ -65,8 +66,6 @@ class BlogPostController extends Controller
     {
         $data = $this->validated($request, $blogPost);
 
-        $slug = $request->slug ? Str::slug($request->slug) : $blogPost->slug;
-
         $imagePath = $request->featured_image_path;
         if ($request->hasFile('featured_image_file')) {
             $imagePath = $this->storeUploadedImage($request->file('featured_image_file'));
@@ -74,7 +73,6 @@ class BlogPostController extends Controller
 
         $blogPost->update([
             ...$data,
-            'slug' => $slug,
             'featured_image' => $imagePath,
         ]);
 
@@ -92,22 +90,12 @@ class BlogPostController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:blog_posts,slug,' . ($blogPost->id ?? 'NULL'),
-            'excerpt' => 'required|string|max:500',
             'content' => 'required|string',
-            'category_tag' => 'required|string|max:100',
-            'read_minutes' => 'nullable|integer|min:1|max:60',
-            'author_name' => 'required|string|max:100',
-            'author_role' => 'nullable|string|max:100',
-            'published_at' => 'nullable|date',
             'featured_image_path' => 'nullable|string|max:500',
             'featured_image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
-            'is_featured' => 'nullable|boolean',
         ]);
 
         unset($data['featured_image_path'], $data['featured_image_file']);
-        $data['read_minutes'] = $data['read_minutes'] ?? 5;
-        $data['is_featured'] = $request->boolean('is_featured');
 
         return $data;
     }
