@@ -351,7 +351,7 @@ class PageController extends Controller
             'name' => $buyNowProduct->name,
             'price' => $buyNowProduct->price,
             'image' => $buyNowProduct->primaryImage(),
-            'quantity' => 1,
+            'quantity' => max(1, min(10, $request->integer('qty', 1))),
         ] : null;
 
         return view('pages.checkout', compact('buyNow'));

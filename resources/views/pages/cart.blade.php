@@ -5,10 +5,6 @@
 @verbatim</body></html>
 @endverbatim
 
-<div id="stock-notice-template" class="hidden">
-    @include('partials.stock-price-notice')
-</div>
-
 <script>
 (function() {
     var CART_KEY = 'kg_shopping_cart';
@@ -25,9 +21,6 @@
         var cart = getCart();
         var main = document.querySelector('main');
         if (!main) return;
-
-        var noticeElem = document.getElementById('stock-notice-template');
-        var noticeHtml = noticeElem ? noticeElem.innerHTML : '';
 
         var totalCount = cart.reduce(function(s, i) { return s + (i.quantity || 1); }, 0);
         var subtotal = cart.reduce(function(s, i) { return s + (i.price || 0) * (i.quantity || 1); }, 0);
@@ -103,7 +96,6 @@
                     '<div class="flex items-center justify-between"><dt class="text-muted-foreground">Estimated tax</dt><dd class="font-medium">' + fmt(tax) + '</dd></div>' +
                     '<div class="mt-3 flex items-center justify-between border-t border-border pt-3"><dt class="text-base font-semibold">Total</dt><dd class="text-lg font-semibold">' + fmt(grandTotal) + '</dd></div>' +
                 '</dl>' +
-                noticeHtml +
                 '<a href="/checkout" class="mt-6 block">' +
                     '<button class="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-12 w-full rounded-full text-base">' +
                         'Secure checkout' +

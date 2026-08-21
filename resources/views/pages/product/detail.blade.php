@@ -273,11 +273,11 @@
                 @else
                     <div class="flex flex-wrap items-center gap-3">
                         <div class="inline-flex items-center rounded-full border border-border bg-background">
-                            <button class="grid h-11 w-11 place-items-center rounded-full hover:bg-secondary" aria-label="Decrease quantity"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus h-4 w-4" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
-                            <span class="w-8 text-center text-sm font-medium tabular-nums">1</span>
-                            <button class="grid h-11 w-11 place-items-center rounded-full hover:bg-secondary" aria-label="Increase quantity"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus h-4 w-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button>
+                            <button type="button" id="qty-decrease" class="grid h-11 w-11 place-items-center rounded-full hover:bg-secondary" aria-label="Decrease quantity"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-minus h-4 w-4" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+                            <span id="qty-value" class="w-8 text-center text-sm font-medium tabular-nums">1</span>
+                            <button type="button" id="qty-increase" class="grid h-11 w-11 place-items-center rounded-full hover:bg-secondary" aria-label="Increase quantity"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus h-4 w-4" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg></button>
                         </div>
-                        <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 group relative h-12 flex-1 overflow-hidden rounded-sm px-8 shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]">
+                        <a href="/checkout?product={{ $product->slug }}" id="buy-now-link" data-base-href="/checkout?product={{ $product->slug }}" class="btn-buy-now inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 group relative h-12 flex-1 overflow-hidden rounded-sm px-8 shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]">
                             <span class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></span>
                             <span class="relative flex items-center gap-3">
                                 <span class="text-xs font-bold uppercase tracking-[0.14em]">Buy Now</span>
@@ -305,6 +305,40 @@
             @endif
         </div>
     </div>
+
+    <script>
+        (function () {
+            var MIN_QTY = 1;
+            var MAX_QTY = 10;
+            var qty = MIN_QTY;
+            var qtyValue = document.getElementById('qty-value');
+            var decreaseBtn = document.getElementById('qty-decrease');
+            var increaseBtn = document.getElementById('qty-increase');
+            var buyNowLink = document.getElementById('buy-now-link');
+
+            if (!qtyValue || !decreaseBtn || !increaseBtn) return;
+
+            function render() {
+                qtyValue.textContent = qty;
+                decreaseBtn.disabled = qty <= MIN_QTY;
+                decreaseBtn.classList.toggle('opacity-50', qty <= MIN_QTY);
+                increaseBtn.disabled = qty >= MAX_QTY;
+                increaseBtn.classList.toggle('opacity-50', qty >= MAX_QTY);
+                if (buyNowLink) {
+                    buyNowLink.href = buyNowLink.dataset.baseHref + '&qty=' + qty;
+                }
+            }
+
+            decreaseBtn.addEventListener('click', function () {
+                if (qty > MIN_QTY) { qty -= 1; render(); }
+            });
+            increaseBtn.addEventListener('click', function () {
+                if (qty < MAX_QTY) { qty += 1; render(); }
+            });
+
+            render();
+        })();
+    </script>
 
     <nav aria-label="Product sections" class="mt-14 flex flex-wrap items-center gap-2 border-b border-border pb-4">
         @if($product->specs->count())
