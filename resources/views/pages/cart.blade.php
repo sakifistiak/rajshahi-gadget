@@ -22,7 +22,6 @@
         var main = document.querySelector('main');
         if (!main) return;
 
-        var totalCount = cart.reduce(function(s, i) { return s + (i.quantity || 1); }, 0);
         var subtotal = cart.reduce(function(s, i) { return s + (i.price || 0) * (i.quantity || 1); }, 0);
 
         if (cart.length === 0) {
@@ -42,13 +41,10 @@
             return;
         }
 
-        var shipping = subtotal > 99000 || subtotal === 0 ? 0 : 100;
-        var tax = Math.round(subtotal * 0.05);
-        var grandTotal = subtotal + shipping + tax;
+        var grandTotal = subtotal;
 
         var html = '<div class="container-page py-12">' +
             '<h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">Your cart</h1>' +
-            '<p class="mt-2 text-sm text-muted-foreground">' + totalCount + ' item' + (totalCount === 1 ? '' : 's') + ' · Free next‑day delivery over ৳ 99,000</p>' +
             '<div class="mt-10 grid items-start gap-10 lg:grid-cols-[1.5fr_1fr]">' +
                 '<ul class="divide-y divide-border rounded-md border border-border bg-card">';
 
@@ -60,8 +56,7 @@
                     '</div>' +
                 '</a>' +
                 '<div class="min-w-0">' +
-                    '<p class="text-xs uppercase tracking-wider text-muted-foreground">KHAN GADGET</p>' +
-                    '<a href="/product/' + (item.slug || '') + '" class="mt-1 block truncate text-base font-medium hover:underline">' + (item.name || 'Product') + '</a>' +
+                    '<a href="/product/' + (item.slug || '') + '" class="block truncate text-base font-medium hover:underline">' + (item.name || 'Product') + '</a>' +
                     '<p class="mt-1 text-sm text-muted-foreground">' + fmt(item.price || 0) + ' each</p>' +
                     '<div class="mt-4 flex items-center gap-3 sm:hidden">' +
                         '<div class="inline-flex items-center rounded-full border border-border">' +
@@ -92,8 +87,7 @@
                 '<h2 class="text-lg font-semibold">Order summary</h2>' +
                 '<dl class="mt-4 space-y-3 text-sm">' +
                     '<div class="flex items-center justify-between"><dt class="text-muted-foreground">Subtotal</dt><dd class="font-medium">' + fmt(subtotal) + '</dd></div>' +
-                    '<div class="flex items-center justify-between"><dt class="text-muted-foreground">Shipping</dt><dd class="font-medium">' + (shipping === 0 ? 'Free' : fmt(shipping)) + '</dd></div>' +
-                    '<div class="flex items-center justify-between"><dt class="text-muted-foreground">Estimated tax</dt><dd class="font-medium">' + fmt(tax) + '</dd></div>' +
+                    '<div class="flex items-center justify-between"><dt class="text-muted-foreground">Shipping</dt><dd class="font-medium">Free</dd></div>' +
                     '<div class="mt-3 flex items-center justify-between border-t border-border pt-3"><dt class="text-base font-semibold">Total</dt><dd class="text-lg font-semibold">' + fmt(grandTotal) + '</dd></div>' +
                 '</dl>' +
                 '<a href="/checkout" class="mt-6 block">' +
@@ -102,36 +96,41 @@
                         '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right ml-2 h-4 w-4"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>' +
                     '</button>' +
                 '</a>' +
-                '<p class="mt-3 text-center text-xs text-muted-foreground">Taxes and shipping calculated at checkout.</p>' +
             '</aside>' +
         '</div>' +
     '</div>';
 
         main.innerHTML = html;
-
-        main.addEventListener('click', function(ev) {
-            var qb = ev.target.closest('.kg-qty-btn');
-            var rb = ev.target.closest('.kg-remove-btn');
-
-            if (qb) {
-                var c = getCart();
-                var i = parseInt(qb.dataset.idx);
-                if (qb.dataset.action === 'inc') { c[i].quantity = (c[i].quantity || 1) + 1; }
-                else { c[i].quantity = (c[i].quantity || 1) - 1; if (c[i].quantity < 1) c.splice(i, 1); }
-                saveCart(c);
-                renderCartPage();
-            }
-            if (rb) {
-                var c = getCart();
-                c.splice(parseInt(rb.dataset.idx), 1);
-                saveCart(c);
-                renderCartPage();
-            }
-        });
     }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderCartPage);
-    else renderCartPage();
+    function onCartClick(ev) {
+        var qb = ev.target.closest('.kg-qty-btn');
+        var rb = ev.target.closest('.kg-remove-btn');
+
+        if (qb) {
+            var c = getCart();
+            var i = parseInt(qb.dataset.idx);
+            if (qb.dataset.action === 'inc') { c[i].quantity = (c[i].quantity || 1) + 1; }
+            else { c[i].quantity = (c[i].quantity || 1) - 1; if (c[i].quantity < 1) c.splice(i, 1); }
+            saveCart(c);
+            renderCartPage();
+        }
+        if (rb) {
+            var c = getCart();
+            c.splice(parseInt(rb.dataset.idx), 1);
+            saveCart(c);
+            renderCartPage();
+        }
+    }
+
+    function init() {
+        renderCartPage();
+        var main = document.querySelector('main');
+        if (main) main.addEventListener('click', onCartClick);
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
 })();
 </script>
 

@@ -227,8 +227,15 @@
             var productName='Product', productPrice=0, productImage='', productSlug='product-'+Date.now(), imgEl=null;
 
             if (card) {
-                var t = card.querySelector('h3, .line-clamp-2, a[href*="/product/"]');
-                if (t) productName = t.textContent.trim();
+                // Prefer the title heading over the image link — the image is wrapped
+                // in an a[href*="/product/"] that comes first in the DOM but has no
+                // text, so querySelector('h3, ..., a[href*="/product/"]') would match
+                // that empty anchor first and silently produce a blank cart item name.
+                var t = card.querySelector('h3') || card.querySelector('.line-clamp-2') || card.querySelector('a[href*="/product/"]');
+                if (t) {
+                    var tName = t.textContent.trim();
+                    if (tName) productName = tName;
+                }
                 var l = card.querySelector('a[href*="/product/"]');
                 if (l) { var p = l.getAttribute('href').split('/product/'); if(p.length>1) productSlug=p[1].split('?')[0]; }
                 
