@@ -8,7 +8,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{{ $work->title }} | {{ $siteName ?? 'Khan Gadget' }}"/>
 <meta name="twitter:description" content="{{ $work->summary }}"/>
-@if($work->image)<meta property="og:image" content="{{ $work->image }}"/><meta name="twitter:image" content="{{ $work->image }}"/>@endif
+@if($work->image)<meta property="og:image" content="{{ url($work->image) }}"/><meta name="twitter:image" content="{{ url($work->image) }}"/>@endif
 <meta property="og:title" content="{{ $work->title }} | {{ $siteName ?? 'Khan Gadget' }}"/>
 <meta property="og:description" content="{{ $work->summary }}"/>
 <meta property="og:type" content="article"/>

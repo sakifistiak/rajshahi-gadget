@@ -76,6 +76,7 @@ class AppServiceProvider extends ServiceProvider
                 'siteLogo' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
                 'siteLogoDark' => SiteSetting::getValue('logo_dark', '/media/logo_dark_1786184552.png'),
                 'siteFavicon' => SiteSetting::getValue('site_favicon', '/favicon.png'),
+                'siteShareImage' => SiteSetting::getValue('site_share_image', '/media/b3ca13-kg-lockup-v2.png'),
                 'siteName' => SiteSetting::getValue('site_name', 'Khan Gadget'),
                 'siteSlogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
                 'siteDescription' => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),

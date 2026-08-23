@@ -50,6 +50,7 @@ class SettingController extends Controller
             'logo_light' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
             'logo_dark' => SiteSetting::getValue('logo_dark', '/media/b3ca13-kg-lockup-v2.png'),
             'site_favicon' => SiteSetting::getValue('site_favicon', '/favicon.png'),
+            'site_share_image' => SiteSetting::getValue('site_share_image', '/media/b3ca13-kg-lockup-v2.png'),
             'footer_col1_active' => SiteSetting::getValue('footer_col1_active', '1'),
             'footer_col1_title' => SiteSetting::getValue('footer_col1_title', 'SHOP'),
             'footer_col1_links' => SiteSetting::getValue('footer_col1_links', $defaultCol1Links),
@@ -109,6 +110,7 @@ class SettingController extends Controller
             'logo_light_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'logo_dark_file' => 'nullable|image|mimes:png,jpg,jpeg,svg,webp|max:4096',
             'favicon_file' => 'nullable|mimes:png,jpg,jpeg,svg,webp,ico|max:1024',
+            'share_image_file' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:4096',
             'site_font_english' => 'nullable|in:Inter,Poppins',
             'site_font_bangla' => 'nullable|in:Noto Serif Bengali,Hind Siliguri,Tiro Bangla,Anek Bangla',
         ]);
@@ -196,6 +198,17 @@ class SettingController extends Controller
             $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'site_favicon'],
+                ['value' => '/media/'.$filename]
+            );
+        }
+
+        // Handle Social Share Image Upload
+        if ($request->hasFile('share_image_file')) {
+            $file = $request->file('share_image_file');
+            $filename = 'share_image_'.time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('media'), $filename);
+            SiteSetting::updateOrCreate(
+                ['key' => 'site_share_image'],
                 ['value' => '/media/'.$filename]
             );
         }
