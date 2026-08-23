@@ -57,7 +57,7 @@
                             <select name="store_location_id" class="rounded-md border border-border bg-background font-normal">
                                 <option value="">Select an outlet</option>
                                 @foreach($storeLocations as $outlet)
-                                    <option value="{{ $outlet->id }}">{{ $outlet->name }} — {{ \Illuminate\Support\Str::limit($outlet->plainAddress(), 32) }}</option>
+                                    <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
                                 @endforeach
                             </select>
                         </label>
