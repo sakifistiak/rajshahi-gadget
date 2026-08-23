@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Support\ImageUploader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\JsonResponse;
@@ -25,15 +26,8 @@ class MediaController extends Controller
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
-            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
-            
-            $targetDir = public_path('uploads');
-            if (!File::exists($targetDir)) {
-                File::makeDirectory($targetDir, 0755, true);
-            }
-
-            $file->move($targetDir, $filename);
-            $url = '/uploads/' . $filename;
+            $url = ImageUploader::storeInPublic($file, 'uploads');
+            $filename = basename($url);
 
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([

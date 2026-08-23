@@ -442,11 +442,6 @@ class PageController extends Controller
             }
         }
 
-        // Max Price filter
-        if ($request->filled('max_price')) {
-            $query->where('price', '<=', (float) $request->max_price);
-        }
-
         // Search query
         if ($request->filled('search')) {
             $search = $request->search;
@@ -454,6 +449,21 @@ class PageController extends Controller
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
+        }
+
+        // The price slider's ceiling reflects the highest price among products
+        // matching every other active filter (category/condition/brand/spec/
+        // search), rounded up to the nearest ৳10k — so narrowing to a category
+        // with a lower top price (e.g. Pre-Owned maxing at 49k) also narrows the
+        // slider (to 50k), instead of a fixed ceiling hiding pricier products in
+        // other categories. Computed from a clone, before max_price is applied
+        // to $query itself, so dragging the slider down can't shrink its own max.
+        $rawMaxPrice = (clone $query)->max('price');
+        $priceMax = $rawMaxPrice ? (int) (ceil($rawMaxPrice / 10000) * 10000) : 300000;
+
+        // Max Price filter
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', (float) $request->max_price);
         }
 
         // Sort order
@@ -472,7 +482,7 @@ class PageController extends Controller
 
         return view('pages.shop', compact(
             'products', 'categories', 'brands', 'conditions',
-            'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes'
+            'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes', 'priceMax'
         ));
     }
 

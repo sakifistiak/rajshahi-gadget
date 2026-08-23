@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PromoBanner;
+use App\Support\ImageUploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\File;
@@ -35,14 +36,7 @@ class PromoBannerController extends Controller
         $imagePath = $request->image_path;
 
         if ($request->hasFile('image_file')) {
-            $file = $request->file('image_file');
-            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
-            $targetDir = public_path('uploads');
-            if (!File::exists($targetDir)) {
-                File::makeDirectory($targetDir, 0755, true);
-            }
-            $file->move($targetDir, $filename);
-            $imagePath = '/uploads/' . $filename;
+            $imagePath = ImageUploader::storeInPublic($request->file('image_file'), 'uploads');
         }
 
         if (empty($imagePath)) {
@@ -80,14 +74,7 @@ class PromoBannerController extends Controller
         $imagePath = $request->image_path ?: $promo->image_path;
 
         if ($request->hasFile('image_file')) {
-            $file = $request->file('image_file');
-            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
-            $targetDir = public_path('uploads');
-            if (!File::exists($targetDir)) {
-                File::makeDirectory($targetDir, 0755, true);
-            }
-            $file->move($targetDir, $filename);
-            $imagePath = '/uploads/' . $filename;
+            $imagePath = ImageUploader::storeInPublic($request->file('image_file'), 'uploads');
         }
 
         $promo->update([

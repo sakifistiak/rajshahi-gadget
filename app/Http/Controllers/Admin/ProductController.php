@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\Product;
+use App\Support\ImageUploader;
 use App\Support\ProductFilterSync;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -301,13 +302,6 @@ class ProductController extends Controller
 
     private function storeUploadedImage(UploadedFile $file): string
     {
-        $filename = time().'_'.str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
-        $targetDir = public_path('uploads');
-        if (! File::exists($targetDir)) {
-            File::makeDirectory($targetDir, 0755, true);
-        }
-        $file->move($targetDir, $filename);
-
-        return '/uploads/'.$filename;
+        return ImageUploader::storeInPublic($file, 'uploads');
     }
 }

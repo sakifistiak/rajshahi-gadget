@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\SiteSetting;
+use App\Support\ImageUploader;
 use App\Support\SectionTitleStyle;
 use Illuminate\Http\Request;
 
@@ -208,14 +209,14 @@ class HomeSettingController extends Controller
         }
 
         if ($request->hasFile('popup_offer_image_file')) {
-            $path = $request->file('popup_offer_image_file')->store('popups', 'public');
+            $path = ImageUploader::storeOnDisk($request->file('popup_offer_image_file'), 'popups');
             SiteSetting::setValue('popup_offer_image', '/storage/'.$path);
         } elseif ($request->has('popup_offer_image')) {
             SiteSetting::setValue('popup_offer_image', $request->input('popup_offer_image', ''));
         }
 
         if ($request->hasFile('popup_offer_image_mobile_file')) {
-            $pathMobile = $request->file('popup_offer_image_mobile_file')->store('popups', 'public');
+            $pathMobile = ImageUploader::storeOnDisk($request->file('popup_offer_image_mobile_file'), 'popups');
             SiteSetting::setValue('popup_offer_image_mobile', '/storage/'.$pathMobile);
         } elseif ($request->has('popup_offer_image_mobile')) {
             SiteSetting::setValue('popup_offer_image_mobile', $request->input('popup_offer_image_mobile', ''));

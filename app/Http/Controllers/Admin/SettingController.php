@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CustomPage;
 use App\Models\SiteSetting;
 use App\Support\DrawerIcons;
+use App\Support\ImageUploader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -171,45 +172,33 @@ class SettingController extends Controller
 
         // Handle Light Mode Logo Upload
         if ($request->hasFile('logo_light_file')) {
-            $file = $request->file('logo_light_file');
-            $filename = 'logo_light_'.time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'logo_light'],
-                ['value' => '/media/'.$filename]
+                ['value' => ImageUploader::storeInPublic($request->file('logo_light_file'), 'media')]
             );
         }
 
         // Handle Dark Mode Logo Upload
         if ($request->hasFile('logo_dark_file')) {
-            $file = $request->file('logo_dark_file');
-            $filename = 'logo_dark_'.time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'logo_dark'],
-                ['value' => '/media/'.$filename]
+                ['value' => ImageUploader::storeInPublic($request->file('logo_dark_file'), 'media')]
             );
         }
 
         // Handle Favicon Upload
         if ($request->hasFile('favicon_file')) {
-            $file = $request->file('favicon_file');
-            $filename = 'favicon_'.time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'site_favicon'],
-                ['value' => '/media/'.$filename]
+                ['value' => ImageUploader::storeInPublic($request->file('favicon_file'), 'media')]
             );
         }
 
         // Handle Social Share Image Upload
         if ($request->hasFile('share_image_file')) {
-            $file = $request->file('share_image_file');
-            $filename = 'share_image_'.time().'.'.$file->getClientOriginalExtension();
-            $file->move(public_path('media'), $filename);
             SiteSetting::updateOrCreate(
                 ['key' => 'site_share_image'],
-                ['value' => '/media/'.$filename]
+                ['value' => ImageUploader::storeInPublic($request->file('share_image_file'), 'media')]
             );
         }
 

@@ -130,13 +130,19 @@
                 @endif
 
                 <!-- Max Price Filter -->
+                @php
+                    // Clamp a stale max_price carried over from a wider filter
+                    // combo (e.g. picked before narrowing to a cheaper category)
+                    // so the range input's value never exceeds its own max.
+                    $selectedMaxPrice = min((int) request('max_price', $priceMax), $priceMax);
+                @endphp
                 <div>
                     <p class="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                        Max price · ৳<span id="price-display">{{ number_format(request('max_price', 300000)) }}</span>
+                        Max price · ৳<span id="price-display">{{ number_format($selectedMaxPrice) }}</span>
                     </p>
                     <div class="space-y-2">
-                        <input type="range" name="max_price" min="5000" max="300000" step="5000" 
-                               value="{{ request('max_price', 300000) }}"
+                        <input type="range" name="max_price" min="5000" max="{{ $priceMax }}" step="5000"
+                               value="{{ $selectedMaxPrice }}"
                                class="w-full accent-foreground cursor-pointer" 
                                oninput="document.getElementById('price-display').innerText = new Intl.NumberFormat().format(this.value)"
                                onchange="this.form.submit()" />

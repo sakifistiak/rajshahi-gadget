@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Support\ImageUploader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -75,15 +76,7 @@ class BrandController extends Controller
     private function resolveLogoPath(Request $request, ?string $existing): ?string
     {
         if ($request->hasFile('logo_file')) {
-            $file = $request->file('logo_file');
-            $filename = time() . '_' . str_replace(' ', '_', preg_replace('/[^A-Za-z0-9\-\.\_]/', '', $file->getClientOriginalName()));
-            $targetDir = public_path('uploads');
-            if (!File::exists($targetDir)) {
-                File::makeDirectory($targetDir, 0755, true);
-            }
-            $file->move($targetDir, $filename);
-
-            return '/uploads/' . $filename;
+            return ImageUploader::storeInPublic($request->file('logo_file'), 'uploads');
         }
 
         return $request->input('logo_path') ?: $existing;

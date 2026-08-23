@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use App\Support\ImageUploader;
 use Illuminate\Http\Request;
 
 class PopupOfferController extends Controller
@@ -42,14 +43,14 @@ class PopupOfferController extends Controller
         SiteSetting::setValue('popup_offer_active', $request->has('popup_offer_active') ? '1' : '0');
 
         if ($request->hasFile('popup_offer_image_file')) {
-            $path = $request->file('popup_offer_image_file')->store('popups', 'public');
+            $path = ImageUploader::storeOnDisk($request->file('popup_offer_image_file'), 'popups');
             SiteSetting::setValue('popup_offer_image', '/storage/' . $path);
         } elseif ($request->has('popup_offer_image')) {
             SiteSetting::setValue('popup_offer_image', $request->input('popup_offer_image', ''));
         }
 
         if ($request->hasFile('popup_offer_image_mobile_file')) {
-            $pathMobile = $request->file('popup_offer_image_mobile_file')->store('popups', 'public');
+            $pathMobile = ImageUploader::storeOnDisk($request->file('popup_offer_image_mobile_file'), 'popups');
             SiteSetting::setValue('popup_offer_image_mobile', '/storage/' . $pathMobile);
         } elseif ($request->has('popup_offer_image_mobile')) {
             SiteSetting::setValue('popup_offer_image_mobile', $request->input('popup_offer_image_mobile', ''));
