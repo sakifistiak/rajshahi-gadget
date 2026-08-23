@@ -265,7 +265,11 @@
             @include('partials.stock-price-notice')
 
             <div class="mt-8 space-y-3">
-                @if($product->is_new_arrival)
+                @if(!$product->in_stock)
+                    <button type="button" disabled class="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap text-sm font-bold uppercase tracking-[0.14em] h-12 rounded-sm px-8 bg-secondary text-muted-foreground cursor-not-allowed">
+                        Out of Stock
+                    </button>
+                @elseif($product->is_new_arrival)
                     <a href="https://wa.me/{{ \App\Support\PhoneNumber::whatsapp($whatsappNumber ?? '8801700000001') }}?text={{ rawurlencode('I want to order ' . $product->name . ' ' . route('product', $product->slug)) }}" target="_blank" rel="noopener noreferrer" class="btn-buy-now inline-flex w-full items-center justify-center gap-2 whitespace-nowrap text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 group relative h-12 overflow-hidden rounded-sm px-8 shadow-md transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]">
                         <span class="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></span>
                         <span class="relative text-xs font-bold uppercase tracking-[0.14em]">Order Now</span>
