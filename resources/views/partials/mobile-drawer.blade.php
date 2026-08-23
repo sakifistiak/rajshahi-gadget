@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', function() {
 @if (($liveChatEnabled ?? '1') === '1')
 @if ($showWhatsapp || $showMessenger || $showCall)
     <aside id="kg-live-chat" aria-label="Live chat options" style="--kg-chat-pulse-color: {{ $liveChatWhatsappColor ?? '#25D366' }}">
-        <div id="kg-live-chat-tooltip" class="kg-live-chat-tooltip" role="status">Chat with us 👋</div>
+        <div id="kg-live-chat-tooltip" class="kg-live-chat-tooltip" role="status">Chat With Us 👋</div>
         <div id="kg-live-chat-menu" role="menu">
             <p class="kg-live-chat-heading">How Can We Help? 💬</p>
 
