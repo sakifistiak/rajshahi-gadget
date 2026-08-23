@@ -14,6 +14,18 @@
     <link rel="stylesheet" href="/assets/styles-CC_Lznyw.css"/>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="/assets/theme.js"></script>
+    <style>
+        /* The static styles-CC_Lznyw.css bundle has no Tailwind Typography
+           (.prose) classes at all, so they render as a no-op here — paragraph
+           spacing has to be hand-normalized instead. Quill (the admin rich
+           text editor for custom pages) also saves every blank line as a
+           literal <p><br></p>, which otherwise stacks its own margin on top
+           of the next paragraph's, producing oversized gaps. */
+        #custom-page-content > :where(p, ul, ol, h1, h2, h3, h4, h5, h6, blockquote) { margin: 0 0 1em; }
+        #custom-page-content > :last-child { margin-bottom: 0; }
+        #custom-page-content > p:empty,
+        #custom-page-content > p:has(> br:only-child) { display: none; }
+    </style>
 </head>
 <body class="bg-background text-foreground antialiased min-h-screen flex flex-col">
     <!-- Header Navbar -->
@@ -33,7 +45,7 @@
             @endif
 
             <!-- Render HTML Content -->
-            <article class="prose dark:prose-invert prose-slate max-w-none text-foreground leading-relaxed text-sm sm:text-base space-y-4">
+            <article id="custom-page-content" class="text-foreground leading-relaxed text-sm sm:text-base">
                 {!! $page->content !!}
             </article>
         </div>
