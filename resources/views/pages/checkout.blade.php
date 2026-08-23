@@ -117,7 +117,15 @@
             var pickupField = document.getElementById('pickup-field');
             var storeSelect = document.querySelector('[name="store_location_id"]');
 
-            homeOnlyFields.forEach(function (el) { el.style.display = 'none'; });
+            homeOnlyFields.forEach(function (el) {
+                el.style.display = 'none';
+                // A hidden-but-required field (e.g. address) still blocks native
+                // form validation in some browsers with a silent, unfocusable
+                // "invalid form control" failure — disabling it excludes it from
+                // constraint validation entirely, same as the already-disabled
+                // division/district/upazila selects.
+                el.querySelectorAll('[required]').forEach(function (input) { input.required = false; input.disabled = true; });
+            });
             pickupField.style.display = '';
             storeSelect.required = true;
         })();
