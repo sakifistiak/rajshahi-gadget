@@ -1,3 +1,10 @@
+@php
+    if (defined('KG_MOBILE_DRAWER_LOADED')) {
+        return;
+    }
+    define('KG_MOBILE_DRAWER_LOADED', true);
+@endphp
+
 {{-- Mobile Navigation Drawer --}}
 {{-- Include this at the bottom of any page's <body> to enable the hamburger mobile menu --}}
 
@@ -1023,6 +1030,14 @@ document.addEventListener('DOMContentLoaded', function() {
     </aside>
 @endif
 
+    <!-- Right-side Floating Live Chat Support Widget Button -->
+    <div id="kg-live-chat-floating-btn" class="fixed bottom-20 right-4 z-50 flex flex-col items-center sm:bottom-6">
+        <button type="button" class="flex flex-col items-center transition-transform hover:scale-105 active:scale-95 cursor-pointer" aria-label="Open live chat" title="Need help?">
+            <img src="/assets/support-agent-BWJyOWv2.png" alt="Live chat support agent" width="512" height="512" loading="lazy" class="agent-float h-20 w-20 select-none object-contain drop-shadow-lg sm:h-24 sm:w-24" />
+            <span class="-mt-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm">Live Chat</span>
+        </button>
+    </div>
+
     <section id="kg-customer-chat" aria-label="Customer chat">
         <div id="kg-customer-chat-header">
             <div id="kg-customer-chat-header-info">
@@ -1056,67 +1071,78 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </section>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const box = document.getElementById('kg-customer-chat'),
-              start = document.getElementById('kg-customer-chat-start'),
-              body = document.getElementById('kg-customer-chat-body'),
-              list = document.getElementById('kg-customer-chat-messages');
-        if (!box) return;
-        let timer;
+    (function () {
+        function initCustomerChat() {
+            const box = document.getElementById('kg-customer-chat'),
+                  start = document.getElementById('kg-customer-chat-start'),
+                  body = document.getElementById('kg-customer-chat-body'),
+                  list = document.getElementById('kg-customer-chat-messages');
+            if (!box) return;
+            let timer;
 
-        function render(data) {
-            list.innerHTML = (data.messages || []).map(m =>
-                '<div class="kg-chat-message ' + m.sender_type + '">' + String(m.body).replace(/[&<>]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) + '</div>'
-            ).join('');
-            list.scrollTop = list.scrollHeight;
-        }
+            function render(data) {
+                list.innerHTML = (data.messages || []).map(m =>
+                    '<div class="kg-chat-message ' + m.sender_type + '">' + String(m.body).replace(/[&<>]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) + '</div>'
+                ).join('');
+                list.scrollTop = list.scrollHeight;
+            }
 
-        function load() {
-            fetch('{{ route('chat.messages') }}').then(r => r.ok ? r.json() : null).then(d => {
-                if (d) { start.classList.remove('is-visible'); body.style.display = 'block'; render(d); }
-            }).catch(() => {});
-        }
+            function load() {
+                fetch('{{ route('chat.messages') }}').then(r => r.ok ? r.json() : null).then(d => {
+                    if (d) { start.classList.remove('is-visible'); body.style.display = 'block'; render(d); }
+                }).catch(() => {});
+            }
 
-        function openCustomerChat() {
-            box.classList.add('is-visible');
-            load();
-            if (!timer) timer = setInterval(load, 4000);
-        }
-        window.kgOpenCustomerChat = openCustomerChat;
-        document.querySelectorAll('[aria-label="Open live chat"]').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                openCustomerChat();
-            });
-        });
-
-        document.getElementById('kg-close-customer-chat').addEventListener('click', () => box.classList.remove('is-visible'));
-
-        document.getElementById('kg-chat-start-button').addEventListener('click', () => {
-            let nameInput = document.getElementById('kg-chat-name');
-            if (!nameInput.value.trim()) { nameInput.focus(); return; }
-            fetch('{{ route('chat.start') }}', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ name: nameInput.value, phone: document.getElementById('kg-chat-phone').value })
-            }).then(r => r.ok ? r.json() : Promise.reject()).then(d => {
-                start.classList.remove('is-visible');
-                body.style.display = 'block';
-                render(d);
+            function openCustomerChat() {
+                box.classList.add('is-visible');
+                load();
                 if (!timer) timer = setInterval(load, 4000);
-            }).catch(() => {});
-        });
+            }
+            window.kgOpenCustomerChat = openCustomerChat;
+            document.querySelectorAll('[aria-label="Open live chat"], #kg-live-chat-floating-btn button').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    openCustomerChat();
+                });
+            });
 
-        document.getElementById('kg-customer-chat-form').addEventListener('submit', e => {
-            e.preventDefault();
-            let input = document.getElementById('kg-chat-input');
-            if (!input.value.trim()) return;
-            fetch('{{ route('chat.messages.send') }}', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ body: input.value })
-            }).then(r => r.json()).then(d => { input.value = ''; render(d); });
-        });
-    });
+            const closeBtn = document.getElementById('kg-close-customer-chat');
+            if (closeBtn) closeBtn.addEventListener('click', () => box.classList.remove('is-visible'));
+
+            const startBtn = document.getElementById('kg-chat-start-button');
+            if (startBtn) startBtn.addEventListener('click', () => {
+                let nameInput = document.getElementById('kg-chat-name');
+                if (!nameInput.value.trim()) { nameInput.focus(); return; }
+                fetch('{{ route('chat.start') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ name: nameInput.value, phone: document.getElementById('kg-chat-phone').value })
+                }).then(r => r.ok ? r.json() : Promise.reject()).then(d => {
+                    start.classList.remove('is-visible');
+                    body.style.display = 'block';
+                    render(d);
+                    if (!timer) timer = setInterval(load, 4000);
+                }).catch(() => {});
+            });
+
+            const chatForm = document.getElementById('kg-customer-chat-form');
+            if (chatForm) chatForm.addEventListener('submit', e => {
+                e.preventDefault();
+                let input = document.getElementById('kg-chat-input');
+                if (!input.value.trim()) return;
+                fetch('{{ route('chat.messages.send') }}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    body: JSON.stringify({ body: input.value })
+                }).then(r => r.json()).then(d => { input.value = ''; render(d); });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCustomerChat);
+        } else {
+            initCustomerChat();
+        }
+    })();
     </script>
 @endif

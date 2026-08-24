@@ -7,16 +7,14 @@
                 <!-- Centered Premium Badge Header with Full-Width Lines Above & Below -->
                 <div class="my-8 space-y-4">
                     <div class="h-px w-full bg-border"></div>
-                    <div class="flex items-center justify-center">
-                        <div class="inline-flex items-center gap-3 rounded-full border border-border px-5 py-2.5">
-                            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full" style="background-color: var(--color-foreground, #09090b);">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" style="color: var(--color-background, #ffffff);" aria-hidden="true">
-                                    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
-                                    <circle cx="12" cy="10" r="3"></circle>
-                                </svg>
-                            </span>
-                            <h3 class="text-sm font-extrabold uppercase tracking-wider text-foreground whitespace-nowrap sm:text-base">Our Outlets</h3>
-                        </div>
+                    <div class="flex items-center justify-center gap-3 py-1">
+                        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full" style="background-color: var(--color-foreground, #09090b);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" style="color: var(--color-background, #ffffff);" aria-hidden="true">
+                                <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </span>
+                        <h3 class="text-sm font-extrabold uppercase tracking-wider text-foreground whitespace-nowrap sm:text-base">Our Outlets</h3>
                     </div>
                     <div class="h-px w-full bg-border"></div>
                 </div>
@@ -184,3 +182,4 @@
     <div class="h-2 sm:hidden"></div>
 </footer>
 @include('partials.cart-script')
+@include('partials.mobile-drawer')

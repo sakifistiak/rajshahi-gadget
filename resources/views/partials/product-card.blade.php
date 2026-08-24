@@ -54,7 +54,7 @@
                     Out of Stock
                 </button>
             @elseif ($product->is_new_arrival)
-                <a href="https://wa.me/{{ \App\Support\PhoneNumber::whatsapp($whatsappNumber ?? '8801700000001') }}?text={{ rawurlencode('I want to order ' . $product->name . ' ' . route('product', $product->slug)) }}" target="_blank" rel="noopener noreferrer" class="btn-buy-now flex-1 inline-flex items-center justify-center rounded-full font-bold text-sm transition-all shadow-sm" style="background-color: #24272c !important; color: #ffffff !important; height:36px; padding:0 16px;">
+                <a href="https://wa.me/{{ \App\Support\PhoneNumber::whatsapp($whatsappNumber ?? '8801700000001') }}?text={{ rawurlencode("I'm Interested In " . $product->name . ' ' . route('product', $product->slug)) }}" target="_blank" rel="noopener noreferrer" class="btn-buy-now flex-1 inline-flex items-center justify-center rounded-full font-bold text-sm transition-all shadow-sm" style="background-color: #24272c !important; color: #ffffff !important; height:36px; padding:0 16px;">
                     Order Now
                 </a>
             @else
