@@ -57,7 +57,7 @@
                 '</a>' +
                 '<div class="min-w-0">' +
                     '<a href="/product/' + (item.slug || '') + '" class="block text-base font-medium hover:underline">' + (item.name || 'Product') + '</a>' +
-                    '<p class="mt-1 text-sm text-muted-foreground">' + fmt(item.price || 0) + ' each</p>' +
+                    '<p class="mt-1 text-sm text-muted-foreground">' + fmt(item.price || 0) + '</p>' +
                     '<div class="mt-4 flex items-center gap-3 sm:hidden">' +
                         '<div class="inline-flex items-center rounded-full border border-border">' +
                             '<button class="kg-qty-btn grid h-9 w-9 place-items-center hover:bg-secondary" data-action="dec" data-idx="' + idx + '" aria-label="Decrease"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path></svg></button>' +
