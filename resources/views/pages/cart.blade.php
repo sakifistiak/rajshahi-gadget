@@ -56,7 +56,7 @@
                     '</div>' +
                 '</a>' +
                 '<div class="min-w-0">' +
-                    '<a href="/product/' + (item.slug || '') + '" class="block truncate text-base font-medium hover:underline">' + (item.name || 'Product') + '</a>' +
+                    '<a href="/product/' + (item.slug || '') + '" class="block text-base font-medium hover:underline">' + (item.name || 'Product') + '</a>' +
                     '<p class="mt-1 text-sm text-muted-foreground">' + fmt(item.price || 0) + ' each</p>' +
                     '<div class="mt-4 flex items-center gap-3 sm:hidden">' +
                         '<div class="inline-flex items-center rounded-full border border-border">' +

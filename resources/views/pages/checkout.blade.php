@@ -106,7 +106,7 @@
         var escapeHtml = function (s) { var d=document.createElement('div'); d.textContent=s || ''; return d.innerHTML; };
         var total = items.reduce(function (sum, item) { return sum + Number(item.price || 0) * Number(item.quantity || 1); }, 0);
         if (!items.length) { document.getElementById('checkout-form').classList.add('hidden'); document.getElementById('checkout-empty').classList.remove('hidden'); return; }
-        document.getElementById('checkout-items').innerHTML = items.map(function (item) { return '<div class="flex gap-3"><img class="h-14 w-14 rounded object-cover bg-secondary" src="' + escapeHtml(item.image) + '" alt=""><div class="min-w-0 flex-1"><p class="truncate text-sm font-medium">' + escapeHtml(item.name) + '</p><p class="mt-1 text-sm text-muted-foreground">Qty: ' + Number(item.quantity || 1) + '</p></div><strong class="text-sm">' + money(Number(item.price || 0) * Number(item.quantity || 1)) + '</strong></div>'; }).join('');
+        document.getElementById('checkout-items').innerHTML = items.map(function (item) { return '<div class="flex gap-3"><img class="h-14 w-14 rounded object-cover bg-secondary" src="' + escapeHtml(item.image) + '" alt=""><div class="min-w-0 flex-1"><p class="text-sm font-medium">' + escapeHtml(item.name) + '</p><p class="mt-1 text-sm text-muted-foreground">Qty: ' + Number(item.quantity || 1) + '</p></div><strong class="text-sm">' + money(Number(item.price || 0) * Number(item.quantity || 1)) + '</strong></div>'; }).join('');
         document.getElementById('checkout-subtotal').textContent = money(total); document.getElementById('checkout-total').textContent = money(total);
 
         (function () {
