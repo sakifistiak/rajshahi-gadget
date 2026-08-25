@@ -20,10 +20,10 @@ class PhilanthropicWorkController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(fn ($q) => $q->where('title', 'like', "%{$search}%")->orWhere('place', 'like', "%{$search}%"));
+            $query->where('title', 'like', "%{$search}%");
         }
 
-        $works = $query->latest('date')->paginate(15)->withQueryString();
+        $works = $query->latest()->paginate(15)->withQueryString();
 
         return view('admin.philanthropic-works.index', compact('works'));
     }
@@ -86,10 +86,8 @@ class PhilanthropicWorkController extends Controller
         $data = $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:philanthropic_works,slug,' . ($work->id ?? 'NULL'),
-            'place' => 'required|string|max:255',
-            'summary' => 'required|string|max:500',
             'content' => 'nullable|string',
-            'date' => 'required|date',
+            'video_url' => 'nullable|url|max:500',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);

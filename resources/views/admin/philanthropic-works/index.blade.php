@@ -26,8 +26,6 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Image') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Title') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Place') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Date') }}</th>
                         <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -41,8 +39,6 @@
                                 <div class="text-xs font-semibold text-slate-800">{{ $work->title }}</div>
                                 <div class="text-[9px] text-slate-400">/philanthropic-work/{{ $work->slug }}</div>
                             </td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $work->place }}</td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $work->date?->format('M d, Y') }}</td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
                                     <a href="{{ route('admin.philanthropic-works.edit', $work) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
@@ -62,7 +58,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No entries yet') }}</td>
+                            <td colspan="3" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No entries yet') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

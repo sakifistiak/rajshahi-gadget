@@ -197,7 +197,7 @@ class ProductController extends Controller
      */
     public function philanthropicWorks(): JsonResponse
     {
-        return response()->json(PhilanthropicWork::orderBy('date', 'desc')->get());
+        return response()->json(PhilanthropicWork::orderBy('id', 'desc')->get());
     }
 
     /**

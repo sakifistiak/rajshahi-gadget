@@ -30,20 +30,9 @@
                 <input type="text" name="slug" value="{{ old('slug', $work->slug) }}" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Place <span class="text-rose-500">*</span></label>
-                    <input type="text" name="place" value="{{ old('place', $work->place) }}" required class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date <span class="text-rose-500">*</span></label>
-                    <input type="date" name="date" value="{{ old('date', optional($work->date)->format('Y-m-d')) }}" required class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Summary <span class="text-rose-500">*</span></label>
-                <textarea name="summary" rows="2" required maxlength="500" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">{{ old('summary', $work->summary) }}</textarea>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">YouTube Video Link <span class="font-normal normal-case text-slate-400">(optional — shows an embedded video on the detail page)</span></label>
+                <input type="url" name="video_url" value="{{ old('video_url', $work->video_url) }}" placeholder="https://www.youtube.com/watch?v=..." class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
             </div>
 
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">
@@ -90,9 +79,10 @@
             modules: { toolbar: [[{ header: [2, 3, false] }], ['bold', 'italic', 'underline'], [{ list: 'ordered' }, { list: 'bullet' }], ['link', 'image'], ['clean']] }
         });
         if (hiddenField.value) { quill.root.innerHTML = hiddenField.value; }
-        quill.on('text-change', function () { hiddenField.value = quill.root.innerHTML; });
+        function cleanHtml() { return quill.root.innerHTML.replace(/<span class="ql-cursor">[^<]*<\/span>/g, ''); }
+        quill.on('text-change', function () { hiddenField.value = cleanHtml(); });
         var form = hiddenField.closest('form');
-        if (form) { form.addEventListener('submit', function () { hiddenField.value = quill.root.innerHTML; }); }
+        if (form) { form.addEventListener('submit', function () { hiddenField.value = cleanHtml(); }); }
     })();
     </script>
 </x-app-layout>

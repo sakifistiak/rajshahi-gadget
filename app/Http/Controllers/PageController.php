@@ -553,7 +553,7 @@ class PageController extends Controller
 
     public function philanthropicWorkIndex()
     {
-        $works = PhilanthropicWork::orderByDesc('date')->get();
+        $works = PhilanthropicWork::orderByDesc('id')->get();
 
         return view('pages.philanthropic-work', compact('works'));
     }
