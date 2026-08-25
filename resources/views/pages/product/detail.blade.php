@@ -9,13 +9,13 @@
 <div class="container-page py-10" data-tsd-source="/src/routes/product.$slug.tsx:46:5">
 
     <style>
-        .product-title { font-size: 28px; }
+        .product-title { font-size: 24px; }
         @media (min-width: 640px) {
-            .product-title { font-size: 34px; }
+            .product-title { font-size: 30px; }
         }
-        .product-price-amount { font-size: 27px; }
+        .product-price-amount { font-size: 23px; }
         @media (min-width: 640px) {
-            .product-price-amount { font-size: 33px; }
+            .product-price-amount { font-size: 29px; }
         }
         .product-rich-text a { text-decoration: underline; color: var(--color-foreground, #09090b); }
         .product-rich-text img { max-width: 100%; height: auto; border-radius: 2px; }
