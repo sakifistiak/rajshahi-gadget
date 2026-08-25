@@ -64,6 +64,8 @@ class SettingController extends Controller
             'mobile_drawer_info_links' => SiteSetting::getValue('mobile_drawer_info_links', $defaultMobileDrawerInfoLinks),
             'site_font_english' => SiteSetting::getValue('site_font_english', 'Inter'),
             'site_font_bangla' => SiteSetting::getValue('site_font_bangla', 'Hind Siliguri'),
+            'shipping_fee_inside_dhaka' => SiteSetting::getValue('shipping_fee_inside_dhaka', '70'),
+            'shipping_fee_outside_dhaka' => SiteSetting::getValue('shipping_fee_outside_dhaka', '130'),
         ];
 
         $customPages = CustomPage::where('is_active', true)->orderBy('title')->get();
@@ -114,6 +116,8 @@ class SettingController extends Controller
             'share_image_file' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:4096',
             'site_font_english' => 'nullable|in:Inter,Poppins',
             'site_font_bangla' => 'nullable|in:Noto Serif Bengali,Hind Siliguri,Tiro Bangla,Anek Bangla',
+            'shipping_fee_inside_dhaka' => 'nullable|integer|min:0|max:100000',
+            'shipping_fee_outside_dhaka' => 'nullable|integer|min:0|max:100000',
         ]);
 
         $keys = [
@@ -143,6 +147,8 @@ class SettingController extends Controller
             'mobile_drawer_info_links',
             'site_font_english',
             'site_font_bangla',
+            'shipping_fee_inside_dhaka',
+            'shipping_fee_outside_dhaka',
         ];
 
         foreach ($keys as $key) {

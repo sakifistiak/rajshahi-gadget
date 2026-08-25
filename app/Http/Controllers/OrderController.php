@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FlashSaleProduct;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -72,7 +73,16 @@ class OrderController extends Controller
                 $subtotal += $lineTotal;
                 $lines[] = compact('product', 'item', 'lineTotal', 'unitPrice', 'quantity');
             }
+            // Store pickup is always free. Home delivery is priced server-side
+            // from the admin-configured settings, keyed on the customer's
+            // District — never trust a fee the client might submit.
             $shippingFee = 0;
+            if ($data['delivery_method'] === 'home_delivery') {
+                $shippingFee = trim((string) ($data['district'] ?? '')) === 'Dhaka'
+                    ? (int) SiteSetting::getValue('shipping_fee_inside_dhaka', 70)
+                    : (int) SiteSetting::getValue('shipping_fee_outside_dhaka', 130);
+            }
+
             $order = Order::create([
                 ...collect($data)->except('items')->all(),
                 'order_number' => 'KG-' . now()->format('ymd') . '-' . strtoupper(str()->random(6)),

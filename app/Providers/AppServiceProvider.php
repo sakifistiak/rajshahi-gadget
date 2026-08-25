@@ -32,6 +32,14 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
+        // Share home-delivery shipping fee settings ONLY with the checkout page
+        View::composer('pages.checkout', function ($view) {
+            $view->with([
+                'shippingFeeInsideDhaka' => (int) SiteSetting::getValue('shipping_fee_inside_dhaka', 70),
+                'shippingFeeOutsideDhaka' => (int) SiteSetting::getValue('shipping_fee_outside_dhaka', 130),
+            ]);
+        });
+
         // Share site & footer settings and store locations with ALL views dynamically
         View::composer('*', function ($view) {
             $storeLocations = collect();

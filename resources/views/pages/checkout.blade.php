@@ -84,15 +84,19 @@
                 <div class="rounded-lg border border-border bg-card p-5">
                     <h2 class="text-lg font-semibold">Delivery method</h2>
                     <div class="mt-4 co-delivery-method">
-                        <input type="hidden" name="delivery_method" value="store_pickup" id="dm-pickup">
-                        <div class="flex items-center gap-3 rounded-md border border-border p-4">
+                        <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
+                            <input type="radio" name="delivery_method" value="home_delivery" id="dm-home" checked>
+                            <span><strong>Home Delivery</strong><br><span class="text-sm text-muted-foreground">Nearest courier delivery — Cash on Delivery, pay when it arrives.</span></span>
+                        </label>
+                        <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
+                            <input type="radio" name="delivery_method" value="store_pickup" id="dm-pickup">
                             <span><strong>Store / Outlet Pickup</strong><br><span class="text-sm text-muted-foreground">Collect your order from one of our outlets, free of charge.</span></span>
-                        </div>
+                        </label>
                     </div>
                 </div>
                 <div class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Payment method</h2><label class="mt-4 flex cursor-pointer items-center gap-3 rounded-md border border-border p-4"><input checked type="radio" name="payment_method" value="cod"><span><strong>Cash on Delivery</strong><br><span class="text-sm text-muted-foreground">Pay when your order arrives.</span></span></label></div>
             </section>
-            <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong>Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place order</button></aside>
+            <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong id="checkout-delivery-fee">Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place order</button></aside>
         </form>
     </main>
     @include('partials.footer', ['hideOutlets' => true])
@@ -107,33 +111,78 @@
         var total = items.reduce(function (sum, item) { return sum + Number(item.price || 0) * Number(item.quantity || 1); }, 0);
         if (!items.length) { document.getElementById('checkout-form').classList.add('hidden'); document.getElementById('checkout-empty').classList.remove('hidden'); return; }
         document.getElementById('checkout-items').innerHTML = items.map(function (item) { return '<div class="flex gap-3"><img class="h-14 w-14 rounded object-cover bg-secondary" src="' + escapeHtml(item.image) + '" alt=""><div class="min-w-0 flex-1"><p class="text-sm font-medium">' + escapeHtml(item.name) + '</p><p class="mt-1 text-sm text-muted-foreground">Qty: ' + Number(item.quantity || 1) + '</p></div><strong class="text-sm">' + money(Number(item.price || 0) * Number(item.quantity || 1)) + '</strong></div>'; }).join('');
-        document.getElementById('checkout-subtotal').textContent = money(total); document.getElementById('checkout-total').textContent = money(total);
+        document.getElementById('checkout-subtotal').textContent = money(total);
+
+        var shippingFeeInsideDhaka = {{ (int) $shippingFeeInsideDhaka }};
+        var shippingFeeOutsideDhaka = {{ (int) $shippingFeeOutsideDhaka }};
 
         (function () {
-            // Store/outlet pickup is the only delivery method now, so the
-            // home-address-only fields stay permanently hidden and not
-            // required, and the pickup outlet field is always shown/required.
+            // Two delivery methods: Home Delivery (courier, Cash on Delivery —
+            // needs the address fields + a fee based on district) and Store /
+            // Outlet Pickup (needs the outlet dropdown, always free). Whichever
+            // group isn't relevant is hidden AND disabled — a disabled control
+            // is excluded from both native form validation and FormData, so it
+            // can't block submission or get sent to the server by mistake.
             var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'union-field', 'address-field'].map(function (id) { return document.getElementById(id); });
             var pickupField = document.getElementById('pickup-field');
             var storeSelect = document.querySelector('[name="store_location_id"]');
-
-            homeOnlyFields.forEach(function (el) {
-                el.style.display = 'none';
-                // A hidden-but-required field (e.g. address) still blocks native
-                // form validation in some browsers with a silent, unfocusable
-                // "invalid form control" failure — disabling it excludes it from
-                // constraint validation entirely, same as the already-disabled
-                // division/district/upazila selects.
-                el.querySelectorAll('[required]').forEach(function (input) { input.required = false; input.disabled = true; });
-            });
-            pickupField.style.display = '';
-            storeSelect.required = true;
-        })();
-
-        (function () {
+            var addressInput = document.querySelector('#address-field textarea');
+            var unionInput = document.querySelector('#union-field input');
             var divisionSelect = document.getElementById('division-select');
             var districtSelect = document.getElementById('district-select');
             var upazilaSelect = document.getElementById('upazila-select');
+            var deliveryFeeEl = document.getElementById('checkout-delivery-fee');
+            var totalEl = document.getElementById('checkout-total');
+            var geoData = null;
+
+            function isPickupMode() {
+                return document.querySelector('[name="delivery_method"]:checked').value === 'store_pickup';
+            }
+
+            function updateDeliveryFee() {
+                if (isPickupMode()) {
+                    deliveryFeeEl.textContent = 'Free';
+                    totalEl.textContent = money(total);
+                    return;
+                }
+                if (!districtSelect.value) {
+                    deliveryFeeEl.textContent = 'Select district';
+                    totalEl.textContent = money(total);
+                    return;
+                }
+                var fee = districtSelect.value === 'Dhaka' ? shippingFeeInsideDhaka : shippingFeeOutsideDhaka;
+                deliveryFeeEl.textContent = fee > 0 ? money(fee) : 'Free';
+                totalEl.textContent = money(total + fee);
+            }
+
+            function refreshFieldStates() {
+                var pickup = isPickupMode();
+
+                homeOnlyFields.forEach(function (el) { el.style.display = pickup ? 'none' : ''; });
+                pickupField.style.display = pickup ? '' : 'none';
+
+                storeSelect.disabled = !pickup;
+                storeSelect.required = pickup;
+
+                addressInput.disabled = pickup;
+                addressInput.required = !pickup;
+                unionInput.disabled = pickup;
+
+                divisionSelect.disabled = pickup || !geoData;
+                divisionSelect.required = !pickup;
+
+                districtSelect.disabled = pickup || !geoData || !divisionSelect.value;
+                districtSelect.required = !pickup;
+
+                upazilaSelect.disabled = pickup || !geoData || !districtSelect.value;
+                upazilaSelect.required = !pickup;
+
+                updateDeliveryFee();
+            }
+
+            document.querySelectorAll('[name="delivery_method"]').forEach(function (radio) {
+                radio.addEventListener('change', refreshFieldStates);
+            });
 
             function fillOptions(select, list, placeholder) {
                 select.innerHTML = '<option value="">' + placeholder + '</option>' + list.map(function (item) {
@@ -142,31 +191,37 @@
             }
 
             fetch('/data/bd-geo.json').then(function (res) { return res.json(); }).then(function (geo) {
+                geoData = geo;
                 fillOptions(divisionSelect, geo.divisions, 'Select division');
-                divisionSelect.disabled = false;
 
                 divisionSelect.addEventListener('change', function () {
                     var division = geo.divisions.find(function (d) { return d.name === divisionSelect.value; });
                     districtSelect.innerHTML = '<option value="">Select district</option>';
                     upazilaSelect.innerHTML = '<option value="">Select upazila</option>';
-                    districtSelect.disabled = !division;
-                    upazilaSelect.disabled = true;
-                    if (!division) return;
-                    var districts = geo.districts.filter(function (d) { return d.division_id === division.id; });
-                    fillOptions(districtSelect, districts, 'Select district');
+                    if (division) {
+                        var districts = geo.districts.filter(function (d) { return d.division_id === division.id; });
+                        fillOptions(districtSelect, districts, 'Select district');
+                    }
+                    refreshFieldStates();
                 });
 
                 districtSelect.addEventListener('change', function () {
                     var district = geo.districts.find(function (d) { return d.name === districtSelect.value; });
                     upazilaSelect.innerHTML = '<option value="">Select upazila</option>';
-                    upazilaSelect.disabled = !district;
-                    if (!district) return;
-                    var upazilas = geo.upazilas.filter(function (u) { return u.district_id === district.id; });
-                    fillOptions(upazilaSelect, upazilas, 'Select upazila');
+                    if (district) {
+                        var upazilas = geo.upazilas.filter(function (u) { return u.district_id === district.id; });
+                        fillOptions(upazilaSelect, upazilas, 'Select upazila');
+                    }
+                    refreshFieldStates();
                 });
+
+                refreshFieldStates();
             }).catch(function () {
                 divisionSelect.innerHTML = '<option value="">Could not load — refresh the page</option>';
+                refreshFieldStates();
             });
+
+            refreshFieldStates();
         })();
 
         document.getElementById('checkout-form').addEventListener('submit', async function (event) {
