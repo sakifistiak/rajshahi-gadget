@@ -12,7 +12,8 @@ class CustomPageController extends Controller
      */
     public function show(string $slug): View
     {
-        $page = CustomPage::where('slug', $slug)
+        $page = CustomPage::with('locations')
+            ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class CustomPage extends Model
@@ -25,6 +26,11 @@ class CustomPage extends Model
         'is_active' => 'boolean',
         'show_title' => 'boolean',
     ];
+
+    public function locations(): HasMany
+    {
+        return $this->hasMany(CustomPageLocation::class)->orderBy('sort_order');
+    }
 
     /**
      * Auto generate slug on create/update if empty.

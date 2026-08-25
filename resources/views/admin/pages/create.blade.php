@@ -17,7 +17,18 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('admin.pages.store') }}" class="space-y-6" x-data="customPageEditor()">
+        @if ($errors->any())
+            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl">
+                <p class="text-xs font-bold text-rose-700 mb-1.5">Please fix the following before saving:</p>
+                <ul class="list-disc list-inside space-y-0.5">
+                    @foreach ($errors->all() as $error)
+                        <li class="text-xs text-rose-600">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('admin.pages.store') }}" enctype="multipart/form-data" class="space-y-6" x-data="customPageEditor()">
             @csrf
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -170,6 +181,27 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Store Locations / Branches (optional card grid shown on this page) -->
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 gap-3">
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="map-pin" class="h-3.5 w-3.5 text-blue-600"></i>
+                            Store Locations
+                        </h3>
+                        <p class="text-[11px] text-slate-500 mt-1">Optional. Add outlet/branch cards (photo, address, phone, map link) — they render as a card grid on this page, e.g. a "Store Location" section on your Contact Us page.</p>
+                    </div>
+                    <button type="button" onclick="addLocationRow()" class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-sm border border-blue-200 transition-colors shrink-0">
+                        <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                        Add Location
+                    </button>
+                </div>
+
+                <div id="locations-container" class="space-y-3">
+                    <!-- Rows injected by JavaScript below -->
+                </div>
+            </div>
         </form>
     </div>
 
@@ -241,5 +273,98 @@
                 }
             }
         }
+
+        let locationRowCounter = 0;
+
+        function escLocationValue(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function addLocationRow(data = {}) {
+            const idx = locationRowCounter++;
+            const container = document.getElementById('locations-container');
+            const image = data.image_path || '';
+            const row = document.createElement('div');
+            row.className = 'location-row bg-white border border-slate-200 rounded-lg p-4 space-y-3';
+            row.innerHTML = `
+                <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-start gap-3 flex-1">
+                        <div class="h-16 w-16 shrink-0 rounded-lg border border-slate-200 bg-slate-100 overflow-hidden flex items-center justify-center">
+                            <img id="location_preview_${idx}" src="${escLocationValue(image)}" class="h-full w-full object-cover ${image ? '' : 'hidden'}" onerror="this.classList.add('hidden')">
+                            <i data-lucide="image" id="location_placeholder_${idx}" class="w-6 h-6 text-slate-300 ${image ? 'hidden' : ''}"></i>
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <input type="hidden" name="location_image_path[]" id="location_path_${idx}" value="${escLocationValue(image)}">
+                            <input type="file" name="location_image_file[]" accept="image/*" onchange="previewLocationFile(event, ${idx})" class="block w-full text-[11px] text-slate-500 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-sm file:border-0 file:text-[11px] file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer border border-slate-200 rounded-sm p-1 bg-white" />
+                            <p class="text-[10px] text-slate-400">Photo shown at the top of this location's card.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="this.closest('.location-row').remove()" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-sm hover:bg-rose-50 transition-colors shrink-0" title="Remove location">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Branch Name</label>
+                        <input type="text" name="location_name[]" value="${escLocationValue(data.name)}" placeholder="e.g. Dhanmondi Branch" class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Phone</label>
+                        <input type="text" name="location_phone[]" value="${escLocationValue(data.phone)}" placeholder="e.g. 01700000000" class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Address</label>
+                    <textarea name="location_address[]" rows="2" placeholder="Full address" class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none">${escLocationValue(data.address)}</textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Google Maps Link (powers the "Shop Map" button)</label>
+                    <input type="text" name="location_map_link[]" value="${escLocationValue(data.map_link)}" placeholder="https://maps.google.com/..." class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Details (revealed by the "Show Details" button)</label>
+                    <textarea name="location_details[]" rows="2" placeholder="Opening hours, floor, landmark, etc." class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none">${escLocationValue(data.details)}</textarea>
+                </div>
+            `;
+            container.appendChild(row);
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function previewLocationFile(event, idx) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const preview = document.getElementById('location_preview_' + idx);
+            const placeholder = document.getElementById('location_placeholder_' + idx);
+            if (preview) {
+                preview.src = URL.createObjectURL(file);
+                preview.classList.remove('hidden');
+            }
+            if (placeholder) placeholder.classList.add('hidden');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const oldNames = @json(old('location_name', []));
+            const oldAddresses = @json(old('location_address', []));
+            const oldPhones = @json(old('location_phone', []));
+            const oldMapLinks = @json(old('location_map_link', []));
+            const oldDetails = @json(old('location_details', []));
+            const oldImagePaths = @json(old('location_image_path', []));
+
+            oldNames.forEach((name, i) => {
+                addLocationRow({
+                    name: name,
+                    address: oldAddresses[i] || '',
+                    phone: oldPhones[i] || '',
+                    map_link: oldMapLinks[i] || '',
+                    details: oldDetails[i] || '',
+                    image_path: oldImagePaths[i] || ''
+                });
+            });
+        });
     </script>
 </x-app-layout>
