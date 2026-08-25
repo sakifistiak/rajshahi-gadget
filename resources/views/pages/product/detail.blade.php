@@ -19,9 +19,12 @@
         }
         .product-rich-text a { text-decoration: underline; color: var(--color-foreground, #09090b); }
         .product-rich-text img { max-width: 100%; height: auto; border-radius: 2px; }
-        .product-rich-text p { margin: 0 0 1em; }
+        .product-rich-text p { margin: 0 0 0.2rem; line-height: 1.45; }
+        .product-rich-text p:empty,
+        .product-rich-text p:has(> br:only-child) { margin: 0 !important; height: 0.6rem !important; min-height: 0.6rem !important; line-height: 0.6rem !important; }
         .product-rich-text p:last-child { margin-bottom: 0; }
-        .product-rich-text ul, .product-rich-text ol { margin: 0 0 1em; padding-left: 1.25em; }
+        .product-rich-text ul, .product-rich-text ol { margin: 0 0 0.4rem; padding-left: 1.25em; }
+        .product-rich-text li { margin-bottom: 0.15rem; }
 
         /* Compact, capped-width image column instead of scaling with viewport width. */
         @media (min-width: 1024px) {
@@ -215,24 +218,25 @@
                         Status: <span class="font-semibold text-accent">Pre-Order</span>
                     </span>
                 </div>
-            @else
-                <div class="mt-6 inline-flex flex-wrap items-center gap-3 rounded-md border border-border bg-secondary/30 px-4 py-3" style="max-width:100%;">
-                    <span class="product-price-amount font-bold" style="color:#EA580C">৳ {{ number_format($product->price) }}</span>
-                    @if($product->compare_at_price && $product->compare_at_price > $product->price)
-                        <span class="text-base text-muted-foreground line-through">৳ {{ number_format($product->compare_at_price) }}</span>
-                    @endif
-                    @if($product->compare_at_price && $product->compare_at_price > $product->price)
-                        <span class="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">Save ৳ {{ number_format($product->discount()) }}</span>
-                    @endif
-                    <span class="hidden h-5 w-px bg-border sm:inline-block"></span>
-                    <span class="text-sm font-semibold text-foreground">
-                        Status:
-                        @if($product->in_stock)
-                            <span class="text-success">In Stock</span>
                         @else
-                            <span class="text-rose-600">Out of Stock</span>
+                <div class="mt-6 inline-flex flex-wrap items-center gap-3 rounded-md border border-border bg-secondary/30 px-4 py-3" style="max-width:100%;">
+                    @if($product->in_stock)
+                        <span class="product-price-amount font-bold" style="color:#EA580C">৳ {{ number_format($product->price) }}</span>
+                        @if($product->compare_at_price && $product->compare_at_price > $product->price)
+                            <span class="text-base text-muted-foreground line-through">৳ {{ number_format($product->compare_at_price) }}</span>
                         @endif
-                    </span>
+                        @if($product->compare_at_price && $product->compare_at_price > $product->price)
+                            <span class="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">Save ৳ {{ number_format($product->discount()) }}</span>
+                        @endif
+                        <span class="hidden h-5 w-px bg-border sm:inline-block"></span>
+                        <span class="text-sm font-semibold text-foreground">
+                            Status: <span class="text-success">In Stock</span>
+                        </span>
+                    @else
+                        <span class="text-sm font-semibold text-foreground">
+                            Status: <span class="text-rose-600 font-bold">Out of Stock</span>
+                        </span>
+                    @endif
                 </div>
             @endif
 
@@ -353,7 +357,7 @@
 
     <div class="product-flow">
     <div class="mt-10 spec-recently-viewed-grid">
-        <div class="specs-block">
+        <div class="specs-block space-y-12">
             @if($product->specs->count())
                 <div id="specifications" style="scroll-margin-top: 120px">
                     <h2 class="text-2xl font-semibold tracking-tight">Specifications</h2>
@@ -366,6 +370,15 @@
                         @endforeach
                     </dl>
                 </div>
+            @endif
+
+            @if($product->description)
+                <section id="description" class="mt-8" style="scroll-margin-top: 120px">
+                    <h2 class="text-2xl font-semibold tracking-tight">Description</h2>
+                    <div class="mt-6 space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
+                        <div class="product-rich-text">{!! $product->description !!}</div>
+                    </div>
+                </section>
             @endif
         </div>
 
@@ -471,12 +484,7 @@
         })();
     </script>
 
-    <section id="description" class="mt-20" style="scroll-margin-top: 120px">
-        <h2 class="text-2xl font-semibold tracking-tight">Description</h2>
-        <div class="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-            <div class="product-rich-text">{!! $product->description !!}</div>
-        </div>
-    </section>
+
 
     <section id="relatedProducts" class="mt-24">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

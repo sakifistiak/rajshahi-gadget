@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class MediaController extends Controller
@@ -20,32 +21,34 @@ class MediaController extends Controller
 
     public function upload(Request $request)
     {
-        $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|image|mimes:jpeg,png,jpg,webp,gif,svg,avif|max:20480',
         ]);
+
+        if ($validator->fails()) {
+            if ($request->expectsJson() || $request->wantsJson() || $request->ajax() || $request->hasHeader('X-CSRF-TOKEN')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $validator->errors()->first('file') ?: 'Validation failed.',
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator);
+        }
 
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $url = ImageUploader::storeInPublic($file, 'uploads');
             $filename = basename($url);
 
-            if ($request->wantsJson() || $request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'url' => $url,
-                    'filename' => $filename,
-                    'message' => 'Image uploaded successfully!',
-                ]);
-            }
-
-            return redirect()->back()->with('success', 'Image uploaded successfully: ' . $url);
+            return response()->json([
+                'success' => true,
+                'url' => $url,
+                'filename' => $filename,
+                'message' => 'Image uploaded successfully!',
+            ]);
         }
 
-        if ($request->wantsJson() || $request->ajax()) {
-            return response()->json(['success' => false, 'message' => 'No file provided.'], 400);
-        }
-
-        return redirect()->back()->with('error', 'No file provided.');
+        return response()->json(['success' => false, 'message' => 'No file provided.'], 400);
     }
 
     public function list(): JsonResponse

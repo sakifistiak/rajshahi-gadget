@@ -38,12 +38,14 @@
                 @endif
             @endif
         </ul>
-        <div class="flex flex-wrap items-baseline" style="margin-top:12px; gap:6px">
-            @if ($product->price_is_tba)
+                <div class="flex flex-wrap items-baseline" style="margin-top:12px; gap:6px">
+            @if (!$product->in_stock)
+                <span class="text-xs font-bold text-rose-600">Out of Stock</span>
+            @elseif ($product->price_is_tba)
                 <span class="text-sm font-semibold text-foreground">TBA</span>
             @else
                 <span class="text-sm font-semibold text-foreground">৳ {{ number_format($product->price) }}</span>
-                @if ($product->compare_at_price)
+                @if ($product->compare_at_price && $product->compare_at_price > $product->price)
                     <span class="text-xs text-muted-foreground line-through">৳ {{ number_format($product->compare_at_price) }}</span>
                 @endif
             @endif

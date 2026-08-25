@@ -33,9 +33,16 @@
             var formData = new FormData();
             formData.append('file', file);
             var token = document.querySelector('meta[name="csrf-token"]');
+            var headers = {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            };
+            if (token) {
+                headers['X-CSRF-TOKEN'] = token.content;
+            }
             fetch('{{ route('admin.media.upload') }}', {
                 method: 'POST',
-                headers: token ? { 'X-CSRF-TOKEN': token.content } : {},
+                headers: headers,
                 body: formData
             })
                 .then(function (res) { return res.json(); })
@@ -45,10 +52,12 @@
                         quill.insertEmbed(range.index, 'image', data.url, 'user');
                         quill.setSelection(range.index + 1);
                     } else {
-                        alert('Image upload failed.');
+                        alert(data.message || 'Image upload failed.');
                     }
                 })
-                .catch(function () { alert('Image upload failed.'); });
+                .catch(function (err) {
+                    alert('Image upload failed. Please try again.');
+                });
         };
     }
 
