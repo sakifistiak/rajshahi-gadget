@@ -36,10 +36,20 @@ class ProductController extends Controller
             $query->where('category_id', $categoryId);
         }
 
+        if ($conditionId = $request->input('condition')) {
+            $query->where('condition_id', $conditionId);
+        }
+
+        if ($brandId = $request->input('brand')) {
+            $query->where('brand_id', $brandId);
+        }
+
         $products = $query->latest()->paginate(10)->withQueryString();
         $categories = Category::orderBy('name')->get();
+        $conditions = Condition::orderBy('label')->get();
+        $brands = Brand::orderBy('name')->get();
 
-        return view('admin.products.index', compact('products', 'categories'));
+        return view('admin.products.index', compact('products', 'categories', 'conditions', 'brands'));
     }
 
     public function create(): View

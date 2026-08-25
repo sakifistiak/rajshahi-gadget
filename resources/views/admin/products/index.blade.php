@@ -54,6 +54,18 @@
                     <option value="{{ $cat->id }}" {{ (string) request('category') === (string) $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                 @endforeach
             </select>
+            <select name="condition" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+                <option value="">{{ __('All Conditions') }}</option>
+                @foreach ($conditions as $cond)
+                    <option value="{{ $cond->id }}" {{ (string) request('condition') === (string) $cond->id ? 'selected' : '' }}>{{ $cond->label }}</option>
+                @endforeach
+            </select>
+            <select name="brand" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+                <option value="">{{ __('All Brands') }}</option>
+                @foreach ($brands as $brand)
+                    <option value="{{ $brand->id }}" {{ (string) request('brand') === (string) $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
+                @endforeach
+            </select>
             <select name="stock" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
                 <option value="">{{ __('All Stock Status') }}</option>
                 <option value="in_stock" {{ request('stock') === 'in_stock' ? 'selected' : '' }}>{{ __('In Stock') }}</option>
@@ -63,7 +75,7 @@
                 <i data-lucide="filter" class="h-3.5 w-3.5"></i>
                 {{ __('Filter') }}
             </button>
-            @if (request('q') || request('category') || request('stock'))
+            @if (request('q') || request('category') || request('condition') || request('brand') || request('stock'))
                 <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-800 text-[11px] font-bold uppercase rounded transition-colors">
                     <i data-lucide="x" class="h-3.5 w-3.5"></i>
                     {{ __('Clear') }}
@@ -145,7 +157,7 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-4 text-center text-xs text-slate-400">
-                                @if (request('q') || request('category') || request('stock'))
+                                @if (request('q') || request('category') || request('condition') || request('brand') || request('stock'))
                                     {{ __('No products match your search/filters') }}
                                 @else
                                     {{ __('No products found') }}
