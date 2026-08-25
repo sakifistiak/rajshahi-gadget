@@ -160,7 +160,7 @@
             </div>
         </div>
     </main>
-    @include('partials.footer')
+    @include('partials.footer', ['hideOutlets' => true])
     @include('partials.mobile-drawer')
 </body>
 </html>

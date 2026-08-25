@@ -95,7 +95,7 @@
             <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong>Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place order</button></aside>
         </form>
     </main>
-    @include('partials.footer')
+    @include('partials.footer', ['hideOutlets' => true])
     @include('partials.mobile-drawer')
     <script>
     (function () {
