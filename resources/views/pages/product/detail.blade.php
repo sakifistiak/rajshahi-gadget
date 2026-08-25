@@ -9,9 +9,9 @@
 <div class="container-page py-10" data-tsd-source="/src/routes/product.$slug.tsx:46:5">
 
     <style>
-        .product-title { font-size: 24px; }
+        .product-title { font-size: 20px; }
         @media (min-width: 640px) {
-            .product-title { font-size: 30px; }
+            .product-title { font-size: 24px; }
         }
         .product-price-amount { font-size: 23px; }
         @media (min-width: 640px) {
