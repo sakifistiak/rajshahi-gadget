@@ -40,7 +40,7 @@
 
     <!-- Main Content Container -->
     <main class="flex-1 py-10 sm:py-16">
-        <div class="container-page max-w-4xl mx-auto">
+        <div class="container-page">
 <!-- Page Header -->
             @if ($page->show_title)
                 <header class="border-b border-border pb-6 mb-8">
@@ -60,7 +60,7 @@
             @if ($page->locations->isNotEmpty())
                 <section aria-label="Store locations" class="mt-12 border-t border-border" style="padding-top:2.5rem">
                     <h2 class="text-2xl font-semibold tracking-tight text-foreground">Store Locations</h2>
-                    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                    <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($page->locations as $location)
                             <div class="flex flex-col overflow-hidden rounded-md border border-border bg-surface shadow-sm">
                                 @if ($location->image_path)
