@@ -76,9 +76,9 @@
                 </div>
             </div>
             @if($product->images->count() > 1)
-                <div class="mt-4 grid grid-cols-4 gap-3">
-                    @foreach($product->images->take(4) as $image)
-                        <div class="gallery-thumb overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}">
+                <div class="mt-4 flex gap-3 overflow-x-auto pb-1" style="scrollbar-width:thin">
+                    @foreach($product->images as $image)
+                        <div class="gallery-thumb shrink-0 overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}" style="width:72px">
                             <div class="aspect-square">
                                 <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-cover" />
                             </div>
@@ -88,6 +88,9 @@
                 <style>
                     .gallery-thumb { cursor: pointer; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .15s ease; }
                     .gallery-thumb.is-active { outline-color: var(--foreground); }
+                    @media (min-width: 640px) {
+                        .gallery-thumb { width: 96px !important; }
+                    }
                 </style>
                 <script>
                     (function () {
