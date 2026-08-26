@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -59,6 +60,24 @@ class OrderController extends Controller
     {
         $order->load(['items', 'storeLocation']);
         return view('admin.orders.show', compact('order'));
+    }
+
+    public function invoice(Order $order)
+    {
+        $order->load(['items', 'storeLocation']);
+
+        $company = [
+            'name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
+            'slogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
+            'logo' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
+            'phone' => SiteSetting::getValue('site_phone', '+8801700000000'),
+            'whatsapp' => SiteSetting::getValue('whatsapp_number', '8801700000001'),
+            'email' => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
+            'address' => SiteSetting::getValue('site_address', 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh'),
+            'business_hours' => SiteSetting::getValue('site_business_hours', 'Sat – Thu · 10:00 AM – 9:00 PM'),
+        ];
+
+        return view('admin.orders.invoice', compact('order', 'company'));
     }
 
     public function updateStatus(Request $request, Order $order)

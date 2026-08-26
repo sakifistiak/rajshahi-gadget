@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none">
+  <!-- Visa Wordmark -->
+  <g transform="translate(6, 12)">
+    <text x="0" y="18" font-family="'Inter', 'Arial Black', sans-serif" font-weight="900" font-size="18" fill="#1434CB" font-style="italic" letter-spacing="1">VISA</text>
+  </g>
+  <!-- Mastercard Interlocking Circles -->
+  <g transform="translate(64, 9)">
+    <circle cx="12" cy="13" r="11" fill="#EB001B"/>
+    <circle cx="23" cy="13" r="11" fill="#F79E1B" fill-opacity="0.9"/>
+    <path d="M17.5 4.5C19.5 6.5 20.8 9.5 20.8 13C20.8 16.5 19.5 19.5 17.5 21.5C15.5 19.5 14.2 16.5 14.2 13C14.2 9.5 15.5 6.5 17.5 4.5Z" fill="#FF5F00"/>
+  </g>
+  <!-- Bank / UnionPay / Amex generic icon -->
+  <g transform="translate(108, 12)">
+    <rect x="0" y="0" width="26" height="20" rx="3" fill="#0284C7"/>
+    <rect x="0" y="4" width="26" height="4" fill="#0C4A6E"/>
+    <rect x="4" y="12" width="6" height="4" rx="1" fill="#BAE6FD"/>
+  </g>
+</svg>

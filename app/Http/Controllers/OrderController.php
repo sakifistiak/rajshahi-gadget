@@ -26,11 +26,15 @@ class OrderController extends Controller
             'address' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:1000'],
             'store_location_id' => ['required_if:delivery_method,store_pickup', 'nullable', 'exists:store_locations,id'],
             'note' => ['nullable', 'string', 'max:1000'],
-            'payment_method' => ['required', 'in:cod'],
+            'payment_method' => ['nullable', 'string', 'max:50'],
             'items' => ['required', 'array', 'min:1', 'max:20'],
             'items.*.slug' => ['required', 'string', 'max:255'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:10'],
         ]);
+
+        if (empty($data['payment_method'])) {
+            $data['payment_method'] = ($data['delivery_method'] === 'store_pickup') ? 'Store Pickup' : 'cod';
+        }
 
         $products = Product::whereIn('slug', collect($data['items'])->pluck('slug'))
             ->where('in_stock', true)

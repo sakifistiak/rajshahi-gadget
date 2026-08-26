@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none">
+  <g transform="translate(5, 5)">
+    <!-- bKash Origami Bird -->
+    <path d="M22.5 17.5L5 25.5L14 34.5L22.5 17.5Z" fill="#B30950"/>
+    <path d="M22.5 17.5L14 34.5L27 33L22.5 17.5Z" fill="#C9105B"/>
+    <path d="M22.5 17.5L5 25.5L13.5 13L22.5 17.5Z" fill="#D81765"/>
+    <path d="M22.5 17.5L13.5 13L28 0.5L22.5 17.5Z" fill="#E2136E"/>
+    <path d="M22.5 17.5L28 0.5L34.5 14L22.5 17.5Z" fill="#ED217C"/>
+    <path d="M22.5 17.5L34.5 14L32 23L22.5 17.5Z" fill="#D81765"/>
+    <path d="M22.5 17.5L32 23L27 33L22.5 17.5Z" fill="#E2136E"/>
+  </g>
+  <!-- bKash Text Wordmark -->
+  <text x="50" y="27" font-family="'Inter', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="22" fill="#E2136E" letter-spacing="-0.5">bKash</text>
+</svg>

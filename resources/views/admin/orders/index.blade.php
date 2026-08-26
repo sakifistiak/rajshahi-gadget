@@ -154,6 +154,10 @@
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
+                                    <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="text-slate-600 hover:text-slate-900 font-semibold inline-flex items-center gap-1" title="Print Invoice">
+                                        <i data-lucide="printer" class="h-3.5 w-3.5 text-slate-500"></i>
+                                        {{ __('Invoice') }}
+                                    </a>
                                     <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
                                         <i data-lucide="eye" class="h-3.5 w-3.5"></i>
                                         {{ __('View') }}

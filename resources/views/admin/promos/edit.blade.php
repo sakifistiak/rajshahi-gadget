@@ -53,7 +53,7 @@
                     <div class="flex items-center justify-between flex-wrap gap-2">
                         <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider">1. Select or Upload Promo Image *</label>
                         <span class="px-2.5 py-1 bg-amber-100 text-amber-900 text-[11px] font-bold rounded-sm border border-amber-200">
-                            Recommended Size: 600 × 380 px (16:10)
+                            Recommended Size: 600 × 315 px
                         </span>
                     </div>
                     
@@ -72,10 +72,10 @@
                         </button>
                     </div>
 
-                    <!-- Instant Live Preview (Matches 600 x 380 px ratio) -->
+                    <!-- Instant Live Preview -->
                     <div x-show="imagePath" class="pt-2">
-                        <span class="block text-[11px] font-semibold text-slate-600 mb-1 font-mono">Live Preview (Exact 600 × 380 px Ratio):</span>
-                        <div class="w-full max-w-md aspect-[16/10] rounded-sm border border-slate-300 bg-slate-100 overflow-hidden shadow-sm">
+                        <span class="block text-[11px] font-semibold text-slate-600 mb-1 font-mono">Live Preview (Exact 600 × 315 px Ratio):</span>
+                        <div class="w-full max-w-md aspect-[600/315] rounded-sm border border-slate-300 bg-slate-100 overflow-hidden shadow-sm">
                             <img :src="imagePath" alt="Preview" class="w-full h-full object-cover" />
                         </div>
                     </div>

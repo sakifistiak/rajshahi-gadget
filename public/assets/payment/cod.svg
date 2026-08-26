@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none">
+  <g transform="translate(6, 6)">
+    <rect width="32" height="32" rx="6" fill="#059669"/>
+    <path d="M7 11H25M7 16H25M7 21H18" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="21" cy="21" r="3" fill="#34D399"/>
+  </g>
+  <text x="46" y="27" font-family="'Inter', Arial, sans-serif" font-weight="900" font-size="19" fill="#059669" letter-spacing="1">COD</text>
+</svg>

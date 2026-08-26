@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none">
+  <defs>
+    <linearGradient id="nagadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F7941D"/>
+      <stop offset="100%" stop-color="#ED1C24"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(6, 6)">
+    <!-- Nagad Swirl/Flame icon -->
+    <path d="M16 2C8 6 4 14 6 22C8 28 14 32 20 31C24 30 28 26 27 21C26 17 21 16 18 19C16 21 17 24 19 24C16 24 14 21 14 18C14 13 18 8 24 6C20 4 18 3 16 2Z" fill="url(#nagadGrad)"/>
+    <path d="M22 6C27 10 29 17 26 23C24 27 20 30 16 29C22 28 25 23 24 17C23 12 19 8 16 6C18 5 20 5 22 6Z" fill="#ED1C24"/>
+  </g>
+  <!-- Nagad Text in Bangla & English -->
+  <text x="44" y="24" font-family="'Hind Siliguri', 'Segoe UI', Arial, sans-serif" font-weight="900" font-size="20" fill="#ED1C24" letter-spacing="0">নগদ</text>
+  <text x="86" y="24" font-family="'Inter', Arial, sans-serif" font-weight="800" font-size="13" fill="#F7941D" letter-spacing="0.5">NAGAD</text>
+</svg>

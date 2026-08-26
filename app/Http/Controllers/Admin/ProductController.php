@@ -26,25 +26,48 @@ class ProductController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
-        if ($request->input('stock') === 'in_stock') {
-            $query->where('in_stock', true);
-        } elseif ($request->input('stock') === 'out_of_stock') {
-            $query->where('in_stock', false);
+        if ($request->filled('stock')) {
+            if ($request->input('stock') === 'in_stock') {
+                $query->where('in_stock', true);
+            } elseif ($request->input('stock') === 'out_of_stock') {
+                $query->where('in_stock', false);
+            }
         }
 
-        if ($categoryId = $request->input('category')) {
-            $query->where('category_id', $categoryId);
+        if ($request->filled('category')) {
+            $categoryId = $request->input('category');
+            $query->where(function ($q) use ($categoryId) {
+                if (is_numeric($categoryId)) {
+                    $q->where('category_id', $categoryId);
+                } else {
+                    $q->whereHas('category', fn ($c) => $c->where('slug', $categoryId)->orWhere('name', $categoryId));
+                }
+            });
         }
 
-        if ($conditionId = $request->input('condition')) {
-            $query->where('condition_id', $conditionId);
+        if ($request->filled('condition')) {
+            $conditionId = $request->input('condition');
+            $query->where(function ($q) use ($conditionId) {
+                if (is_numeric($conditionId)) {
+                    $q->where('condition_id', $conditionId);
+                } else {
+                    $q->whereHas('condition', fn ($c) => $c->where('slug', $conditionId)->orWhere('label', $conditionId)->orWhere('short', $conditionId));
+                }
+            });
         }
 
-        if ($brandId = $request->input('brand')) {
-            $query->where('brand_id', $brandId);
+        if ($request->filled('brand')) {
+            $brandId = $request->input('brand');
+            $query->where(function ($q) use ($brandId) {
+                if (is_numeric($brandId)) {
+                    $q->where('brand_id', $brandId);
+                } else {
+                    $q->whereHas('brand', fn ($b) => $b->where('slug', $brandId)->orWhere('name', $brandId));
+                }
+            });
         }
 
-        $products = $query->latest()->paginate(10)->withQueryString();
+        $products = $query->latest()->paginate(15)->withQueryString();
         $categories = Category::orderBy('name')->get();
         $conditions = Condition::orderBy('label')->get();
         $brands = Brand::orderBy('name')->get();

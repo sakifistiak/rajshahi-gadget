@@ -48,37 +48,37 @@
                 <i data-lucide="search" class="h-3.5 w-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Search by product name..." class="w-full pl-8 pr-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
             </div>
-            <select name="category" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+            <select name="category" onchange="this.form.submit()" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white cursor-pointer">
                 <option value="">{{ __('All Categories') }}</option>
                 @foreach ($categories as $cat)
                     <option value="{{ $cat->id }}" {{ (string) request('category') === (string) $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                 @endforeach
             </select>
-            <select name="condition" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+            <select name="condition" onchange="this.form.submit()" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white cursor-pointer">
                 <option value="">{{ __('All Conditions') }}</option>
                 @foreach ($conditions as $cond)
                     <option value="{{ $cond->id }}" {{ (string) request('condition') === (string) $cond->id ? 'selected' : '' }}>{{ $cond->label }}</option>
                 @endforeach
             </select>
-            <select name="brand" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+            <select name="brand" onchange="this.form.submit()" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white cursor-pointer">
                 <option value="">{{ __('All Brands') }}</option>
                 @foreach ($brands as $brand)
                     <option value="{{ $brand->id }}" {{ (string) request('brand') === (string) $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                 @endforeach
             </select>
-            <select name="stock" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white">
+            <select name="stock" onchange="this.form.submit()" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white cursor-pointer">
                 <option value="">{{ __('All Stock Status') }}</option>
                 <option value="in_stock" {{ request('stock') === 'in_stock' ? 'selected' : '' }}>{{ __('In Stock') }}</option>
                 <option value="out_of_stock" {{ request('stock') === 'out_of_stock' ? 'selected' : '' }}>{{ __('Out of Stock') }}</option>
             </select>
-            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors">
+            <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors cursor-pointer">
                 <i data-lucide="filter" class="h-3.5 w-3.5"></i>
                 {{ __('Filter') }}
             </button>
             @if (request('q') || request('category') || request('condition') || request('brand') || request('stock'))
-                <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-800 text-[11px] font-bold uppercase rounded transition-colors">
+                <a href="{{ route('admin.products.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] font-bold uppercase rounded transition-colors">
                     <i data-lucide="x" class="h-3.5 w-3.5"></i>
-                    {{ __('Clear') }}
+                    {{ __('Reset') }}
                 </a>
             @endif
         </form>

@@ -32,6 +32,10 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="rounded bg-blue-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-blue-700 inline-flex items-center gap-1.5 transition-colors shadow-sm">
+                <i data-lucide="printer" class="h-3.5 w-3.5"></i>
+                Invoice / Print
+            </a>
             <a href="{{ route('admin.orders.index') }}" class="rounded border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 inline-flex items-center gap-1.5 transition-colors">
                 <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>
                 Back to Orders

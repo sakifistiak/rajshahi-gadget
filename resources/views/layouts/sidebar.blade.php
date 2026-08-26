@@ -56,7 +56,7 @@
                     <i data-lucide="credit-card" class="h-3.5 w-3.5 text-slate-400"></i>
                     <span>Payments</span>
                 </a>
-                <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
+                <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="file-text" class="h-3.5 w-3.5 text-slate-400"></i>
                     <span>Invoices</span>
                 </a>

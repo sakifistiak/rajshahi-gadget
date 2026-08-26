@@ -94,7 +94,78 @@
                         </label>
                     </div>
                 </div>
-                <div class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Payment method</h2><label class="mt-4 flex cursor-pointer items-center gap-3 rounded-md border border-border p-4"><input checked type="radio" name="payment_method" value="cod"><span><strong>Cash on Delivery</strong><br><span class="text-sm text-muted-foreground">Pay when your order arrives.</span></span></label></div>
+                <div class="rounded-lg border border-border bg-card p-4 sm:p-5" id="payment-method-card">
+                    <h2 class="text-base sm:text-lg font-semibold">Payment method</h2>
+                    <div class="mt-3.5 space-y-2.5 sm:space-y-3">
+                        <!-- 1. Cash on Delivery (Active) -->
+                        <label class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 border-primary bg-background p-3 sm:p-4 transition-colors">
+                            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <input checked type="radio" name="payment_method" value="cod" class="h-4 w-4 text-primary focus:ring-primary shrink-0">
+                                <div class="h-8 sm:h-9 px-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md flex items-center justify-center shrink-0">
+                                    <img src="/assets/payment/cod.svg" alt="COD" class="h-5 sm:h-6 w-auto object-contain" />
+                                </div>
+                                <div class="min-w-0">
+                                    <strong class="text-xs sm:text-sm font-bold text-foreground block leading-tight">Cash on Delivery</strong>
+                                    <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">Pay when your order arrives</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 shrink-0 whitespace-nowrap">
+                                Available
+                            </span>
+                        </label>
+
+                        <!-- 2. bKash (Coming Soon) -->
+                        <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
+                            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <input type="radio" disabled class="h-4 w-4 opacity-40 cursor-not-allowed shrink-0">
+                                <div class="h-8 sm:h-9 px-2 bg-white rounded-md border border-pink-100 shadow-sm flex items-center justify-center shrink-0">
+                                    <img src="/assets/payment/bkash.svg" alt="bKash" class="h-5 sm:h-6 w-auto object-contain" />
+                                </div>
+                                <div class="min-w-0">
+                                    <strong class="text-xs sm:text-sm font-semibold text-foreground/90 block leading-tight">bKash Payment</strong>
+                                    <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">Direct app & gateway</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 shrink-0 whitespace-nowrap">
+                                Coming Soon
+                            </span>
+                        </div>
+
+                        <!-- 3. Nagad (Coming Soon) -->
+                        <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
+                            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <input type="radio" disabled class="h-4 w-4 opacity-40 cursor-not-allowed shrink-0">
+                                <div class="h-8 sm:h-9 px-2 bg-white rounded-md border border-orange-100 shadow-sm flex items-center justify-center shrink-0">
+                                    <img src="/assets/payment/nagad.svg" alt="Nagad" class="h-5 sm:h-6 w-auto object-contain" />
+                                </div>
+                                <div class="min-w-0">
+                                    <strong class="text-xs sm:text-sm font-semibold text-foreground/90 block leading-tight">Nagad Payment</strong>
+                                    <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">Digital wallet payment</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 shrink-0 whitespace-nowrap">
+                                Coming Soon
+                            </span>
+                        </div>
+
+                        <!-- 4. Bank / Card (Coming Soon) -->
+                        <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
+                            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <input type="radio" disabled class="h-4 w-4 opacity-40 cursor-not-allowed shrink-0">
+                                <div class="h-8 sm:h-9 px-2 bg-white rounded-md border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
+                                    <img src="/assets/payment/cards.svg" alt="Cards & Bank" class="h-4 sm:h-5 w-auto object-contain" />
+                                </div>
+                                <div class="min-w-0">
+                                    <strong class="text-xs sm:text-sm font-semibold text-foreground/90 block leading-tight">Card / Bank & EMI</strong>
+                                    <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">Visa, Master & Net Banking</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400 shrink-0 whitespace-nowrap">
+                                Coming Soon
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </section>
             <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong id="checkout-delivery-fee">Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place order</button></aside>
         </form>
@@ -125,6 +196,7 @@
             // can't block submission or get sent to the server by mistake.
             var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'union-field', 'address-field'].map(function (id) { return document.getElementById(id); });
             var pickupField = document.getElementById('pickup-field');
+            var paymentCard = document.getElementById('payment-method-card');
             var storeSelect = document.querySelector('[name="store_location_id"]');
             var addressInput = document.querySelector('#address-field textarea');
             var unionInput = document.querySelector('#union-field input');
@@ -160,6 +232,9 @@
 
                 homeOnlyFields.forEach(function (el) { el.style.display = pickup ? 'none' : ''; });
                 pickupField.style.display = pickup ? '' : 'none';
+                if (paymentCard) {
+                    paymentCard.style.display = pickup ? 'none' : '';
+                }
 
                 storeSelect.disabled = !pickup;
                 storeSelect.required = pickup;
