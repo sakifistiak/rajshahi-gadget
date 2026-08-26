@@ -58,8 +58,8 @@
 
             <!-- Store Locations (added per-page from the admin page editor) -->
             @if ($page->locations->isNotEmpty())
-                <section aria-label="Store locations" class="mt-12 border-t border-border" style="padding-top:2.5rem">
-                    <h2 class="text-2xl font-semibold tracking-tight text-foreground">Store Locations</h2>
+                <section aria-label="Store locations" class="mt-8 border-t border-border" style="padding-top:1.5rem">
+                    <h2 class="text-2xl font-semibold tracking-tight text-foreground">Find Our Locations</h2>
                     <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($page->locations as $location)
                             <div class="flex flex-col overflow-hidden rounded-md border border-border bg-surface shadow-sm">
