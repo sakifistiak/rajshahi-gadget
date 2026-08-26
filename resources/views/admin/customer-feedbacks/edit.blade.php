@@ -20,31 +20,9 @@
             @csrf
             @method('PUT')
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Customer Name <span class="text-rose-500">*</span></label>
-                    <input type="text" name="name" value="{{ old('name', $feedback->name) }}" required autofocus class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Location <span class="text-rose-500">*</span></label>
-                    <input type="text" name="location" value="{{ old('location', $feedback->location) }}" required class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Rating (1-5) <span class="text-rose-500">*</span></label>
-                    <input type="number" name="rating" value="{{ old('rating', $feedback->rating) }}" step="0.5" min="1" max="5" required class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Date <span class="text-rose-500">*</span></label>
-                    <input type="date" name="date" value="{{ old('date', optional($feedback->date)->format('Y-m-d')) }}" required class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
-                </div>
-            </div>
-
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Message <span class="text-rose-500">*</span></label>
-                <textarea name="message" rows="3" required maxlength="1000" class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">{{ old('message', $feedback->message) }}</textarea>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Message / Title</label>
+                <textarea name="message" rows="3" maxlength="2000" autofocus class="w-full text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">{{ old('message', $feedback->message) }}</textarea>
             </div>
 
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">

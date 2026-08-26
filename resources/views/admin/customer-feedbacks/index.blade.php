@@ -25,8 +25,7 @@
                 <thead class="bg-slate-50/20">
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Image') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Rating') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Message') }}</th>
+                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Message / Title') }}</th>
                         <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -34,10 +33,9 @@
                     @forelse ($feedbacks as $feedback)
                         <tr class="hover:bg-slate-50/30 transition-colors">
                             <td class="px-6 py-3.5 whitespace-nowrap">
-                                <img src="{{ $feedback->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $feedback->name }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
+                                <img src="{{ $feedback->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="Customer Feedback" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
-                            <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">{{ $feedback->rating }} / 5</td>
-                            <td class="px-6 py-3.5 text-xs text-slate-600 max-w-md truncate">{{ $feedback->message }}</td>
+                            <td class="px-6 py-3.5 text-xs text-slate-700 max-w-md font-medium">{{ $feedback->message }}</td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
                                     <a href="{{ route('admin.customer-feedbacks.edit', $feedback) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">

@@ -58,8 +58,21 @@
 
             <!-- Store Locations (added per-page from the admin page editor) -->
             @if ($page->locations->isNotEmpty())
-                <section aria-label="Store locations" class="mt-8 border-t border-border" style="padding-top:1.5rem">
-                    <h2 class="text-2xl font-semibold tracking-tight text-foreground text-center">Find Our Locations</h2>
+                <section aria-label="Store locations" class="mt-8">
+                    <!-- Centered Premium Badge Header with Full-Width Lines Above & Below -->
+                    <div class="my-8 space-y-4">
+                        <div class="h-px w-full bg-border"></div>
+                        <div class="flex items-center justify-center gap-3 py-1">
+                            <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full" style="background-color: var(--color-foreground, #09090b);">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" style="color: var(--color-background, #ffffff);" aria-hidden="true">
+                                    <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                                    <circle cx="12" cy="10" r="3"></circle>
+                                </svg>
+                            </span>
+                            <h2 class="text-sm font-extrabold uppercase tracking-wider text-foreground whitespace-nowrap sm:text-base">Find Our Location</h2>
+                        </div>
+                        <div class="h-px w-full bg-border"></div>
+                    </div>
                     <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($page->locations as $location)
                             <div class="flex flex-col overflow-hidden rounded-md border border-border bg-surface shadow-sm">

@@ -1,8 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 45" fill="none">
-  <g transform="translate(6, 6)">
-    <rect width="32" height="32" rx="6" fill="#059669"/>
-    <path d="M7 11H25M7 16H25M7 21H18" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="21" cy="21" r="3" fill="#34D399"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 40" fill="none">
+  <rect width="100" height="40" rx="6" fill="#10B981" fill-opacity="0.15"/>
+  <g transform="translate(12, 10)">
+    <rect x="0" y="2" width="22" height="16" rx="3" fill="#059669"/>
+    <rect x="4" y="5" width="5" height="2" fill="#A7F3D0"/>
+    <rect x="4" y="9" width="10" height="2" fill="#A7F3D0"/>
+    <rect x="4" y="13" width="7" height="2" fill="#A7F3D0"/>
+    <text x="28" y="15" font-family="'Inter', 'Segoe UI', Arial, sans-serif" font-weight="900" font-size="14" fill="#059669" letter-spacing="1.5">COD</text>
   </g>
-  <text x="46" y="27" font-family="'Inter', Arial, sans-serif" font-weight="900" font-size="19" fill="#059669" letter-spacing="1">COD</text>
 </svg>

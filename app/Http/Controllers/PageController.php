@@ -547,7 +547,7 @@ class PageController extends Controller
 
     public function customerFeedbackIndex()
     {
-        $feedbacks = CustomerFeedback::orderByDesc('date')->get();
+        $feedbacks = CustomerFeedback::latest()->get();
 
         return view('pages.customer-feedback', compact('feedbacks'));
     }

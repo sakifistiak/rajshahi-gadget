@@ -101,8 +101,8 @@
                         <label class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 border-primary bg-background p-3 sm:p-4 transition-colors">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                                 <input checked type="radio" name="payment_method" value="cod" class="h-4 w-4 text-primary focus:ring-primary shrink-0">
-                                <div class="h-8 sm:h-9 px-2 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md flex items-center justify-center shrink-0">
-                                    <img src="/assets/payment/cod.svg" alt="COD" class="h-5 sm:h-6 w-auto object-contain" />
+                                <div class="w-14 sm:w-16 h-8 sm:h-9 px-1 py-1 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="/assets/payment/cod.svg" alt="COD" class="h-full w-full object-contain" />
                                 </div>
                                 <div class="min-w-0">
                                     <strong class="text-xs sm:text-sm font-bold text-foreground block leading-tight">Cash on Delivery</strong>
@@ -118,8 +118,8 @@
                         <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                                 <input type="radio" disabled class="h-4 w-4 opacity-40 cursor-not-allowed shrink-0">
-                                <div class="h-8 sm:h-9 px-2 bg-white rounded-md border border-pink-100 shadow-sm flex items-center justify-center shrink-0">
-                                    <img src="/assets/payment/bkash.svg" alt="bKash" class="h-5 sm:h-6 w-auto object-contain" />
+                                <div class="w-14 sm:w-16 h-8 sm:h-9 px-1 py-1 bg-white rounded-md border border-slate-200 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="/assets/payment/bkash.png" alt="bKash" class="h-full w-full object-contain" />
                                 </div>
                                 <div class="min-w-0">
                                     <strong class="text-xs sm:text-sm font-semibold text-foreground/90 block leading-tight">bKash Payment</strong>
@@ -135,8 +135,8 @@
                         <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                                 <input type="radio" disabled class="h-4 w-4 opacity-40 cursor-not-allowed shrink-0">
-                                <div class="h-8 sm:h-9 px-2 bg-white rounded-md border border-orange-100 shadow-sm flex items-center justify-center shrink-0">
-                                    <img src="/assets/payment/nagad.svg" alt="Nagad" class="h-5 sm:h-6 w-auto object-contain" />
+                                <div class="w-14 sm:w-16 h-8 sm:h-9 px-1 py-1 bg-white rounded-md border border-slate-200 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="/assets/payment/nagad.png" alt="Nagad" class="h-full w-full object-contain" />
                                 </div>
                                 <div class="min-w-0">
                                     <strong class="text-xs sm:text-sm font-semibold text-foreground/90 block leading-tight">Nagad Payment</strong>
@@ -148,12 +148,12 @@
                             </span>
                         </div>
 
-                        <!-- 4. Bank / Card (Coming Soon) -->
+                        <!-- 4. Card / Bank & EMI (Coming Soon) -->
                         <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                                 <input type="radio" disabled class="h-4 w-4 opacity-40 cursor-not-allowed shrink-0">
-                                <div class="h-8 sm:h-9 px-2 bg-white rounded-md border border-slate-200 shadow-sm flex items-center justify-center shrink-0">
-                                    <img src="/assets/payment/cards.svg" alt="Cards & Bank" class="h-4 sm:h-5 w-auto object-contain" />
+                                <div class="w-14 sm:w-16 h-8 sm:h-9 px-1 py-1 bg-white rounded-md border border-slate-200 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="/assets/payment/cards.svg" alt="Cards & Bank" class="h-full w-full object-contain" />
                                 </div>
                                 <div class="min-w-0">
                                     <strong class="text-xs sm:text-sm font-semibold text-foreground/90 block leading-tight">Card / Bank & EMI</strong>

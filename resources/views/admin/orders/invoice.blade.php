@@ -30,14 +30,16 @@
 
         @page {
             size: A4 portrait;
-            margin: 12mm 15mm;
+            margin: 6mm 10mm;
         }
 
         @media print {
-            body {
+            html, body {
                 background-color: #ffffff !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
             }
             .no-print {
                 display: none !important;
@@ -50,17 +52,64 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 border-radius: 0 !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
             .page-break-avoid {
-                page-break-inside: avoid;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
+        }
+
+        /* Dynamic scaling presets */
+        .invoice-scale-compact {
+            font-size: 11px !important;
+        }
+        .invoice-scale-compact .py-3.5 {
+            padding-top: 0.4rem !important;
+            padding-bottom: 0.4rem !important;
+        }
+        .invoice-scale-compact .py-2.5 {
+            padding-top: 0.3rem !important;
+            padding-bottom: 0.3rem !important;
+        }
+        .invoice-scale-compact .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 0.35rem !important;
+        }
+
+        .invoice-scale-very-compact {
+            font-size: 10px !important;
+        }
+        .invoice-scale-very-compact .py-3.5,
+        .invoice-scale-very-compact .py-3 {
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+        }
+        .invoice-scale-very-compact .py-2.5,
+        .invoice-scale-very-compact .py-2 {
+            padding-top: 0.2rem !important;
+            padding-bottom: 0.2rem !important;
+        }
+        .invoice-scale-very-compact .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+            margin-top: 0.2rem !important;
+        }
+        .invoice-scale-very-compact .mt-6 {
+            margin-top: 0.75rem !important;
         }
     </style>
 </head>
-<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+<body class="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+@php
+    $itemCount = $order->items->count();
+    $scaleClass = match(true) {
+        $itemCount >= 6 => 'invoice-scale-very-compact',
+        $itemCount >= 3 => 'invoice-scale-compact',
+        default => '',
+    };
+@endphp
 
     <!-- Top Action Bar (Screen Only) -->
-    <div class="no-print max-w-4xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 bg-white p-3.5 rounded-lg border border-slate-200 shadow-sm">
+    <div class="no-print max-w-4xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-4 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
                 <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
@@ -83,25 +132,21 @@
     </div>
 
     <!-- Normal Flat Invoice Document -->
-    <div class="invoice-wrapper max-w-4xl mx-auto bg-white border border-slate-200 shadow-sm p-8 sm:p-12">
+    <div class="invoice-wrapper {{ $scaleClass }} max-w-4xl mx-auto bg-white border border-slate-200 shadow-sm p-6 sm:p-8">
         
         <!-- Top Header: Logo, Company info & Invoice Details -->
-        <div class="flex flex-col sm:flex-row justify-between items-start gap-8 pb-8 border-b border-slate-200">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-slate-200">
             <!-- Left: Company Branding & Details -->
-            <div class="space-y-2 max-w-md">
+            <div class="space-y-1 max-w-md">
                 @if(!empty($company['logo']))
-                    <div class="mb-3">
-                        <img src="{{ asset($company['logo']) }}" alt="{{ $company['name'] }}" class="h-10 sm:h-12 w-auto object-contain" />
+                    <div class="mb-1.5">
+                        <img src="{{ asset($company['logo']) }}" alt="{{ $company['name'] }}" class="h-9 sm:h-10 w-auto object-contain" />
                     </div>
                 @else
                     <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $company['name'] }}</h1>
                 @endif
-                
-                @if(!empty($company['slogan']))
-                    <p class="text-xs font-medium text-slate-500">{{ $company['slogan'] }}</p>
-                @endif
 
-                <div class="text-xs text-slate-600 space-y-1 pt-1 leading-relaxed">
+                <div class="text-xs text-slate-600 space-y-0.5 leading-snug">
                     @if(!empty($company['address']))
                         <p>{{ $company['address'] }}</p>
                     @endif
@@ -115,12 +160,14 @@
             </div>
 
             <!-- Right: Invoice Metadata -->
-            <div class="text-left sm:text-right space-y-1.5 shrink-0">
+            <div class="text-left sm:text-right space-y-0.5 shrink-0">
                 <h2 class="text-2xl font-extrabold text-slate-900 tracking-wider">INVOICE</h2>
-                <div class="text-xs text-slate-500">Invoice / Order #</div>
-                <div class="text-sm font-bold text-blue-600">{{ $order->order_number }}</div>
+                <div class="text-sm font-bold text-blue-600">
+                    <span class="text-slate-400 font-normal">Order ID:</span>
+                    {{ $order->order_number }}
+                </div>
 
-                <div class="pt-2 text-xs space-y-1 text-slate-600">
+                <div class="pt-1 text-xs space-y-0.5 text-slate-600">
                     <div>
                         <span class="text-slate-400">Date:</span>
                         <span class="font-medium text-slate-800 ml-1">{{ $order->created_at->format('d M, Y - h:i A') }}</span>
@@ -137,13 +184,13 @@
             </div>
         </div>
 
-        <!-- Normal Customer & Delivery Section (No Rounded Boxes) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 py-6 border-b border-slate-200">
+        <!-- Customer & Delivery Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-3.5 border-b border-slate-200 text-xs">
             <!-- Customer Info -->
-            <div class="space-y-1.5">
+            <div class="space-y-1">
                 <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Customer Details</span>
                 <h3 class="text-sm font-bold text-slate-900">{{ $order->customer_name }}</h3>
-                <div class="text-xs text-slate-700 space-y-1">
+                <div class="text-xs text-slate-700 space-y-0.5">
                     <p>Phone: <span class="font-semibold">{{ $order->phone }}</span></p>
                     @if($order->email)
                         <p>Email: {{ $order->email }}</p>
@@ -152,19 +199,19 @@
             </div>
 
             <!-- Delivery Info -->
-            <div class="space-y-1.5">
-                <div class="flex items-center gap-2">
+            <div class="space-y-1">
+                <div class="flex items-center gap-1.5">
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Details</span>
-                    <span class="text-[10px] font-bold text-slate-600">({{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Home Delivery' }})</span>
+                    <span class="text-[10px] font-bold text-slate-500">({{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Home Delivery' }})</span>
                 </div>
 
                 @if($order->delivery_method === 'store_pickup')
                     <div class="text-xs text-slate-700 space-y-0.5">
                         @if($order->storeLocation)
                             <p class="font-bold text-slate-900">{{ $order->storeLocation->name }}</p>
-                            <div class="text-slate-600 leading-relaxed">{!! $order->storeLocation->address !!}</div>
+                            <div class="text-slate-600 leading-tight">{!! $order->storeLocation->address !!}</div>
                             @if($order->storeLocation->phone)
-                                <p class="text-slate-600 mt-1">Contact: {{ preg_replace('/^Contact:\s*/i', '', $order->storeLocation->phone) }}</p>
+                                <p class="text-slate-600">Contact: {{ preg_replace('/^Contact:\s*/i', '', $order->storeLocation->phone) }}</p>
                             @endif
                         @else
                             <p class="text-slate-500 italic">Pickup Outlet</p>
@@ -172,44 +219,38 @@
                     </div>
                 @else
                     <div class="text-xs text-slate-700 space-y-0.5">
-                        <p class="font-medium text-slate-900 leading-relaxed">{{ $order->address }}</p>
-                        <p class="text-slate-600">
-                            @if($order->union_area){{ $order->union_area }}, @endif
-                            @if($order->upazila){{ $order->upazila }}, @endif
-                            {{ $order->district }}
-                            @if($order->division && $order->division !== $order->district) - {{ $order->division }}@endif
-                        </p>
+                        <p class="font-medium text-slate-900 leading-snug">{{ $order->address }}</p>
                     </div>
                 @endif
             </div>
         </div>
 
         <!-- Ordered Items Table -->
-        <div class="py-6">
+        <div class="py-3.5">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-slate-300 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-2.5 px-2 w-10 text-center">#</th>
-                        <th class="py-2.5 px-2">Item Description</th>
-                        <th class="py-2.5 px-2 text-right w-28">Unit Price</th>
-                        <th class="py-2.5 px-2 text-center w-20">Qty</th>
-                        <th class="py-2.5 px-2 text-right w-32">Total</th>
+                        <th class="py-2 px-2 w-8 text-center">#</th>
+                        <th class="py-2 px-2">Item Description</th>
+                        <th class="py-2 px-2 text-right w-24">Unit Price</th>
+                        <th class="py-2 px-2 text-center w-16">Qty</th>
+                        <th class="py-2 px-2 text-right w-28">Total</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-xs">
                     @foreach ($order->items as $index => $item)
                         <tr>
-                            <td class="py-3 px-2 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
-                            <td class="py-3 px-2">
+                            <td class="py-2.5 px-2 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
+                            <td class="py-2.5 px-2">
                                 <div class="font-bold text-slate-900 leading-snug">{{ $item->product_name }}</div>
                             </td>
-                            <td class="py-3 px-2 text-right font-medium text-slate-700">
+                            <td class="py-2.5 px-2 text-right font-medium text-slate-700">
                                 ৳{{ number_format($item->unit_price) }}
                             </td>
-                            <td class="py-3 px-2 text-center font-semibold text-slate-800">
+                            <td class="py-2.5 px-2 text-center font-semibold text-slate-800">
                                 {{ $item->quantity }}
                             </td>
-                            <td class="py-3 px-2 text-right font-bold text-slate-900">
+                            <td class="py-2.5 px-2 text-right font-bold text-slate-900">
                                 ৳{{ number_format($item->line_total) }}
                             </td>
                         </tr>
@@ -218,32 +259,52 @@
             </table>
         </div>
 
-        <!-- Normal Summary & Totals (No Box) -->
-        <div class="page-break-avoid border-t border-slate-300 pt-4 flex flex-col sm:flex-row justify-between items-start gap-8">
-            <!-- Left: Payment Details & Instructions -->
-            <div class="w-full sm:w-1/2 space-y-2 text-xs text-slate-600">
-                <div>
-                    <span class="font-bold text-slate-800">Payment Details:</span>
-                    <p class="mt-0.5">Method: <strong class="text-slate-900 uppercase">{{ $order->payment_method }}</strong></p>
-                    @if($order->payment_method === 'cod')
-                        <p class="text-slate-500">Amount payable to delivery personnel upon package arrival.</p>
-                    @endif
-                </div>
+        <!-- Summary, Terms & Totals -->
+        <div class="page-break-avoid border-t border-slate-300 pt-3 flex flex-col sm:flex-row justify-between items-start gap-4">
+            <!-- Left: Terms and Conditions -->
+            <div class="w-full sm:w-7/12 space-y-1.5 text-xs text-slate-600">
+                <div class="space-y-2">
+                    <!-- Conditions: Intact -->
+                    <div>
+                        <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (For Intact Laptop Only)</span>
+                        <p class="text-[10px] text-slate-600 leading-snug">
+                            Warranty Coverage Shown On The Website Is Based On Our Purchase Date From The Brand. Your Warranty Will Be Counted From The Date Of Your Purchase From Us, And You Will Receive 1 Year Warranty. The Duration Or Years Displayed On The Official Site Does Not Apply. Carry Cost To Be Paid By Customer For International Warranty Claim (+ 4 To 8 No. Conditions Apply).
+                        </p>
+                    </div>
 
-                <div class="text-[11px] text-slate-500 space-y-0.5 pt-2">
-                    <p>• Please check the package and product condition in front of the delivery agent.</p>
-                    <p>• Warranty claims require preserving this invoice copy.</p>
+                    <!-- Conditions: PRE-OWNED -->
+                    <div>
+                        <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (FOR PRE-OWNED &amp; OPEN BOX LAPTOP ONLY)</span>
+                        <ol class="text-[9.5px] text-slate-600 space-y-0.5 list-decimal list-inside leading-snug">
+                            <li>10 Days Parts Replacement Guarantee Without Display, Adapter &amp; Casing. If The Same Model/Variant Is Unavailable, Then With Any Available Product Of The Same Or Higher Price Range By Adjusting The Price Accordingly, As Decided By {{ $company['name'] }}.</li>
+                            <li>5 Years Service Warranty Without Parts. If Service Is Not Possible, Then New Parts Need To Be Purchased By Customer.</li>
+                            <li>70% Cash Is Refundable In Case Of Return After Buying Within 7 Days, Exchange Value To Be Determined By {{ $company['name'] }}.</li>
+                            <li>The Warranty/Guarantee Is Not Applicable For Any: Physical Damage, Internal Burn, Warranty Sticker Damage/Removal Etc.</li>
+                            <li>If Any Product Is Lost Or Damaged Through The Courier Service, The Customer Will Contact The Courier Company, {{ $company['name'] }} Authority Is Not Responsible.</li>
+                            <li>After Sales Service Is Only Available At Service Center, Service Center Off Days: Dhaka: Tuesday, Rajshahi: Friday &amp; Sunday, Bogura: Friday &amp; Saturday.</li>
+                            <li>If Product Has No Fault As Per Deal/Advertisement &amp; Customer Changes His/Her Mind Without Any Logical/Valid Reason, Pre-Order/Pre-Booked Money Won't Be Refunded.</li>
+                            <li>Online/Courier-Based Orders Imply Acceptance Of All Terms, Even Without Customer Signature.</li>
+                        </ol>
+                    </div>
+
+                    <!-- NB Section -->
+                    <div class="text-[9px] text-slate-500 pt-1 border-t border-slate-200 space-y-0.5 leading-snug bg-slate-50 p-2 rounded">
+                        <p><strong class="text-slate-700">NB:</strong></p>
+                        <p>• <strong class="text-slate-700">Replacement Means:</strong> ১০ দিনের মধ্যে বিনামূল্যে যন্ত্রাংশ পরিবর্তন করে দেওয়া।</p>
+                        <p>• <strong class="text-slate-700">Exchange Means:</strong> একটি পণ্যের পরিবর্তে অন্য পণ্য নেয়া; এক্ষেত্রে কাস্টোমারের পণ্যের মূল্য খান গ্যাজেট ক্রয় বিভাগ নির্ধারণ করবে।</p>
+                        <p>• <strong class="text-slate-700">Refund Means:</strong> গ্রাহক ক্রয়ের ৭ দিনের মধ্যে বিনা ক্ষতিতে পণ্য ফেরত দিলে ক্রয়মূল্যের ৭০% টাকা পাবে। ৭ দিন পার হবার পর এই সুযোগ আর নেই।</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Right: Calculation Breakdown (Clean Normal Flat) -->
-            <div class="w-full sm:w-5/12 space-y-2 text-xs">
-                <div class="flex justify-between text-slate-600 py-1">
+            <div class="w-full sm:w-4/12 space-y-1 text-xs shrink-0">
+                <div class="flex justify-between text-slate-600 py-0.5">
                     <span>Subtotal:</span>
                     <span class="font-semibold text-slate-900">৳{{ number_format($order->subtotal) }}</span>
                 </div>
-                <div class="flex justify-between text-slate-600 py-1">
-                    <span>Shipping / Delivery Fee:</span>
+                <div class="flex justify-between text-slate-600 py-0.5">
+                    <span>Shipping Fee:</span>
                     <span class="font-semibold text-slate-900">
                         @if($order->shipping_fee > 0)
                             ৳{{ number_format($order->shipping_fee) }}
@@ -253,28 +314,28 @@
                     </span>
                 </div>
                 <div class="border-t border-slate-300 pt-2 flex justify-between items-baseline">
-                    <span class="text-sm font-bold text-slate-900">Grand Total:</span>
+                    <span class="text-xs font-bold text-slate-900">Grand Total:</span>
                     <span class="text-lg font-extrabold text-blue-600">৳{{ number_format($order->total) }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Footer Signatures -->
-        <div class="page-break-avoid mt-16 pt-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-end gap-10">
+        <div class="page-break-avoid mt-6 pt-3 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-end gap-6">
             <div class="text-left">
-                <div class="w-40 border-b border-slate-400 mb-1"></div>
+                <div class="w-36 border-b border-slate-400 mb-0.5"></div>
                 <p class="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Customer Signature</p>
             </div>
 
             <div class="text-center sm:text-right">
-                <div class="w-44 border-b border-slate-400 mb-1 ml-auto"></div>
+                <div class="w-36 border-b border-slate-400 mb-0.5 ml-auto"></div>
                 <p class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">{{ $company['name'] }}</p>
                 <p class="text-[10px] text-slate-400">Authorized Signature & Seal</p>
             </div>
         </div>
 
         <!-- Footer Note -->
-        <div class="page-break-avoid mt-8 pt-4 border-t border-slate-100 text-center text-[11px] text-slate-400">
+        <div class="page-break-avoid mt-3 pt-2 border-t border-slate-100 text-center text-[10px] text-slate-400">
             Thank you for shopping with <strong>{{ $company['name'] }}</strong>!
         </div>
 
@@ -285,6 +346,27 @@
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+        });
+
+        function autoFitInvoiceToA4() {
+            const wrapper = document.querySelector('.invoice-wrapper');
+            if (!wrapper) return;
+            // Printable A4 target height in px (approx ~1050px)
+            const targetMaxHeight = 1040;
+            const currentHeight = wrapper.scrollHeight;
+            if (currentHeight > targetMaxHeight) {
+                const scale = Math.max(0.72, Math.floor((targetMaxHeight / currentHeight) * 100) / 100);
+                wrapper.style.transform = `scale(${scale})`;
+                wrapper.style.transformOrigin = 'top center';
+            } else {
+                wrapper.style.transform = '';
+            }
+        }
+
+        window.addEventListener('beforeprint', autoFitInvoiceToA4);
+        window.addEventListener('afterprint', function() {
+            const wrapper = document.querySelector('.invoice-wrapper');
+            if (wrapper) wrapper.style.transform = '';
         });
     </script>
 </body>

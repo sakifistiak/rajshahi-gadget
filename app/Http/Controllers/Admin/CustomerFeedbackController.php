@@ -19,10 +19,10 @@ class CustomerFeedbackController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(fn ($q) => $q->where('name', 'like', "%{$search}%")->orWhere('message', 'like', "%{$search}%"));
+            $query->where('message', 'like', "%{$search}%");
         }
 
-        $feedbacks = $query->latest('date')->paginate(15)->withQueryString();
+        $feedbacks = $query->latest()->paginate(15)->withQueryString();
 
         return view('admin.customer-feedbacks.index', compact('feedbacks'));
     }
@@ -75,11 +75,7 @@ class CustomerFeedbackController extends Controller
     private function validated(Request $request): array
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'rating' => 'required|numeric|min:1|max:5',
-            'message' => 'required|string|max:1000',
-            'date' => 'required|date',
+            'message' => 'nullable|string|max:2000',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);
