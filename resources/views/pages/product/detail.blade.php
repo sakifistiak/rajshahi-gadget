@@ -559,8 +559,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                         <div class="text-[10px] text-gray-500 mt-0.5">${escapeHtml(item.category)}</div>
                                     </div>
                                     <div class="text-right shrink-0">
-                                        <div class="text-xs font-bold text-gray-900">${item.price}</div>
-                                        ${item.compare_at_price ? `<div class="text-[10px] text-gray-400 line-through">${item.compare_at_price}</div>` : ''}
+                                        ${item.in_stock ? `
+                                            <div class="text-xs font-bold text-gray-900">${item.price}</div>
+                                            ${item.compare_at_price ? `<div class="text-[10px] text-gray-400 line-through">${item.compare_at_price}</div>` : ''}
+                                        ` : `<div class="text-[10px] font-bold text-muted-foreground uppercase">Out of Stock</div>`}
                                     </div>
                                 </a>
                             `;

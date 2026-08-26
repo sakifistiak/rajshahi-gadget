@@ -262,6 +262,7 @@ class PageController extends Controller
                     'slug' => $product->slug,
                     'price' => '৳ '.number_format($product->price),
                     'compare_at_price' => $product->compare_at_price ? '৳ '.number_format($product->compare_at_price) : null,
+                    'in_stock' => $product->in_stock,
                     'image' => $product->primaryImage(),
                     'category' => optional($product->category)->name ?? 'Gadget',
                     'url' => route('product', $product->slug),
