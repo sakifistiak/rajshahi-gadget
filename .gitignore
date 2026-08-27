@@ -2,6 +2,7 @@
 /node_modules
 /public/hot
 /public/storage
+/public/build
 /storage/*.key
 /storage/pail
 /vendor
@@ -20,3 +21,15 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Runtime-uploaded media (kept on the server / backups, not in version control)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# One-off local dev / maintenance scripts
+/scratch
+
+# OS / misc cruft
+.DS_Store
+Thumbs.db
+*.log
