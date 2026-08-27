@@ -23,6 +23,7 @@ class OrderController extends Controller
             'district' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:100'],
             'upazila' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:100'],
             'union_area' => ['nullable', 'string', 'max:150'],
+            'postal_code' => ['nullable', 'string', 'max:20'],
             'address' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:1000'],
             'store_location_id' => ['required_if:delivery_method,store_pickup', 'nullable', 'exists:store_locations,id'],
             'note' => ['nullable', 'string', 'max:1000'],
@@ -89,7 +90,7 @@ class OrderController extends Controller
 
             $order = Order::create([
                 ...collect($data)->except('items')->all(),
-                'order_number' => 'KG-' . now()->format('ymd') . '-' . strtoupper(str()->random(6)),
+                'order_number' => 'KG-'.now()->format('ymd').'-'.strtoupper(str()->random(6)),
                 'subtotal' => $subtotal,
                 'shipping_fee' => $shippingFee,
                 'total' => $subtotal + $shippingFee,
@@ -105,9 +106,39 @@ class OrderController extends Controller
                     'line_total' => $line['lineTotal'],
                 ]);
             }
+
             return $order;
         });
 
         return response()->json(['order_number' => $order->order_number]);
+    }
+
+    /**
+     * Public, customer-facing invoice for an order — reachable straight from the
+     * thank-you page by order number (the random suffix makes it unguessable).
+     * Renders the same template the admin uses, in "public" mode so the internal
+     * navigation is swapped for customer-appropriate actions.
+     */
+    public function invoice(Order $order, Request $request)
+    {
+        $order->load(['items', 'storeLocation']);
+
+        $company = [
+            'name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
+            'slogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
+            'logo' => SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png'),
+            'phone' => SiteSetting::getValue('site_phone', '+8801700000000'),
+            'whatsapp' => SiteSetting::getValue('whatsapp_number', '8801700000001'),
+            'email' => SiteSetting::getValue('site_email', 'khangadget.bd@gmail.com'),
+            'address' => SiteSetting::getValue('site_address', 'Level 4, House 12, Road 5, Dhanmondi, Dhaka 1205, Bangladesh'),
+            'business_hours' => SiteSetting::getValue('site_business_hours', 'Sat – Thu · 10:00 AM – 9:00 PM'),
+        ];
+
+        return view('admin.orders.invoice', [
+            'order' => $order,
+            'company' => $company,
+            'public' => true,
+            'autoPrint' => $request->boolean('print'),
+        ]);
     }
 }

@@ -627,7 +627,7 @@
                     <i data-lucide="truck" class="h-4 w-4 text-blue-600"></i>
                     <span>7. Shipping & Delivery Fees</span>
                 </div>
-                <p class="text-[11px] text-slate-400 -mt-2">Charged only when a customer picks Home Delivery at checkout — determined automatically by their selected district (Store/Outlet Pickup is always free).</p>
+                <p class="text-[11px] text-slate-400 -mt-2">Charged only when a customer picks Courier Delivery at checkout — determined automatically by their selected district (Store/Outlet Pickup is always free).</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>

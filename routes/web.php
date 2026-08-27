@@ -40,6 +40,7 @@ Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.s
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+Route::get('/orders/{order:order_number}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
 Route::middleware('throttle:30,1')->group(function () {
     Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
     Route::get('/chat/messages', [ChatController::class, 'messages'])->name('chat.messages');

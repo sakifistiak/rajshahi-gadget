@@ -46,6 +46,16 @@
                 <p class="mt-2 text-sm text-muted-foreground">Thank you, {{ $order->customer_name }}. We will contact you soon to confirm delivery.</p>
                 <p class="mt-4 text-sm text-muted-foreground">Order number</p>
                 <p class="font-bold text-lg" style="letter-spacing:0.02em">{{ $order->order_number }}</p>
+                <div class="ty-contact-grid" style="margin-top:16px">
+                    <a href="{{ route('orders.invoice', $order->order_number) }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-full font-bold text-sm" style="border:1px solid var(--border); color:var(--foreground); height:44px; padding:0 16px; text-decoration:none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:16px;width:16px" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+                        View Invoice
+                    </a>
+                    <a href="{{ route('orders.invoice', $order->order_number) }}?print=1" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-full font-bold text-sm" style="background:#24272c; color:#ffffff; height:44px; padding:0 16px; text-decoration:none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:16px;width:16px" aria-hidden="true"><path d="M12 15V3"></path><path d="m6 11 6 6 6-6"></path><path d="M19 21H5"></path></svg>
+                        Download Invoice
+                    </a>
+                </div>
             </div>
 
             <div class="mt-6 rounded-lg border border-border bg-card p-5">
@@ -119,6 +129,12 @@
                             <div>
                                 <p class="text-xs font-medium text-muted-foreground">Union / Area</p>
                                 <p class="mt-1 text-sm font-medium">{{ $order->union_area }}</p>
+                            </div>
+                        @endif
+                        @if($order->postal_code)
+                            <div>
+                                <p class="text-xs font-medium text-muted-foreground">Postal Code</p>
+                                <p class="mt-1 text-sm font-medium">{{ $order->postal_code }}</p>
                             </div>
                         @endif
                         <div style="grid-column:1/-1">

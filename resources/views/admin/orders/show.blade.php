@@ -83,7 +83,7 @@
                     <div>
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Method</span>
                         <span class="text-xs font-semibold mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded {{ $order->delivery_method === 'store_pickup' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' : 'bg-slate-100 text-slate-700 border border-slate-200' }}">
-                            {{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Home Delivery' }}
+                            {{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Courier Delivery' }}
                         </span>
                     </div>
 
@@ -117,6 +117,13 @@
                             <div>
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Union / Area</span>
                                 <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->union_area }}</span>
+                            </div>
+                        @endif
+
+                        @if($order->postal_code)
+                            <div>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Postal Code</span>
+                                <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->postal_code }}</span>
                             </div>
                         @endif
 

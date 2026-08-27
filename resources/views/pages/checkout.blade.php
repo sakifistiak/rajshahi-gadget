@@ -35,6 +35,15 @@
             #checkout-form { grid-template-columns: minmax(0, 1fr) 380px; }
             #checkout-form aside { position: sticky; top: 24px; align-self: start; }
         }
+        /* The outlet dropdown must show each store name exactly as entered in the
+           admin — plain, never bold or italic — regardless of what the wrapping
+           <label class="font-medium"> or the static CSS bundle would inherit. */
+        #pickup-field select,
+        #pickup-field select option {
+            font-weight: 400 !important;
+            font-style: normal !important;
+            font-family: inherit;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-background text-foreground">
@@ -76,8 +85,8 @@
                                 <option value="">Select upazila</option>
                             </select>
                         </label>
-                        <label class="co-field text-sm font-medium" id="union-field">Union / Area <span class="font-normal text-muted-foreground">(optional)</span><input name="union_area" class="rounded-md border border-border bg-background font-normal" placeholder="e.g. Union name or locality"></label>
-                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Full address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, village/area details"></textarea></label>
+                        <label class="co-field text-sm font-medium" id="postal-field"><span>Postal Code <span class="font-normal text-muted-foreground">(optional)</span></span><input name="postal_code" inputmode="numeric" class="rounded-md border border-border bg-background font-normal" placeholder="e.g. 1205" autocomplete="postal-code"></label>
+                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Specific Address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, village/area details"></textarea></label>
                         <label class="co-field co-span-2 text-sm font-medium">Order note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
                     </div>
                 </div>
@@ -86,7 +95,7 @@
                     <div class="mt-4 co-delivery-method">
                         <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
                             <input type="radio" name="delivery_method" value="home_delivery" id="dm-home" checked>
-                            <span><strong>Home Delivery</strong><br><span class="text-sm text-muted-foreground">Nearest courier delivery — Cash on Delivery, pay when it arrives.</span></span>
+                            <span><strong>Courier Delivery</strong><br><span class="text-sm text-muted-foreground">Delivery at nearest location — pay when it arrives.</span></span>
                         </label>
                         <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
                             <input type="radio" name="delivery_method" value="store_pickup" id="dm-pickup">
@@ -188,18 +197,18 @@
         var shippingFeeOutsideDhaka = {{ (int) $shippingFeeOutsideDhaka }};
 
         (function () {
-            // Two delivery methods: Home Delivery (courier, Cash on Delivery —
-            // needs the address fields + a fee based on district) and Store /
+            // Two delivery methods: Courier Delivery (Cash on Delivery — needs
+            // the address fields + a fee based on district) and Store /
             // Outlet Pickup (needs the outlet dropdown, always free). Whichever
             // group isn't relevant is hidden AND disabled — a disabled control
             // is excluded from both native form validation and FormData, so it
             // can't block submission or get sent to the server by mistake.
-            var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'union-field', 'address-field'].map(function (id) { return document.getElementById(id); });
+            var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'postal-field', 'address-field'].map(function (id) { return document.getElementById(id); });
             var pickupField = document.getElementById('pickup-field');
             var paymentCard = document.getElementById('payment-method-card');
             var storeSelect = document.querySelector('[name="store_location_id"]');
             var addressInput = document.querySelector('#address-field textarea');
-            var unionInput = document.querySelector('#union-field input');
+            var postalInput = document.querySelector('#postal-field input');
             var divisionSelect = document.getElementById('division-select');
             var districtSelect = document.getElementById('district-select');
             var upazilaSelect = document.getElementById('upazila-select');
@@ -241,7 +250,7 @@
 
                 addressInput.disabled = pickup;
                 addressInput.required = !pickup;
-                unionInput.disabled = pickup;
+                postalInput.disabled = pickup;
 
                 divisionSelect.disabled = pickup || !geoData;
                 divisionSelect.required = !pickup;

@@ -87,14 +87,19 @@
         var isDark = document.documentElement.classList.contains('dark');
         var lightLogo = window.__SITE_LOGO_LIGHT || document.body?.dataset?.logoLight || '/media/b3ca13-kg-lockup-v2.png';
         var darkLogo = window.__SITE_LOGO_DARK || document.body?.dataset?.logoDark || '/media/logo_dark_1786184552.png';
-        var siteName = window.__SITE_NAME || 'Khan Gadget';
         var logoUrl = isDark ? darkLogo : lightLogo;
 
         if (!logoUrl) return;
 
         var fullLogoUrl = logoUrl.startsWith('http') ? logoUrl : new URL(logoUrl, window.location.origin).href;
 
-        document.querySelectorAll('img[alt*="Khan Gadget"], img[alt*="' + siteName + '"], header a[href="/"] img, .site-logo-img, header img').forEach(function(img) {
+        // Only touch the actual site-logo <img> tags: the ones sitting inside the
+        // home link in the header/footer, or explicitly marked .site-logo-img.
+        // Do NOT match on alt text / "header img" — that also caught unrelated
+        // content images whose alt happened to contain the site name (e.g. a
+        // Customer Spotlight card titled "Khan Gadget"), silently replacing them
+        // with the logo.
+        document.querySelectorAll('header a[href="/"] img, footer a[href="/"] img, .site-logo-img').forEach(function(img) {
             if (img.src !== fullLogoUrl && img.src !== logoUrl) {
                 img.src = logoUrl;
             }

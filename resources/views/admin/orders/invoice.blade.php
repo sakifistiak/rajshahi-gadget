@@ -109,12 +109,20 @@
 @endphp
 
     <!-- Top Action Bar (Screen Only) -->
+    @php($isPublic = $public ?? false)
     <div class="no-print max-w-4xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-4 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
-                Back to Order
-            </a>
+            @if($isPublic)
+                <a href="{{ route('thank-you') }}?order={{ urlencode($order->order_number) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    Back to Order
+                </a>
+            @else
+                <a href="{{ route('admin.orders.show', $order) }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+                    <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                    Back to Order
+                </a>
+            @endif
             <span class="text-xs text-slate-300">|</span>
             <span class="text-xs text-slate-600 font-medium">Order <strong class="text-slate-900 font-bold">#{{ $order->order_number }}</strong></span>
         </div>
@@ -122,12 +130,14 @@
         <div class="flex items-center gap-2">
             <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded shadow-sm transition-colors">
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                Print Invoice
+                {{ $isPublic ? 'Download / Print' : 'Print Invoice' }}
             </button>
-            <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
-                <i data-lucide="list" class="w-3.5 h-3.5"></i>
-                All Orders
-            </a>
+            @unless($isPublic)
+                <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
+                    <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                    All Orders
+                </a>
+            @endunless
         </div>
     </div>
 
@@ -202,7 +212,7 @@
             <div class="space-y-1">
                 <div class="flex items-center gap-1.5">
                     <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Details</span>
-                    <span class="text-[10px] font-bold text-slate-500">({{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Home Delivery' }})</span>
+                    <span class="text-[10px] font-bold text-slate-500">({{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Courier Delivery' }})</span>
                 </div>
 
                 @if($order->delivery_method === 'store_pickup')
@@ -220,6 +230,9 @@
                 @else
                     <div class="text-xs text-slate-700 space-y-0.5">
                         <p class="font-medium text-slate-900 leading-snug">{{ $order->address }}</p>
+                        @if($order->postal_code)
+                            <p class="text-slate-600">Postal Code: <span class="font-semibold text-slate-800">{{ $order->postal_code }}</span></p>
+                        @endif
                     </div>
                 @endif
             </div>
@@ -347,6 +360,12 @@
                 lucide.createIcons();
             }
         });
+
+        @if(($autoPrint ?? false))
+        window.addEventListener('load', function() {
+            setTimeout(function() { window.print(); }, 400);
+        });
+        @endif
 
         function autoFitInvoiceToA4() {
             const wrapper = document.querySelector('.invoice-wrapper');
