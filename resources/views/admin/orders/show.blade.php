@@ -103,33 +103,9 @@
                         </div>
                     @else
                         <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Division</span>
-                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->division }}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Area</span>
+                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : ($order->delivery_area === 'outside_dhaka' ? 'Outside Dhaka' : '—') }}</span>
                         </div>
-
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">District</span>
-                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->district }}</span>
-                        </div>
-
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Upazila / Thana</span>
-                            <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->upazila }}</span>
-                        </div>
-
-                        @if($order->union_area)
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Union / Area</span>
-                                <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->union_area }}</span>
-                            </div>
-                        @endif
-
-                        @if($order->postal_code)
-                            <div>
-                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Postal Code</span>
-                                <span class="text-xs font-semibold text-slate-800 mt-1 block">{{ $order->postal_code }}</span>
-                            </div>
-                        @endif
 
                         <div class="sm:col-span-2">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Address</span>

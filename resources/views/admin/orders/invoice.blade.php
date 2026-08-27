@@ -247,19 +247,9 @@
                             <p class="font-semibold text-slate-900 leading-snug">{{ $order->address }}</p>
                         </div>
 
-                        @php
-                            $districtWithPostal = trim(($order->district ?? '') . ($order->postal_code ? ' - ' . $order->postal_code : ''));
-                            $locationHierarchy = array_filter([
-                                $order->union_area,
-                                $order->upazila,
-                                $districtWithPostal ?: null,
-                                ($order->division && $order->division !== $order->district) ? $order->division : null,
-                            ]);
-                        @endphp
-
-                        @if(!empty($locationHierarchy))
+                        @if($order->delivery_area)
                             <p class="text-slate-600 leading-tight">
-                                <span class="font-medium text-slate-700">{{ implode(', ', $locationHierarchy) }}</span>
+                                <span class="font-medium text-slate-700">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}</span>
                             </p>
                         @endif
 

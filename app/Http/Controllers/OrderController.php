@@ -19,11 +19,7 @@ class OrderController extends Controller
             'phone' => ['required', 'string', 'max:30'],
             'email' => ['nullable', 'email', 'max:120'],
             'delivery_method' => ['required', 'in:home_delivery,store_pickup'],
-            'division' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:100'],
-            'district' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:100'],
-            'upazila' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:100'],
-            'union_area' => ['nullable', 'string', 'max:150'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
+            'delivery_area' => ['required_if:delivery_method,home_delivery', 'nullable', 'in:inside_dhaka,outside_dhaka'],
             'address' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:1000'],
             'store_location_id' => ['required_if:delivery_method,store_pickup', 'nullable', 'exists:store_locations,id'],
             'note' => ['nullable', 'string', 'max:1000'],
@@ -80,10 +76,10 @@ class OrderController extends Controller
             }
             // Store pickup is always free. Home delivery is priced server-side
             // from the admin-configured settings, keyed on the customer's
-            // District — never trust a fee the client might submit.
+            // selected delivery area — never trust a fee the client might submit.
             $shippingFee = 0;
             if ($data['delivery_method'] === 'home_delivery') {
-                $shippingFee = trim((string) ($data['district'] ?? '')) === 'Dhaka'
+                $shippingFee = ($data['delivery_area'] ?? null) === 'inside_dhaka'
                     ? (int) SiteSetting::getValue('shipping_fee_inside_dhaka', 70)
                     : (int) SiteSetting::getValue('shipping_fee_outside_dhaka', 130);
             }

@@ -627,19 +627,19 @@
                     <i data-lucide="truck" class="h-4 w-4 text-blue-600"></i>
                     <span>7. Shipping & Delivery Fees</span>
                 </div>
-                <p class="text-[11px] text-slate-400 -mt-2">Charged only when a customer picks Courier Delivery at checkout — determined automatically by their selected district (Store/Outlet Pickup is always free).</p>
+                <p class="text-[11px] text-slate-400 -mt-2">Charged only when a customer picks Courier Delivery at checkout — determined by the delivery area they choose (Store/Outlet Pickup is always free).</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Inside Dhaka Delivery Fee (৳)</label>
                         <input type="number" min="0" step="1" name="shipping_fee_inside_dhaka" value="{{ old('shipping_fee_inside_dhaka', $settings['shipping_fee_inside_dhaka']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                        <p class="mt-1 text-[11px] text-slate-400">Applied when the customer's District is "Dhaka".</p>
+                        <p class="mt-1 text-[11px] text-slate-400">Applied when the customer selects the "Inside Dhaka" delivery area.</p>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1">Outside Dhaka Delivery Fee (৳)</label>
                         <input type="number" min="0" step="1" name="shipping_fee_outside_dhaka" value="{{ old('shipping_fee_outside_dhaka', $settings['shipping_fee_outside_dhaka']) }}" class="w-full text-xs font-semibold px-3 py-2 border border-slate-200 rounded-sm focus:ring-1 focus:ring-blue-500 focus:outline-none">
-                        <p class="mt-1 text-[11px] text-slate-400">Applied for any other district.</p>
+                        <p class="mt-1 text-[11px] text-slate-400">Applied when the customer selects the "Outside Dhaka" delivery area.</p>
                     </div>
                 </div>
             </div>

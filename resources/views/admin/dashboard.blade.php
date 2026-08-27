@@ -80,7 +80,7 @@
                     <tr>
                         <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Order #</th>
                         <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Customer</th>
-                        <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">District</th>
+                        <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Area</th>
                         <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total</th>
                         <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
                         <th class="px-4 py-2.5 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</th>
@@ -100,7 +100,11 @@
                                 <div class="text-[9px] text-slate-400">{{ $order->phone }}</div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-xs text-slate-600">
-                                {{ $order->district }}
+                                @if($order->delivery_method === 'store_pickup')
+                                    Pickup
+                                @else
+                                    {{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : ($order->delivery_area === 'outside_dhaka' ? 'Outside Dhaka' : '—') }}
+                                @endif
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-xs font-bold text-slate-800">
                                 ৳{{ number_format($order->total) }}

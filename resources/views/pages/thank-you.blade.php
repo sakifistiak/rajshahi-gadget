@@ -114,29 +114,9 @@
                         </div>
                     @else
                         <div>
-                            <p class="text-xs font-medium text-muted-foreground">Division</p>
-                            <p class="mt-1 text-sm font-medium">{{ $order->division }}</p>
+                            <p class="text-xs font-medium text-muted-foreground">Delivery area</p>
+                            <p class="mt-1 text-sm font-medium">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : ($order->delivery_area === 'outside_dhaka' ? 'Outside Dhaka' : '—') }}</p>
                         </div>
-                        <div>
-                            <p class="text-xs font-medium text-muted-foreground">District</p>
-                            <p class="mt-1 text-sm font-medium">{{ $order->district }}</p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium text-muted-foreground">Upazila / Thana</p>
-                            <p class="mt-1 text-sm font-medium">{{ $order->upazila }}</p>
-                        </div>
-                        @if($order->union_area)
-                            <div>
-                                <p class="text-xs font-medium text-muted-foreground">Union / Area</p>
-                                <p class="mt-1 text-sm font-medium">{{ $order->union_area }}</p>
-                            </div>
-                        @endif
-                        @if($order->postal_code)
-                            <div>
-                                <p class="text-xs font-medium text-muted-foreground">Postal Code</p>
-                                <p class="mt-1 text-sm font-medium">{{ $order->postal_code }}</p>
-                            </div>
-                        @endif
                         <div style="grid-column:1/-1">
                             <p class="text-xs font-medium text-muted-foreground">Delivery address</p>
                             <p class="mt-1 text-sm font-medium">{{ $order->address }}</p>

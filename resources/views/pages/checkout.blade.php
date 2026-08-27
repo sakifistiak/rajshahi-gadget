@@ -70,23 +70,14 @@
                                 @endforeach
                             </select>
                         </label>
-                        <label class="co-field text-sm font-medium" id="division-field">Division
-                            <select name="division" class="rounded-md border border-border bg-background font-normal" id="division-select" disabled>
-                                <option value="">Loading…</option>
+                        <label class="co-field co-span-2 text-sm font-medium" id="area-field">Delivery Area
+                            <select name="delivery_area" class="rounded-md border border-border bg-background font-normal" id="area-select">
+                                <option value="">Select delivery area</option>
+                                <option value="inside_dhaka">Inside Dhaka</option>
+                                <option value="outside_dhaka">Outside Dhaka</option>
                             </select>
                         </label>
-                        <label class="co-field text-sm font-medium" id="district-field">District
-                            <select name="district" class="rounded-md border border-border bg-background font-normal" id="district-select" disabled>
-                                <option value="">Select district</option>
-                            </select>
-                        </label>
-                        <label class="co-field text-sm font-medium" id="upazila-field">Upazila / Thana
-                            <select name="upazila" class="rounded-md border border-border bg-background font-normal" id="upazila-select" disabled>
-                                <option value="">Select upazila</option>
-                            </select>
-                        </label>
-                        <label class="co-field text-sm font-medium" id="postal-field"><span>Postal Code <span class="font-normal text-muted-foreground">(optional)</span></span><input name="postal_code" inputmode="numeric" class="rounded-md border border-border bg-background font-normal" placeholder="e.g. 1205" autocomplete="postal-code"></label>
-                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Specific Address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, village/area details"></textarea></label>
+                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Specific Address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, area — as detailed as possible"></textarea></label>
                         <label class="co-field co-span-2 text-sm font-medium">Order note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
                     </div>
                 </div>
@@ -197,24 +188,20 @@
         var shippingFeeOutsideDhaka = {{ (int) $shippingFeeOutsideDhaka }};
 
         (function () {
-            // Two delivery methods: Courier Delivery (Cash on Delivery — needs
-            // the address fields + a fee based on district) and Store /
-            // Outlet Pickup (needs the outlet dropdown, always free). Whichever
-            // group isn't relevant is hidden AND disabled — a disabled control
-            // is excluded from both native form validation and FormData, so it
-            // can't block submission or get sent to the server by mistake.
-            var homeOnlyFields = ['division-field', 'district-field', 'upazila-field', 'postal-field', 'address-field'].map(function (id) { return document.getElementById(id); });
+            // Two delivery methods: Courier Delivery (Cash on Delivery — needs a
+            // free-text address + a "delivery area" that picks the courier fee)
+            // and Store / Outlet Pickup (needs the outlet dropdown, always free).
+            // Whichever group isn't relevant is hidden AND disabled — a disabled
+            // control is excluded from both native form validation and FormData,
+            // so it can't block submission or get sent to the server by mistake.
+            var homeOnlyFields = ['area-field', 'address-field'].map(function (id) { return document.getElementById(id); });
             var pickupField = document.getElementById('pickup-field');
             var paymentCard = document.getElementById('payment-method-card');
             var storeSelect = document.querySelector('[name="store_location_id"]');
             var addressInput = document.querySelector('#address-field textarea');
-            var postalInput = document.querySelector('#postal-field input');
-            var divisionSelect = document.getElementById('division-select');
-            var districtSelect = document.getElementById('district-select');
-            var upazilaSelect = document.getElementById('upazila-select');
+            var areaSelect = document.getElementById('area-select');
             var deliveryFeeEl = document.getElementById('checkout-delivery-fee');
             var totalEl = document.getElementById('checkout-total');
-            var geoData = null;
 
             function isPickupMode() {
                 return document.querySelector('[name="delivery_method"]:checked').value === 'store_pickup';
@@ -226,12 +213,12 @@
                     totalEl.textContent = money(total);
                     return;
                 }
-                if (!districtSelect.value) {
-                    deliveryFeeEl.textContent = 'Select district';
+                if (!areaSelect.value) {
+                    deliveryFeeEl.textContent = 'Select delivery area';
                     totalEl.textContent = money(total);
                     return;
                 }
-                var fee = districtSelect.value === 'Dhaka' ? shippingFeeInsideDhaka : shippingFeeOutsideDhaka;
+                var fee = areaSelect.value === 'inside_dhaka' ? shippingFeeInsideDhaka : shippingFeeOutsideDhaka;
                 deliveryFeeEl.textContent = fee > 0 ? money(fee) : 'Free';
                 totalEl.textContent = money(total + fee);
             }
@@ -250,16 +237,9 @@
 
                 addressInput.disabled = pickup;
                 addressInput.required = !pickup;
-                postalInput.disabled = pickup;
 
-                divisionSelect.disabled = pickup || !geoData;
-                divisionSelect.required = !pickup;
-
-                districtSelect.disabled = pickup || !geoData || !divisionSelect.value;
-                districtSelect.required = !pickup;
-
-                upazilaSelect.disabled = pickup || !geoData || !districtSelect.value;
-                upazilaSelect.required = !pickup;
+                areaSelect.disabled = pickup;
+                areaSelect.required = !pickup;
 
                 updateDeliveryFee();
             }
@@ -267,43 +247,7 @@
             document.querySelectorAll('[name="delivery_method"]').forEach(function (radio) {
                 radio.addEventListener('change', refreshFieldStates);
             });
-
-            function fillOptions(select, list, placeholder) {
-                select.innerHTML = '<option value="">' + placeholder + '</option>' + list.map(function (item) {
-                    return '<option value="' + item.name.replace(/"/g, '&quot;') + '">' + item.name + '</option>';
-                }).join('');
-            }
-
-            fetch('/data/bd-geo.json').then(function (res) { return res.json(); }).then(function (geo) {
-                geoData = geo;
-                fillOptions(divisionSelect, geo.divisions, 'Select division');
-
-                divisionSelect.addEventListener('change', function () {
-                    var division = geo.divisions.find(function (d) { return d.name === divisionSelect.value; });
-                    districtSelect.innerHTML = '<option value="">Select district</option>';
-                    upazilaSelect.innerHTML = '<option value="">Select upazila</option>';
-                    if (division) {
-                        var districts = geo.districts.filter(function (d) { return d.division_id === division.id; });
-                        fillOptions(districtSelect, districts, 'Select district');
-                    }
-                    refreshFieldStates();
-                });
-
-                districtSelect.addEventListener('change', function () {
-                    var district = geo.districts.find(function (d) { return d.name === districtSelect.value; });
-                    upazilaSelect.innerHTML = '<option value="">Select upazila</option>';
-                    if (district) {
-                        var upazilas = geo.upazilas.filter(function (u) { return u.district_id === district.id; });
-                        fillOptions(upazilaSelect, upazilas, 'Select upazila');
-                    }
-                    refreshFieldStates();
-                });
-
-                refreshFieldStates();
-            }).catch(function () {
-                divisionSelect.innerHTML = '<option value="">Could not load — refresh the page</option>';
-                refreshFieldStates();
-            });
+            areaSelect.addEventListener('change', updateDeliveryFee);
 
             refreshFieldStates();
         })();

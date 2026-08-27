@@ -86,7 +86,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Order #') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Customer') }}</th>
-                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('District') }}</th>
+                        <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Area') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Items') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Total') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Payment') }}</th>
@@ -108,7 +108,11 @@
                                 <div class="text-[9px] text-slate-400">{{ $order->phone }}</div>
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">
-                                {{ $order->district }}
+                                @if($order->delivery_method === 'store_pickup')
+                                    Pickup
+                                @else
+                                    {{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : ($order->delivery_area === 'outside_dhaka' ? 'Outside Dhaka' : '—') }}
+                                @endif
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-xs font-semibold text-slate-700">
                                 {{ $order->items->count() }} {{ Str::plural('item', $order->items->count()) }}
