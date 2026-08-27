@@ -318,15 +318,15 @@ class PageController extends Controller
         }
 
         if ($page === 'blog') {
-            return $this->blogIndex();
+            return $this->blogIndex($request);
         }
 
         if ($page === 'customer-spotlight') {
-            return $this->customerSpotlightIndex();
+            return $this->customerSpotlightIndex($request);
         }
 
         if ($page === 'customer-feedback') {
-            return $this->customerFeedbackIndex();
+            return $this->customerFeedbackIndex($request);
         }
 
         if ($page === 'philanthropic-work') {
@@ -510,17 +510,28 @@ class PageController extends Controller
         throw new NotFoundHttpException;
     }
 
-    public function blogIndex()
+    public function blogIndex(Request $request)
     {
-        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9);
+        $search = trim((string) $request->query('search', ''));
 
-        return view('pages.blog', compact('posts'));
+        $posts = BlogPost::published()
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")))
+            ->orderByDesc('published_at')
+            ->paginate(9)
+            ->withQueryString();
+
+        return view('pages.blog', compact('posts', 'search'));
     }
 
     public function blogLoadMore(Request $request)
     {
         $page = max(1, (int) $request->query('page', 2));
-        $posts = BlogPost::published()->orderByDesc('published_at')->paginate(9, ['*'], 'page', $page);
+        $search = trim((string) $request->query('search', ''));
+
+        $posts = BlogPost::published()
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")))
+            ->orderByDesc('published_at')
+            ->paginate(9, ['*'], 'page', $page);
 
         return response()->json([
             'html' => view('partials.blog-cards', compact('posts'))->render(),
@@ -538,18 +549,28 @@ class PageController extends Controller
         return $this->render('pages.blog.'.$slug);
     }
 
-    public function customerSpotlightIndex()
+    public function customerSpotlightIndex(Request $request)
     {
-        $spotlights = CustomerSpotlight::orderByDesc('date')->get();
+        $search = trim((string) $request->query('search', ''));
 
-        return view('pages.customer-spotlight', compact('spotlights'));
+        $spotlights = CustomerSpotlight::orderByDesc('date')
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('product', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")))
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('pages.customer-spotlight', compact('spotlights', 'search'));
     }
 
-    public function customerFeedbackIndex()
+    public function customerFeedbackIndex(Request $request)
     {
-        $feedbacks = CustomerFeedback::latest()->get();
+        $search = trim((string) $request->query('search', ''));
 
-        return view('pages.customer-feedback', compact('feedbacks'));
+        $feedbacks = CustomerFeedback::latest()
+            ->when($search !== '', fn ($q) => $q->where('message', 'like', "%{$search}%"))
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('pages.customer-feedback', compact('feedbacks', 'search'));
     }
 
     public function philanthropicWorkIndex()

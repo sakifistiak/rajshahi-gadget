@@ -329,7 +329,33 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @endif
 
-@if($homeTrustbarActive ?? true)<section aria-label="Store benefits" class="container-page pt-6"><div class="rounded-md border border-border bg-surface px-3 py-4 sm:px-8 sm:py-5"><ul class="-mx-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5">@foreach($trustbarItems ?? [] as $tbItem)<li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11">@if(($tbItem['icon_type'] ?? 'lucide') === 'image' && !empty($tbItem['icon_image']))<img src="{{ $tbItem['icon_image'] }}" alt="" class="h-5 w-5 object-contain" />@else<i data-lucide="{{ $tbItem['icon_lucide'] ?? 'check' }}" class="h-5 w-5"></i>@endif</span><span class="text-[11px] font-semibold leading-tight text-foreground sm:text-sm">{{ $tbItem['label'] ?? '' }}</span></li>@endforeach</ul></div></section>@endif
+@if($homeTrustbarActive ?? true)
+<style>
+    /* Mobile: the static CSS bundle has no `grid-cols-5`, so instead of the
+       horizontal snap-scroll carousel (which pushed the last badge off-screen),
+       lay the badges out as an equal-width flex row that always fits the
+       viewport — however many badges the admin configures. Desktop (>=640px)
+       keeps the existing sm:grid / lg:grid-cols-5 layout untouched. */
+    @media (max-width: 639.98px) {
+        #home-trustbar {
+            display: flex;
+            gap: 6px;
+            margin: 0;
+            padding: 0;
+            overflow: visible;
+            scroll-snap-type: none;
+        }
+        #home-trustbar > li {
+            flex: 1 1 0;
+            width: auto;
+            min-width: 0;
+        }
+        #home-trustbar .trustbar-label {
+            font-size: 10px;
+        }
+    }
+</style>
+<section aria-label="Store benefits" class="container-page pt-6"><div class="rounded-md border border-border bg-surface px-3 py-4 sm:px-8 sm:py-5"><ul id="home-trustbar" class="-mx-3 flex snap-x snap-mandatory gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:snap-none sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5">@foreach($trustbarItems ?? [] as $tbItem)<li class="flex w-[104px] shrink-0 snap-start flex-col items-center gap-2 text-center sm:w-auto sm:flex-row sm:justify-center sm:gap-3 sm:text-left"><span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent/10 text-accent sm:h-11 sm:w-11">@if(($tbItem['icon_type'] ?? 'lucide') === 'image' && !empty($tbItem['icon_image']))<img src="{{ $tbItem['icon_image'] }}" alt="" class="h-5 w-5 object-contain" />@else<i data-lucide="{{ $tbItem['icon_lucide'] ?? 'check' }}" class="h-5 w-5"></i>@endif</span><span class="trustbar-label text-[11px] font-semibold leading-tight text-foreground sm:text-sm">{{ $tbItem['label'] ?? '' }}</span></li>@endforeach</ul></div></section>@endif
 @if(($homeNewArrivalPosition ?? 'below_flash') === 'above_flash')
     @include('partials.home-new-arrival-section')
 @endif
