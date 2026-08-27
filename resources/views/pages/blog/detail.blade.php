@@ -17,17 +17,58 @@
 @endverbatim
 
 <style>
-    .blog-rich-text p { margin: 0 0 1.1em; line-height: 1.75; }
-    .blog-rich-text h2 { font-size: 1.5rem; font-weight: 600; margin: 1.6em 0 0.6em; letter-spacing: -0.01em; }
-    .blog-rich-text h3 { font-size: 1.2rem; font-weight: 600; margin: 1.4em 0 0.5em; }
-    .blog-rich-text ul, .blog-rich-text ol { margin: 0 0 1.1em; padding-left: 1.4em; }
-    .blog-rich-text li { margin-bottom: 0.4em; line-height: 1.7; }
-    .blog-rich-text a { text-decoration: underline; color: var(--color-foreground, #09090b); }
-    .blog-rich-text img { max-width: 100%; height: auto; border-radius: 6px; margin: 1.2em 0; }
-    .blog-rich-text blockquote { border-left: 3px solid var(--color-border, #e5e7eb); padding-left: 1em; margin: 1.2em 0; color: var(--color-muted-foreground, #71717a); font-style: italic; }
+    .blog-rich-text {
+        color: var(--color-foreground, #09090b);
+        font-size: 15px;
+        line-height: 1.5;
+    }
+    .blog-rich-text p {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.5;
+    }
+    .blog-rich-text p:empty,
+    .blog-rich-text p:has(> br:only-child) {
+        margin: 0 !important;
+        padding: 0 !important;
+        min-height: 1.2em;
+    }
+    .blog-rich-text h1, .blog-rich-text h2, .blog-rich-text h3 {
+        font-weight: 600;
+        margin: 1rem 0 0.25rem;
+        line-height: 1.3;
+    }
+    .blog-rich-text h2 { font-size: 1.35rem; }
+    .blog-rich-text h3 { font-size: 1.15rem; }
+    .blog-rich-text ul, .blog-rich-text ol {
+        margin: 0.25rem 0 0.5rem;
+        padding-left: 1.3rem;
+    }
+    .blog-rich-text li {
+        margin: 0;
+        padding: 0;
+        line-height: 1.5;
+    }
+    .blog-rich-text a {
+        text-decoration: underline;
+        color: var(--color-foreground, #09090b);
+    }
+    .blog-rich-text img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+        margin: 0.75rem 0;
+    }
+    .blog-rich-text blockquote {
+        border-left: 3px solid var(--color-border, #e5e7eb);
+        padding-left: 0.75rem;
+        margin: 0.75rem 0;
+        color: var(--color-muted-foreground, #71717a);
+        font-style: italic;
+    }
 </style>
 
-<script src="/assets/kg-translate.js"></script>
+<script src="/assets/kg-translate.js?v=2"></script>
 <script>document.addEventListener('DOMContentLoaded', function () { if (window.kgInitTranslateToggle) window.kgInitTranslateToggle('#blog-translate-scope'); });</script>
 
 <div class="container-page py-10" id="blog-translate-scope">

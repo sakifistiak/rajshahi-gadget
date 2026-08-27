@@ -50,7 +50,17 @@
             .catch(function () { return chunk; });
     }
 
+    function hasBengali(text) {
+        return /[\u0980-\u09FF]/.test(text);
+    }
+
     function translateText(text, done) {
+        // If text is already in Bengali, never machine-translate it (preserve original)
+        if (hasBengali(text)) {
+            done(text);
+            return;
+        }
+
         var key = cacheKeyFor(text);
         var cached = null;
         try { cached = localStorage.getItem(key); } catch (e) {}
