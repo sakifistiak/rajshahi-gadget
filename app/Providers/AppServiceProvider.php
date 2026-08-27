@@ -42,12 +42,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Share site & footer settings and store locations with ALL views dynamically
         View::composer('*', function ($view) {
-            $storeLocations = collect();
-            try {
-                $storeLocations = StoreLocation::where('is_active', true)->orderBy('sort_order', 'asc')->get();
-            } catch (\Exception $e) {
-                // Fail gracefully if DB table doesn't exist yet
-            }
+            $storeLocations = StoreLocation::activeOrdered();
 
             // Do not inject fallback navigation: the footer only displays links
             // explicitly configured by the administrator.

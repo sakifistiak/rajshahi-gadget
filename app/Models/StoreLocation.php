@@ -3,9 +3,38 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class StoreLocation extends Model
 {
+    protected const ACTIVE_CACHE_KEY = 'store_locations.active';
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => static::flushActiveCache());
+        static::deleted(fn () => static::flushActiveCache());
+    }
+
+    public static function activeOrdered()
+    {
+        try {
+            return Cache::rememberForever(
+                static::ACTIVE_CACHE_KEY,
+                fn () => static::where('is_active', true)->orderBy('sort_order', 'asc')->get()
+            );
+        } catch (\Throwable $e) {
+            return collect();
+        }
+    }
+
+    public static function flushActiveCache(): void
+    {
+        try {
+            Cache::forget(static::ACTIVE_CACHE_KEY);
+        } catch (\Throwable $e) {
+        }
+    }
+
     protected $fillable = [
         'name',
         'address',
