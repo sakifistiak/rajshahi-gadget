@@ -116,8 +116,6 @@ if (!function_exists('sectionTitleSizeStyle')) {
         object-fit: cover;
         object-position: center;
         display: block;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: high-quality;
     }
     @media (min-width: 640px) {
         .promo-banner-grid {
