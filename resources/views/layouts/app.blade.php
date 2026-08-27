@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Khan Gadget Admin') }}</title>
+        <title>@yield('title', 'Admin Dashboard') | {{ config('app.name', 'Khan Gadget') }}</title>
 
         <!-- Site & Admin Favicon -->
         <link rel="icon" href="{{ $siteFavicon ?? '/favicon.png' }}" type="image/png"/>

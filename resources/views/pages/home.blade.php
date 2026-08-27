@@ -545,8 +545,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const labelSpan = btn.querySelector('.sort-label');
 
         if (currentOrder === 'high_to_low') {
-            // Sort: Low to High
+            // Sort: Low to High (In-stock first, Out-of-stock last)
             cards.sort((a, b) => {
+                const stockA = parseInt(a.dataset.inStock || '1', 10);
+                const stockB = parseInt(b.dataset.inStock || '1', 10);
+                if (stockA !== stockB) return stockB - stockA;
+
                 const priceA = parseFloat(a.dataset.price || 0);
                 const priceB = parseFloat(b.dataset.price || 0);
                 return priceA - priceB;
@@ -554,8 +558,12 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.setAttribute('data-sort-order', 'low_to_high');
             if (labelSpan) labelSpan.textContent = 'Low Price → High Price';
         } else {
-            // Sort: High to Low
+            // Sort: High to Low (In-stock first, Out-of-stock last)
             cards.sort((a, b) => {
+                const stockA = parseInt(a.dataset.inStock || '1', 10);
+                const stockB = parseInt(b.dataset.inStock || '1', 10);
+                if (stockA !== stockB) return stockB - stockA;
+
                 const priceA = parseFloat(a.dataset.price || 0);
                 const priceB = parseFloat(b.dataset.price || 0);
                 return priceB - priceA;

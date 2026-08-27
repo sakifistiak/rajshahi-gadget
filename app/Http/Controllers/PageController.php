@@ -29,12 +29,9 @@ class PageController extends Controller
     {
         $heroSliders = HeroSlider::where('is_active', true)->orderBy('sort_order')->get();
         $promoBanners = PromoBanner::where('is_active', true)->orderBy('sort_order')->get();
-        $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->where('in_stock', true)->orderByDesc('price')->get();
+        $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->orderByDesc('in_stock')->orderByDesc('price')->get();
 
-        // The flash sale shown on the homepage is whichever campaign is
-        // currently within its start/end window and marked active — there is
-        // no manual product picking here, it's fully driven by the admin's
-        // Flash Sales campaigns (see Admin\FlashSaleController).
+        
         $activeFlashSale = FlashSale::live()
             ->with(['items' => function ($query) {
                 $query->orderBy('sort_order')->with(['product.images', 'product.highlights']);
@@ -225,16 +222,25 @@ class PageController extends Controller
 
             return $allProducts->filter(function ($p) use ($slug) {
                 return optional($p->condition)->slug === $slug;
-            })->sortByDesc('price')->values()->take($limit);
+            })->sortBy([
+                ['in_stock', 'desc'],
+                ['price', 'desc'],
+            ])->values()->take($limit);
         } elseif (str_starts_with($filter, 'cat_')) {
             $catId = (int) substr($filter, 4);
 
             return $allProducts->filter(function ($p) use ($catId) {
                 return $p->category_id == $catId;
-            })->sortByDesc('price')->values()->take($limit);
+            })->sortBy([
+                ['in_stock', 'desc'],
+                ['price', 'desc'],
+            ])->values()->take($limit);
         }
 
-        return $allProducts->sortByDesc('price')->values()->take($limit);
+        return $allProducts->sortBy([
+            ['in_stock', 'desc'],
+            ['price', 'desc'],
+        ])->values()->take($limit);
     }
 
     public function ajaxSearch(Request $request)
@@ -466,6 +472,9 @@ class PageController extends Controller
         if ($request->filled('max_price')) {
             $query->where('price', '<=', (float) $request->max_price);
         }
+
+        // Always place in-stock products first, and out-of-stock products at the end
+        $query->orderByDesc('in_stock');
 
         // Sort order
         if ($request->sort === 'price-asc') {
