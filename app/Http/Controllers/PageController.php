@@ -29,7 +29,7 @@ class PageController extends Controller
     {
         $heroSliders = HeroSlider::where('is_active', true)->orderBy('sort_order')->get();
         $promoBanners = PromoBanner::where('is_active', true)->orderBy('sort_order')->get();
-        $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->where('in_stock', true)->latest()->get();
+        $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->where('in_stock', true)->orderByDesc('price')->get();
 
         // The flash sale shown on the homepage is whichever campaign is
         // currently within its start/end window and marked active — there is
@@ -225,16 +225,16 @@ class PageController extends Controller
 
             return $allProducts->filter(function ($p) use ($slug) {
                 return optional($p->condition)->slug === $slug;
-            })->take($limit);
+            })->sortByDesc('price')->values()->take($limit);
         } elseif (str_starts_with($filter, 'cat_')) {
             $catId = (int) substr($filter, 4);
 
             return $allProducts->filter(function ($p) use ($catId) {
                 return $p->category_id == $catId;
-            })->take($limit);
+            })->sortByDesc('price')->values()->take($limit);
         }
 
-        return $allProducts->take($limit);
+        return $allProducts->sortByDesc('price')->values()->take($limit);
     }
 
     public function ajaxSearch(Request $request)
