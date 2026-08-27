@@ -555,7 +555,7 @@ class PageController extends Controller
 
         $spotlights = CustomerSpotlight::orderByDesc('date')
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('product', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")))
-            ->paginate(12)
+            ->paginate(24)
             ->withQueryString();
 
         return view('pages.customer-spotlight', compact('spotlights', 'search'));
@@ -567,7 +567,7 @@ class PageController extends Controller
 
         $feedbacks = CustomerFeedback::latest()
             ->when($search !== '', fn ($q) => $q->where('message', 'like', "%{$search}%"))
-            ->paginate(12)
+            ->paginate(24)
             ->withQueryString();
 
         return view('pages.customer-feedback', compact('feedbacks', 'search'));
