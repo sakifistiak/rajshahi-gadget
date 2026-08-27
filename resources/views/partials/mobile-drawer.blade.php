@@ -512,6 +512,17 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
 </script>
 
 <style>
+/* Sticky site header must be fully opaque. In light mode the harvested
+   `bg-background/95` + `backdrop-blur` renders as a see-through frosted panel
+   over the page content (worst over a dark product image), and on some Android
+   browsers backdrop-filter also leaves a rounded-corner compositing artifact.
+   Force a solid background and drop the blur on every storefront header. */
+header.sticky {
+    background-color: var(--background, #ffffff) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
 /* Single product page "Buy Now" button format matching Home/Shop page */
 .product-single-buy-now,
 button.bg-primary.text-primary-foreground,
