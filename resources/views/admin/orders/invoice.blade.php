@@ -109,7 +109,9 @@
 @endphp
 
     <!-- Top Action Bar (Screen Only) -->
-    @php($isPublic = $public ?? false)
+    @php
+        $isPublic = $public ?? false;
+    @endphp
     <div class="no-print max-w-4xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-4 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
         <div class="flex items-center gap-3">
             @if($isPublic)
@@ -228,10 +230,29 @@
                         @endif
                     </div>
                 @else
-                    <div class="text-xs text-slate-700 space-y-0.5">
-                        <p class="font-medium text-slate-900 leading-snug">{{ $order->address }}</p>
-                        @if($order->postal_code)
-                            <p class="text-slate-600">Postal Code: <span class="font-semibold text-slate-800">{{ $order->postal_code }}</span></p>
+                    <div class="text-xs text-slate-700 space-y-1">
+                        <div>
+                            <p class="font-semibold text-slate-900 leading-snug">{{ $order->address }}</p>
+                        </div>
+
+                        @php
+                            $districtWithPostal = trim(($order->district ?? '') . ($order->postal_code ? ' - ' . $order->postal_code : ''));
+                            $locationHierarchy = array_filter([
+                                $order->union_area,
+                                $order->upazila,
+                                $districtWithPostal ?: null,
+                                ($order->division && $order->division !== $order->district) ? $order->division : null,
+                            ]);
+                        @endphp
+
+                        @if(!empty($locationHierarchy))
+                            <p class="text-slate-600 leading-tight">
+                                <span class="font-medium text-slate-700">{{ implode(', ', $locationHierarchy) }}</span>
+                            </p>
+                        @endif
+
+                        @if($order->note)
+                            <p class="text-slate-500 text-[10.5px] italic pt-0.5"><span class="font-semibold text-slate-600 not-italic">Note:</span> {{ $order->note }}</p>
                         @endif
                     </div>
                 @endif

@@ -143,7 +143,7 @@ if (!function_exists('sectionTitleSizeStyle')) {
         </div>
 
         <!-- Side Promo Banners -->
-        <div class="promo-banner-grid grid {{ $promoBanners->count() === 1 ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-1' }} gap-3 sm:gap-4 h-full">
+        <div class="promo-banner-grid grid {{ $promoBanners->count() === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-1' }} gap-3 sm:gap-4 h-full">
             @foreach($promoBanners as $promo)
                 <a href="{{ $promo->link ?? '/shop' }}" class="promo-banner-item group relative block overflow-hidden rounded-md shadow-sm">
                     <div class="w-full h-full relative overflow-hidden bg-surface">
