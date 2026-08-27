@@ -32,10 +32,14 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="rounded bg-blue-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-blue-700 inline-flex items-center gap-1.5 transition-colors shadow-sm">
+            <button type="button" onclick="directDownloadInvoice('{{ route('admin.orders.invoice', $order) }}?download=1', this)" class="rounded bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-emerald-700 inline-flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer">
+                <i data-lucide="download" class="h-3.5 w-3.5"></i>
+                Download Invoice
+            </button>
+            <button type="button" onclick="directPrintInvoice('{{ route('admin.orders.invoice', $order) }}', this)" class="rounded bg-blue-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-blue-700 inline-flex items-center gap-1.5 transition-colors shadow-sm cursor-pointer">
                 <i data-lucide="printer" class="h-3.5 w-3.5"></i>
-                Invoice / Print
-            </a>
+                Print Invoice
+            </button>
             <a href="{{ route('admin.orders.index') }}" class="rounded border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50 inline-flex items-center gap-1.5 transition-colors">
                 <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>
                 Back to Orders
@@ -264,4 +268,61 @@
         </div>
     </div>
 
+    <script>
+        function directDownloadInvoice(url, btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="inline-block animate-spin mr-1">⌛</span> Downloading PDF...';
+            btn.disabled = true;
+
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '0';
+            iframe.style.width = '800px';
+            iframe.style.height = '1200px';
+            iframe.style.opacity = '0';
+            iframe.style.pointerEvents = 'none';
+            iframe.src = url;
+            document.body.appendChild(iframe);
+
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                setTimeout(() => iframe.remove(), 10000);
+            }, 3000);
+        }
+
+        function directPrintInvoice(url, btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="inline-block animate-spin mr-1">⌛</span> Opening Print...';
+            btn.disabled = true;
+
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '0';
+            iframe.style.width = '1024px';
+            iframe.style.height = '1400px';
+            iframe.style.opacity = '0';
+            iframe.src = url;
+
+            iframe.onload = function() {
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                    if (typeof lucide !== 'undefined') lucide.createIcons();
+                    try {
+                        iframe.contentWindow.focus();
+                        iframe.contentWindow.print();
+                    } catch (e) {
+                        console.error(e);
+                    }
+                    setTimeout(() => iframe.remove(), 60000);
+                }, 400);
+            };
+
+            document.body.appendChild(iframe);
+        }
+    </script>
 </x-app-layout>

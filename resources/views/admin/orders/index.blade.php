@@ -154,10 +154,10 @@
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
-                                    <a href="{{ route('admin.orders.invoice', $order) }}" target="_blank" class="text-slate-600 hover:text-slate-900 font-semibold inline-flex items-center gap-1" title="Print Invoice">
-                                        <i data-lucide="printer" class="h-3.5 w-3.5 text-slate-500"></i>
+                                    <button type="button" onclick="directDownloadInvoice('{{ route('admin.orders.invoice', $order) }}?download=1', this)" class="text-slate-600 hover:text-slate-900 font-semibold inline-flex items-center gap-1 cursor-pointer" title="Download Invoice">
+                                        <i data-lucide="download" class="h-3.5 w-3.5 text-slate-500"></i>
                                         {{ __('Invoice') }}
-                                    </a>
+                                    </button>
                                     <a href="{{ route('admin.orders.show', $order) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
                                         <i data-lucide="eye" class="h-3.5 w-3.5"></i>
                                         {{ __('View') }}
@@ -194,4 +194,30 @@
             </div>
         @endif
     </div>
+
+    <script>
+        function directDownloadInvoice(url, btn) {
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="inline-block animate-spin mr-1">⌛</span> <span class="text-[10px]">Downloading...</span>';
+            btn.disabled = true;
+
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'fixed';
+            iframe.style.left = '-9999px';
+            iframe.style.top = '0';
+            iframe.style.width = '800px';
+            iframe.style.height = '1200px';
+            iframe.style.opacity = '0';
+            iframe.style.pointerEvents = 'none';
+            iframe.src = url;
+            document.body.appendChild(iframe);
+
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+                setTimeout(() => iframe.remove(), 10000);
+            }, 3000);
+        }
+    </script>
 </x-app-layout>

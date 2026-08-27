@@ -1,4 +1,4 @@
-<article class="group flex h-full flex-col border border-border bg-secondary overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px">
+<article class="product-card-item group flex h-full flex-col border border-border bg-secondary overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px" data-price="{{ $product->price ?? 0 }}" data-name="{{ $product->name }}">
     <div class="relative overflow-hidden bg-surface">
         <a href="/product/{{ $product->slug }}" class="block">
             <div class="aspect-square w-full overflow-hidden">

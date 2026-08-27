@@ -19,6 +19,9 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- html2pdf for Direct Client-side PDF Downloads -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         body {
             font-family: 'Inter', 'Hind Siliguri', sans-serif;
@@ -26,6 +29,11 @@
             color: #1e293b;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
+        }
+
+        .invoice-wrapper {
+            border: none !important;
+            box-shadow: none !important;
         }
 
         @page {
@@ -130,12 +138,16 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded shadow-sm transition-colors">
+            <button onclick="downloadInvoicePDF()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded shadow-sm transition-colors cursor-pointer">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                Download PDF
+            </button>
+            <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded shadow-sm transition-colors cursor-pointer">
                 <i data-lucide="printer" class="w-3.5 h-3.5"></i>
-                {{ $isPublic ? 'Download / Print' : 'Print Invoice' }}
+                Print Invoice
             </button>
             @unless($isPublic)
-                <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
+                <a href="{{ route('admin.orders.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="list" class="w-3.5 h-3.5"></i>
                     All Orders
                 </a>
@@ -143,8 +155,8 @@
         </div>
     </div>
 
-    <!-- Normal Flat Invoice Document -->
-    <div class="invoice-wrapper {{ $scaleClass }} max-w-4xl mx-auto bg-white border border-slate-200 shadow-sm p-6 sm:p-8">
+    <!-- Normal Flat Invoice Document (No outer border box) -->
+    <div class="invoice-wrapper {{ $scaleClass }} max-w-4xl mx-auto bg-white p-6 sm:p-8">
         
         <!-- Top Header: Logo, Company info & Invoice Details -->
         <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-slate-200">
@@ -309,16 +321,40 @@
                     <!-- Conditions: PRE-OWNED -->
                     <div>
                         <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (FOR PRE-OWNED &amp; OPEN BOX LAPTOP ONLY)</span>
-                        <ol class="text-[9.5px] text-slate-600 space-y-0.5 list-decimal list-inside leading-snug">
-                            <li>10 Days Parts Replacement Guarantee Without Display, Adapter &amp; Casing. If The Same Model/Variant Is Unavailable, Then With Any Available Product Of The Same Or Higher Price Range By Adjusting The Price Accordingly, As Decided By {{ $company['name'] }}.</li>
-                            <li>5 Years Service Warranty Without Parts. If Service Is Not Possible, Then New Parts Need To Be Purchased By Customer.</li>
-                            <li>70% Cash Is Refundable In Case Of Return After Buying Within 7 Days, Exchange Value To Be Determined By {{ $company['name'] }}.</li>
-                            <li>The Warranty/Guarantee Is Not Applicable For Any: Physical Damage, Internal Burn, Warranty Sticker Damage/Removal Etc.</li>
-                            <li>If Any Product Is Lost Or Damaged Through The Courier Service, The Customer Will Contact The Courier Company, {{ $company['name'] }} Authority Is Not Responsible.</li>
-                            <li>After Sales Service Is Only Available At Service Center, Service Center Off Days: Dhaka: Tuesday, Rajshahi: Friday &amp; Sunday, Bogura: Friday &amp; Saturday.</li>
-                            <li>If Product Has No Fault As Per Deal/Advertisement &amp; Customer Changes His/Her Mind Without Any Logical/Valid Reason, Pre-Order/Pre-Booked Money Won't Be Refunded.</li>
-                            <li>Online/Courier-Based Orders Imply Acceptance Of All Terms, Even Without Customer Signature.</li>
-                        </ol>
+                        <div class="text-[9.5px] text-slate-600 space-y-0.5 leading-snug">
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">1.</span>
+                                <span>10 Days Parts Replacement Guarantee Without Display, Adapter &amp; Casing. If The Same Model/Variant Is Unavailable, Then With Any Available Product Of The Same Or Higher Price Range By Adjusting The Price Accordingly, As Decided By {{ $company['name'] }}.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">2.</span>
+                                <span>5 Years Service Warranty Without Parts. If Service Is Not Possible, Then New Parts Need To Be Purchased By Customer.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">3.</span>
+                                <span>70% Cash Is Refundable In Case Of Return After Buying Within 7 Days, Exchange Value To Be Determined By {{ $company['name'] }}.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">4.</span>
+                                <span>The Warranty/Guarantee Is Not Applicable For Any: Physical Damage, Internal Burn, Warranty Sticker Damage/Removal Etc.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">5.</span>
+                                <span>If Any Product Is Lost Or Damaged Through The Courier Service, The Customer Will Contact The Courier Company, {{ $company['name'] }} Authority Is Not Responsible.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">6.</span>
+                                <span>After Sales Service Is Only Available At Service Center, Service Center Off Days: Dhaka: Tuesday, Rajshahi: Friday &amp; Sunday, Bogura: Friday &amp; Saturday.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">7.</span>
+                                <span>If Product Has No Fault As Per Deal/Advertisement &amp; Customer Changes His/Her Mind Without Any Logical/Valid Reason, Pre-Order/Pre-Booked Money Won't Be Refunded.</span>
+                            </div>
+                            <div class="flex items-start gap-1">
+                                <span class="shrink-0 font-medium">8.</span>
+                                <span>Online/Courier-Based Orders Imply Acceptance Of All Terms, Even Without Customer Signature.</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- NB Section -->
@@ -382,11 +418,77 @@
             }
         });
 
-        @if(($autoPrint ?? false))
-        window.addEventListener('load', function() {
-            setTimeout(function() { window.print(); }, 400);
-        });
-        @endif
+        function downloadInvoicePDF() {
+            const wrapper = document.querySelector('.invoice-wrapper');
+            if (!wrapper) return;
+
+            const originalWidth = wrapper.style.width;
+            const originalMaxWidth = wrapper.style.maxWidth;
+            const originalPadding = wrapper.style.padding;
+            
+            wrapper.style.width = '794px';
+            wrapper.style.maxWidth = '794px';
+            wrapper.style.padding = '20px 28px';
+
+            const opt = {
+                margin: [4, 6, 4, 6],
+                filename: 'Invoice-{{ $order->order_number }}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    allowTaint: true, 
+                    logging: false,
+                    windowWidth: 800
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            return html2pdf().set(opt).from(wrapper).save().then(function() {
+                wrapper.style.width = originalWidth;
+                wrapper.style.maxWidth = originalMaxWidth;
+                wrapper.style.padding = originalPadding;
+            }).catch(function(err) {
+                console.error("PDF download failed:", err);
+                wrapper.style.width = originalWidth;
+                wrapper.style.maxWidth = originalMaxWidth;
+                wrapper.style.padding = originalPadding;
+            });
+        }
+
+        function ensureHtml2PdfAndRun(callback) {
+            if (typeof html2pdf !== 'undefined') {
+                setTimeout(callback, 250);
+            } else {
+                let attempts = 0;
+                const interval = setInterval(() => {
+                    attempts++;
+                    if (typeof html2pdf !== 'undefined') {
+                        clearInterval(interval);
+                        setTimeout(callback, 250);
+                    } else if (attempts > 60) {
+                        clearInterval(interval);
+                        console.error("html2pdf failed to load in time.");
+                    }
+                }, 50);
+            }
+        }
+
+        function runWhenReady() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('download') === '1') {
+                ensureHtml2PdfAndRun(downloadInvoicePDF);
+            } else if (urlParams.get('print') === '1') {
+                setTimeout(function() { window.print(); }, 300);
+            }
+        }
+
+        if (document.readyState === 'complete') {
+            runWhenReady();
+        } else {
+            window.addEventListener('load', runWhenReady);
+        }
 
         function autoFitInvoiceToA4() {
             const wrapper = document.querySelector('.invoice-wrapper');

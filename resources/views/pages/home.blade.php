@@ -116,6 +116,8 @@ if (!function_exists('sectionTitleSizeStyle')) {
         object-fit: cover;
         object-position: center;
         display: block;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: high-quality;
     }
     @media (min-width: 640px) {
         .promo-banner-grid {
@@ -504,22 +506,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
 @if(isset($productSections) && count($productSections) > 0)
     @foreach ($productSections as $index => $sec)
-        <section class="container-page py-10 {{ $index > 0 ? 'border-t border-border/50' : '' }}">
+        <section class="container-page py-10 {{ $index > 0 ? 'border-t border-border/50' : '' }}" id="section-block-{{ $index }}">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div class="max-w-2xl">
                     <h2 class="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl {{ sectionTitleSizeClass($sec['style'] ?? null) }}"{!! sectionTitleSizeStyle($sec['style'] ?? null) !!}>
                         {!! renderSectionTitle($sec['title'], $sec['highlight'], $sec['style'] ?? null) !!}
                     </h2>
                 </div>
-                <a href="{{ $sec['viewAllLink'] ?? '/shop' }}" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">View all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+                <div class="flex items-center gap-3">
+                    <!-- Price Sort Toggle (High to Low / Low to High) -->
+                    <button type="button" 
+                            onclick="toggleSectionPriceSort({{ $index }}, this)" 
+                            class="group/sort inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border bg-secondary/60 hover:bg-secondary text-xs font-medium text-foreground transition-all cursor-pointer shadow-xs hover:border-foreground/30"
+                            title="Sort by price (High to Low / Low to High)"
+                            data-sort-order="high_to_low">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 text-accent transition-transform"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+                        <span class="sort-label text-[11px] font-semibold">High Price → Low Price</span>
+                    </button>
+
+                    <a href="{{ $sec['viewAllLink'] ?? '/shop' }}" class="group inline-flex items-center gap-1.5 text-sm font-medium text-foreground">View all<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right h-4 w-4 transition-transform group-hover:translate-x-0.5"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+                </div>
             </div>
-            <div class="mt-8 grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div class="mt-8 grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 transition-opacity duration-200" id="product-grid-{{ $index }}">
                 @foreach ($sec['products'] as $product)
                     @include('partials.product-card', ['product' => $product])
                 @endforeach
             </div>
         </section>
     @endforeach
+
+    <script>
+    function toggleSectionPriceSort(sectionIndex, btn) {
+        const grid = document.getElementById('product-grid-' + sectionIndex);
+        if (!grid) return;
+
+        const cards = Array.from(grid.children);
+        if (!cards.length) return;
+
+        const currentOrder = btn.getAttribute('data-sort-order') || 'high_to_low';
+        const labelSpan = btn.querySelector('.sort-label');
+
+        if (currentOrder === 'high_to_low') {
+            // Sort: Low to High
+            cards.sort((a, b) => {
+                const priceA = parseFloat(a.dataset.price || 0);
+                const priceB = parseFloat(b.dataset.price || 0);
+                return priceA - priceB;
+            });
+            btn.setAttribute('data-sort-order', 'low_to_high');
+            if (labelSpan) labelSpan.textContent = 'Low Price → High Price';
+        } else {
+            // Sort: High to Low
+            cards.sort((a, b) => {
+                const priceA = parseFloat(a.dataset.price || 0);
+                const priceB = parseFloat(b.dataset.price || 0);
+                return priceB - priceA;
+            });
+            btn.setAttribute('data-sort-order', 'high_to_low');
+            if (labelSpan) labelSpan.textContent = 'High Price → Low Price';
+        }
+
+        grid.style.opacity = '0.4';
+        setTimeout(() => {
+            cards.forEach(card => grid.appendChild(card));
+            grid.style.opacity = '1';
+        }, 100);
+    }
+    </script>
 @endif
 
 @if($homeTestimonialsActive ?? true)
