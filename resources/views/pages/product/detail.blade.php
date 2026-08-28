@@ -72,7 +72,7 @@
         <div>
             <div class="group overflow-hidden rounded-md border border-border bg-surface">
                 <div class="aspect-square" id="mainImageStage" style="position:relative;overflow:hidden">
-                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="1200" height="1200" style="transform-origin:50% 50%" class="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.8]" />
+                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="1200" height="1200" style="transform-origin:50% 50%" class="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.8]" />
                 </div>
             </div>
             @if($product->images->count() > 1)
@@ -80,7 +80,7 @@
                     @foreach($product->images as $image)
                         <div class="gallery-thumb shrink-0 overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}" style="width:72px">
                             <div class="aspect-square">
-                                <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-cover" />
+                                <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-contain" />
                             </div>
                         </div>
                     @endforeach
@@ -123,7 +123,7 @@
                             overlay.alt = mainImg.alt;
                             overlay.draggable = false;
                             overlay.setAttribute('aria-hidden', 'true');
-                            overlay.className = 'h-full w-full object-cover';
+                            overlay.className = 'h-full w-full object-contain';
                             overlay.style.position = 'absolute';
                             overlay.style.inset = '0';
                             overlay.style.transform = 'translateX(' + (direction * 100) + '%)';

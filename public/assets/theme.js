@@ -1,8 +1,10 @@
 (function() {
-    // 1. Initial theme application before DOM loads to avoid flash
+    // 1. Initial theme application before DOM loads to avoid flash.
+    // Light is the default for every visitor regardless of their OS setting —
+    // dark mode only applies when the visitor has explicitly chosen it before
+    // (persisted in localStorage by the toggle below).
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+    if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
     } else {
         document.documentElement.classList.remove('dark');
