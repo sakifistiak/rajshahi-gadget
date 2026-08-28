@@ -9,6 +9,18 @@
 <div class="container-page py-10" data-tsd-source="/src/routes/product.$slug.tsx:46:5">
 
     <style>
+        /* Same reasoning as checkout/cart: the static styles-CC_Lznyw.css bundle
+           is missing whole families of utility classes, so a few product rows
+           don't shrink and push the page into horizontal overflow on mobile.
+           Hard-stop it here and let long content wrap / tables scroll instead. */
+        html, body { overflow-x: hidden; }
+        .product-card, .product-card *,
+        .spec-recently-viewed-grid, .spec-recently-viewed-grid *,
+        #relatedProducts, #relatedProducts * { min-width: 0; }
+        .product-title, .product-rich-text, .product-rich-text * { overflow-wrap: anywhere; }
+        .product-rich-text table { display: block; width: 100%; max-width: 100%; overflow-x: auto; }
+        .product-rich-text img, .product-rich-text iframe, .product-rich-text video { max-width: 100%; height: auto; }
+
         .product-title { font-size: 20px; }
         @media (min-width: 640px) {
             .product-title { font-size: 24px; }
