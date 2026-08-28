@@ -51,12 +51,37 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:16px;width:16px" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
                         View Invoice
                     </a>
-                    <a href="{{ route('orders.invoice', $order->order_number) }}?print=1" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-full font-bold text-sm" style="background:#24272c; color:#ffffff; height:44px; padding:0 16px; text-decoration:none">
+                    <button type="button" onclick="directDownloadInvoice('{{ route('orders.invoice', $order->order_number) }}?download=1', this)" class="inline-flex items-center justify-center gap-2 rounded-full font-bold text-sm cursor-pointer" style="background:#24272c; color:#ffffff; height:44px; padding:0 16px; border:none; width:100%">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:16px;width:16px" aria-hidden="true"><path d="M12 15V3"></path><path d="m6 11 6 6 6-6"></path><path d="M19 21H5"></path></svg>
-                        Download Invoice
-                    </a>
+                        <span>Download Invoice</span>
+                    </button>
                 </div>
             </div>
+
+            <script>
+                function directDownloadInvoice(url, btn) {
+                    const originalHtml = btn.innerHTML;
+                    btn.innerHTML = '<span style="display:inline-block; animation:spin 1s linear infinite; margin-right:6px">⌛</span> Downloading PDF...';
+                    btn.disabled = true;
+
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'fixed';
+                    iframe.style.left = '-9999px';
+                    iframe.style.top = '0';
+                    iframe.style.width = '900px';
+                    iframe.style.height = '1200px';
+                    iframe.style.opacity = '0';
+                    iframe.style.pointerEvents = 'none';
+                    iframe.src = url;
+                    document.body.appendChild(iframe);
+
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                        setTimeout(() => iframe.remove(), 10000);
+                    }, 3500);
+                }
+            </script>
 
             <div class="mt-6 rounded-lg border border-border bg-card p-5">
                 <h2 class="text-lg font-semibold">Order details</h2>

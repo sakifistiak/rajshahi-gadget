@@ -254,7 +254,7 @@
             iframe.style.position = 'fixed';
             iframe.style.left = '-9999px';
             iframe.style.top = '0';
-            iframe.style.width = '800px';
+            iframe.style.width = '900px';
             iframe.style.height = '1200px';
             iframe.style.opacity = '0';
             iframe.style.pointerEvents = 'none';

@@ -38,7 +38,7 @@
 
         @page {
             size: A4 portrait;
-            margin: 6mm 10mm;
+            margin: 6mm 6mm;
         }
 
         @media print {
@@ -349,7 +349,6 @@
 
                     <!-- NB Section -->
                     <div class="text-[9px] text-slate-500 pt-1 border-t border-slate-200 space-y-0.5 leading-snug bg-slate-50 p-2 rounded">
-                        <p><strong class="text-slate-700">NB:</strong></p>
                         <p>• <strong class="text-slate-700">Replacement Means:</strong> ১০ দিনের মধ্যে বিনামূল্যে যন্ত্রাংশ পরিবর্তন করে দেওয়া।</p>
                         <p>• <strong class="text-slate-700">Exchange Means:</strong> একটি পণ্যের পরিবর্তে অন্য পণ্য নেয়া; এক্ষেত্রে কাস্টোমারের পণ্যের মূল্য খান গ্যাজেট ক্রয় বিভাগ নির্ধারণ করবে।</p>
                         <p>• <strong class="text-slate-700">Refund Means:</strong> গ্রাহক ক্রয়ের ৭ দিনের মধ্যে বিনা ক্ষতিতে পণ্য ফেরত দিলে ক্রয়মূল্যের ৭০% টাকা পাবে। ৭ দিন পার হবার পর এই সুযোগ আর নেই।</p>
@@ -412,16 +411,10 @@
             const wrapper = document.querySelector('.invoice-wrapper');
             if (!wrapper) return;
 
-            const originalWidth = wrapper.style.width;
-            const originalMaxWidth = wrapper.style.maxWidth;
-            const originalPadding = wrapper.style.padding;
-            
-            wrapper.style.width = '794px';
-            wrapper.style.maxWidth = '794px';
-            wrapper.style.padding = '20px 28px';
+            window.scrollTo(0, 0);
 
             const opt = {
-                margin: [4, 6, 4, 6],
+                margin: [6, 6, 6, 6],
                 filename: 'Invoice-{{ $order->order_number }}.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
@@ -429,22 +422,14 @@
                     useCORS: true, 
                     allowTaint: true, 
                     logging: false,
-                    windowWidth: 800
+                    scrollX: 0,
+                    scrollY: 0
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
-            return html2pdf().set(opt).from(wrapper).save().then(function() {
-                wrapper.style.width = originalWidth;
-                wrapper.style.maxWidth = originalMaxWidth;
-                wrapper.style.padding = originalPadding;
-            }).catch(function(err) {
-                console.error("PDF download failed:", err);
-                wrapper.style.width = originalWidth;
-                wrapper.style.maxWidth = originalMaxWidth;
-                wrapper.style.padding = originalPadding;
-            });
+            return html2pdf().set(opt).from(wrapper).save();
         }
 
         function ensureHtml2PdfAndRun(callback) {
