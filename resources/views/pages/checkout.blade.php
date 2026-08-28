@@ -14,7 +14,7 @@
            layout, spacing and input sizing has to be hand-covered here instead
            of relying on Tailwind classes like gap-1.5, py-2.5, sm:grid-cols-2,
            lg:grid-cols-[...] which silently do nothing in this bundle. */
-        html, body { overflow-x: hidden; }
+        html, body { overflow-x: clip; }
         /* Grid/flex items default to min-width:auto, which sizes them to fit
            their content (e.g. a long un-wrapped product name) even past the
            viewport. min-width:0 lets them shrink instead of pushing the page

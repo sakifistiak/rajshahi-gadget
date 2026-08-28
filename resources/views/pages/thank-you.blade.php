@@ -12,7 +12,7 @@
            bundle is missing fractional-value and sm:/lg: responsive utility
            classes entirely, so layout/spacing here is hand-covered instead of
            relying on Tailwind classes that silently do nothing in this bundle. */
-        html, body { overflow-x: hidden; }
+        html, body { overflow-x: clip; }
         /* Flex/grid items default to min-width:auto, which sizes them to fit
            their content (e.g. a long un-wrapped product name or price) even
            past the viewport. min-width:0 lets them shrink instead of pushing

@@ -12,8 +12,10 @@
         /* Same reasoning as checkout/cart: the static styles-CC_Lznyw.css bundle
            is missing whole families of utility classes, so a few product rows
            don't shrink and push the page into horizontal overflow on mobile.
-           Hard-stop it here and let long content wrap / tables scroll instead. */
-        html, body { overflow-x: hidden; }
+           Hard-stop it here and let long content wrap / tables scroll instead.
+           `clip` (not `hidden`) so the sticky header keeps working — `overflow-x:
+           hidden` on body turns it into a scroll container and breaks sticky. */
+        html, body { overflow-x: clip; }
         .product-card, .product-card *,
         .spec-recently-viewed-grid, .spec-recently-viewed-grid *,
         #relatedProducts, #relatedProducts * { min-width: 0; }

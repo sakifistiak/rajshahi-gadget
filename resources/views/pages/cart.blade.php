@@ -3,7 +3,7 @@
    (grid-cols-[88px_1fr], lg:grid-cols-[1.5fr_1fr]), so the cart layout is
    hand-covered here instead — otherwise the item rows collapse and push the
    page into horizontal overflow on mobile (prices/summary run off-screen). */
-html, body { overflow-x: hidden; }
+html, body { overflow-x: clip; }
 .kg-cart-layout { display: grid; gap: 2.5rem; grid-template-columns: 1fr; align-items: start; }
 @media (min-width: 1024px) { .kg-cart-layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
 .kg-cart-layout, .kg-cart-layout * { min-width: 0; }
