@@ -95,7 +95,7 @@ class PageController extends Controller
             'target' => SiteSetting::getValue('popup_offer_target', '_self'),
             'frequency' => SiteSetting::getValue('popup_offer_frequency', 'session'),
             'delay' => (float) SiteSetting::getValue('popup_offer_delay', '1'),
-            'backdrop_blur' => SiteSetting::getValue('popup_offer_backdrop_blur', 'md'),
+            'backdrop_blur' => SiteSetting::getValue('popup_offer_backdrop_blur', '8'),
         ];
 
         $homeTrustbarActive = SiteSetting::getValue('home_trustbar_active', '1') == '1';

@@ -7,6 +7,10 @@
         $target    = $popupOfferSettings['target'] ?: '_self';
         $image     = $popupOfferSettings['image'];
         $imageMob  = $popupOfferSettings['image_mobile'] ?? '';
+        // Signature of the current offer — changes whenever the admin swaps the
+        // image/link/frequency, which re-arms the popup for visitors who already
+        // dismissed a previous offer.
+        $sig       = substr(md5($image.'|'.$imageMob.'|'.$link.'|'.$frequency), 0, 10);
     @endphp
 
     {{-- Popup Backdrop --}}
@@ -52,15 +56,30 @@
         (function () {
             var FREQ  = '{{ $frequency }}';
             var DELAY = {{ $delay * 1000 }};
-            var SK    = 'kg_popup_dismissed';
-            var LK    = 'kg_popup_dismissed_until';
+            var SIG   = '{{ $sig }}';
+            var SK    = 'kg_popup_dismissed_' + SIG;
+            var LK    = 'kg_popup_until_' + SIG;
+
+            // Drop dismissal flags from older offers so localStorage doesn't grow.
+            try {
+                for (var i = localStorage.length - 1; i >= 0; i--) {
+                    var k = localStorage.key(i);
+                    if (k && k.indexOf('kg_popup_until_') === 0 && k !== LK) {
+                        localStorage.removeItem(k);
+                    }
+                }
+            } catch (e) {}
 
             function shouldShow() {
-                if (FREQ === 'always') return true;
-                if (FREQ === 'session') return sessionStorage.getItem(SK) !== '1';
-                if (FREQ === 'daily') {
-                    var until = localStorage.getItem(LK);
-                    return !until || Date.now() >= parseInt(until, 10);
+                try {
+                    if (FREQ === 'always') return true;
+                    if (FREQ === 'session') return sessionStorage.getItem(SK) !== '1';
+                    if (FREQ === 'daily') {
+                        var until = localStorage.getItem(LK);
+                        return !until || Date.now() >= parseInt(until, 10);
+                    }
+                } catch (e) {
+                    return true;
                 }
                 return false;
             }
@@ -72,8 +91,10 @@
                 el.style.transition = 'opacity 0.2s ease';
                 setTimeout(function () { el.style.display = 'none'; }, 200);
 
-                if (FREQ === 'session') sessionStorage.setItem(SK, '1');
-                else if (FREQ === 'daily') localStorage.setItem(LK, (Date.now() + 86400000).toString());
+                try {
+                    if (FREQ === 'session') sessionStorage.setItem(SK, '1');
+                    else if (FREQ === 'daily') localStorage.setItem(LK, (Date.now() + 86400000).toString());
+                } catch (e) {}
             };
 
             document.addEventListener('keydown', function (e) {

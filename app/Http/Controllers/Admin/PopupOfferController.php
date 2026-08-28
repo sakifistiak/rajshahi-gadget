@@ -12,14 +12,14 @@ class PopupOfferController extends Controller
     public function index()
     {
         $settingsKeys = [
-            'popup_offer_active'        => '0',
-            'popup_offer_image'         => '',
-            'popup_offer_image_mobile'  => '',
-            'popup_offer_link'          => '/shop',
-            'popup_offer_target'        => '_self',
-            'popup_offer_frequency'     => 'session',
-            'popup_offer_delay'         => '1',
-            'popup_offer_backdrop_blur' => 'md',
+            'popup_offer_active' => '0',
+            'popup_offer_image' => '',
+            'popup_offer_image_mobile' => '',
+            'popup_offer_link' => '/shop',
+            'popup_offer_target' => '_self',
+            'popup_offer_frequency' => 'session',
+            'popup_offer_delay' => '1',
+            'popup_offer_backdrop_blur' => '8',
         ];
 
         $settings = [];
@@ -35,7 +35,7 @@ class PopupOfferController extends Controller
         if ($request->has('popup_offer_active')) {
             $existingDesktopImage = SiteSetting::getValue('popup_offer_image');
             $hasNewDesktopImage = $request->hasFile('popup_offer_image_file') || $request->filled('popup_offer_image');
-            if (empty($existingDesktopImage) && !$hasNewDesktopImage) {
+            if (empty($existingDesktopImage) && ! $hasNewDesktopImage) {
                 return redirect()->back()->withErrors(['popup_offer_image' => 'Desktop banner image is required to enable popup offer.'])->withInput();
             }
         }
@@ -44,14 +44,14 @@ class PopupOfferController extends Controller
 
         if ($request->hasFile('popup_offer_image_file')) {
             $path = ImageUploader::storeOnDisk($request->file('popup_offer_image_file'), 'popups');
-            SiteSetting::setValue('popup_offer_image', '/storage/' . $path);
+            SiteSetting::setValue('popup_offer_image', '/storage/'.$path);
         } elseif ($request->has('popup_offer_image')) {
             SiteSetting::setValue('popup_offer_image', $request->input('popup_offer_image', ''));
         }
 
         if ($request->hasFile('popup_offer_image_mobile_file')) {
             $pathMobile = ImageUploader::storeOnDisk($request->file('popup_offer_image_mobile_file'), 'popups');
-            SiteSetting::setValue('popup_offer_image_mobile', '/storage/' . $pathMobile);
+            SiteSetting::setValue('popup_offer_image_mobile', '/storage/'.$pathMobile);
         } elseif ($request->has('popup_offer_image_mobile')) {
             SiteSetting::setValue('popup_offer_image_mobile', $request->input('popup_offer_image_mobile', ''));
         }
