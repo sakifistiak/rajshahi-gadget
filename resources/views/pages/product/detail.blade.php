@@ -90,7 +90,7 @@
                 </div>
             </div>
             @if($product->images->count() > 1)
-                <div class="mt-4 flex gap-3 overflow-x-auto pb-1" style="scrollbar-width:thin">
+                <div id="galleryThumbs" class="mt-4 flex gap-3 overflow-x-auto pb-1">
                     @foreach($product->images as $image)
                         <div class="gallery-thumb shrink-0 overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}" style="width:72px">
                             <div class="aspect-square">
@@ -100,6 +100,10 @@
                     @endforeach
                 </div>
                 <style>
+                    /* No visible scrollbar — the strip slides itself so the active
+                       thumbnail is always centred when a photo is selected. */
+                    #galleryThumbs { scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+                    #galleryThumbs::-webkit-scrollbar { width: 0; height: 0; display: none; }
                     .gallery-thumb { cursor: pointer; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color .15s ease; }
                     .gallery-thumb.is-active { outline-color: var(--foreground); }
                     @media (min-width: 640px) {
@@ -110,7 +114,21 @@
                     (function () {
                         var stage = document.getElementById('mainImageStage');
                         var mainImg = document.getElementById('mainProductImage');
+                        var thumbStrip = document.getElementById('galleryThumbs');
                         var thumbs = Array.prototype.slice.call(document.querySelectorAll('.gallery-thumb'));
+
+                        // Slide the thumbnail strip so the selected photo sits in the
+                        // middle (clamped at the ends). Only moves the strip itself,
+                        // never the page.
+                        function centreThumb(thumb) {
+                            if (!thumbStrip || !thumb) return;
+                            var stripRect = thumbStrip.getBoundingClientRect();
+                            var thumbRect = thumb.getBoundingClientRect();
+                            var thumbLeftInContent = (thumbRect.left - stripRect.left) + thumbStrip.scrollLeft;
+                            var target = thumbLeftInContent - (thumbStrip.clientWidth / 2) + (thumbRect.width / 2);
+                            var max = thumbStrip.scrollWidth - thumbStrip.clientWidth;
+                            thumbStrip.scrollTo({ left: Math.max(0, Math.min(target, max)), behavior: 'smooth' });
+                        }
                         var currentIndex = 0;
                         var animating = false;
                         thumbs.forEach(function (t) {
@@ -162,6 +180,7 @@
                             currentIndex = newIndex;
                             thumbs.forEach(function (t) { t.classList.remove('is-active'); });
                             thumb.classList.add('is-active');
+                            centreThumb(thumb);
                         }
 
                         thumbs.forEach(function (thumb) {
