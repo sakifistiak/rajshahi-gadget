@@ -12,7 +12,6 @@ use App\Support\ProductFilterSync;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -68,11 +67,30 @@ class ProductController extends Controller
         }
 
         $products = $query->latest()->paginate(15)->withQueryString();
+
+        // Live search / filter / pagination requests only need the table markup.
+        if ($request->ajax()) {
+            return view('admin.products._results', compact('products'));
+        }
+
         $categories = Category::orderBy('name')->get();
         $conditions = Condition::orderBy('label')->get();
         $brands = Brand::orderBy('name')->get();
 
         return view('admin.products.index', compact('products', 'categories', 'conditions', 'brands'));
+    }
+
+    /**
+     * Only allow redirecting back to a URL that belongs to this admin product list,
+     * so a tampered ?return= value can't bounce the user off-site.
+     */
+    private function safeReturnUrl(?string $return): ?string
+    {
+        if (! $return) {
+            return null;
+        }
+
+        return str_starts_with($return, route('admin.products.index')) ? $return : null;
     }
 
     public function create(): View
@@ -294,18 +312,22 @@ class ProductController extends Controller
 
         ProductFilterSync::syncProduct($product);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully!');
+        $target = $this->safeReturnUrl($request->input('return')) ?? route('admin.products.index');
+
+        return redirect($target)->with('success', 'Product updated successfully!');
     }
 
-    public function destroy(Product $product): RedirectResponse
+    public function destroy(Request $request, Product $product): RedirectResponse
     {
+        $target = $this->safeReturnUrl($request->input('return')) ?? route('admin.products.index');
+
         if ($product->orderItems()->exists()) {
-            return redirect()->route('admin.products.index')->with('error', "Cannot delete \"{$product->name}\" because it has existing orders.");
+            return redirect($target)->with('error', "Cannot delete \"{$product->name}\" because it has existing orders.");
         }
 
         $product->delete();
 
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully!');
+        return redirect($target)->with('success', 'Product deleted successfully!');
     }
 
     public function bulkDestroy(Request $request): RedirectResponse
@@ -315,6 +337,8 @@ class ProductController extends Controller
             'ids.*' => 'exists:products,id',
         ]);
 
+        $target = $this->safeReturnUrl($request->input('return')) ?? route('admin.products.index');
+
         $products = Product::whereIn('id', $request->input('ids'))->withCount('orderItems')->get();
         $deletable = $products->where('order_items_count', 0);
         $blocked = $products->where('order_items_count', '>', 0);
@@ -322,7 +346,7 @@ class ProductController extends Controller
         Product::whereIn('id', $deletable->pluck('id'))->delete();
 
         if ($blocked->isEmpty()) {
-            return redirect()->route('admin.products.index')->with('success', 'Selected products deleted successfully!');
+            return redirect($target)->with('success', 'Selected products deleted successfully!');
         }
 
         $message = $deletable->count() > 0
@@ -330,7 +354,7 @@ class ProductController extends Controller
             : '';
         $message .= 'Could not delete '.$blocked->pluck('name')->implode(', ').' because they have existing orders.';
 
-        return redirect()->route('admin.products.index')->with($deletable->count() > 0 ? 'success' : 'error', $message);
+        return redirect($target)->with($deletable->count() > 0 ? 'success' : 'error', $message);
     }
 
     private function storeUploadedImage(UploadedFile $file): string

@@ -1,4 +1,12 @@
 <x-app-layout>
+    @php
+        // Where to send the admin back after saving — the exact catalog page/filter
+        // they came from. Only honoured if it points back at the product list.
+        $returnUrl = old('return', request('return'));
+        $backUrl = ($returnUrl && str_starts_with($returnUrl, route('admin.products.index')))
+            ? $returnUrl
+            : route('admin.products.index');
+    @endphp
     <div class="w-full space-y-6" x-data="{
         showMediaModal: false,
         imagePath: '{{ old('image_path', $product->primaryImage()) }}',
@@ -52,7 +60,7 @@
                 <h1 class="text-xl font-bold text-slate-900">Edit Product</h1>
                 <p class="text-xs text-slate-500 mt-1">{{ $product->name }}</p>
             </div>
-            <a href="{{ route('admin.products.index') }}"
+            <a href="{{ $backUrl }}"
                class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-sm transition-all">
                 <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 Back to Products
@@ -74,6 +82,7 @@
         <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-sm border border-slate-200 shadow-sm space-y-6">
             @csrf
             @method('PUT')
+            <input type="hidden" name="return" value="{{ $returnUrl }}">
 
             <!-- Name -->
             <div>
@@ -265,7 +274,7 @@
             </div>
 
             <div class="pt-4 border-t border-slate-100 flex justify-end gap-3">
-                <a href="{{ route('admin.products.index') }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-sm transition-all">
+                <a href="{{ $backUrl }}" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-sm transition-all">
                     {{ __('Cancel') }}
                 </a>
                 <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-sm shadow-sm transition-all flex items-center gap-2">
