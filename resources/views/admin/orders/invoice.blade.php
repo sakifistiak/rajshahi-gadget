@@ -304,17 +304,17 @@
                     <div>
                         <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (For Intact Laptop Only)</span>
                         <p class="text-[10px] text-slate-600 leading-snug">
-                            Warranty Coverage Shown On The Website Is Based On Our Purchase Date From The Brand. Your Warranty Will Be Counted From The Date Of Your Purchase From Us, And You Will Receive 1 Year Warranty. The Duration Or Years Displayed On The Official Site Does Not Apply. Carry Cost To Be Paid By Customer For International Warranty Claim (+ 4 To 8 No. Conditions Apply).
+                           Warranty Coverage Shown On The Website Is Based On Our Purchase Date From The Brand. Your Warranty Will Be Counted From The Date Of Your Purchase From Us, And You Will Receive 2 Years International Warranty. The Duration Or Years Displayed On The Official Site Does Not Apply. Carry Cost To Be Paid By Customer For International Warranty Claim. + 4 To 8 No. Conditions Apply.
                         </p>
                     </div>
 
                     <!-- Conditions: PRE-OWNED -->
                     <div>
-                        <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (FOR PRE-OWNED &amp; OPEN BOX LAPTOP ONLY)</span>
+                        <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (FOR PRE-OWNED & OPEN BOX LAPTOP ONLY)</span>
                         <div class="text-[9.5px] text-slate-600 space-y-0.5 leading-snug">
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">1.</span>
-                                <span>10 Days Parts Replacement Guarantee Without Display, Adapter &amp; Casing. If The Same Model/Variant Is Unavailable, Then With Any Available Product Of The Same Or Higher Price Range By Adjusting The Price Accordingly, As Decided By {{ $company['name'] }}.</span>
+                                <span>10 Days Parts Replacement Guarantee Without Display, Adapter & Casing. If The Same Model/Variant Is Unavailable, Then With Any Available Product Of The Same Or Higher Price Range By Adjusting Price Accordingly, As Decided By Khan Gadget.</span>
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">2.</span>
@@ -322,36 +322,29 @@
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">3.</span>
-                                <span>70% Cash Is Refundable In Case Of Return After Buying Within 7 Days, Exchange Value To Be Determined By {{ $company['name'] }}.</span>
+                                <span>70% Cash Is Refundable In Case Of Return After Buying Within 7 Days, Exchange Value To Be Determined By Khan Gadget.</span>
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">4.</span>
-                                <span>The Warranty/Guarantee Is Not Applicable For Any: Physical Damage, Internal Burn, Warranty Sticker Damage/Removal Etc.</span>
+                                <span>The Warranty/Guarantee Is Not Applicable For Any: Physical Damage, Internal Burn, Warranty Sticker Damage/Removing Etc.</span>
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">5.</span>
-                                <span>If Any Product Is Lost Or Damaged Through The Courier Service, The Customer Will Contact The Courier Company, {{ $company['name'] }} Authority Is Not Responsible.</span>
+                                <span>If Any Product Is Lost Or Damaged Through The Courier Service, The Customer Will Contact The Courier Company, Khan Gadget Authority Is Not Responsible.</span>
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">6.</span>
-                                <span>After Sales Service Is Only Available At Service Center, Service Center Off Days: Dhaka: Tuesday, Rajshahi: Friday &amp; Sunday, Bogura: Friday &amp; Saturday.</span>
+                                <span>After Sales Service Is Only Available At Service Center, Service Center Off day: Dhaka- Tuesday, Rajshahi & Bogura- Friday.</span>
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">7.</span>
-                                <span>If Product Has No Fault As Per Deal/Advertisement &amp; Customer Changes His/Her Mind Without Any Logical/Valid Reason, Pre-Order/Pre-Booked Money Won't Be Refunded.</span>
+                                <span>If Product Has No Fault As Per Deal/Advertisement & Customer Changes His/Her Mind Without Any Logical/Valid Reason, Pre-Order/Pre-Booked Money Won't Be Refunded.</span>
                             </div>
                             <div class="flex items-start gap-1">
                                 <span class="shrink-0 font-medium">8.</span>
-                                <span>Online/Courier-Based Orders Imply Acceptance Of All Terms, Even Without Customer Signature.</span>
+                                <span>Online/Courier-Based Order Imply Acceptance of All Terms, Even Without Customer Signature.</span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- NB Section -->
-                    <div class="text-[9px] text-slate-500 pt-1 border-t border-slate-200 space-y-0.5 leading-snug bg-slate-50 p-2 rounded">
-                        <p>• <strong class="text-slate-700">Replacement Means:</strong> ১০ দিনের মধ্যে বিনামূল্যে যন্ত্রাংশ পরিবর্তন করে দেওয়া।</p>
-                        <p>• <strong class="text-slate-700">Exchange Means:</strong> একটি পণ্যের পরিবর্তে অন্য পণ্য নেয়া; এক্ষেত্রে কাস্টোমারের পণ্যের মূল্য খান গ্যাজেট ক্রয় বিভাগ নির্ধারণ করবে।</p>
-                        <p>• <strong class="text-slate-700">Refund Means:</strong> গ্রাহক ক্রয়ের ৭ দিনের মধ্যে বিনা ক্ষতিতে পণ্য ফেরত দিলে ক্রয়মূল্যের ৭০% টাকা পাবে। ৭ দিন পার হবার পর এই সুযোগ আর নেই।</p>
                     </div>
                 </div>
             </div>
@@ -376,6 +369,22 @@
                     <span class="text-xs font-bold text-slate-900">Grand Total:</span>
                     <span class="text-lg font-extrabold text-blue-600">৳{{ number_format($order->total) }}</span>
                 </div>
+            </div>
+        </div>
+
+        <!-- Full Width NB Section Across Page -->
+        <div class="page-break-avoid w-full mt-2.5 pt-2 pb-1.5 border-t border-slate-200 bg-slate-50 px-2.5 rounded text-slate-700" style="font-family: 'Hind Siliguri', sans-serif; font-size: 11px; line-height: 1.45;">
+            <div class="flex items-baseline gap-1.5 py-0.5">
+                <span class="font-bold text-slate-900 shrink-0">• Replacement Means:</span>
+                <span>১০ দিনের মধ্যে বিনামূল্যে যন্ত্রাংশ পরিবর্তন করে দেওয়া...</span>
+            </div>
+            <div class="flex items-baseline gap-1.5 py-0.5">
+                <span class="font-bold text-slate-900 shrink-0">• Exchange Means:</span>
+                <span>একটি পণ্যের পরিবর্তে অন্য পণ্য নেয়া; এক্ষেত্রে কাস্টোমারের পণ্যের মূল্য খান গ্যাজেট ক্রয় বিভাগ নির্ধারণ করবে...</span>
+            </div>
+            <div class="flex items-baseline gap-1.5 py-0.5">
+                <span class="font-bold text-slate-900 shrink-0">• Refund Means:</span>
+                <span>গ্রাহক ক্রয়ের ৭ দিনের মধ্যে বিনা ক্ষতিতে পণ্য ফেরত দিলে ক্রয়মূল্যের ৭০% টাকা পাবে, ৭ দিন পার হবার পর এই সুযোগ আর নেই...</span>
             </div>
         </div>
 
