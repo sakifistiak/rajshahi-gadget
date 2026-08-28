@@ -31,7 +31,6 @@ class PageController extends Controller
         $promoBanners = PromoBanner::where('is_active', true)->orderBy('sort_order')->get();
         $allProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])->orderByDesc('in_stock')->orderByDesc('price')->get();
 
-        
         $activeFlashSale = FlashSale::live()
             ->with(['items' => function ($query) {
                 $query->orderBy('sort_order')->with(['product.images', 'product.highlights']);
@@ -512,10 +511,6 @@ class PageController extends Controller
             return view('pages.product.detail', compact('product', 'relatedProducts'));
         }
 
-        if (View::exists('pages.product.'.$slug)) {
-            return view('pages.product.'.$slug);
-        }
-
         throw new NotFoundHttpException;
     }
 
@@ -555,7 +550,7 @@ class PageController extends Controller
             return view('pages.blog.detail', compact('post'));
         }
 
-        return $this->render('pages.blog.'.$slug);
+        throw new NotFoundHttpException;
     }
 
     public function customerSpotlightIndex(Request $request)
