@@ -61,7 +61,7 @@
             <script>
                 function directDownloadInvoice(url, btn) {
                     const originalHtml = btn.innerHTML;
-                    btn.innerHTML = '<span style="display:inline-block; animation:spin 1s linear infinite; margin-right:6px">⌛</span> Downloading PDF...';
+                    btn.innerHTML = 'Downloading PDF...';
                     btn.disabled = true;
 
                     const iframe = document.createElement('iframe');
