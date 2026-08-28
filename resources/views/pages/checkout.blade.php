@@ -7,7 +7,7 @@
     <title>Checkout | {{ $siteName ?? 'Khan Gadget' }}</title>
     <link rel="stylesheet" href="/assets/styles-CC_Lznyw.css">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/assets/theme.js"></script>
+    <script src="/assets/theme.js?v=20260828"></script>
     <style>
         /* The static styles-CC_Lznyw.css bundle is missing fractional-value and
            sm:/lg: responsive utility classes entirely, so the checkout form's
