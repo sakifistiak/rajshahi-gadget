@@ -239,26 +239,32 @@
                 var l = card.querySelector('a[href*="/product/"]');
                 if (l) { var p = l.getAttribute('href').split('/product/'); if(p.length>1) productSlug=p[1].split('?')[0]; }
                 
-                // Extract price accurately from card
+                // Extract price from the card. Only read the FIRST run of digits
+                // from a currency-looking string and sanity-check the range —
+                // never strip-and-concat every digit in an element (that turns a
+                // title full of model numbers, or a "price + old price" span,
+                // into an absurd number that then shows up in the cart).
+                var priceFromText = function (text) {
+                    var s = String(text || '').replace(/[,\s]/g, '');
+                    if (s.indexOf('৳') === -1 && s.indexOf('$') === -1 && s.indexOf('Tk') === -1) return 0;
+                    var m = s.match(/\d{2,9}/);
+                    var n = m ? parseInt(m[0], 10) : 0;
+                    return (n >= 100 && n <= 100000000) ? n : 0;
+                };
                 var priceContainer = card.querySelector('.mt-3.flex, [class*="items-baseline"]');
                 if (priceContainer) {
                     var spans = priceContainer.querySelectorAll('span');
                     for (var i = 0; i < spans.length; i++) {
-                        var txt = spans[i].textContent.trim();
-                        // Ignore discount "Save" spans or line-through original price spans
-                        if (txt.includes('Save') || spans[i].classList.contains('line-through')) continue;
-                        var digits = txt.replace(/[^0-9]/g, '');
-                        if (digits) {
-                            productPrice = parseInt(digits, 10);
-                            break;
-                        }
+                        if (spans[i].textContent.includes('Save') || spans[i].classList.contains('line-through')) continue;
+                        productPrice = priceFromText(spans[i].textContent);
+                        if (productPrice) break;
                     }
                 }
                 if (!productPrice) {
-                    var fallbackPrice = card.querySelector('.text-base, .font-semibold');
-                    if (fallbackPrice) {
-                        var d = fallbackPrice.textContent.replace(/[^0-9]/g, '');
-                        if (d) productPrice = parseInt(d, 10);
+                    var priceEls = card.querySelectorAll('.text-base, .font-semibold, .tabular-nums, [class*="price" i]');
+                    for (var j = 0; j < priceEls.length; j++) {
+                        productPrice = priceFromText(priceEls[j].textContent);
+                        if (productPrice) break;
                     }
                 }
 
