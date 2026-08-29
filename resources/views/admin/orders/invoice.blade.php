@@ -34,6 +34,7 @@
         .invoice-wrapper {
             border: none !important;
             box-shadow: none !important;
+            min-height: 1050px;
         }
 
         @page {
@@ -57,11 +58,19 @@
                 border: none !important;
                 max-width: 100% !important;
                 width: 100% !important;
+                height: 100% !important;
+                min-height: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 border-radius: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
+            }
+            .invoice-footer-bottom {
+                margin-top: auto !important;
             }
             .page-break-avoid {
                 page-break-inside: avoid !important;
@@ -155,256 +164,209 @@
         </div>
     </div>
 
-    <!-- Normal Flat Invoice Document (No outer border box) -->
-    <div class="invoice-wrapper {{ $scaleClass }} max-w-4xl mx-auto bg-white p-6 sm:p-8">
+    <!-- Normal Flat Invoice Document (Full A4 layout with bottom signatures) -->
+    <div class="invoice-wrapper {{ $scaleClass }} max-w-4xl mx-auto bg-white p-6 sm:p-8 flex flex-col justify-between min-h-[1050px]">
         
-        <!-- Top Header: Logo, Company info & Invoice Details -->
-        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-slate-200">
-            <!-- Left: Company Branding & Details -->
-            <div class="space-y-1 max-w-md">
-                @if(!empty($company['logo']))
-                    <div class="mb-1.5">
-                        <img src="{{ asset($company['logo']) }}" alt="{{ $company['name'] }}" class="h-9 sm:h-10 w-auto object-contain" />
-                    </div>
-                @else
-                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $company['name'] }}</h1>
-                @endif
-
-                <div class="text-xs text-slate-600 space-y-0.5 leading-snug">
-                    @if(!empty($company['address']))
-                        <p>{{ $company['address'] }}</p>
+        <!-- Upper Body: Header, Customer Info, Items, Summary & Terms -->
+        <div class="space-y-4 flex-1">
+            <!-- Top Header: Logo, Company info & Invoice Details -->
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pb-4 border-b border-slate-200">
+                <!-- Left: Company Branding & Details -->
+                <div class="space-y-1 max-w-md">
+                    @if(!empty($company['logo']))
+                        <div class="mb-1.5">
+                            <img src="{{ asset($company['logo']) }}" alt="{{ $company['name'] }}" class="h-9 sm:h-10 w-auto object-contain" />
+                        </div>
+                    @else
+                        <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ $company['name'] }}</h1>
                     @endif
-                    @if(!empty($company['phone']))
-                        <p>Phone: <strong>{{ $company['phone'] }}</strong></p>
-                    @endif
-                    @if(!empty($company['email']))
-                        <p>Email: {{ $company['email'] }}</p>
-                    @endif
-                </div>
-            </div>
 
-            <!-- Right: Invoice Metadata -->
-            <div class="text-left sm:text-right space-y-0.5 shrink-0">
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-wider">INVOICE</h2>
-                <div class="text-sm font-bold text-blue-600">
-                    <span class="text-slate-400 font-normal">Order ID:</span>
-                    {{ $order->order_number }}
-                </div>
-
-                <div class="pt-1 text-xs space-y-0.5 text-slate-600">
-                    <div>
-                        <span class="text-slate-400">Date:</span>
-                        <span class="font-medium text-slate-800 ml-1">{{ $order->created_at->format('d M, Y - h:i A') }}</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">Payment:</span>
-                        <span class="font-bold text-slate-800 ml-1 uppercase">{{ $order->payment_method }}</span>
-                    </div>
-                    <div>
-                        <span class="text-slate-400">Status:</span>
-                        <span class="font-bold text-slate-800 ml-1 uppercase">{{ $order->status }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Customer & Delivery Section -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-3.5 border-b border-slate-200 text-xs">
-            <!-- Customer Info -->
-            <div class="space-y-1">
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Customer Details</span>
-                <h3 class="text-sm font-bold text-slate-900">{{ $order->customer_name }}</h3>
-                <div class="text-xs text-slate-700 space-y-0.5">
-                    <p>Phone: <span class="font-semibold">{{ $order->phone }}</span></p>
-                    @if($order->email)
-                        <p>Email: {{ $order->email }}</p>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Delivery Info -->
-            <div class="space-y-1">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Details</span>
-                    <span class="text-[10px] font-bold text-slate-500">({{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Courier Delivery' }})</span>
-                </div>
-
-                @if($order->delivery_method === 'store_pickup')
-                    <div class="text-xs text-slate-700 space-y-0.5">
-                        @if($order->storeLocation)
-                            <p class="font-bold text-slate-900">{{ $order->storeLocation->name }}</p>
-                            <div class="text-slate-600 leading-tight">{!! $order->storeLocation->address !!}</div>
-                            @if($order->storeLocation->phone)
-                                <p class="text-slate-600">Contact: {{ preg_replace('/^Contact:\s*/i', '', $order->storeLocation->phone) }}</p>
-                            @endif
-                        @else
-                            <p class="text-slate-500 italic">Pickup Outlet</p>
+                    <div class="text-xs text-slate-600 space-y-0.5 leading-snug">
+                        @if(!empty($company['address']))
+                            <p>{{ $company['address'] }}</p>
+                        @endif
+                        @if(!empty($company['phone']))
+                            <p>Phone: <strong>{{ $company['phone'] }}</strong></p>
+                        @endif
+                        @if(!empty($company['email']))
+                            <p>Email: {{ $company['email'] }}</p>
                         @endif
                     </div>
-                @else
-                    <div class="text-xs text-slate-700 space-y-1">
+                </div>
+
+                <!-- Right: Invoice Metadata -->
+                <div class="text-left sm:text-right space-y-0.5 shrink-0">
+                    <h2 class="text-xl font-extrabold text-slate-900 tracking-wider">INVOICE</h2>
+                    <div class="text-xs font-bold text-slate-900">
+                        <span class="text-slate-500 font-normal">Order ID:</span>
+                        {{ $order->order_number }}
+                    </div>
+
+                    <div class="pt-0.5 text-[11px] space-y-0.5 text-slate-600">
                         <div>
-                            <p class="font-semibold text-slate-900 leading-snug">{{ $order->address }}</p>
+                            <span class="text-slate-400">Date:</span>
+                            <span class="font-medium text-slate-800 ml-1">{{ $order->created_at->format('d M, Y - h:i A') }}</span>
                         </div>
+                        <div>
+                            <span class="text-slate-400">Payment:</span>
+                            <span class="font-bold text-slate-800 ml-1 uppercase">{{ $order->payment_method }}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Status:</span>
+                            <span class="font-bold text-slate-800 ml-1 uppercase">{{ $order->status }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        @if($order->delivery_area)
-                            <p class="text-slate-600 leading-tight">
-                                <span class="font-medium text-slate-700">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}</span>
-                            </p>
-                        @endif
-
-                        @if($order->note)
-                            <p class="text-slate-500 text-[10.5px] italic pt-0.5"><span class="font-semibold text-slate-600 not-italic">Note:</span> {{ $order->note }}</p>
+            <!-- Customer & Delivery Section -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-3.5 border-b border-slate-200 text-xs">
+                <!-- Customer Info -->
+                <div class="space-y-1">
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Customer Details</span>
+                    <h3 class="text-sm font-bold text-slate-900">{{ $order->customer_name }}</h3>
+                    <div class="text-xs text-slate-700 space-y-0.5">
+                        <p>Phone: <span class="font-semibold">{{ $order->phone }}</span></p>
+                        @if($order->email)
+                            <p>Email: {{ $order->email }}</p>
                         @endif
                     </div>
-                @endif
-            </div>
-        </div>
+                </div>
 
-        <!-- Ordered Items Table -->
-        <div class="py-3.5">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-slate-300 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        <th class="py-2 px-2 w-8 text-center">#</th>
-                        <th class="py-2 px-2">Item Description</th>
-                        <th class="py-2 px-2 text-right w-24">Unit Price</th>
-                        <th class="py-2 px-2 text-center w-16">Qty</th>
-                        <th class="py-2 px-2 text-right w-28">Total</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 text-xs">
-                    @foreach ($order->items as $index => $item)
-                        <tr>
-                            <td class="py-2.5 px-2 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
-                            <td class="py-2.5 px-2">
-                                <div class="font-bold text-slate-900 leading-snug">{{ $item->product_name }}</div>
-                            </td>
-                            <td class="py-2.5 px-2 text-right font-medium text-slate-700">
-                                ৳{{ number_format($item->unit_price) }}
-                            </td>
-                            <td class="py-2.5 px-2 text-center font-semibold text-slate-800">
-                                {{ $item->quantity }}
-                            </td>
-                            <td class="py-2.5 px-2 text-right font-bold text-slate-900">
-                                ৳{{ number_format($item->line_total) }}
-                            </td>
+                <!-- Delivery Info -->
+                <div class="space-y-1">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Delivery Details</span>
+                        <span class="text-[10px] font-bold text-slate-500">({{ $order->delivery_method === 'store_pickup' ? 'Store Pickup' : 'Courier Delivery' }})</span>
+                    </div>
+
+                    @if($order->delivery_method === 'store_pickup')
+                        <div class="text-xs text-slate-700 space-y-0.5">
+                            @if($order->storeLocation)
+                                <p class="font-bold text-slate-900">{{ $order->storeLocation->name }}</p>
+                                <div class="text-slate-600 leading-tight">{!! $order->storeLocation->address !!}</div>
+                                @if($order->storeLocation->phone)
+                                    <p class="text-slate-600">Contact: {{ preg_replace('/^Contact:\s*/i', '', $order->storeLocation->phone) }}</p>
+                                @endif
+                            @else
+                                <p class="text-slate-500 italic">Pickup Outlet</p>
+                            @endif
+                        </div>
+                    @else
+                        <div class="text-xs text-slate-700 space-y-1">
+                            <div>
+                                <p class="font-semibold text-slate-900 leading-snug">{{ $order->address }}</p>
+                            </div>
+
+                            @if($order->delivery_area)
+                                <p class="text-slate-600 leading-tight">
+                                    <span class="font-medium text-slate-700">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}</span>
+                                </p>
+                            @endif
+
+                            @if($order->note)
+                                <p class="text-slate-500 text-[10.5px] italic pt-0.5"><span class="font-semibold text-slate-600 not-italic">Note:</span> {{ $order->note }}</p>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Ordered Items Table -->
+            <div class="py-3.5">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-300 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="py-2 px-2 w-8 text-center">#</th>
+                            <th class="py-2 px-2">Item Description</th>
+                            <th class="py-2 px-2 text-right w-24">Unit Price</th>
+                            <th class="py-2 px-2 text-center w-16">Qty</th>
+                            <th class="py-2 px-2 text-right w-28">Total</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs">
+                        @foreach ($order->items as $index => $item)
+                            <tr>
+                                <td class="py-2.5 px-2 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
+                                <td class="py-2.5 px-2">
+                                    <div class="font-bold text-slate-900 leading-snug">{{ $item->product_name }}</div>
+                                </td>
+                                <td class="py-2.5 px-2 text-right font-medium text-slate-700">
+                                    ৳{{ number_format($item->unit_price) }}
+                                </td>
+                                <td class="py-2.5 px-2 text-center font-semibold text-slate-800">
+                                    {{ $item->quantity }}
+                                </td>
+                                <td class="py-2.5 px-2 text-right font-bold text-slate-900">
+                                    ৳{{ number_format($item->line_total) }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-        <!-- Summary, Terms & Totals -->
-        <div class="page-break-avoid border-t border-slate-300 pt-3 flex flex-col sm:flex-row justify-between items-start gap-4">
-            <!-- Left: Terms and Conditions -->
-            <div class="w-full sm:w-7/12 space-y-1.5 text-xs text-slate-600">
-                <div class="space-y-2">
-                    <!-- Conditions: Intact -->
-                    <div>
-                        <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (For Intact Laptop Only)</span>
-                        <p class="text-[10px] text-slate-600 leading-snug">
-                           Warranty Coverage Shown On The Website Is Based On Our Purchase Date From The Brand. Your Warranty Will Be Counted From The Date Of Your Purchase From Us, And You Will Receive 2 Years International Warranty. The Duration Or Years Displayed On The Official Site Does Not Apply. Carry Cost To Be Paid By Customer For International Warranty Claim. + 4 To 8 No. Conditions Apply.
-                        </p>
+            <!-- Summary, Terms Notice & Totals -->
+            <div class="page-break-avoid border-t border-slate-300 pt-4 flex flex-col sm:flex-row justify-between items-start gap-6">
+                <!-- Left: Terms & Conditions (Minimal, No Box) -->
+                <div class="w-full sm:w-7/12 space-y-1 text-xs text-slate-600">
+                    <p class="font-bold text-slate-900 uppercase tracking-wide text-[11px]">Terms &amp; Conditions:</p>
+                    <div class="pt-0.5">
+                        <a href="{{ url('/page/terms-conditions') }}" target="_blank" class="inline-flex items-center gap-1.5 text-slate-900 hover:text-black font-semibold text-xs underline decoration-slate-400">
+                            <span>{{ url('/page/terms-conditions') }}</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5 inline text-slate-600"></i>
+                        </a>
                     </div>
+                    <p class="text-[10px] text-slate-500 pt-1">
+                        * Online/Courier-Based Order Imply Acceptance of All Terms, Even Without Customer Signature.
+                    </p>
+                </div>
 
-                    <!-- Conditions: PRE-OWNED -->
-                    <div>
-                        <span class="font-bold text-slate-800 uppercase tracking-wide text-[11px] block mb-0.5">Conditions: (FOR PRE-OWNED & OPEN BOX LAPTOP ONLY)</span>
-                        <div class="text-[9.5px] text-slate-600 space-y-0.5 leading-snug">
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">1.</span>
-                                <span>10 Days Parts Replacement Guarantee Without Display, Adapter & Casing. If The Same Model/Variant Is Unavailable, Then With Any Available Product Of The Same Or Higher Price Range By Adjusting Price Accordingly, As Decided By Khan Gadget.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">2.</span>
-                                <span>5 Years Service Warranty Without Parts. If Service Is Not Possible, Then New Parts Need To Be Purchased By Customer.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">3.</span>
-                                <span>70% Cash Is Refundable In Case Of Return After Buying Within 7 Days, Exchange Value To Be Determined By Khan Gadget.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">4.</span>
-                                <span>The Warranty/Guarantee Is Not Applicable For Any: Physical Damage, Internal Burn, Warranty Sticker Damage/Removing Etc.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">5.</span>
-                                <span>If Any Product Is Lost Or Damaged Through The Courier Service, The Customer Will Contact The Courier Company, Khan Gadget Authority Is Not Responsible.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">6.</span>
-                                <span>After Sales Service Is Only Available At Service Center, Service Center Off day: Dhaka- Tuesday, Rajshahi & Bogura- Friday.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">7.</span>
-                                <span>If Product Has No Fault As Per Deal/Advertisement & Customer Changes His/Her Mind Without Any Logical/Valid Reason, Pre-Order/Pre-Booked Money Won't Be Refunded.</span>
-                            </div>
-                            <div class="flex items-start gap-1">
-                                <span class="shrink-0 font-medium">8.</span>
-                                <span>Online/Courier-Based Order Imply Acceptance of All Terms, Even Without Customer Signature.</span>
-                            </div>
-                        </div>
+                <!-- Right: Calculation Breakdown (Clean Normal Flat) -->
+                <div class="w-full sm:w-4/12 space-y-1.5 text-xs shrink-0">
+                    <div class="flex justify-between text-slate-600 py-0.5">
+                        <span>Subtotal:</span>
+                        <span class="font-semibold text-slate-900">৳{{ number_format($order->subtotal) }}</span>
+                    </div>
+                    <div class="flex justify-between text-slate-600 py-0.5">
+                        <span>Shipping Fee:</span>
+                        <span class="font-semibold text-slate-900">
+                            @if($order->shipping_fee > 0)
+                                ৳{{ number_format($order->shipping_fee) }}
+                            @else
+                                Free
+                            @endif
+                        </span>
+                    </div>
+                    <div class="border-t border-slate-300 pt-2 flex justify-between items-baseline">
+                        <span class="text-xs font-bold text-slate-900">Grand Total:</span>
+                        <span class="text-sm font-bold text-slate-900">৳{{ number_format($order->total) }}</span>
                     </div>
                 </div>
             </div>
-
-            <!-- Right: Calculation Breakdown (Clean Normal Flat) -->
-            <div class="w-full sm:w-4/12 space-y-1 text-xs shrink-0">
-                <div class="flex justify-between text-slate-600 py-0.5">
-                    <span>Subtotal:</span>
-                    <span class="font-semibold text-slate-900">৳{{ number_format($order->subtotal) }}</span>
-                </div>
-                <div class="flex justify-between text-slate-600 py-0.5">
-                    <span>Shipping Fee:</span>
-                    <span class="font-semibold text-slate-900">
-                        @if($order->shipping_fee > 0)
-                            ৳{{ number_format($order->shipping_fee) }}
-                        @else
-                            Free
-                        @endif
-                    </span>
-                </div>
-                <div class="border-t border-slate-300 pt-2 flex justify-between items-baseline">
-                    <span class="text-xs font-bold text-slate-900">Grand Total:</span>
-                    <span class="text-lg font-extrabold text-blue-600">৳{{ number_format($order->total) }}</span>
-                </div>
-            </div>
         </div>
 
-        <!-- Full Width NB Section Across Page -->
-        <div class="page-break-avoid w-full mt-2.5 pt-2 pb-1.5 border-t border-slate-200 bg-slate-50 px-2.5 rounded text-slate-700" style="font-family: 'Hind Siliguri', sans-serif; font-size: 11px; line-height: 1.45;">
-            <div class="flex items-baseline gap-1.5 py-0.5">
-                <span class="font-bold text-slate-900 shrink-0">• Replacement Means:</span>
-                <span>১০ দিনের মধ্যে বিনামূল্যে যন্ত্রাংশ পরিবর্তন করে দেওয়া...</span>
-            </div>
-            <div class="flex items-baseline gap-1.5 py-0.5">
-                <span class="font-bold text-slate-900 shrink-0">• Exchange Means:</span>
-                <span>একটি পণ্যের পরিবর্তে অন্য পণ্য নেয়া; এক্ষেত্রে কাস্টোমারের পণ্যের মূল্য খান গ্যাজেট ক্রয় বিভাগ নির্ধারণ করবে...</span>
-            </div>
-            <div class="flex items-baseline gap-1.5 py-0.5">
-                <span class="font-bold text-slate-900 shrink-0">• Refund Means:</span>
-                <span>গ্রাহক ক্রয়ের ৭ দিনের মধ্যে বিনা ক্ষতিতে পণ্য ফেরত দিলে ক্রয়মূল্যের ৭০% টাকা পাবে, ৭ দিন পার হবার পর এই সুযোগ আর নেই...</span>
-            </div>
-        </div>
+        <!-- Pinned Bottom Footer: Signatures & Note -->
+        <div class="invoice-footer-bottom mt-auto pt-10">
+            <!-- Footer Signatures -->
+            <div class="page-break-avoid pt-3 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-end gap-6">
+                <div class="text-left">
+                    <div class="w-40 border-b border-slate-400 mb-0.5"></div>
+                    <p class="text-[11px] font-semibold text-slate-700 uppercase tracking-wider">Customer Signature</p>
+                    <p class="text-[9.5px] text-slate-400 mt-0.5">(Valid without signature for online orders)</p>
+                </div>
 
-        <!-- Footer Signatures -->
-        <div class="page-break-avoid mt-6 pt-3 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-end gap-6">
-            <div class="text-left">
-                <div class="w-36 border-b border-slate-400 mb-0.5"></div>
-                <p class="text-[11px] font-semibold text-slate-600 uppercase tracking-wider">Customer Signature</p>
+                <div class="text-center sm:text-right">
+                    <div class="w-40 border-b border-slate-400 mb-0.5 ml-auto"></div>
+                    <p class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">{{ $company['name'] }}</p>
+                    <p class="text-[10px] text-slate-400">Authorized Signature &amp; Seal</p>
+                </div>
             </div>
 
-            <div class="text-center sm:text-right">
-                <div class="w-36 border-b border-slate-400 mb-0.5 ml-auto"></div>
-                <p class="text-[11px] font-bold text-slate-800 uppercase tracking-wider">{{ $company['name'] }}</p>
-                <p class="text-[10px] text-slate-400">Authorized Signature & Seal</p>
+            <!-- Footer Note -->
+            <div class="page-break-avoid mt-3 pt-2 border-t border-slate-100 text-center text-[10px] text-slate-400">
+                Thank you for shopping with <strong>{{ $company['name'] }}</strong>!
             </div>
-        </div>
-
-        <!-- Footer Note -->
-        <div class="page-break-avoid mt-3 pt-2 border-t border-slate-100 text-center text-[10px] text-slate-400">
-            Thank you for shopping with <strong>{{ $company['name'] }}</strong>!
         </div>
 
     </div>

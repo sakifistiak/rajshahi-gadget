@@ -52,6 +52,8 @@ Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
 Route::get('/philanthropic-work/{slug}', [PageController::class, 'philanthropicWork'])->name('philanthropic-work');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
 
+Route::get('/terms-and-conditions', fn () => redirect('/page/terms-conditions', 301))->name('terms');
+Route::get('/terms', fn () => redirect('/page/terms-conditions', 301));
 Route::get('/page/{slug}', [CustomPageController::class, 'show'])->name('pages.custom');
 
 /*
