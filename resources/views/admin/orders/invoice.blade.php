@@ -365,7 +365,7 @@
 
             <!-- Footer Note -->
             <div class="page-break-avoid mt-3 pt-2 border-t border-slate-100 text-center text-[10px] text-slate-400">
-                Thank you for shopping with <strong>{{ $company['name'] }}</strong>!
+                Thank You For Shopping With <strong>{{ $company['name'] }}</strong>!
             </div>
         </div>
 
