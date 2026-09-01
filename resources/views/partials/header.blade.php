@@ -46,7 +46,13 @@
     <div class="hidden border-t border-border lg:block">
         <div class="container-page flex h-11 items-center gap-6 text-xs">
             <nav class="flex items-center gap-1">
-                <a href="/shop" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">ALL PRODUCTS</a>
+                <div class="relative kg-mega-menu-wrap" id="kg-all-products-menu">
+                    <a href="/shop" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">ALL PRODUCTS</a>
+                    <div class="kg-mega-menu" id="kg-mega-menu" role="menu" aria-label="All products">
+                        <div class="kg-mega-menu-cats" id="kg-mega-menu-cats"></div>
+                        <div class="kg-mega-menu-brands" id="kg-mega-menu-brands"></div>
+                    </div>
+                </div>
                 <a href="/shop?condition=intact" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">BRAND NEW INTACT BOX</a>
                 <a href="/shop?condition=without-box" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">BRAND NEW WITHOUT BOX</a>
                 <a href="/shop?condition=pre-owned" class="rounded-full px-2.5 py-1 font-medium transition-colors hover:bg-secondary text-foreground/80">PRE-OWNED</a>

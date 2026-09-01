@@ -37,6 +37,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
 Route::get('/api/compare', [PageController::class, 'compareData'])->name('api.compare');
 Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
+Route::get('/api/nav-categories', [PageController::class, 'navCategories'])->name('api.nav-categories');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');

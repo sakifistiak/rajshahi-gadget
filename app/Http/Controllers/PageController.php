@@ -316,6 +316,33 @@ class PageController extends Controller
         ]);
     }
 
+    /**
+     * Categories + the brands that actually have products in each, for the
+     * "ALL PRODUCTS" header mega-menu. Cached briefly since it only changes
+     * when products/categories/brands are added or edited in the admin panel.
+     */
+    public function navCategories()
+    {
+        $menu = \Illuminate\Support\Facades\Cache::remember('nav.category_brands', now()->addMinutes(30), function () {
+            return Category::orderBy('sort_order')->orderBy('name')->get()
+                ->map(function (Category $category) {
+                    $brands = Brand::whereHas('products', function ($q) use ($category) {
+                        $q->where('category_id', $category->id);
+                    })->orderBy('name')->get(['slug', 'name']);
+
+                    return [
+                        'slug' => $category->slug,
+                        'name' => $category->name,
+                        'brands' => $brands,
+                    ];
+                })
+                ->filter(fn ($category) => $category['brands']->isNotEmpty())
+                ->values();
+        });
+
+        return response()->json($menu);
+    }
+
     public function page(string $page, Request $request)
     {
         if ($page === 'shop') {

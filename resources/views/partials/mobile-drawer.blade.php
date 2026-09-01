@@ -947,6 +947,86 @@ html.dark .btn-buy-now:hover {
 #kg-customer-chat-closed-banner { display: none; padding: .8rem .9rem; border-top: 1px solid #e5e7eb; background: #f8fafc; text-align: center; }
 #kg-customer-chat-closed-banner p { margin: 0 0 .5rem; font-size: .78rem; color: #6b7280; font-weight: 600; }
 #kg-customer-chat-closed-banner button { border: 0; border-radius: .5rem; padding: .55rem 1rem; background: #24272c; color: #fff; font-weight: 700; font-size: .78rem; cursor: pointer; }
+
+/* ── "All Products" mega menu ── */
+.kg-mega-menu-wrap { position: relative; }
+.kg-mega-menu {
+    position: absolute;
+    top: calc(100% + .6rem);
+    left: 0;
+    z-index: 60;
+    display: flex;
+    min-width: 30rem;
+    max-height: 26rem;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: .6rem;
+    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(6px);
+    transition: opacity .16s ease, transform .16s ease, visibility .16s;
+    overflow: hidden;
+}
+.kg-mega-menu-wrap:hover .kg-mega-menu,
+.kg-mega-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.kg-mega-menu-cats {
+    width: 13rem;
+    flex-shrink: 0;
+    overflow-y: auto;
+    padding: .5rem;
+    border-right: 1px solid var(--border, #e5e7eb);
+}
+.kg-mega-cat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    width: 100%;
+    padding: .55rem .7rem;
+    border: 0;
+    background: transparent;
+    border-radius: .4rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--foreground, #24272c);
+    text-align: left;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.kg-mega-cat svg { flex-shrink: 0; opacity: .5; width: .8rem; height: .8rem; }
+.kg-mega-cat:hover, .kg-mega-cat.is-active {
+    background: var(--secondary, #f1f1f1);
+    color: var(--primary, #24272c);
+}
+.kg-mega-menu-brands {
+    flex: 1;
+    overflow-y: auto;
+    padding: .75rem 1rem;
+    min-width: 12rem;
+}
+.kg-mega-brand-panel { display: none; }
+.kg-mega-brand-panel.is-active { display: block; }
+.kg-mega-brand-link {
+    display: block;
+    padding: .4rem .3rem;
+    font-size: .8rem;
+    color: var(--muted-foreground, #6b7280);
+    text-decoration: none;
+    border-radius: .3rem;
+}
+.kg-mega-brand-link:hover { color: var(--foreground, #24272c); background: var(--secondary, #f1f1f1); }
+.kg-mega-brand-link.kg-mega-all-link {
+    font-weight: 700;
+    color: var(--foreground, #24272c);
+    margin-bottom: .35rem;
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+}
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -1115,6 +1195,68 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var wrap = document.getElementById('kg-all-products-menu');
+    var panel = document.getElementById('kg-mega-menu');
+    var catList = document.getElementById('kg-mega-menu-cats');
+    var brandsWrap = document.getElementById('kg-mega-menu-brands');
+    if (!wrap || !panel || !catList || !brandsWrap) return;
+
+    function setActiveCategory(slug) {
+        catList.querySelectorAll('.kg-mega-cat').forEach(function(btn) {
+            btn.classList.toggle('is-active', btn.dataset.cat === slug);
+        });
+        brandsWrap.querySelectorAll('.kg-mega-brand-panel').forEach(function(p) {
+            p.classList.toggle('is-active', p.dataset.catPanel === slug);
+        });
+    }
+
+    function buildMenu(categories) {
+        if (!categories || !categories.length) {
+            wrap.style.display = 'none';
+            return;
+        }
+        var catHtml = '';
+        var brandHtml = '';
+        categories.forEach(function(cat, i) {
+            catHtml += '<button type="button" class="kg-mega-cat' + (i === 0 ? ' is-active' : '') + '" data-cat="' + cat.slug + '">'
+                + cat.name
+                + '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>'
+                + '</button>';
+
+            var brandLinks = '<a class="kg-mega-brand-link kg-mega-all-link" href="/shop?category[]=' + encodeURIComponent(cat.slug) + '">All ' + cat.name + '</a>';
+            (cat.brands || []).forEach(function(brand) {
+                brandLinks += '<a class="kg-mega-brand-link" href="/shop?category[]=' + encodeURIComponent(cat.slug) + '&brand[]=' + encodeURIComponent(brand.slug) + '">' + brand.name + '</a>';
+            });
+            brandHtml += '<div class="kg-mega-brand-panel' + (i === 0 ? ' is-active' : '') + '" data-cat-panel="' + cat.slug + '">' + brandLinks + '</div>';
+        });
+        catList.innerHTML = catHtml;
+        brandsWrap.innerHTML = brandHtml;
+
+        catList.querySelectorAll('.kg-mega-cat').forEach(function(btn) {
+            btn.addEventListener('mouseenter', function() { setActiveCategory(btn.dataset.cat); });
+            btn.addEventListener('click', function() { setActiveCategory(btn.dataset.cat); });
+        });
+    }
+
+    var cacheKey = 'kg_nav_categories_v1';
+    var cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null'); } catch (e) {}
+    if (cached) {
+        buildMenu(cached);
+    }
+
+    fetch('/api/nav-categories')
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            buildMenu(data);
+            try { sessionStorage.setItem(cacheKey, JSON.stringify(data)); } catch (e) {}
+        })
+        .catch(function() {});
+});
+</script>
+
 @php
     $liveChatWhatsapp = \App\Support\PhoneNumber::whatsapp($liveChatWhatsappNumber ?? '');
     $liveChatCall = \App\Support\PhoneNumber::tel($liveChatCallNumber ?? '');
@@ -1162,7 +1304,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="kg-live-chat-floating-btn" class="fixed bottom-20 right-4 z-50 flex flex-col items-center sm:bottom-6">
         <button type="button" class="flex flex-col items-center transition-transform hover:scale-105 active:scale-95 cursor-pointer" aria-label="Open live chat" title="Need help?">
             <img src="/assets/support-agent-BWJyOWv2.png" alt="Live chat support agent" width="512" height="512" loading="lazy" class="agent-float h-20 w-20 select-none object-contain drop-shadow-lg sm:h-24 sm:w-24" />
-            <span class="-mt-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm">Live Chat</span>
+            <span class="-mt-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm">Live Chat 💬</span>
         </button>
     </div>
 
