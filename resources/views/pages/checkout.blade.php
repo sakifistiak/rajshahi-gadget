@@ -86,11 +86,11 @@
                     <div class="mt-4 co-delivery-method">
                         <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
                             <input type="radio" name="delivery_method" value="home_delivery" id="dm-home" checked>
-                            <span><strong>Courier Delivery</strong><br><span class="text-sm text-muted-foreground">Delivery at nearest location — pay when it arrives.</span></span>
+                            <span><strong>Courier Delivery</strong><br><span class="text-sm text-muted-foreground">Delivery At Nearest Location - Pay When It Arrives.</span></span>
                         </label>
                         <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
                             <input type="radio" name="delivery_method" value="store_pickup" id="dm-pickup">
-                            <span><strong>Store / Outlet Pickup</strong><br><span class="text-sm text-muted-foreground">Collect your order from one of our outlets, free of charge.</span></span>
+                            <span><strong>Store / Outlet Pickup</strong><br><span class="text-sm text-muted-foreground">Collect Your Order From One Of Our Outlets, Free Of Charge.</span></span>
                         </label>
                     </div>
                 </div>
