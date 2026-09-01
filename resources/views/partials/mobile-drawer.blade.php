@@ -1304,7 +1304,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div id="kg-live-chat-floating-btn" class="fixed bottom-20 right-4 z-50 flex flex-col items-center sm:bottom-6">
         <button type="button" class="flex flex-col items-center transition-transform hover:scale-105 active:scale-95 cursor-pointer" aria-label="Open live chat" title="Need help?">
             <img src="/assets/support-agent-BWJyOWv2.png" alt="Live chat support agent" width="512" height="512" loading="lazy" class="agent-float h-20 w-20 select-none object-contain drop-shadow-lg sm:h-24 sm:w-24" />
-            <span class="-mt-1 rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm">Live Chat 💬</span>
+            <span class="rounded-full bg-foreground px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-background shadow-sm">Live Chat 💬</span>
         </button>
     </div>
 
