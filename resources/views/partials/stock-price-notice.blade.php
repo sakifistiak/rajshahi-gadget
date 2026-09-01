@@ -1,20 +1,23 @@
 @if(($stockPriceNoticeActive ?? '0') == '1' && !empty(trim($stockPriceNoticeText ?? '')))
     @php
         $type = $stockPriceNoticeType ?? 'warning';
-        $containerClasses = match($type) {
-            'info' => 'bg-blue-50/90 border-blue-200 text-blue-900',
-            'danger' => 'bg-rose-50/90 border-rose-200 text-rose-900',
-            default => 'bg-amber-50/90 border-amber-200 text-amber-900',
-        };
-        $iconColorClass = match($type) {
-            'info' => 'text-blue-600',
-            'danger' => 'text-rose-600',
-            default => 'text-amber-600',
+        // The bg-amber-50/border-amber-200/text-amber-900 (and blue/rose)
+        // Tailwind classes below aren't in the harvested static CSS bundle at
+        // all (checked: zero rules for any of them), so this box has always
+        // rendered with no color — plain white/transparent — wherever it's
+        // used. Inline styles instead, matching the same Tailwind palette
+        // values, so it actually shows the intended amber/blue/rose card in
+        // both light and dark mode (a status color like this stays fixed
+        // either way, same as the site's other semantic colors).
+        [$bg, $border, $text, $icon] = match ($type) {
+            'info' => ['#eff6ff', '#bfdbfe', '#1e3a8a', '#2563eb'],
+            'danger' => ['#fff1f2', '#fecdd3', '#881337', '#e11d48'],
+            default => ['#fffbeb', '#fde68a', '#78350f', '#d97706'],
         };
     @endphp
 
-    <div class="my-3 p-3 rounded-lg border text-xs font-medium leading-relaxed flex items-start gap-2.5 shadow-xs transition-all {{ $containerClasses }}">
-        <div class="shrink-0 mt-0.5 {{ $iconColorClass }}">
+    <div class="my-3 p-3 rounded-lg border text-xs font-medium leading-relaxed flex items-start gap-2.5 shadow-xs transition-all" style="background-color: {{ $bg }}; border-color: {{ $border }}; color: {{ $text }};">
+        <div class="shrink-0 mt-0.5" style="color: {{ $icon }};">
             @if($type === 'info')
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
             @elseif($type === 'danger')

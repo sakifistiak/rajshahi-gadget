@@ -496,6 +496,38 @@
             </div>
         </div>
 
+        <!-- Checkout Page - COD Advance Payment Notice -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden" x-data="{ codNoticeLength: '{{ mb_strlen($settings['checkout_cod_notice_text'] ?? '') }}' }">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-amber-100 text-amber-600 rounded-lg">
+                        <i data-lucide="banknote" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Checkout — COD Advance Payment Notice</h3>
+                        <p class="text-xs text-slate-500">Shown right under "Cash on Delivery" on the Checkout page.</p>
+                    </div>
+                </div>
+                <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer select-none">
+                    <input type="checkbox" name="checkout_cod_notice_active" value="1" {{ ($settings['checkout_cod_notice_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    <span>Enable Notice</span>
+                </label>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Notice Text Message (Bengali / English)</label>
+                    <span class="text-[11px] text-slate-400 font-mono"><span x-text="codNoticeLength"></span>/255</span>
+                </div>
+                <textarea name="checkout_cod_notice_text"
+                          rows="2"
+                          maxlength="255"
+                          @input="codNoticeLength = $event.target.value.length"
+                          class="w-full px-4 py-3 rounded-lg border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 leading-relaxed"
+                          placeholder="e.g. অর্ডার কনফার্ম করার জন্য ন্যূনতম ২,০০০ টাকা অগ্রিম পেমেন্ট করতে হবে।">{{ $settings['checkout_cod_notice_text'] ?? '' }}</textarea>
+                <p class="text-[11px] text-slate-400 mt-1">Leave the toggle off to hide it — the Checkout page shows nothing when disabled.</p>
+            </div>
+        </div>
+
         <!-- Product Detail Page - Delivery/Replacement Info Box -->
         <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
             <div class="p-5 flex items-center justify-between">

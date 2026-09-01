@@ -153,11 +153,13 @@ class ProductController extends Controller
         if ($request->hasFile('image_file')) {
             $imagePath = $this->storeUploadedImage($request->file('image_file'));
         }
-        $product->images()->create([
-            'image_path' => $imagePath ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg',
-            'is_primary' => true,
-            'sort_order' => 0,
-        ]);
+        if ($imagePath) {
+            $product->images()->create([
+                'image_path' => $imagePath,
+                'is_primary' => true,
+                'sort_order' => 0,
+            ]);
+        }
 
         // Add gallery images
         $galleryFiles = $request->file('gallery_files', []);
@@ -278,14 +280,16 @@ class ProductController extends Controller
         }
 
         // Update featured (primary) image
-        $imagePath = $request->image_path ?: $product->primaryImage();
+        $imagePath = $request->image_path;
         if ($request->hasFile('image_file')) {
             $imagePath = $this->storeUploadedImage($request->file('image_file'));
         }
         $primaryImage = $product->images()->where('is_primary', true)->first();
         if ($primaryImage) {
-            $primaryImage->update(['image_path' => $imagePath]);
-        } else {
+            if ($imagePath) {
+                $primaryImage->update(['image_path' => $imagePath]);
+            }
+        } elseif ($imagePath) {
             $product->images()->create([
                 'image_path' => $imagePath,
                 'is_primary' => true,

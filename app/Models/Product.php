@@ -102,7 +102,7 @@ class Product extends Model
     {
         return $this->images()->where('is_primary', true)->first()?->image_path
             ?? $this->images()->first()?->image_path
-            ?? '/assets/laptop-ultrabook-C5nU_6_f.jpg';
+            ?? '/assets/no-image-placeholder.svg';
     }
 
     public function discount(): ?int

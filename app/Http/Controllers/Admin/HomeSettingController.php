@@ -96,6 +96,8 @@ class HomeSettingController extends Controller
             'stock_price_notice_active' => '1',
             'stock_price_notice_text' => 'অর্ডার করার পূর্বে স্টক ও প্রাইজ কমতে বাড়তে পারে',
             'stock_price_notice_type' => 'warning',
+            'checkout_cod_notice_active' => '1',
+            'checkout_cod_notice_text' => 'অর্ডার কনফার্ম করার জন্য ন্যূনতম ২,০০০ টাকা অগ্রিম পেমেন্ট করতে হবে।',
             'product_trust_badges_active' => '1',
             'home_trustbar_active' => '1',
         ];
@@ -359,6 +361,13 @@ class HomeSettingController extends Controller
                 ? $request->input('stock_price_notice_type')
                 : 'warning';
             SiteSetting::setValue('stock_price_notice_type', $type);
+        }
+
+        // Save Checkout COD Advance Payment Notice settings
+        SiteSetting::setValue('checkout_cod_notice_active', $request->has('checkout_cod_notice_active') ? '1' : '0');
+        if ($request->has('checkout_cod_notice_text')) {
+            $codNoticeText = mb_substr(trim($request->input('checkout_cod_notice_text', '')), 0, 255);
+            SiteSetting::setValue('checkout_cod_notice_text', $codNoticeText);
         }
 
         SiteSetting::setValue('product_trust_badges_active', $request->has('product_trust_badges_active') ? '1' : '0');

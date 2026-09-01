@@ -89,7 +89,7 @@
                     @foreach($order->items as $item)
                         <div class="ty-item">
                             <div style="height:56px;width:56px;border-radius:8px;overflow:hidden;flex-shrink:0" class="bg-secondary">
-                                <img src="{{ optional($item->product)->primaryImage() ?? '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="" style="height:100%;width:100%;object-fit:cover">
+                                <img src="{{ optional($item->product)->primaryImage() ?? '/assets/no-image-placeholder.svg' }}" alt="" style="height:100%;width:100%;object-fit:cover">
                             </div>
                             <div style="flex:1; min-width:0">
                                 <p class="text-sm font-medium line-clamp-1">{{ $item->product_name }}</p>

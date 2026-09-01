@@ -37,6 +37,8 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'shippingFeeInsideDhaka' => (int) SiteSetting::getValue('shipping_fee_inside_dhaka', 70),
                 'shippingFeeOutsideDhaka' => (int) SiteSetting::getValue('shipping_fee_outside_dhaka', 130),
+                'codAdvanceNoticeActive' => SiteSetting::getValue('checkout_cod_notice_active', '1'),
+                'codAdvanceNoticeText' => SiteSetting::getValue('checkout_cod_notice_text', 'অর্ডার কনফার্ম করার জন্য ন্যূনতম ২,০০০ টাকা অগ্রিম পেমেন্ট করতে হবে।'),
             ]);
         });
 

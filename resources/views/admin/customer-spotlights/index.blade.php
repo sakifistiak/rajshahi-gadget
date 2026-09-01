@@ -34,7 +34,7 @@
                     @forelse ($spotlights as $spotlight)
                         <tr class="hover:bg-slate-50/30 transition-colors">
                             <td class="px-6 py-3.5 whitespace-nowrap">
-                                <img src="{{ $spotlight->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $spotlight->product }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
+                                <img src="{{ $spotlight->image ?: '/assets/no-image-placeholder.svg' }}" alt="{{ $spotlight->product }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-xs font-semibold text-slate-800">{{ $spotlight->product }}</td>
                             <td class="px-6 py-3.5 text-xs text-slate-600 max-w-md truncate">{{ $spotlight->quote }}</td>

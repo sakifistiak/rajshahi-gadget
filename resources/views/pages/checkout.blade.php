@@ -101,6 +101,12 @@
                 <div class="rounded-lg border border-border bg-card p-4 sm:p-5" id="payment-method-card">
                     <h2 class="text-base sm:text-lg font-semibold">Payment Method</h2>
                     <div class="mt-3.5 space-y-2.5 sm:space-y-3">
+                        @php
+                            // Admin-configurable notice inside the Cash on Delivery row (Admin
+                            // Panel → Home Settings → Checkout COD Advance Payment Notice).
+                            $codNoticeText = trim($codAdvanceNoticeText ?? '');
+                            $codNoticeOn = ($codAdvanceNoticeActive ?? '0') == '1' && $codNoticeText !== '';
+                        @endphp
                         <!-- 1. Cash on Delivery (Active) -->
                         <label class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 border-primary bg-background p-3 sm:p-4 transition-colors">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -111,8 +117,16 @@
                                 <div class="min-w-0">
                                     <strong class="text-xs sm:text-sm font-bold text-foreground block leading-tight">Cash on Delivery</strong>
                                     <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">Pay when your order arrives</p>
+                                    @if($codNoticeOn)
+                                        <p class="sm:hidden mt-1 text-[10px] font-semibold leading-snug" style="color:#92400e">{{ $codNoticeText }}</p>
+                                    @endif
                                 </div>
                             </div>
+                            @if($codNoticeOn)
+                                <span class="hidden sm:flex max-w-[230px] items-center justify-center rounded-md border px-2.5 py-1.5 text-center text-[10px] font-semibold leading-snug shrink-0" style="background-color:#fffbeb;border-color:#fde68a;color:#78350f">
+                                    {{ $codNoticeText }}
+                                </span>
+                            @endif
                             <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 shrink-0 whitespace-nowrap">
                                 Available
                             </span>

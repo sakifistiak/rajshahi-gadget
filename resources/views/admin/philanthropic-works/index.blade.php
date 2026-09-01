@@ -33,7 +33,7 @@
                     @forelse ($works as $work)
                         <tr class="hover:bg-slate-50/30 transition-colors">
                             <td class="px-6 py-3.5 whitespace-nowrap">
-                                <img src="{{ $work->image ?: '/assets/laptop-ultrabook-C5nU_6_f.jpg' }}" alt="{{ $work->title }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
+                                <img src="{{ $work->image ?: '/assets/no-image-placeholder.svg' }}" alt="{{ $work->title }}" class="h-8 w-8 object-cover rounded border border-slate-100 shadow-sm">
                             </td>
                             <td class="px-6 py-3.5">
                                 <div class="text-xs font-semibold text-slate-800">{{ $work->title }}</div>
