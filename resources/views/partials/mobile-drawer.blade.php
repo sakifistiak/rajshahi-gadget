@@ -802,27 +802,28 @@ a.bg-primary:hover {
 }
 #kg-close-customer-chat:hover { background: rgba(255,255,255,.2); }
 #kg-customer-chat-messages { height: 280px; overflow-y: auto; padding: .9rem; background: #f8fafc; display: flex; flex-direction: column; }
-.kg-chat-message { max-width: 80%; margin-bottom: .5rem; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; animation: kg-chat-msg-in .2s ease; }
+.kg-chat-message { max-width: 80%; margin-bottom: .5rem; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; white-space: pre-wrap; animation: kg-chat-msg-in .2s ease; }
 .kg-chat-message.customer { margin-left: auto; background: #24272c; color: #fff; border-bottom-right-radius: .25rem; }
 .kg-chat-message.agent { margin-right: auto; background: #fff; border: 1px solid #e5e7eb; color: #1f2937; border-bottom-left-radius: .25rem; }
 @keyframes kg-chat-msg-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
 }
-#kg-customer-chat-form { display: flex; align-items: center; gap: .5rem; padding: .7rem; border-top: 1px solid #e5e7eb; background: #fff; }
-#kg-customer-chat-form input { min-width: 0; flex: 1; border: 1px solid #e2e2e5; background: #f4f4f5; border-radius: 9999px; padding: .6rem 1rem; font-size: .82rem; outline: none; transition: border-color .15s, background .15s; }
-#kg-customer-chat-form input:focus { border-color: #24272c; background: #fff; }
+#kg-customer-chat-form { display: flex; align-items: flex-end; gap: .5rem; padding: .6rem .7rem; border-top: 1px solid #e5e7eb; background: #fff; }
+#kg-customer-chat-form textarea { min-width: 0; flex: 1; border: 1px solid #e2e2e5; background: #f4f4f5; border-radius: 1rem; padding: .5rem .85rem; font-size: .82rem; outline: none; transition: border-color .15s, background .15s; resize: none; max-height: 90px; line-height: 1.4; }
+#kg-customer-chat-form textarea:focus { border-color: #24272c; background: #fff; }
 #kg-customer-chat-form button {
     display: grid;
     place-items: center;
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 2.3rem;
+    height: 2.3rem;
     flex-shrink: 0;
     border: 0;
     border-radius: 9999px;
     background: #24272c;
     color: #fff;
     cursor: pointer;
+    margin-bottom: 2px;
     transition: transform .15s, background .15s;
 }
 #kg-customer-chat-form button:hover { background: #14161a; transform: scale(1.05); }
@@ -1074,7 +1075,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div id="kg-customer-chat-body" style="display:none">
             <div id="kg-customer-chat-messages"></div>
             <form id="kg-customer-chat-form">
-                <input id="kg-chat-input" placeholder="Write a message..." maxlength="2000" autocomplete="off">
+                <textarea id="kg-chat-input" rows="1" placeholder="Write a message..." maxlength="2000"></textarea>
                 <button type="submit" aria-label="Send message">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                 </button>
@@ -1137,6 +1138,22 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const chatForm = document.getElementById('kg-customer-chat-form');
+            const chatInput = document.getElementById('kg-chat-input');
+
+            if (chatInput) {
+                chatInput.addEventListener('input', function() {
+                    chatInput.style.height = 'auto';
+                    chatInput.style.height = Math.min(chatInput.scrollHeight, 90) + 'px';
+                });
+
+                chatInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        chatForm.requestSubmit ? chatForm.requestSubmit() : chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
+                    }
+                });
+            }
+
             if (chatForm) chatForm.addEventListener('submit', e => {
                 e.preventDefault();
                 let input = document.getElementById('kg-chat-input');
@@ -1145,7 +1162,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ body: input.value })
-                }).then(r => r.json()).then(d => { input.value = ''; render(d); });
+                }).then(r => r.json()).then(d => {
+                    input.value = '';
+                    input.style.height = 'auto';
+                    render(d);
+                });
             });
         }
 

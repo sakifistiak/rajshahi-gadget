@@ -37,10 +37,10 @@
 
         <div id="admin-chat-messages" class="flex-1 space-y-4 overflow-y-auto bg-[#f4f6fb] p-5"></div>
 
-        <form id="admin-chat-form" class="flex shrink-0 items-center gap-2 border-t border-slate-100 bg-white p-4">
+        <form id="admin-chat-form" class="flex shrink-0 items-end gap-2 border-t border-slate-100 bg-white p-3 sm:p-4">
             @csrf
-            <input id="admin-chat-input" name="body" required maxlength="2000" autocomplete="off" placeholder="Write a reply..." class="min-w-0 flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400">
-            <button id="admin-chat-submit" type="submit" title="Send reply" class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">
+            <textarea id="admin-chat-input" name="body" required maxlength="2000" rows="1" placeholder="Write a reply... (Enter to send, Shift+Enter for new line)" class="min-w-0 flex-1 resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm leading-relaxed focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 max-h-36 overflow-y-auto"></textarea>
+            <button id="admin-chat-submit" type="submit" title="Send reply (Enter)" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 mb-0.5">
                 <i data-lucide="send" class="h-4 w-4"></i>
             </button>
         </form>
@@ -65,6 +65,22 @@ document.addEventListener('DOMContentLoaded', () => {
         let hh = String(d.getHours()).padStart(2, '0'), mm = String(d.getMinutes()).padStart(2, '0');
         return hh + ':' + mm;
     }
+
+    function autoResize() {
+        if (!input) return;
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+    }
+
+    input.addEventListener('input', autoResize);
+
+    // Enter sends the message; Shift+Enter creates a new line (line break)
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+    });
 
     function groupMessages(list) {
         let groups = [];
@@ -130,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 messages.push(d.message);
                 render();
                 input.value = '';
+                autoResize();
             })
             .catch(function () {
                 alert('Could not send the message. Please try again.');
