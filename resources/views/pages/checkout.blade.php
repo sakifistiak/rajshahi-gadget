@@ -50,19 +50,19 @@
     @include('partials.header')
 
     <main class="container-page py-8 sm:py-12">
-        <div class="mb-8 text-center"><p class="text-sm text-muted-foreground">Secure checkout</p><h1 class="mt-1 text-3xl font-semibold">Complete your order</h1></div>
+        <div class="mb-8 text-center"><p class="text-sm text-muted-foreground">Secure checkout</p><h1 class="mt-1 text-3xl font-semibold">Complete Your Order</h1></div>
         <div id="checkout-empty" class="hidden rounded-lg border border-border p-8 text-center">
-            <p>Your cart is empty.</p><a href="/shop" class="mt-4 inline-block font-semibold underline">Continue shopping</a>
+            <p>Your cart is empty.</p><a href="/shop" class="mt-4 inline-block font-semibold underline">Continue Shopping</a>
         </div>
         <form id="checkout-form" novalidate>
             <section class="space-y-6">
                 <div class="rounded-lg border border-border bg-card p-5">
-                    <h2 class="text-lg font-semibold">Delivery information</h2>
+                    <h2 class="text-lg font-semibold">Delivery Information</h2>
                     <div class="mt-5 co-delivery-grid">
-                        <label class="co-field co-span-2 text-sm font-medium">Full name<input required name="customer_name" class="rounded-md border border-border bg-background font-normal" autocomplete="name"></label>
-                        <label class="co-field text-sm font-medium">Mobile number<input required name="phone" inputmode="tel" class="rounded-md border border-border bg-background font-normal" placeholder="01XXXXXXXXX" autocomplete="tel"></label>
+                        <label class="co-field co-span-2 text-sm font-medium">Full Name<input required name="customer_name" class="rounded-md border border-border bg-background font-normal" autocomplete="name"></label>
+                        <label class="co-field text-sm font-medium">Mobile Number<input required name="phone" inputmode="tel" class="rounded-md border border-border bg-background font-normal" placeholder="01XXXXXXXXX" autocomplete="tel"></label>
                         <label class="co-field text-sm font-medium">Email <span class="font-normal text-muted-foreground">(optional)</span><input name="email" type="email" class="rounded-md border border-border bg-background font-normal" autocomplete="email"></label>
-                        <label class="co-field co-span-2 text-sm font-medium" id="pickup-field" style="display:none">Pickup outlet
+                        <label class="co-field co-span-2 text-sm font-medium" id="pickup-field" style="display:none">Pickup Outlet
                             <select name="store_location_id" class="rounded-md border border-border bg-background font-normal">
                                 <option value="">Select an outlet</option>
                                 @foreach($storeLocations as $outlet)
@@ -72,17 +72,17 @@
                         </label>
                         <label class="co-field co-span-2 text-sm font-medium" id="area-field">Delivery Area
                             <select name="delivery_area" class="rounded-md border border-border bg-background font-normal" id="area-select">
-                                <option value="">Select delivery area</option>
+                                <option value="">Select Delivery Area</option>
                                 <option value="inside_dhaka">Inside Dhaka</option>
                                 <option value="outside_dhaka">Outside Dhaka</option>
                             </select>
                         </label>
                         <label class="co-field co-span-2 text-sm font-medium" id="address-field">Specific Address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, area — as detailed as possible"></textarea></label>
-                        <label class="co-field co-span-2 text-sm font-medium">Order note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
+                        <label class="co-field co-span-2 text-sm font-medium">Order Note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
                     </div>
                 </div>
                 <div class="rounded-lg border border-border bg-card p-5">
-                    <h2 class="text-lg font-semibold">Delivery method</h2>
+                    <h2 class="text-lg font-semibold">Delivery Method</h2>
                     <div class="mt-4 co-delivery-method">
                         <label class="flex cursor-pointer items-center gap-3 rounded-md border border-border p-4">
                             <input type="radio" name="delivery_method" value="home_delivery" id="dm-home" checked>
@@ -95,7 +95,7 @@
                     </div>
                 </div>
                 <div class="rounded-lg border border-border bg-card p-4 sm:p-5" id="payment-method-card">
-                    <h2 class="text-base sm:text-lg font-semibold">Payment method</h2>
+                    <h2 class="text-base sm:text-lg font-semibold">Payment Method</h2>
                     <div class="mt-3.5 space-y-2.5 sm:space-y-3">
                         <!-- 1. Cash on Delivery (Active) -->
                         <label class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 border-primary bg-background p-3 sm:p-4 transition-colors">
@@ -167,7 +167,7 @@
                     </div>
                 </div>
             </section>
-            <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong id="checkout-delivery-fee">Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place order</button></aside>
+            <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order Summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong id="checkout-delivery-fee">Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place Order</button></aside>
         </form>
     </main>
     @include('partials.footer', ['hideOutlets' => true])
@@ -214,7 +214,7 @@
                     return;
                 }
                 if (!areaSelect.value) {
-                    deliveryFeeEl.textContent = 'Select delivery area';
+                    deliveryFeeEl.textContent = 'Select Delivery Area';
                     totalEl.textContent = money(total);
                     return;
                 }
@@ -255,9 +255,9 @@
         document.getElementById('checkout-form').addEventListener('submit', async function (event) {
             event.preventDefault(); var form = event.currentTarget, button = document.getElementById('place-order'), error = document.getElementById('checkout-error');
             if (!form.reportValidity()) return;
-            error.classList.add('hidden'); button.disabled = true; button.textContent = 'Placing order…';
+            error.classList.add('hidden'); button.disabled = true; button.textContent = 'Placing Order…';
             var data = Object.fromEntries(new FormData(form).entries()); data.items = items.map(function (item) { return { slug: item.slug, quantity: Number(item.quantity || 1) }; });
-            try { var response = await fetch('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify(data) }); var payload = await response.json(); if (!response.ok) throw new Error(payload.message || Object.values(payload.errors || {})[0]?.[0] || 'Could not place the order.'); if (!buyNow) localStorage.removeItem(cartKey); window.location.href = '/thank-you?order=' + encodeURIComponent(payload.order_number); } catch (err) { error.textContent = err.message; error.classList.remove('hidden'); button.disabled = false; button.textContent = 'Place order'; }
+            try { var response = await fetch('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify(data) }); var payload = await response.json(); if (!response.ok) throw new Error(payload.message || Object.values(payload.errors || {})[0]?.[0] || 'Could not place the order.'); if (!buyNow) localStorage.removeItem(cartKey); window.location.href = '/thank-you?order=' + encodeURIComponent(payload.order_number); } catch (err) { error.textContent = err.message; error.classList.remove('hidden'); button.disabled = false; button.textContent = 'Place Order'; }
         });
     })();
     </script>
