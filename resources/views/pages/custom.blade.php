@@ -100,7 +100,7 @@
                                     @endif
 
                                     @if ($location->map_link || $location->details)
-                                        <div class="mt-4 flex flex-wrap gap-2">
+                                        <div class="mt-auto flex flex-wrap gap-2 pt-4">
                                             @if ($location->map_link)
                                                 <a href="{{ $location->map_link }}" target="_blank" rel="noopener noreferrer" class="kg-map-btn inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-primary px-4 text-xs font-bold text-primary-foreground shadow" style="height:36px;">
                                                     <i data-lucide="map" class="h-3.5 w-3.5"></i>
