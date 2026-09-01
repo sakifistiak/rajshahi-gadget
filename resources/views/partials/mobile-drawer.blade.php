@@ -175,7 +175,11 @@ html.dark .kg-hotline-number {
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--color-muted-foreground, #71717a);
+    /* --color-muted-foreground is never defined (only --muted-foreground
+       is) and this label has no separate .dark override, so it stayed on
+       the light-mode-ish fallback — dimmer than intended against the dark
+       drawer panel. */
+    color: var(--muted-foreground, #71717a);
     padding: 10px 8px 4px;
 }
 .kg-drawer-group {
@@ -204,7 +208,8 @@ html.dark .kg-drawer-group-btn:hover { background: #1a2035; }
 .kg-drawer-group-btn svg {
     transition: transform 0.25s ease;
     flex-shrink: 0;
-    color: var(--color-muted-foreground, #71717a);
+    /* Same undefined-variable issue as above, no .dark override for this one. */
+    color: var(--muted-foreground, #71717a);
 }
 .kg-drawer-group-btn.expanded svg { transform: rotate(180deg); }
 
@@ -234,7 +239,11 @@ html.dark .kg-drawer-subitem:hover { background: #1a2035; }
 .kg-drawer-subitem-dot {
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: var(--color-muted-foreground, #a1a1aa);
+    /* --color-muted-foreground is never defined (only --muted-foreground
+       is), so this always fell back to the light-mode-ish hardcoded value
+       in dark mode too — no visible bug here specifically since it's a tiny
+       bullet dot, but fixed for consistency with the other instances below. */
+    background: var(--muted-foreground, #a1a1aa);
     flex-shrink: 0;
 }
 
@@ -387,7 +396,9 @@ html.dark #kg-store-prev, html.dark #kg-store-next {
         @endphp
         @if(!empty($drawerStoreText))
         <div style="padding:10px 20px 6px;">
-            <div style="background:var(--color-secondary, #f4f4f5);border:1px solid var(--color-border, #e5e7eb);border-radius:2px;padding:10px 14px;">
+            {{-- --color-secondary is never defined (only --secondary is) and this box has
+                no .dark override, so it stayed a light-gray patch in the dark drawer. --}}
+            <div style="background:var(--secondary, #f4f4f5);border:1px solid var(--color-border, #e5e7eb);border-radius:2px;padding:10px 14px;">
                 <p style="font-size:12.5px;font-weight:500;color:var(--color-foreground,#09090b);line-height:1.55;margin:0;">
                     {{ $drawerStoreText }}
                 </p>
@@ -523,6 +534,59 @@ header.sticky {
     backdrop-filter: none !important;
 }
 
+/* `<input type="search">` keeps its native browser "search field" chrome
+   (appearance:auto) unless explicitly removed, and with `color-scheme: dark`
+   set (see the static bundle's .dark rules) that native chrome paints its
+   own dark canvas UNDER the field. On top of that, the static bundle has a
+   separate `html.dark input, select, textarea { background: var(--surface)
+   !important }` safety-net rule (needed for real form fields, e.g. checkout)
+   that's MORE specific than a plain `input[type="search"]` rule and paints
+   the header search box too — even though it's deliberately transparent to
+   blend into the pill wrapping it. Both combine into the visible dark
+   rectangle inside the (lighter) search pill. Fix appearance + out-specify
+   that safety-net rule for this one input. */
+input[type="search"] {
+    appearance: none;
+    -webkit-appearance: none;
+}
+html.dark input[type="search"] {
+    background-color: transparent !important;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/* The static bundle's dark theme leans on near-pure black (#18191c-ish) with
+   near-pure white text/buttons, which reads as stark/flat rather than the
+   softer charcoal + off-white "premium" dark UI look (Stripe/Linear-style).
+   Nudge the base surface tokens a touch lighter/warmer and off-white instead
+   of changing every component individually. */
+:root.dark {
+    --background: #1c1e22;
+    --card: #212327;
+    --popover: #212327;
+    --foreground: #e8e8ea;
+    --card-foreground: #e8e8ea;
+    --popover-foreground: #e8e8ea;
+    /* Footer/"recessed" sections use --surface, one notch darker than the
+       page background (same relationship as light mode, where --surface is
+       a touch darker than --background) — nudged in step with the values
+       above so the footer doesn't end up looking disproportionately darker
+       than the rest of the now-lighter page. */
+    --surface: #1a1b1f;
+    --surface-elevated: #262830;
+}
+
+/* The static bundle also separately hardcodes the sticky header to
+   near-black (rgba(10,10,11,.95)) in dark mode — more specific than the
+   header.sticky rule above, so it wins even with !important there. Same
+   fix as the buttons: point it at the (now-softened) theme background
+   instead of a hardcoded near-black. */
+html.dark header.sticky {
+    background-color: var(--background) !important;
+}
+
 /* Single product page "Buy Now" button format matching Home/Shop page */
 .product-single-buy-now,
 button.bg-primary.text-primary-foreground,
@@ -544,6 +608,51 @@ button.bg-primary:hover,
 a.bg-primary:hover {
     background-color: #1a1c20 !important;
     transform: translateY(-1px) !important;
+}
+
+/* The block above hardcodes every primary button to brand-black-on-white in
+   BOTH themes, so it never responds to the .dark class the way --primary /
+   --primary-foreground (and every other themed color on the page) already
+   do. In dark mode this makes every "Buy Now" / "Place Order" / "Order Now"
+   button sit as a near-black pill on the near-black dark background — flat,
+   low-contrast, "off". Re-invert it here so buttons pop light-on-dark like
+   the rest of the page — but a soft off-white with a hairline border and a
+   real shadow, not a stark pure-white slab, to match the softer charcoal
+   surfaces above instead of reading as a harsh black/white checkerboard. */
+.dark .product-single-buy-now,
+.dark button.bg-primary.text-primary-foreground,
+.dark a.bg-primary.text-primary-foreground,
+.dark button.bg-primary,
+.dark a.bg-primary {
+    background-color: #e4e4e7 !important;
+    color: #1c1e22 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3) !important;
+}
+
+.dark .product-single-buy-now:hover,
+.dark button.bg-primary.text-primary-foreground:hover,
+.dark a.bg-primary.text-primary-foreground:hover,
+.dark button.bg-primary:hover,
+.dark a.bg-primary:hover {
+    background-color: #f0f0f2 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Product-card "Buy Now" / "Order Now" pills (.btn-buy-now, styled by the
+   static bundle) have their own hardcoded-dark rule that was already
+   "dark-mode aware" in name only — it swapped #24272c for #1f2428, another
+   near-black, so the button still didn't invert like the rest of the theme.
+   Bring it in line with the softened inversion above. */
+html.dark .btn-buy-now {
+    background-color: #e4e4e7 !important;
+    color: #1c1e22 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3) !important;
+}
+html.dark .btn-buy-now:hover {
+    background-color: #f0f0f2 !important;
+    color: #1c1e22 !important;
 }
 
 /* The main product image follows the mouse position while zoomed. */
@@ -621,7 +730,11 @@ a.bg-primary:hover {
 .kg-live-chat-option:nth-of-type(2) { transition-delay: 0.09s; }
 .kg-live-chat-option:nth-of-type(3) { transition-delay: 0.14s; }
 .kg-live-chat-option:hover {
-    background: var(--color-secondary, #f1f5f9);
+    /* --color-secondary is never defined (only --secondary is) and this
+       menu has no separate .dark override, so the hover state stayed stuck
+       on the light-mode-ish #f1f5f9 fallback in dark mode — a light patch
+       inside the otherwise-dark chat option menu. */
+    background: var(--secondary, #f1f5f9);
     transform: translateX(3px);
     box-shadow: 0 2px 10px -3px rgb(0 0 0 / 0.1);
 }

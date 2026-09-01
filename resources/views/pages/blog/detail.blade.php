@@ -71,7 +71,9 @@
         border-left: 3px solid var(--color-border, #e5e7eb);
         padding-left: 0.75rem;
         margin: 0.75rem 0;
-        color: var(--color-muted-foreground, #71717a);
+        /* --color-muted-foreground is never defined (only --muted-foreground
+           is) — this stayed stuck on the light-mode-ish fallback in dark mode. */
+        color: var(--muted-foreground, #71717a);
         font-style: italic;
     }
 </style>

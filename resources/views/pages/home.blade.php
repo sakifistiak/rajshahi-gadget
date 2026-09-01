@@ -390,7 +390,9 @@ document.addEventListener('DOMContentLoaded', function () {
 @if(($homeFlashActive ?? true) && $activeFlashSale && $flashSaleItems->count())
 <section class="container-page py-12">
     <style>
-        .flash-card { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--color-border, #e5e7eb); background: var(--color-secondary, #f4f4f5); border-radius: 10px; overflow: hidden; }
+        {{-- --color-secondary is never defined (only --secondary is) and .flash-card has
+             no .dark override, so it stayed a light-gray card in dark mode. --}}
+        .flash-card { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--color-border, #e5e7eb); background: var(--secondary, #f4f4f5); border-radius: 10px; overflow: hidden; }
         .flash-card-body { display: flex; flex: 1; flex-direction: column; padding: 10px 12px 12px; }
         .flash-stock-bar { margin-top: 8px; height: 6px; border-radius: 9999px; background: var(--color-border, #e5e7eb); overflow: hidden; }
         .flash-stock-bar > span { display: block; height: 100%; background: var(--color-accent, #ea580c); }
@@ -458,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                         @endif
                         <div class="flex items-center" style="margin-top:12px">
-                            <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now flex-1 inline-flex items-center justify-center rounded-full font-bold text-sm transition-all shadow-sm" style="background-color: #24272c !important; color: #ffffff !important; height:36px; padding:0 16px;">
+                            <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now flex-1 inline-flex items-center justify-center rounded-full font-bold text-sm transition-all shadow-sm" style="height:36px; padding:0 16px;">
                                 Buy Now
                             </a>
                         </div>

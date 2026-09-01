@@ -69,7 +69,12 @@
         .spec-row { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; border-bottom: 1px solid var(--color-border, #e5e7eb); }
         .spec-row dd { padding-left: 1rem; }
         .spec-table > .spec-row:last-child { border-bottom: none; }
-        .spec-table > .spec-row:nth-child(even) { background: var(--color-secondary, #f4f4f5); }
+        /* --color-secondary is never defined anywhere in the static bundle
+           (only --secondary is), so this always fell back to the hardcoded
+           #f4f4f5 — fine in light mode, but in dark mode it stayed the same
+           light gray, turning every even spec row into a near-unreadable
+           light patch with foreground/muted-foreground text on top of it. */
+        .spec-table > .spec-row:nth-child(even) { background: var(--secondary, #f4f4f5); }
         @media (max-width: 640px) {
             .spec-row { grid-template-columns: 1fr; gap: 0.25rem; }
             .spec-table::before { display: none; }
