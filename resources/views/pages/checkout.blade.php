@@ -66,7 +66,11 @@
                             <select name="store_location_id" class="rounded-md border border-border bg-background font-normal">
                                 <option value="">Select an outlet</option>
                                 @foreach($storeLocations as $outlet)
-                                    <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                                    {{-- Outlet names may be entered in the admin using "fancy bold" Unicode
+                                         text (a different set of glyphs, not a font-weight — CSS can't undo
+                                         it, and <option> text can't render markup anyway), so this list
+                                         always shows the flattened, plain version regardless of that. --}}
+                                    <option value="{{ $outlet->id }}">{{ \App\Support\PlainText::flatten($outlet->name) }}</option>
                                 @endforeach
                             </select>
                         </label>
