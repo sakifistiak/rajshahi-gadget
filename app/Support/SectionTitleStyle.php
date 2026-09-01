@@ -132,6 +132,24 @@ class SectionTitleStyle
         return $default;
     }
 
+    /** Black or white, whichever reads better against the given (already-validated) hex color. */
+    private static function contrastColor(string $hex): string
+    {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        // Perceived (not linear) luminance — good enough for a black-vs-white pick.
+        $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+
+        return $luminance > 0.6 ? '#141417' : '#ffffff';
+    }
+
     /**
      * Build the inline `style` attribute value for a single sanitized scope
      * (the output of sanitizeScope/sanitizeFull()['base'|'highlight']).
@@ -141,11 +159,26 @@ class SectionTitleStyle
     {
         $rules = [];
 
+        $hasBackground = $style['bg_type'] !== 'none';
+
         if ($style['text_color'] !== 'inherit') {
             $rules[] = 'color: '.$style['text_color'];
+        } elseif ($hasBackground) {
+            // "inherit" text on a solid/gradient background is a broken
+            // combination: the site's text color is themed (it flips with
+            // the light/dark toggle), while this background is a fixed hex
+            // the admin picked once — so whenever the page's current text
+            // color happens to be close to that fixed background (e.g. an
+            // admin picks a near-white pill that blends into a light page,
+            // then a visitor switches to dark mode, where body text turns
+            // near-white too), the text goes invisible on its own badge.
+            // Auto-contrast against the badge's own background instead, so
+            // it stays readable no matter which theme is active.
+            $rules[] = 'color: '.self::contrastColor(
+                $style['bg_type'] === 'gradient' ? $style['bg_gradient_from'] : $style['bg_color']
+            );
         }
 
-        $hasBackground = $style['bg_type'] !== 'none';
         if ($style['bg_type'] === 'solid') {
             $rules[] = 'background-color: '.$style['bg_color'];
         } elseif ($style['bg_type'] === 'gradient') {
