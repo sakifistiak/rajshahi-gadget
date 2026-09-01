@@ -521,6 +521,7 @@ class PageController extends Controller
         $posts = BlogPost::published()
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")))
             ->orderByDesc('published_at')
+            ->orderByDesc('id')
             ->paginate(9)
             ->withQueryString();
 
@@ -535,6 +536,7 @@ class PageController extends Controller
         $posts = BlogPost::published()
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")))
             ->orderByDesc('published_at')
+            ->orderByDesc('id')
             ->paginate(9, ['*'], 'page', $page);
 
         return response()->json([
@@ -558,6 +560,7 @@ class PageController extends Controller
         $search = trim((string) $request->query('search', ''));
 
         $spotlights = CustomerSpotlight::orderByDesc('date')
+            ->orderByDesc('id')
             ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('product', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")))
             ->paginate(24)
             ->withQueryString();
