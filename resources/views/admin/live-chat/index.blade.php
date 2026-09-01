@@ -17,7 +17,24 @@
         @endif
     </div>
 
-    <div x-data="{ selected: [] }" class="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+    <div x-data="{ selected: [], tab: 'open' }" class="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center gap-1 border-b border-slate-100 bg-slate-50/60 px-4 pt-3">
+            <button type="button" @click="tab = 'open'; selected = []; window.liveChatSetTab('open')"
+                    :class="tab === 'open' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="flex items-center gap-1.5 border-b-2 px-3 pb-2.5 text-xs font-bold transition-colors">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                Active
+                <span id="live-chat-open-count" class="rounded-full bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600">{{ $openCount }}</span>
+            </button>
+            <button type="button" @click="tab = 'closed'; selected = []; window.liveChatSetTab('closed')"
+                    :class="tab === 'closed' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                    class="flex items-center gap-1.5 border-b-2 px-3 pb-2.5 text-xs font-bold transition-colors">
+                <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                Closed
+                <span id="live-chat-closed-count" class="rounded-full bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600">{{ $closedCount }}</span>
+            </button>
+        </div>
+
         @if(Auth::user()->is_admin)
             <div class="flex items-center justify-between gap-3 border-b border-slate-100 bg-slate-50/60 px-4 py-3">
                 <label class="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -64,6 +81,12 @@
                     @if($conversation->unread_count)
                         <span class="shrink-0 rounded-full bg-rose-600 px-2 py-1 text-[10px] font-bold text-white">{{ $conversation->unread_count }} new</span>
                     @endif
+                    <form action="{{ route('admin.live-chat.close', $conversation) }}" method="POST" onsubmit="return confirm('Close this conversation?');" class="shrink-0">
+                        @csrf
+                        <button type="submit" title="Close conversation" class="rounded p-1.5 text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors">
+                            <i data-lucide="circle-x" class="h-4 w-4"></i>
+                        </button>
+                    </form>
                     @if(Auth::user()->is_admin)
                         <form action="{{ route('admin.live-chat.destroy', $conversation) }}" method="POST" onsubmit="return confirm('Delete this conversation? This cannot be undone.');" class="shrink-0">
                             @csrf
@@ -87,20 +110,28 @@ window.liveChatIds = @json($conversations->pluck('id'));
 document.addEventListener('DOMContentLoaded', function () {
     var list = document.getElementById('live-chat-list');
     var isAdmin = {{ Auth::user()->is_admin ? 'true' : 'false' }};
+    var currentTab = 'open';
 
     function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
 
-    function render(conversations) {
+    function render(conversations, status) {
         window.liveChatIds = conversations.map(function (c) { return c.id; });
 
         if (!conversations.length) {
-            list.innerHTML = '<div id="live-chat-list-empty" class="p-10 text-center text-sm text-slate-400">No open conversations yet.</div>';
+            list.innerHTML = '<div id="live-chat-list-empty" class="p-10 text-center text-sm text-slate-400">'
+                + (status === 'closed' ? 'No closed conversations yet.' : 'No open conversations yet.') + '</div>';
             return;
         }
         list.innerHTML = conversations.map(function (c) {
             var phone = c.customer_phone ? '<span class="text-xs font-normal text-slate-400">· ' + esc(c.customer_phone) + '</span>' : '';
             var badge = c.unread_count ? '<span class="shrink-0 rounded-full bg-rose-600 px-2 py-1 text-[10px] font-bold text-white">' + c.unread_count + ' new</span>' : '';
             var checkbox = isAdmin ? '<input type="checkbox" value="' + c.id + '" x-model.number="selected" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 shrink-0">' : '';
+            var closeBtn = status === 'open'
+                ? '<form action="' + c.closeUrl + '" method="POST" onsubmit="return confirm(\'Close this conversation?\');" class="shrink-0">'
+                    + '{!! csrf_field() !!}'
+                    + '<button type="submit" title="Close conversation" class="rounded p-1.5 text-slate-400 hover:bg-amber-50 hover:text-amber-600 transition-colors"><i data-lucide="circle-x" class="h-4 w-4"></i></button>'
+                  + '</form>'
+                : '<span class="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-[10px] font-bold uppercase text-slate-500">' + (c.closed_by === 'auto' ? 'Auto-closed' : 'Closed') + '</span>';
             var deleteBtn = isAdmin
                 ? '<form action="' + c.deleteUrl + '" method="POST" onsubmit="return confirm(\'Delete this conversation? This cannot be undone.\');" class="shrink-0">'
                     + '{!! csrf_field() !!}{!! method_field("DELETE") !!}'
@@ -115,6 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     + '<p class="mt-1 text-xs text-slate-500">' + esc(c.time) + '</p></div>'
                 + '</a>'
                 + badge
+                + closeBtn
                 + deleteBtn
                 + '</div>';
         }).join('');
@@ -122,10 +154,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function poll() {
-        fetch('{{ route('admin.live-chat.list') }}').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
-            if (d) render(d.conversations);
+        fetch('{{ route('admin.live-chat.list') }}?status=' + currentTab).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+            if (!d) return;
+            render(d.conversations, d.status);
+            var openCountEl = document.getElementById('live-chat-open-count');
+            var closedCountEl = document.getElementById('live-chat-closed-count');
+            if (openCountEl) openCountEl.textContent = d.openCount;
+            if (closedCountEl) closedCountEl.textContent = d.closedCount;
         }).catch(function () {});
     }
+
+    window.liveChatSetTab = function (tab) {
+        currentTab = tab;
+        poll();
+    };
+
     setInterval(poll, 5000);
 });
 </script>

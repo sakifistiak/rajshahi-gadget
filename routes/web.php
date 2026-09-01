@@ -45,6 +45,7 @@ Route::middleware('throttle:30,1')->group(function () {
     Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
     Route::get('/chat/messages', [ChatController::class, 'messages'])->name('chat.messages');
     Route::post('/chat/messages', [ChatController::class, 'send'])->name('chat.messages.send');
+    Route::post('/chat/close', [ChatController::class, 'close'])->name('chat.close');
 });
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/load-more', [PageController::class, 'blogLoadMore'])->name('blog.load-more');
@@ -81,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{conversation}', [AdminChatController::class, 'show'])->name('show');
         Route::get('/{conversation}/messages', [AdminChatController::class, 'messages'])->name('messages');
         Route::post('/{conversation}/messages', [AdminChatController::class, 'send'])->name('messages.send');
+        Route::post('/{conversation}/close', [AdminChatController::class, 'close'])->name('close');
         Route::delete('/{conversation}', [AdminChatController::class, 'destroy'])->middleware('admin')->name('destroy');
     });
 

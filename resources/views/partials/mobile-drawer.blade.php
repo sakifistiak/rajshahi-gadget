@@ -831,6 +831,9 @@ a.bg-primary:hover {
 #kg-customer-chat-start.is-visible { display: block; }
 #kg-customer-chat-start input { width: 100%; margin: .35rem 0; border: 1px solid #d1d5db; border-radius: .5rem; padding: .6rem; font-size: .8rem; box-sizing: border-box; }
 #kg-customer-chat-start button { width: 100%; margin-top: .5rem; border: 0; border-radius: .5rem; padding: .65rem; background: #24272c; color: #fff; font-weight: 700; cursor: pointer; }
+#kg-customer-chat-closed-banner { display: none; padding: .8rem .9rem; border-top: 1px solid #e5e7eb; background: #f8fafc; text-align: center; }
+#kg-customer-chat-closed-banner p { margin: 0 0 .5rem; font-size: .78rem; color: #6b7280; font-weight: 600; }
+#kg-customer-chat-closed-banner button { border: 0; border-radius: .5rem; padding: .55rem 1rem; background: #24272c; color: #fff; font-weight: 700; font-size: .78rem; cursor: pointer; }
 </style>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -1080,6 +1083,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                 </button>
             </form>
+            <div id="kg-customer-chat-closed-banner">
+                <p>This conversation has ended.</p>
+                <button type="button" id="kg-chat-restart-button">Start New Chat</button>
+            </div>
         </div>
     </section>
     <script>
@@ -1088,7 +1095,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const box = document.getElementById('kg-customer-chat'),
                   start = document.getElementById('kg-customer-chat-start'),
                   body = document.getElementById('kg-customer-chat-body'),
-                  list = document.getElementById('kg-customer-chat-messages');
+                  list = document.getElementById('kg-customer-chat-messages'),
+                  chatForm2 = document.getElementById('kg-customer-chat-form'),
+                  closedBanner = document.getElementById('kg-customer-chat-closed-banner');
             if (!box) return;
             let timer;
 
@@ -1097,12 +1106,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     '<div class="kg-chat-message ' + m.sender_type + '">' + String(m.body).replace(/[&<>]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) + '</div>'
                 ).join('');
                 list.scrollTop = list.scrollHeight;
+
+                const isClosed = data.conversation && data.conversation.status === 'closed';
+                if (chatForm2) chatForm2.style.display = isClosed ? 'none' : 'flex';
+                if (closedBanner) closedBanner.style.display = isClosed ? 'block' : 'none';
+                if (isClosed && timer) { clearInterval(timer); timer = null; }
             }
 
             function load() {
                 fetch('{{ route('chat.messages') }}').then(r => r.ok ? r.json() : null).then(d => {
                     if (d) { start.classList.remove('is-visible'); body.style.display = 'block'; render(d); }
                 }).catch(() => {});
+            }
+
+            function resetToStart() {
+                if (timer) { clearInterval(timer); timer = null; }
+                list.innerHTML = '';
+                if (closedBanner) closedBanner.style.display = 'none';
+                if (chatForm2) chatForm2.style.display = 'flex';
+                body.style.display = 'none';
+                start.classList.add('is-visible');
+                let nameInput = document.getElementById('kg-chat-name'), phoneInput = document.getElementById('kg-chat-phone');
+                if (nameInput) nameInput.value = '';
+                if (phoneInput) phoneInput.value = '';
             }
 
             function openCustomerChat() {
@@ -1119,7 +1145,21 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const closeBtn = document.getElementById('kg-close-customer-chat');
-            if (closeBtn) closeBtn.addEventListener('click', () => box.classList.remove('is-visible'));
+            if (closeBtn) closeBtn.addEventListener('click', () => {
+                const isChatting = body.style.display !== 'none' && chatForm2 && chatForm2.style.display !== 'none';
+                if (isChatting) {
+                    if (!confirm('End this chat conversation?')) return;
+                    fetch('{{ route('chat.close') }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    }).catch(() => {});
+                }
+                if (timer) { clearInterval(timer); timer = null; }
+                box.classList.remove('is-visible');
+            });
+
+            const restartBtn = document.getElementById('kg-chat-restart-button');
+            if (restartBtn) restartBtn.addEventListener('click', resetToStart);
 
             const startBtn = document.getElementById('kg-chat-start-button');
             if (startBtn) startBtn.addEventListener('click', () => {
@@ -1162,11 +1202,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
                     body: JSON.stringify({ body: input.value })
-                }).then(r => r.json()).then(d => {
+                }).then(r => {
+                    if (!r.ok) { load(); return null; }
+                    return r.json();
+                }).then(d => {
                     input.value = '';
                     input.style.height = 'auto';
-                    render(d);
-                });
+                    if (d) render(d);
+                }).catch(() => {});
             });
         }
 

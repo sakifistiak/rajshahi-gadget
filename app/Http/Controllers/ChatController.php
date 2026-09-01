@@ -16,6 +16,8 @@ class ChatController extends Controller
             'phone' => 'nullable|string|max:30',
         ]);
 
+        ChatConversation::autoCloseStale();
+
         $conversation = ChatConversation::where('customer_token', $request->session()->get('chat_token'))
             ->where('status', 'open')
             ->first();
@@ -35,6 +37,8 @@ class ChatController extends Controller
 
     public function messages(Request $request)
     {
+        ChatConversation::autoCloseStale();
+
         $conversation = ChatConversation::where('customer_token', $request->session()->get('chat_token'))->firstOrFail();
 
         return response()->json($this->payload($conversation));
@@ -44,9 +48,13 @@ class ChatController extends Controller
     {
         $data = $request->validate(['body' => 'required|string|max:2000']);
 
-        $conversation = ChatConversation::where('customer_token', $request->session()->get('chat_token'))
-            ->where('status', 'open')
-            ->firstOrFail();
+        ChatConversation::autoCloseStale();
+
+        $conversation = ChatConversation::where('customer_token', $request->session()->get('chat_token'))->first();
+
+        if (! $conversation || $conversation->status !== 'open') {
+            return response()->json(['error' => 'closed'], 422);
+        }
 
         ChatMessage::create([
             'conversation_id' => $conversation->id,
@@ -56,6 +64,17 @@ class ChatController extends Controller
         $conversation->update(['last_message_at' => now()]);
 
         return $this->messages($request);
+    }
+
+    public function close(Request $request)
+    {
+        $conversation = ChatConversation::where('customer_token', $request->session()->get('chat_token'))
+            ->where('status', 'open')
+            ->first();
+
+        $conversation?->close('customer');
+
+        return response()->json(['ok' => true]);
     }
 
     private function payload(ChatConversation $conversation): array

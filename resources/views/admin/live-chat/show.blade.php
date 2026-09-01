@@ -29,21 +29,35 @@
                     </p>
                 </div>
             </div>
-            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                {{ ucfirst($conversation->status) }}
-            </span>
+            <div class="flex items-center gap-2">
+                <span id="admin-chat-status" class="inline-flex items-center gap-1.5 rounded-full {{ $conversation->status === 'open' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' }} px-3 py-1 text-xs font-bold">
+                    <span class="h-1.5 w-1.5 rounded-full {{ $conversation->status === 'open' ? 'bg-emerald-500' : 'bg-slate-400' }}"></span>
+                    {{ ucfirst($conversation->status) }}
+                </span>
+                @if($conversation->status === 'open')
+                    <form id="admin-chat-close-form" action="{{ route('admin.live-chat.close', $conversation) }}" method="POST" onsubmit="return confirm('Close this conversation?');">
+                        @csrf
+                        <button type="submit" class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 px-3 py-1 text-xs font-bold text-slate-500 transition-colors hover:border-amber-300 hover:text-amber-600">
+                            <i data-lucide="circle-x" class="h-3.5 w-3.5"></i>
+                            Close
+                        </button>
+                    </form>
+                @endif
+            </div>
         </div>
 
         <div id="admin-chat-messages" class="flex-1 space-y-4 overflow-y-auto bg-[#f4f6fb] p-5"></div>
 
-        <form id="admin-chat-form" class="flex shrink-0 items-end gap-2 border-t border-slate-100 bg-white p-3 sm:p-4">
+        <form id="admin-chat-form" class="flex shrink-0 items-end gap-2 border-t border-slate-100 bg-white p-3 sm:p-4" @if($conversation->status !== 'open') style="display:none" @endif>
             @csrf
             <textarea id="admin-chat-input" name="body" required maxlength="2000" rows="1" placeholder="Write a reply... (Enter to send, Shift+Enter for new line)" class="min-w-0 flex-1 resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm leading-relaxed focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 max-h-36 overflow-y-auto"></textarea>
             <button id="admin-chat-submit" type="submit" title="Send reply (Enter)" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 mb-0.5">
                 <i data-lucide="send" class="h-4 w-4"></i>
             </button>
         </form>
+        <div id="admin-chat-closed-note" class="shrink-0 border-t border-slate-100 bg-slate-50 p-3 text-center text-xs font-semibold text-slate-400 sm:p-4" @if($conversation->status === 'open') style="display:none" @endif>
+            This conversation is closed.
+        </div>
     </div>
 </div>
 
@@ -58,6 +72,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let messagesUrl = '{{ route('admin.live-chat.messages', $conversation) }}';
     let token = document.querySelector('input[name="_token"]').value;
     let messages = @json($initialMessages);
+    let status = @json($conversation->status);
+
+    function applyClosedState() {
+        let statusEl = document.getElementById('admin-chat-status');
+        let closeForm = document.getElementById('admin-chat-close-form');
+        let note = document.getElementById('admin-chat-closed-note');
+        if (statusEl) {
+            statusEl.className = 'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ' + (status === 'open' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500');
+            statusEl.innerHTML = '<span class="h-1.5 w-1.5 rounded-full ' + (status === 'open' ? 'bg-emerald-500' : 'bg-slate-400') + '"></span>' + (status.charAt(0).toUpperCase() + status.slice(1));
+        }
+        if (closeForm) closeForm.style.display = status === 'open' ? '' : 'none';
+        form.style.display = status === 'open' ? '' : 'none';
+        if (note) note.style.display = status === 'open' ? 'none' : '';
+    }
 
     function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
     function fmt(iso) {
@@ -148,8 +176,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 input.value = '';
                 autoResize();
             })
-            .catch(function () {
-                alert('Could not send the message. Please try again.');
+            .catch(function (r) {
+                if (r && r.status === 422) {
+                    status = 'closed';
+                    applyClosedState();
+                } else {
+                    alert('Could not send the message. Please try again.');
+                }
             })
             .finally(function () {
                 submitBtn.disabled = false;
@@ -162,6 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch(messagesUrl).then(function (r) { return r.json(); }).then(function (d) {
             messages = d.messages;
             render();
+            if (d.conversation && d.conversation.status !== status) {
+                status = d.conversation.status;
+                applyClosedState();
+            }
         });
     }, 4000);
 });
