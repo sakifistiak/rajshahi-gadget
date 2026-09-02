@@ -258,12 +258,6 @@
                                 <p class="font-semibold text-slate-900 leading-snug">{{ $order->address }}</p>
                             </div>
 
-                            @if($order->delivery_area)
-                                <p class="text-slate-600 leading-tight">
-                                    <span class="font-medium text-slate-700">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}</span>
-                                </p>
-                            @endif
-
                             @if($order->note)
                                 <p class="text-slate-500 text-[10.5px] italic pt-0.5"><span class="font-semibold text-slate-600 not-italic">Note:</span> {{ $order->note }}</p>
                             @endif
@@ -277,27 +271,61 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-slate-300 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                            <th class="py-2 px-2 w-8 text-center">#</th>
+                            <th class="py-2 px-1 w-6 text-center">#</th>
                             <th class="py-2 px-2">Item Description</th>
-                            <th class="py-2 px-2 text-right w-24">Unit Price</th>
-                            <th class="py-2 px-2 text-center w-16">Qty</th>
-                            <th class="py-2 px-2 text-right w-28">Total</th>
+                            <th class="py-2 px-2 text-right w-20 whitespace-nowrap">Unit Price</th>
+                            <th class="py-2 px-1 text-center w-10 whitespace-nowrap">Qty</th>
+                            <th class="py-2 px-2 text-right w-20 whitespace-nowrap">Total</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-xs">
                         @foreach ($order->items as $index => $item)
+                            @php
+                                $specs = $item->product?->specs?->filter(function($s) {
+                                    return !empty(trim((string)$s->value));
+                                });
+                            @endphp
                             <tr>
-                                <td class="py-2.5 px-2 text-center text-slate-400 font-medium">{{ $index + 1 }}</td>
-                                <td class="py-2.5 px-2">
-                                    <div class="font-bold text-slate-900 leading-snug">{{ $item->product_name }}</div>
+                                <td class="py-2.5 px-1 text-center text-slate-400 font-medium align-top">{{ $index + 1 }}</td>
+                                <td class="py-2.5 px-2 align-top">
+                                    @if($specs && $specs->isNotEmpty())
+                                        <div class="space-y-0.5 text-xs text-slate-900 leading-snug">
+                                            @foreach($specs as $spec)
+                                                @php
+                                                    $rawLabel = trim((string)$spec->label);
+                                                    $label = class_exists('Normalizer') ? \Normalizer::normalize($rawLabel, \Normalizer::FORM_KD) : $rawLabel;
+                                                    $labelUpper = strtoupper(trim($label));
+
+                                                    // Skip SPEED completely
+                                                    if ($labelUpper === 'SPEED') {
+                                                        continue;
+                                                    }
+
+                                                    if (in_array($labelUpper, ['RAM', 'SSD', 'HDD', 'GPU', 'CPU', 'NPU', 'TPU', 'AI', 'OS', 'ROM', 'USB', 'IPS', 'OLED', 'LED', 'FHD', 'QHD', '4K', 'HDMI', 'LAN', 'WIFI', 'BT'])) {
+                                                        $displayLabel = $labelUpper;
+                                                    } else {
+                                                        $displayLabel = ucwords(strtolower($label));
+                                                    }
+
+                                                    $val = trim((string)$spec->value);
+                                                @endphp
+                                                <div class="flex items-baseline gap-1.5">
+                                                    <span class="font-bold text-slate-900 shrink-0">{{ $displayLabel }} :</span>
+                                                    <span class="text-slate-800">{{ $val }}</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="font-bold text-slate-900 leading-snug">{{ $item->product_name }}</div>
+                                    @endif
                                 </td>
-                                <td class="py-2.5 px-2 text-right font-medium text-slate-700">
+                                <td class="py-2.5 px-2 text-right font-medium text-slate-700 align-top whitespace-nowrap">
                                     ৳{{ number_format($item->unit_price) }}
                                 </td>
-                                <td class="py-2.5 px-2 text-center font-semibold text-slate-800">
+                                <td class="py-2.5 px-1 text-center font-semibold text-slate-800 align-top whitespace-nowrap">
                                     {{ $item->quantity }}
                                 </td>
-                                <td class="py-2.5 px-2 text-right font-bold text-slate-900">
+                                <td class="py-2.5 px-2 text-right font-bold text-slate-900 align-top whitespace-nowrap">
                                     ৳{{ number_format($item->line_total) }}
                                 </td>
                             </tr>
@@ -307,23 +335,49 @@
             </div>
 
             <!-- Summary, Terms Notice & Totals -->
-            <div class="page-break-avoid border-t border-slate-300 pt-4 flex flex-col sm:flex-row justify-between items-start gap-6">
-                <!-- Left: Terms & Conditions (Minimal, No Box) -->
-                <div class="w-full sm:w-7/12 space-y-1 text-xs text-slate-600">
-                    <p class="font-bold text-slate-900 uppercase tracking-wide text-[11px]">Terms &amp; Conditions:</p>
-                    <div class="pt-0.5">
-                        <a href="{{ url('/page/terms-conditions') }}" target="_blank" class="inline-flex items-center gap-1.5 text-slate-900 hover:text-black font-semibold text-xs underline decoration-slate-400">
-                            <span>{{ url('/page/terms-conditions') }}</span>
-                            <i data-lucide="external-link" class="w-3.5 h-3.5 inline text-slate-600"></i>
-                        </a>
+            <div class="page-break-avoid border-t border-slate-300 pt-4 flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-6">
+                <!-- Left: Terms, Taka in Word, Address & Remarks (Expanded Width with comfortable spacing) -->
+                <div class="w-full sm:flex-1 space-y-3.5 text-xs text-slate-700 pr-0 sm:pr-6">
+                    <!-- 1. Terms & Conditions -->
+                    <div class="space-y-1">
+                        <p class="font-bold text-slate-900 text-xs">Terms &amp; Conditions :</p>
+                        <p class="text-[11px] text-slate-600">Standard Terms of Warranty/Guarantee Mentioned in -</p>
+                        <div class="pt-0.5">
+                            <a href="{{ url('/page/terms-conditions') }}" target="_blank" class="inline-flex items-center gap-1.5 text-slate-900 hover:text-black font-semibold text-xs underline decoration-slate-400">
+                                <span>{{ url('/page/terms-conditions') }}</span>
+                                <i data-lucide="external-link" class="w-3 h-3 inline text-slate-500"></i>
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-[10px] text-slate-500 pt-1">
+
+                    <!-- 3. Physical & Virtual Address -->
+                    <div class="space-y-1">
+                        <p class="text-[11px] text-slate-600">{{ $company['name'] }}'s All Physical &amp; Virtual Address Mentioned in -</p>
+                        <div class="pt-0.5">
+                            <a href="{{ url('/page/contact') }}" target="_blank" class="inline-flex items-center gap-1.5 text-slate-900 hover:text-black font-semibold text-xs underline decoration-slate-400">
+                                <span>{{ url('/page/contact') }}</span>
+                                <i data-lucide="external-link" class="w-3 h-3 inline text-slate-500"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 4. Remarks -->
+                    <div class="space-y-1 pt-1">
+                        <p class="font-bold text-slate-900 text-xs">Remarks :</p>
+                        <p class="text-[11px] text-slate-600 leading-relaxed">
+                            Terms and Conditions Create a Contract Between You and {{ $company['name'] }}. Please Read the Agreement Carefully.<br>
+                            Thank you for Choosing us!
+                        </p>
+                    </div>
+
+                    <!-- 5. Online/Courier Acceptance Notice -->
+                    <p class="text-[10px] text-slate-500 pt-2 border-t border-slate-200/80">
                         * Online/Courier-Based Order Imply Acceptance of All Terms, Even Without Customer Signature.
                     </p>
                 </div>
 
-                <!-- Right: Calculation Breakdown (Clean Normal Flat) -->
-                <div class="w-full sm:w-4/12 space-y-1.5 text-xs shrink-0">
+                <!-- Right: Calculation Breakdown (Compact & Aligned) -->
+                <div class="w-full sm:w-52 space-y-1.5 text-xs shrink-0 pt-1">
                     <div class="flex justify-between text-slate-600 py-0.5">
                         <span>Subtotal:</span>
                         <span class="font-semibold text-slate-900">৳{{ number_format($order->subtotal) }}</span>

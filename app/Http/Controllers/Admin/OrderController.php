@@ -64,7 +64,7 @@ class OrderController extends Controller
 
     public function invoice(Order $order)
     {
-        $order->load(['items', 'storeLocation']);
+        $order->load(['items.product.specs', 'storeLocation']);
 
         $company = [
             'name' => SiteSetting::getValue('site_name', 'Khan Gadget'),
