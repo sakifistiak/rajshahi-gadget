@@ -956,6 +956,7 @@ html.dark .btn-buy-now:hover {
     left: 0;
     z-index: 60;
     display: flex;
+    align-items: flex-start;
     min-width: 30rem;
     max-height: 26rem;
     background: var(--surface, #fff);
