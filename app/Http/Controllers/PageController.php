@@ -20,7 +20,9 @@ use App\Models\PromoBanner;
 use App\Models\SiteSetting;
 use App\Support\SectionTitleStyle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PageController extends Controller
@@ -323,7 +325,7 @@ class PageController extends Controller
      */
     public function navCategories()
     {
-        $menu = \Illuminate\Support\Facades\Cache::remember('nav.category_brands', now()->addMinutes(30), function () {
+        $menu = Cache::remember('nav.category_brands', now()->addMinutes(30), function () {
             return Category::orderBy('sort_order')->orderBy('name')->get()
                 ->map(function (Category $category) {
                     $brands = Brand::whereHas('products', function ($q) use ($category) {
@@ -362,7 +364,7 @@ class PageController extends Controller
         }
 
         if ($page === 'philanthropic-work') {
-            return $this->philanthropicWorkIndex();
+            return $this->philanthropicWorkIndex($request);
         }
 
         return $this->render('pages.'.$page);
@@ -582,6 +584,28 @@ class PageController extends Controller
         throw new NotFoundHttpException;
     }
 
+    public function blogSearchSuggest(Request $request)
+    {
+        $query = trim((string) $request->query('q', ''));
+        if (strlen($query) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $posts = BlogPost::published()
+            ->where(fn ($w) => $w->where('title', 'like', "%{$query}%")->orWhere('content', 'like', "%{$query}%"))
+            ->orderByDesc('published_at')
+            ->take(6)
+            ->get()
+            ->map(fn (BlogPost $post) => [
+                'title' => $post->title,
+                'subtitle' => $post->excerptText(80),
+                'image' => $post->featured_image ?: '/assets/no-image-placeholder.svg',
+                'url' => route('blog', $post->slug),
+            ]);
+
+        return response()->json(['results' => $posts]);
+    }
+
     public function customerSpotlightIndex(Request $request)
     {
         $search = trim((string) $request->query('search', ''));
@@ -593,6 +617,43 @@ class PageController extends Controller
             ->withQueryString();
 
         return view('pages.customer-spotlight', compact('spotlights', 'search'));
+    }
+
+    public function customerSpotlightLoadMore(Request $request)
+    {
+        $page = max(1, (int) $request->query('page', 2));
+        $search = trim((string) $request->query('search', ''));
+
+        $spotlights = CustomerSpotlight::orderByDesc('date')
+            ->orderByDesc('id')
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('product', 'like', "%{$search}%")->orWhere('name', 'like', "%{$search}%")->orWhere('location', 'like', "%{$search}%")))
+            ->paginate(24, ['*'], 'page', $page);
+
+        return response()->json([
+            'html' => view('partials.spotlight-cards', compact('spotlights'))->render(),
+            'has_more' => $spotlights->hasMorePages(),
+        ]);
+    }
+
+    public function customerSpotlightSearchSuggest(Request $request)
+    {
+        $query = trim((string) $request->query('q', ''));
+        if (strlen($query) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $spotlights = CustomerSpotlight::where(fn ($w) => $w->where('product', 'like', "%{$query}%")->orWhere('name', 'like', "%{$query}%")->orWhere('location', 'like', "%{$query}%"))
+            ->orderByDesc('date')
+            ->take(6)
+            ->get()
+            ->map(fn (CustomerSpotlight $spotlight) => [
+                'title' => $spotlight->product,
+                'subtitle' => trim($spotlight->name.($spotlight->location ? ' · '.$spotlight->location : '')),
+                'image' => $spotlight->image ?: '/assets/no-image-placeholder.svg',
+                'url' => '/customer-spotlight?search='.urlencode($spotlight->product),
+            ]);
+
+        return response()->json(['results' => $spotlights]);
     }
 
     public function customerFeedbackIndex(Request $request)
@@ -607,11 +668,88 @@ class PageController extends Controller
         return view('pages.customer-feedback', compact('feedbacks', 'search'));
     }
 
-    public function philanthropicWorkIndex()
+    public function customerFeedbackLoadMore(Request $request)
     {
-        $works = PhilanthropicWork::orderByDesc('id')->get();
+        $page = max(1, (int) $request->query('page', 2));
+        $search = trim((string) $request->query('search', ''));
 
-        return view('pages.philanthropic-work', compact('works'));
+        $feedbacks = CustomerFeedback::latest()
+            ->when($search !== '', fn ($q) => $q->where('message', 'like', "%{$search}%"))
+            ->paginate(24, ['*'], 'page', $page);
+
+        return response()->json([
+            'html' => view('partials.feedback-cards', compact('feedbacks'))->render(),
+            'has_more' => $feedbacks->hasMorePages(),
+        ]);
+    }
+
+    public function customerFeedbackSearchSuggest(Request $request)
+    {
+        $query = trim((string) $request->query('q', ''));
+        if (strlen($query) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $feedbacks = CustomerFeedback::where('message', 'like', "%{$query}%")
+            ->latest()
+            ->take(6)
+            ->get()
+            ->map(fn (CustomerFeedback $feedback) => [
+                'title' => Str::limit($feedback->message, 80),
+                'subtitle' => null,
+                'image' => $feedback->image ?: '/assets/no-image-placeholder.svg',
+                'url' => '/customer-feedback?search='.urlencode(Str::limit($feedback->message, 40, '')),
+            ]);
+
+        return response()->json(['results' => $feedbacks]);
+    }
+
+    public function philanthropicWorkIndex(Request $request)
+    {
+        $search = trim((string) $request->query('search', ''));
+
+        $works = PhilanthropicWork::orderByDesc('id')
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")))
+            ->paginate(24)
+            ->withQueryString();
+
+        return view('pages.philanthropic-work', compact('works', 'search'));
+    }
+
+    public function philanthropicWorkLoadMore(Request $request)
+    {
+        $page = max(1, (int) $request->query('page', 2));
+        $search = trim((string) $request->query('search', ''));
+
+        $works = PhilanthropicWork::orderByDesc('id')
+            ->when($search !== '', fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', "%{$search}%")->orWhere('content', 'like', "%{$search}%")))
+            ->paginate(24, ['*'], 'page', $page);
+
+        return response()->json([
+            'html' => view('partials.philanthropic-cards', compact('works'))->render(),
+            'has_more' => $works->hasMorePages(),
+        ]);
+    }
+
+    public function philanthropicWorkSearchSuggest(Request $request)
+    {
+        $query = trim((string) $request->query('q', ''));
+        if (strlen($query) < 2) {
+            return response()->json(['results' => []]);
+        }
+
+        $works = PhilanthropicWork::where(fn ($w) => $w->where('title', 'like', "%{$query}%")->orWhere('content', 'like', "%{$query}%"))
+            ->orderByDesc('id')
+            ->take(6)
+            ->get()
+            ->map(fn (PhilanthropicWork $work) => [
+                'title' => $work->title,
+                'subtitle' => null,
+                'image' => $work->image ?: '/assets/no-image-placeholder.svg',
+                'url' => route('philanthropic-work', $work->slug),
+            ]);
+
+        return response()->json(['results' => $works]);
     }
 
     public function philanthropicWork(string $slug)

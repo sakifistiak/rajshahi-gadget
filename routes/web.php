@@ -50,7 +50,14 @@ Route::middleware('throttle:30,1')->group(function () {
 });
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/load-more', [PageController::class, 'blogLoadMore'])->name('blog.load-more');
+Route::get('/blog/search-suggest', [PageController::class, 'blogSearchSuggest'])->name('blog.search-suggest');
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
+Route::get('/customer-spotlight/load-more', [PageController::class, 'customerSpotlightLoadMore'])->name('customer-spotlight.load-more');
+Route::get('/customer-spotlight/search-suggest', [PageController::class, 'customerSpotlightSearchSuggest'])->name('customer-spotlight.search-suggest');
+Route::get('/customer-feedback/load-more', [PageController::class, 'customerFeedbackLoadMore'])->name('customer-feedback.load-more');
+Route::get('/customer-feedback/search-suggest', [PageController::class, 'customerFeedbackSearchSuggest'])->name('customer-feedback.search-suggest');
+Route::get('/philanthropic-work/load-more', [PageController::class, 'philanthropicWorkLoadMore'])->name('philanthropic-work.load-more');
+Route::get('/philanthropic-work/search-suggest', [PageController::class, 'philanthropicWorkSearchSuggest'])->name('philanthropic-work.search-suggest');
 Route::get('/philanthropic-work/{slug}', [PageController::class, 'philanthropicWork'])->name('philanthropic-work');
 Route::get('/shop/{category}', [PageController::class, 'category'])->name('category');
 
