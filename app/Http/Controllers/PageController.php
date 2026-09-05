@@ -443,46 +443,63 @@ class PageController extends Controller
             $query->where('in_stock', true);
         }
 
-        // Spec filters (RAM, Storage, Connection, ...) only exist per category,
-        // so they only render — and only apply — once at least one category is
-        // selected. A mouse's category has no "Storage" attribute defined, so
-        // that filter simply never appears for it.
-        $filterAttributes = collect();
+        // Spec filters (RAM, Storage, Processor, ...) are defined per category,
+        // but the same filter (e.g. "RAM") is normally redefined identically on
+        // every laptop-ish category so it also shows on the all-products / no-
+        // category view instead of only appearing once a category is picked.
+        // Attributes across categories that share the same slug-derived `key`
+        // (e.g. "ram") are merged into a single sidebar filter here, matched
+        // against any of their underlying attribute IDs — a mouse's category
+        // simply never defines a "processor" key, so that filter never appears
+        // for it regardless of whether a category is selected.
+        $attributesQuery = FilterAttribute::query();
         if (! empty($categorySlugs)) {
-            $filterAttributes = FilterAttribute::whereHas('category', function ($q) use ($categorySlugs) {
+            $attributesQuery->whereHas('category', function ($q) use ($categorySlugs) {
                 $q->whereIn('slug', $categorySlugs);
-            })->orderBy('sort_order')->get();
+            });
+        }
+        $rawAttributes = $attributesQuery->orderBy('sort_order')->get()->groupBy('key');
 
-            foreach ($filterAttributes as $attribute) {
-                $bounds = ProductFilterValue::where('filter_attribute_id', $attribute->id)
-                    ->selectRaw('MIN(numeric_value) as min_bound, MAX(numeric_value) as max_bound')
-                    ->first();
-                $attribute->min_bound = $bounds->min_bound;
-                $attribute->max_bound = $bounds->max_bound;
+        $filterAttributes = collect();
+        foreach ($rawAttributes as $key => $group) {
+            $ids = $group->pluck('id');
+            $attribute = clone $group->first();
+            $attribute->options = $group->pluck('options')
+                ->filter()
+                ->flatMap(fn ($options) => array_map('trim', explode(',', $options)))
+                ->filter()
+                ->unique()->values()->implode(', ');
 
-                if ($attribute->type === 'range') {
-                    $min = $request->input("spec_min.{$attribute->id}");
-                    $max = $request->input("spec_max.{$attribute->id}");
-                    if (($min !== null && $min !== '') || ($max !== null && $max !== '')) {
-                        $query->whereHas('filterValues', function ($q) use ($attribute, $min, $max) {
-                            $q->where('filter_attribute_id', $attribute->id);
-                            if ($min !== null && $min !== '') {
-                                $q->where('numeric_value', '>=', (float) $min);
-                            }
-                            if ($max !== null && $max !== '') {
-                                $q->where('numeric_value', '<=', (float) $max);
-                            }
-                        });
-                    }
-                } else {
-                    $selected = array_filter((array) $request->input("spec_select.{$attribute->id}", []));
-                    if (! empty($selected)) {
-                        $query->whereHas('filterValues', function ($q) use ($attribute, $selected) {
-                            $q->where('filter_attribute_id', $attribute->id)->whereIn('text_value', $selected);
-                        });
-                    }
+            $bounds = ProductFilterValue::whereIn('filter_attribute_id', $ids)
+                ->selectRaw('MIN(numeric_value) as min_bound, MAX(numeric_value) as max_bound')
+                ->first();
+            $attribute->min_bound = $bounds->min_bound;
+            $attribute->max_bound = $bounds->max_bound;
+
+            if ($attribute->type === 'range') {
+                $min = $request->input("spec_min.{$key}");
+                $max = $request->input("spec_max.{$key}");
+                if (($min !== null && $min !== '') || ($max !== null && $max !== '')) {
+                    $query->whereHas('filterValues', function ($q) use ($ids, $min, $max) {
+                        $q->whereIn('filter_attribute_id', $ids);
+                        if ($min !== null && $min !== '') {
+                            $q->where('numeric_value', '>=', (float) $min);
+                        }
+                        if ($max !== null && $max !== '') {
+                            $q->where('numeric_value', '<=', (float) $max);
+                        }
+                    });
+                }
+            } else {
+                $selected = array_filter((array) $request->input("spec_select.{$key}", []));
+                if (! empty($selected)) {
+                    $query->whereHas('filterValues', function ($q) use ($ids, $selected) {
+                        $q->whereIn('filter_attribute_id', $ids)->whereIn('text_value', $selected);
+                    });
                 }
             }
+
+            $filterAttributes->push($attribute);
         }
 
         // Search query

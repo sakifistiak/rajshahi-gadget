@@ -110,14 +110,14 @@
                             </p>
                             @if($attr->type === 'range')
                                 <div class="flex items-center gap-2">
-                                    <input type="number" name="spec_min[{{ $attr->id }}]"
-                                           value="{{ request("spec_min.{$attr->id}") }}"
+                                    <input type="number" name="spec_min[{{ $attr->key }}]"
+                                           value="{{ request("spec_min.{$attr->key}") }}"
                                            placeholder="{{ $attr->min_bound !== null ? (int) $attr->min_bound : 'Min' }}"
                                            class="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs"
                                            onchange="this.form.submit()" />
                                     <span class="text-xs text-muted-foreground">–</span>
-                                    <input type="number" name="spec_max[{{ $attr->id }}]"
-                                           value="{{ request("spec_max.{$attr->id}") }}"
+                                    <input type="number" name="spec_max[{{ $attr->key }}]"
+                                           value="{{ request("spec_max.{$attr->key}") }}"
                                            placeholder="{{ $attr->max_bound !== null ? (int) $attr->max_bound : 'Max' }}"
                                            class="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs"
                                            onchange="this.form.submit()" />
@@ -125,9 +125,9 @@
                             @else
                                 <div class="space-y-2">
                                     @foreach($attr->optionList() as $option)
-                                        @php $selectedOptions = (array) request("spec_select.{$attr->id}", []); @endphp
+                                        @php $selectedOptions = (array) request("spec_select.{$attr->key}", []); @endphp
                                         <label class="flex cursor-pointer items-center gap-2 text-sm group">
-                                            <input type="checkbox" name="spec_select[{{ $attr->id }}][]" value="{{ $option }}"
+                                            <input type="checkbox" name="spec_select[{{ $attr->key }}][]" value="{{ $option }}"
                                                    class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
                                                    {{ in_array($option, $selectedOptions) ? 'checked' : '' }}
                                                    onchange="this.form.submit()" />
