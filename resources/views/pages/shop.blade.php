@@ -22,7 +22,7 @@
             <form id="shop-filter-form" action="/shop" method="GET" class="sticky top-32 space-y-5 rounded-md border border-border bg-surface p-5 overflow-y-auto" style="max-height: calc(100vh - 9rem);">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold uppercase tracking-widest text-foreground">Filters</p>
-                    @if(request()->hasAny(['condition', 'category', 'brand', 'max_price', 'search']))
+                    @if(request()->hasAny(['condition', 'category', 'brand', 'max_price', 'search', 'exclude_out_of_stock', 'spec_select', 'spec_min', 'spec_max']))
                         <a href="/shop" class="text-[11px] font-medium text-rose-500 hover:underline">Clear All</a>
                     @endif
                 </div>
@@ -33,6 +33,19 @@
                 @if(request('sort'))
                     <input type="hidden" name="sort" value="{{ request('sort') }}">
                 @endif
+
+                <!-- Exclude Out of Stock -->
+                <div>
+                    <label class="flex cursor-pointer items-center gap-2 text-sm group">
+                        <input type="checkbox" name="exclude_out_of_stock" value="1"
+                               class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
+                               {{ request()->boolean('exclude_out_of_stock') ? 'checked' : '' }}
+                               onchange="this.form.submit()" />
+                        <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ request()->boolean('exclude_out_of_stock') ? 'font-bold text-foreground' : '' }}">
+                            Exclude Out of Stock
+                        </span>
+                    </label>
+                </div>
 
                 <!-- Condition Filter -->
                 <div>

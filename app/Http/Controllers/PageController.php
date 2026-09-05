@@ -439,6 +439,10 @@ class PageController extends Controller
             });
         }
 
+        if ($request->boolean('exclude_out_of_stock')) {
+            $query->where('in_stock', true);
+        }
+
         // Spec filters (RAM, Storage, Connection, ...) only exist per category,
         // so they only render — and only apply — once at least one category is
         // selected. A mouse's category has no "Storage" attribute defined, so
