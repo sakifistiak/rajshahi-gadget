@@ -76,14 +76,6 @@
         });
     }
 
-    function parseHighlight(text) {
-        var idx = text.indexOf(':');
-        if (idx > 0 && idx < 40) {
-            return { label: text.slice(0, idx).trim(), value: text.slice(idx + 1).trim() };
-        }
-        return { label: text.trim(), value: '✓' };
-    }
-
     function updateTable() {
         var hint = document.getElementById('kg-compare-hint');
         var rowsContainer = document.getElementById('kg-compare-spec-rows');
@@ -108,19 +100,25 @@
         var seenKeys = {};
         var perSlotFeatures = selected.map(function (p) {
             var map = {};
-            if (p && p.highlights) {
-                p.highlights.forEach(function (text) {
-                    var parsed = parseHighlight(text);
-                    var key = parsed.label.toLowerCase();
-                    if (!(key in map)) map[key] = parsed.value;
-                    if (!seenKeys[key]) { seenKeys[key] = true; featureLabels.push({ key: key, label: parsed.label }); }
+            if (p && p.specs) {
+                p.specs.forEach(function (spec) {
+                    var key = spec.label.toLowerCase();
+                    if (!(key in map)) map[key] = spec.value;
+                    if (!seenKeys[key]) { seenKeys[key] = true; featureLabels.push({ key: key, label: spec.label }); }
                 });
             }
             return map;
         });
 
+        // A product's own spec entries (admin-curated) take precedence over these
+        // generic base rows, so skip a base row whenever a spec already covers the
+        // same label (e.g. a "Warranty" spec) to avoid showing the label twice.
+        var visibleBaseRows = baseRows.filter(function (row) {
+            return !seenKeys[row.label.toLowerCase()];
+        });
+
         var html = '';
-        baseRows.forEach(function (row) {
+        visibleBaseRows.forEach(function (row) {
             html += '<div class="kg-compare-row"><div class="bg-secondary/40 text-sm font-medium text-foreground">' + row.label + '</div>';
             selected.forEach(function (p) {
                 html += '<div class="text-sm text-muted-foreground">' + (p ? row.render(p) : '') + '</div>';

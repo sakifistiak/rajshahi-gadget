@@ -283,7 +283,7 @@ class PageController extends Controller
     {
         $slugs = array_slice(array_filter(explode(',', $request->input('slugs', ''))), 0, 3);
 
-        $products = Product::with(['brand', 'category', 'condition', 'highlights'])
+        $products = Product::with(['brand', 'category', 'condition', 'highlights', 'specs'])
             ->whereIn('slug', $slugs)
             ->get()
             ->sortBy(fn ($p) => array_search($p->slug, $slugs))
@@ -304,6 +304,10 @@ class PageController extends Controller
                     'reviews_count' => $product->reviews_count,
                     'url' => route('product', $product->slug),
                     'highlights' => $product->highlights->sortBy('sort_order')->pluck('text')->values(),
+                    'specs' => $product->specs->sortBy('sort_order')->map(fn ($spec) => [
+                        'label' => $spec->label,
+                        'value' => $spec->value,
+                    ])->values(),
                 ];
             });
 
