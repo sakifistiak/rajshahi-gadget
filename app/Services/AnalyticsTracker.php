@@ -5,9 +5,10 @@ namespace App\Services;
 use App\Models\AnalyticsActiveSession;
 use App\Models\AnalyticsVisit;
 use App\Models\BlogPost;
+use App\Models\Category;
+use App\Models\CustomPage;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 
@@ -25,12 +26,7 @@ class AnalyticsTracker
             return;
         }
 
-        // 2. Skip authenticated admins & live chat agents to keep analytics clean
-        if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_live_chat_agent)) {
-            return;
-        }
-
-        // 3. Skip non-GET, internal AJAX, debugbar, and media asset requests
+        // 2. Skip non-GET, internal AJAX, debugbar, and asset requests
         if (!$request->isMethod('GET') || $request->isXmlHttpRequest()) {
             return;
         }
@@ -47,59 +43,58 @@ class AnalyticsTracker
             return;
         }
 
-        // 4. Session & Visitor identification
+        // 3. Session & Visitor identification
         $sessionId = $request->cookie('kg_analytics_sid');
         if (!$sessionId || strlen($sessionId) < 10) {
             $sessionId = (string) Str::uuid();
             Cookie::queue('kg_analytics_sid', $sessionId, 60 * 24 * 30); // 30 days
         }
 
-        $ip = $request->ip();
-        $visitorHash = hash('sha256', ($ip ?? '127.0.0.1') . '|' . $userAgent);
+        $ip = $request->ip() ?? '127.0.0.1';
+        $visitorHash = hash('sha256', $ip . '|' . $userAgent);
 
         $url = $request->fullUrl();
         $routeName = $request->route()?->getName();
         $referrer = $request->headers->get('referer');
-        $referrerDomain = $this->extractReferrerDomain($referrer, $request->getHost());
+        $trafficSource = $this->determineTrafficSource($request, $referrer);
         $deviceType = $this->detectDevice($userAgent);
         $browser = $this->detectBrowser($userAgent);
         $platform = $this->detectPlatform($userAgent);
 
-        // 5. Detect viewable entity (Product or Blog)
+        // 4. Detect viewable entity (Product, Blog, Category, etc.)
         $viewableInfo = $this->resolveViewable($request);
         $pageTitle = $viewableInfo['title'] ?? $this->formatTitleFromRoute($routeName, $path);
 
         $now = now();
 
-        // 6. Update or insert into active sessions table (for live online visitor tracking)
+        // 5. Update or insert active session (preserving original first_seen_at)
         try {
-            AnalyticsActiveSession::updateOrCreate(
-                ['session_id' => $sessionId],
-                [
-                    'ip_address' => $ip,
-                    'current_url' => Str::limit($url, 1024),
-                    'current_title' => Str::limit($pageTitle, 255),
-                    'route_name' => $routeName,
-                    'viewable_type' => $viewableInfo['type'],
-                    'viewable_id' => $viewableInfo['id'],
-                    'referrer' => Str::limit($referrer, 1024),
-                    'referrer_domain' => $referrerDomain,
-                    'device_type' => $deviceType,
-                    'browser' => $browser,
-                    'platform' => $platform,
-                    'first_seen_at' => now(),
-                    'last_active_at' => $now,
-                ]
-            );
+            $session = AnalyticsActiveSession::firstOrNew(['session_id' => $sessionId]);
+            if (!$session->exists) {
+                $session->first_seen_at = $now;
+            }
+            $session->ip_address = $ip;
+            $session->current_url = Str::limit($url, 1024);
+            $session->current_title = Str::limit($pageTitle, 255);
+            $session->route_name = $routeName;
+            $session->viewable_type = $viewableInfo['type'];
+            $session->viewable_id = $viewableInfo['id'];
+            $session->referrer = Str::limit($referrer, 1024);
+            $session->referrer_domain = $trafficSource;
+            $session->device_type = $deviceType;
+            $session->browser = $browser;
+            $session->platform = $platform;
+            $session->last_active_at = $now;
+            $session->save();
         } catch (\Throwable $e) {
             // Silently ignore to protect customer request flow
         }
 
-        // 7. Record historical pageview in analytics_visits (with 15-second spam debounce for same URL)
+        // 6. Record historical pageview in analytics_visits (with 10-second spam debounce for exact same URL)
         try {
             $recentVisit = AnalyticsVisit::where('session_id', $sessionId)
                 ->where('url', Str::limit($url, 1024))
-                ->where('created_at', '>=', $now->copy()->subSeconds(15))
+                ->where('created_at', '>=', $now->copy()->subSeconds(10))
                 ->exists();
 
             if (!$recentVisit) {
@@ -113,7 +108,7 @@ class AnalyticsTracker
                     'viewable_type' => $viewableInfo['type'],
                     'viewable_id' => $viewableInfo['id'],
                     'referrer' => Str::limit($referrer, 1024),
-                    'referrer_domain' => $referrerDomain,
+                    'referrer_domain' => $trafficSource,
                     'device_type' => $deviceType,
                     'browser' => $browser,
                     'platform' => $platform,
@@ -158,12 +153,12 @@ class AnalyticsTracker
     }
 
     /**
-     * Resolve if the current request is viewing a Product or a BlogPost
+     * Resolve if the current request is viewing a Product, Blog, Category, etc.
      */
     private function resolveViewable(Request $request): array
     {
         $routeName = $request->route()?->getName();
-        $slug = $request->route('slug');
+        $slug = $request->route('slug') ?? $request->route('category');
 
         if ($routeName === 'product' && $slug) {
             $product = Product::where('slug', $slug)->first(['id', 'name']);
@@ -187,6 +182,17 @@ class AnalyticsTracker
             }
         }
 
+        if ($routeName === 'category' && $slug) {
+            $category = Category::where('slug', $slug)->first(['id', 'name']);
+            if ($category) {
+                return [
+                    'type' => 'category',
+                    'id' => $category->id,
+                    'title' => $category->name . ' (Category)',
+                ];
+            }
+        }
+
         return [
             'type' => null,
             'id' => null,
@@ -204,7 +210,7 @@ class AnalyticsTracker
             'blog.index', 'blog' => 'Blog Posts',
             'checkout' => 'Checkout Page',
             'thank-you' => 'Order Confirmation (Thank You)',
-            'category' => 'Shop / Category Page',
+            'category' => 'Shop Category',
             'customer-spotlight.load-more' => 'Customer Spotlight',
             'customer-feedback.load-more' => 'Customer Feedback',
             'philanthropic-work' => 'Philanthropic Work',
@@ -213,37 +219,54 @@ class AnalyticsTracker
     }
 
     /**
-     * Normalize traffic source / referrer domain
+     * Determine accurate traffic source combining UTM, query tags, and referrer domain
      */
-    private function extractReferrerDomain(?string $referrer, string $currentHost): string
+    private function determineTrafficSource(Request $request, ?string $referrer): string
     {
+        // 1. Check UTM tags or ad identifiers
+        $utmSource = strtolower(trim($request->query('utm_source', '')));
+        if (!empty($utmSource)) {
+            if (str_contains($utmSource, 'facebook') || str_contains($utmSource, 'fb')) return 'Facebook (Ad/Campaign)';
+            if (str_contains($utmSource, 'google')) return 'Google (Ad/Campaign)';
+            if (str_contains($utmSource, 'instagram') || str_contains($utmSource, 'ig')) return 'Instagram (Campaign)';
+            if (str_contains($utmSource, 'youtube')) return 'YouTube (Campaign)';
+            if (str_contains($utmSource, 'tiktok')) return 'TikTok (Campaign)';
+            if (str_contains($utmSource, 'email') || str_contains($utmSource, 'newsletter')) return 'Email / Newsletter';
+            return Str::limit(ucfirst($utmSource), 50);
+        }
+
+        if ($request->has('fbclid')) return 'Facebook';
+        if ($request->has('gclid')) return 'Google Ads';
+        if ($request->has('ttclid')) return 'TikTok';
+
+        // 2. Check Referrer
         if (empty($referrer)) {
-            return 'direct';
+            return 'Direct';
         }
 
         $parsed = parse_url($referrer);
         $host = strtolower($parsed['host'] ?? '');
+        $currentHost = strtolower($request->getHost());
 
-        if (empty($host) || $host === strtolower($currentHost) || str_ends_with($host, '.' . strtolower($currentHost))) {
-            return 'direct';
+        if (empty($host) || $host === $currentHost || str_ends_with($host, '.' . $currentHost)) {
+            return 'Direct';
         }
 
-        // Clean host
         $host = preg_replace('/^www\./', '', $host);
 
-        if (str_contains($host, 'google.')) return 'google';
-        if (str_contains($host, 'facebook.') || str_contains($host, 'fb.com') || str_contains($host, 'fb.watch')) return 'facebook';
-        if (str_contains($host, 'instagram.')) return 'instagram';
-        if (str_contains($host, 'youtube.') || str_contains($host, 'youtu.be')) return 'youtube';
-        if (str_contains($host, 'tiktok.')) return 'tiktok';
-        if (str_contains($host, 'whatsapp') || str_contains($host, 'wa.me')) return 'whatsapp';
-        if (str_contains($host, 'bikroy.')) return 'bikroy';
-        if (str_contains($host, 'daraz.')) return 'daraz';
-        if (str_contains($host, 'twitter.') || str_contains($host, 'x.com')) return 'twitter';
-        if (str_contains($host, 'linkedin.')) return 'linkedin';
-        if (str_contains($host, 'bing.')) return 'bing';
+        if (str_contains($host, 'google.')) return 'Google';
+        if (str_contains($host, 'facebook.') || str_contains($host, 'fb.com') || str_contains($host, 'fb.watch')) return 'Facebook';
+        if (str_contains($host, 'instagram.')) return 'Instagram';
+        if (str_contains($host, 'youtube.') || str_contains($host, 'youtu.be')) return 'YouTube';
+        if (str_contains($host, 'tiktok.')) return 'TikTok';
+        if (str_contains($host, 'whatsapp') || str_contains($host, 'wa.me')) return 'WhatsApp';
+        if (str_contains($host, 'bikroy.')) return 'Bikroy';
+        if (str_contains($host, 'daraz.')) return 'Daraz';
+        if (str_contains($host, 'twitter.') || str_contains($host, 'x.com')) return 'X (Twitter)';
+        if (str_contains($host, 'linkedin.')) return 'LinkedIn';
+        if (str_contains($host, 'bing.')) return 'Bing';
 
-        return Str::limit($host, 100);
+        return Str::limit($host, 60);
     }
 
     /**
@@ -253,12 +276,12 @@ class AnalyticsTracker
     {
         $uaLower = strtolower($ua);
         if (preg_match('/(ipad|tablet|(android(?!.*mobile))|(windows(?!.*phone)(.*touch))|kindle|playbook|silk)/i', $uaLower)) {
-            return 'tablet';
+            return 'Tablet';
         }
         if (preg_match('/(mobile|android|iphone|ipod|blackberry|opera mini|iemobile|wpdesktop)/i', $uaLower)) {
-            return 'mobile';
+            return 'Mobile';
         }
-        return 'desktop';
+        return 'Desktop';
     }
 
     /**
@@ -272,7 +295,7 @@ class AnalyticsTracker
         if (str_contains($ua, 'Chrome/') && !str_contains($ua, 'Chromium/')) return 'Chrome';
         if (str_contains($ua, 'Safari/') && !str_contains($ua, 'Chrome/')) return 'Safari';
         if (str_contains($ua, 'Firefox/')) return 'Firefox';
-        return 'Other';
+        return 'Browser';
     }
 
     /**
@@ -281,11 +304,13 @@ class AnalyticsTracker
     private function detectPlatform(string $ua): string
     {
         if (str_contains($ua, 'Android')) return 'Android';
-        if (str_contains($ua, 'iPhone') || str_contains($ua, 'iPad') || str_contains($ua, 'iPod')) return 'iOS';
+        if (str_contains($ua, 'iPhone')) return 'iPhone (iOS)';
+        if (str_contains($ua, 'iPad')) return 'iPad (iPadOS)';
+        if (str_contains($ua, 'Windows NT 10.0')) return 'Windows 10/11';
         if (str_contains($ua, 'Windows')) return 'Windows';
         if (str_contains($ua, 'Macintosh') || str_contains($ua, 'Mac OS')) return 'macOS';
         if (str_contains($ua, 'Linux')) return 'Linux';
-        return 'Other';
+        return 'Unknown OS';
     }
 
     /**

@@ -111,15 +111,12 @@
                     <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('admin.analytics.index') }}" class="flex items-center justify-between px-3 py-2 rounded-md font-semibold {{ request()->routeIs('admin.analytics.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50' }}">
+                <a href="{{ route('admin.analytics.index') }}" class="flex items-center justify-between px-3 py-2 rounded-md font-semibold {{ request()->routeIs('admin.analytics.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50' }}">
                     <span class="flex items-center gap-3">
                         <i data-lucide="activity" class="h-4 w-4"></i>
                         <span>Analytics</span>
                     </span>
-                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-700">
-                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Live
-                    </span>
+                    <span class="px-1.5 py-0.2 rounded text-[10px] font-bold {{ request()->routeIs('admin.analytics.*') ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500' }}">Live</span>
                 </a>
                 <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md font-semibold {{ request()->routeIs('admin.products.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50' }}">
                     <i data-lucide="package" class="h-4 w-4"></i>
