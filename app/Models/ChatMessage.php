@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ChatMessage extends Model
 {
     protected $fillable = [
-        'conversation_id', 'sender_type', 'sender_id', 'body', 'read_at',
+        'conversation_id', 'reply_to_id', 'sender_type', 'sender_id', 'body', 'read_at',
     ];
 
     protected function casts(): array
@@ -21,6 +21,11 @@ class ChatMessage extends Model
     public function conversation(): BelongsTo
     {
         return $this->belongsTo(ChatConversation::class, 'conversation_id');
+    }
+
+    public function replyTo(): BelongsTo
+    {
+        return $this->belongsTo(ChatMessage::class, 'reply_to_id');
     }
 
     public function sender(): BelongsTo

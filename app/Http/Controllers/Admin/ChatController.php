@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ChatConversation;
 use App\Models\ChatMessage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ChatController extends Controller
 {
@@ -68,7 +69,7 @@ class ChatController extends Controller
     public function show(ChatConversation $conversation)
     {
         $conversation->messages()->where('sender_type', 'customer')->whereNull('read_at')->update(['read_at' => now()]);
-        $conversation->load('messages.sender', 'assignedAgent');
+        $conversation->load(['messages.sender', 'messages.replyTo.sender', 'assignedAgent']);
 
         return view('admin.live-chat.show', compact('conversation'));
     }
@@ -79,20 +80,56 @@ class ChatController extends Controller
 
         return response()->json([
             'conversation' => $conversation->only(['status', 'closed_by']),
-            'messages' => $conversation->messages()->with('sender:id,name')->oldest()->get(),
+            'messages' => $conversation->messages()->with(['sender:id,name', 'replyTo.sender:id,name'])->oldest()->get()->map(function ($message) use ($conversation) {
+                $replyTo = null;
+                if ($message->replyTo) {
+                    $origSender = $message->replyTo->sender_type === 'customer'
+                        ? ($conversation->customer_name ?: 'Customer')
+                        : ($message->replyTo->sender?->name ?: 'Agent');
+                    $replyTo = [
+                        'id' => $message->replyTo->id,
+                        'body' => Str::limit($message->replyTo->body, 90),
+                        'sender_type' => $message->replyTo->sender_type,
+                        'sender_name' => $origSender,
+                    ];
+                }
+
+                return [
+                    'id' => $message->id,
+                    'body' => $message->body,
+                    'sender_type' => $message->sender_type,
+                    'sender' => $message->sender ? ['name' => $message->sender->name] : null,
+                    'created_at' => $message->created_at?->toIso8601String(),
+                    'reply_to' => $replyTo,
+                ];
+            }),
         ]);
     }
 
     public function send(Request $request, ChatConversation $conversation)
     {
-        $data = $request->validate(['body' => 'required|string|max:2000']);
+        $data = $request->validate([
+            'body' => 'required|string|max:2000',
+            'reply_to_id' => 'nullable|integer|exists:chat_messages,id',
+        ]);
 
         if ($conversation->status !== 'open') {
             return response()->json(['error' => 'closed'], 422);
         }
 
+        $replyToId = null;
+        if (! empty($data['reply_to_id'])) {
+            $valid = ChatMessage::where('id', $data['reply_to_id'])
+                ->where('conversation_id', $conversation->id)
+                ->exists();
+            if ($valid) {
+                $replyToId = (int) $data['reply_to_id'];
+            }
+        }
+
         $message = ChatMessage::create([
             'conversation_id' => $conversation->id,
+            'reply_to_id' => $replyToId,
             'sender_type' => 'agent',
             'sender_id' => $request->user()->id,
             'body' => trim($data['body']),
@@ -100,7 +137,20 @@ class ChatController extends Controller
         $conversation->update(['last_message_at' => now()]);
 
         if ($request->wantsJson()) {
-            $message->load('sender:id,name');
+            $message->load(['sender:id,name', 'replyTo.sender:id,name']);
+
+            $replyTo = null;
+            if ($message->replyTo) {
+                $origSender = $message->replyTo->sender_type === 'customer'
+                    ? ($conversation->customer_name ?: 'Customer')
+                    : ($message->replyTo->sender?->name ?: 'Agent');
+                $replyTo = [
+                    'id' => $message->replyTo->id,
+                    'body' => Str::limit($message->replyTo->body, 90),
+                    'sender_type' => $message->replyTo->sender_type,
+                    'sender_name' => $origSender,
+                ];
+            }
 
             return response()->json(['message' => [
                 'id' => $message->id,
@@ -108,6 +158,7 @@ class ChatController extends Controller
                 'sender_type' => $message->sender_type,
                 'sender' => $message->sender ? ['name' => $message->sender->name] : null,
                 'created_at' => $message->created_at?->toIso8601String(),
+                'reply_to' => $replyTo,
             ]]);
         }
 

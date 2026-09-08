@@ -46,7 +46,10 @@ class ChatController extends Controller
 
     public function send(Request $request)
     {
-        $data = $request->validate(['body' => 'required|string|max:2000']);
+        $data = $request->validate([
+            'body' => 'required|string|max:2000',
+            'reply_to_id' => 'nullable|integer|exists:chat_messages,id',
+        ]);
 
         // Deliberately NOT calling ChatConversation::autoCloseStale() here — the
         // customer sending a message right now is proof the conversation isn't
@@ -60,8 +63,19 @@ class ChatController extends Controller
             return response()->json(['error' => 'closed'], 422);
         }
 
+        $replyToId = null;
+        if (! empty($data['reply_to_id'])) {
+            $valid = ChatMessage::where('id', $data['reply_to_id'])
+                ->where('conversation_id', $conversation->id)
+                ->exists();
+            if ($valid) {
+                $replyToId = (int) $data['reply_to_id'];
+            }
+        }
+
         ChatMessage::create([
             'conversation_id' => $conversation->id,
+            'reply_to_id' => $replyToId,
             'sender_type' => 'customer',
             'body' => trim($data['body']),
         ]);
@@ -85,13 +99,29 @@ class ChatController extends Controller
     {
         return [
             'conversation' => $conversation->only(['customer_name', 'status']),
-            'messages' => $conversation->messages()->with('sender:id,name')->oldest()->get()->map(fn ($message) => [
-                'id' => $message->id,
-                'body' => $message->body,
-                'sender_type' => $message->sender_type,
-                'sender_name' => $message->sender?->name,
-                'created_at' => $message->created_at?->toIso8601String(),
-            ]),
+            'messages' => $conversation->messages()->with(['sender:id,name', 'replyTo.sender:id,name'])->oldest()->get()->map(function ($message) use ($conversation) {
+                $replyTo = null;
+                if ($message->replyTo) {
+                    $origSender = $message->replyTo->sender_type === 'customer'
+                        ? ($conversation->customer_name ?: 'Customer')
+                        : ($message->replyTo->sender?->name ?: 'Agent');
+                    $replyTo = [
+                        'id' => $message->replyTo->id,
+                        'body' => Str::limit($message->replyTo->body, 90),
+                        'sender_type' => $message->replyTo->sender_type,
+                        'sender_name' => $origSender,
+                    ];
+                }
+
+                return [
+                    'id' => $message->id,
+                    'body' => $message->body,
+                    'sender_type' => $message->sender_type,
+                    'sender_name' => $message->sender?->name,
+                    'created_at' => $message->created_at?->toIso8601String(),
+                    'reply_to' => $replyTo,
+                ];
+            }),
         ];
     }
 }

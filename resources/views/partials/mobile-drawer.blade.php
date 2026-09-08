@@ -915,9 +915,128 @@ html.dark .btn-buy-now:hover {
 }
 #kg-close-customer-chat:hover { background: rgba(255,255,255,.2); }
 #kg-customer-chat-messages { height: 280px; overflow-y: auto; padding: .9rem; background: #f8fafc; display: flex; flex-direction: column; }
-.kg-chat-message { max-width: 80%; margin-bottom: .5rem; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; white-space: pre-wrap; animation: kg-chat-msg-in .2s ease; }
-.kg-chat-message.customer { margin-left: auto; background: #24272c; color: #fff; border-bottom-right-radius: .25rem; }
-.kg-chat-message.agent { margin-right: auto; background: #fff; border: 1px solid #e5e7eb; color: #1f2937; border-bottom-left-radius: .25rem; }
+.kg-chat-row { display: flex; align-items: center; gap: .35rem; margin-bottom: .55rem; max-width: 90%; }
+.kg-chat-row.customer { margin-left: auto; flex-direction: row-reverse; }
+.kg-chat-row.agent { margin-right: auto; flex-direction: row; }
+.kg-chat-reply-btn {
+    opacity: 0;
+    visibility: hidden;
+    border: none;
+    background: #e2e8f0;
+    color: #475569;
+    width: 1.55rem;
+    height: 1.55rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity .15s, background .15s, transform .15s;
+}
+.kg-chat-row:hover .kg-chat-reply-btn,
+.kg-chat-row:focus-within .kg-chat-reply-btn {
+    opacity: 1;
+    visibility: visible;
+}
+@media (hover: none) {
+    .kg-chat-reply-btn { opacity: 0.65; visibility: visible; }
+}
+.kg-chat-reply-btn:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+    transform: scale(1.08);
+}
+.kg-chat-message { max-width: 100%; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; white-space: pre-wrap; animation: kg-chat-msg-in .2s ease; position: relative; }
+.kg-chat-message.customer { background: #24272c; color: #fff; border-bottom-right-radius: .25rem; }
+.kg-chat-message.agent { background: #fff; border: 1px solid #e5e7eb; color: #1f2937; border-bottom-left-radius: .25rem; }
+.kg-chat-quote {
+    padding: .35rem .55rem;
+    border-radius: .4rem;
+    margin-bottom: .4rem;
+    font-size: .72rem;
+    line-height: 1.3;
+    border-left: 3px solid #60a5fa;
+    background: rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    user-select: none;
+    text-align: left;
+}
+.kg-chat-message.agent .kg-chat-quote {
+    background: #f1f5f9;
+    border-left-color: #2563eb;
+}
+.kg-chat-quote .kg-quote-author {
+    font-weight: 700;
+    font-size: .68rem;
+    margin-bottom: 2px;
+    color: #93c5fd;
+    display: block;
+}
+.kg-chat-message.agent .kg-chat-quote .kg-quote-author {
+    color: #2563eb;
+}
+.kg-chat-quote .kg-quote-text {
+    opacity: .9;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+#kg-customer-chat-reply-preview {
+    display: none;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .75rem;
+    background: #f1f5f9;
+    border-top: 1px solid #e2e8f0;
+    font-size: .75rem;
+    animation: kg-chat-msg-in .15s ease;
+}
+#kg-customer-chat-reply-preview .kg-reply-accent {
+    width: 3px;
+    align-self: stretch;
+    background: #2563eb;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+#kg-customer-chat-reply-preview .kg-reply-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+#kg-customer-chat-reply-preview .kg-reply-name {
+    font-size: .7rem;
+    font-weight: 700;
+    color: #2563eb;
+    line-height: 1.2;
+}
+#kg-customer-chat-reply-preview .kg-reply-snippet {
+    font-size: .7rem;
+    color: #64748b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
+    margin-top: 1px;
+}
+#kg-customer-chat-reply-cancel {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color .15s, background .15s;
+}
+#kg-customer-chat-reply-cancel:hover {
+    color: #475569;
+    background: #e2e8f0;
+}
 @keyframes kg-chat-msg-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1347,10 +1466,20 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
         <div id="kg-customer-chat-body" style="display:none">
             <div id="kg-customer-chat-messages"></div>
+            <div id="kg-customer-chat-reply-preview">
+                <div class="kg-reply-accent"></div>
+                <div class="kg-reply-info">
+                    <span class="kg-reply-name" id="kg-reply-name"></span>
+                    <span class="kg-reply-snippet" id="kg-reply-snippet"></span>
+                </div>
+                <button type="button" id="kg-customer-chat-reply-cancel" title="Cancel reply" aria-label="Cancel reply">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
             <form id="kg-customer-chat-form">
                 <textarea id="kg-chat-input" rows="1" placeholder="Write a message..." maxlength="2000"></textarea>
                 <button type="submit" aria-label="Send message">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                 </button>
             </form>
             <div id="kg-customer-chat-closed-banner">
@@ -1367,20 +1496,77 @@ document.addEventListener('DOMContentLoaded', function() {
                   body = document.getElementById('kg-customer-chat-body'),
                   list = document.getElementById('kg-customer-chat-messages'),
                   chatForm2 = document.getElementById('kg-customer-chat-form'),
-                  closedBanner = document.getElementById('kg-customer-chat-closed-banner');
+                  closedBanner = document.getElementById('kg-customer-chat-closed-banner'),
+                  replyBar = document.getElementById('kg-customer-chat-reply-preview'),
+                  replyBarName = document.getElementById('kg-reply-name'),
+                  replyBarSnippet = document.getElementById('kg-reply-snippet'),
+                  replyBarCancel = document.getElementById('kg-customer-chat-reply-cancel');
             if (!box) return;
             let timer;
+            let activeReply = null;
+
+            function esc(s) {
+                return String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+            }
+
+            function setReply(id, author, text) {
+                activeReply = { id: id, author: author, text: text };
+                if (replyBarName) replyBarName.textContent = author;
+                if (replyBarSnippet) replyBarSnippet.textContent = text;
+                if (replyBar) replyBar.style.display = 'flex';
+                const input = document.getElementById('kg-chat-input');
+                if (input) input.focus();
+            }
+
+            function clearReply() {
+                activeReply = null;
+                if (replyBar) replyBar.style.display = 'none';
+            }
+
+            if (replyBarCancel) {
+                replyBarCancel.addEventListener('click', clearReply);
+            }
 
             function render(data) {
-                list.innerHTML = (data.messages || []).map(m =>
-                    '<div class="kg-chat-message ' + m.sender_type + '">' + String(m.body).replace(/[&<>]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[s])) + '</div>'
-                ).join('');
+                list.innerHTML = (data.messages || []).map(m => {
+                    const isCust = m.sender_type === 'customer';
+                    const senderLabel = isCust ? (data.conversation?.customer_name || 'You') : (m.sender_name || 'Agent');
+                    let quoteHtml = '';
+                    if (m.reply_to) {
+                        quoteHtml = '<div class="kg-chat-quote" onclick="document.getElementById(\'kg-cmsg-' + m.reply_to.id + '\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'})">'
+                            + '<strong class="kg-quote-author">' + esc(m.reply_to.sender_name || (m.reply_to.sender_type === 'customer' ? 'Customer' : 'Agent')) + '</strong>'
+                            + '<span class="kg-quote-text">' + esc(m.reply_to.body || '') + '</span>'
+                            + '</div>';
+                    }
+                    const replyBtn = '<button type="button" class="kg-chat-reply-btn" title="Reply to this message" data-id="' + m.id + '" data-author="' + esc(senderLabel) + '" data-body="' + esc(m.body) + '">'
+                        + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>'
+                        + '</button>';
+
+                    return '<div class="kg-chat-row ' + m.sender_type + '" id="kg-cmsg-' + m.id + '">'
+                        + replyBtn
+                        + '<div class="kg-chat-message ' + m.sender_type + '">'
+                        + quoteHtml
+                        + '<div class="kg-chat-text">' + esc(m.body) + '</div>'
+                        + '</div>'
+                        + '</div>';
+                }).join('');
+
+                list.querySelectorAll('.kg-chat-reply-btn').forEach(b => {
+                    b.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        setReply(this.dataset.id, this.dataset.author, this.dataset.body);
+                    });
+                });
+
                 list.scrollTop = list.scrollHeight;
 
                 const isClosed = data.conversation && data.conversation.status === 'closed';
                 if (chatForm2) chatForm2.style.display = isClosed ? 'none' : 'flex';
                 if (closedBanner) closedBanner.style.display = isClosed ? 'block' : 'none';
-                if (isClosed && timer) { clearInterval(timer); timer = null; }
+                if (isClosed) {
+                    clearReply();
+                    if (timer) { clearInterval(timer); timer = null; }
+                }
             }
 
             function load() {
@@ -1391,6 +1577,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             function resetToStart() {
                 if (timer) { clearInterval(timer); timer = null; }
+                clearReply();
                 list.innerHTML = '';
                 if (closedBanner) closedBanner.style.display = 'none';
                 if (chatForm2) chatForm2.style.display = 'flex';
@@ -1425,6 +1612,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }).catch(() => {});
                 }
                 if (timer) { clearInterval(timer); timer = null; }
+                clearReply();
                 box.classList.remove('is-visible');
             });
 
@@ -1451,13 +1639,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const chatInput = document.getElementById('kg-chat-input');
 
             if (chatInput) {
-                chatInput.addEventListener('input', function() {
+                chatInput.addEventListener('input', function () {
                     chatInput.style.height = 'auto';
                     chatInput.style.height = Math.min(chatInput.scrollHeight, 90) + 'px';
                 });
 
-                chatInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                chatInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                        clearReply();
+                    } else if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
                         chatForm.requestSubmit ? chatForm.requestSubmit() : chatForm.dispatchEvent(new Event('submit', { cancelable: true }));
                     }
@@ -1468,16 +1658,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 let input = document.getElementById('kg-chat-input');
                 if (!input.value.trim()) return;
+                let payload = { body: input.value };
+                if (activeReply && activeReply.id) {
+                    payload.reply_to_id = activeReply.id;
+                }
                 fetch('{{ route('chat.messages.send') }}', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                    body: JSON.stringify({ body: input.value })
+                    body: JSON.stringify(payload)
                 }).then(r => {
                     if (!r.ok) { load(); return null; }
                     return r.json();
                 }).then(d => {
                     input.value = '';
                     input.style.height = 'auto';
+                    clearReply();
                     if (d) render(d);
                 }).catch(() => {});
             });

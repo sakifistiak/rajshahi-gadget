@@ -12,6 +12,12 @@
             'sender_type' => $m->sender_type,
             'sender' => $m->sender ? ['name' => $m->sender->name] : null,
             'created_at' => $m->created_at?->toIso8601String(),
+            'reply_to' => $m->replyTo ? [
+                'id' => $m->replyTo->id,
+                'body' => Str::limit($m->replyTo->body, 90),
+                'sender_type' => $m->replyTo->sender_type,
+                'sender_name' => $m->replyTo->sender_type === 'customer' ? ($conversation->customer_name ?: 'Customer') : ($m->replyTo->sender?->name ?: 'Agent'),
+            ] : null,
         ]);
     @endphp
 
@@ -48,10 +54,23 @@
 
         <div id="admin-chat-messages" class="flex-1 space-y-4 overflow-y-auto bg-[#f4f6fb] p-5"></div>
 
+        <div id="admin-chat-reply-preview" style="display:none" class="flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-4 py-2 text-xs">
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-1 self-stretch bg-blue-600 rounded-full shrink-0"></div>
+                <div class="min-w-0 leading-tight">
+                    <span class="block text-[11px] font-bold text-blue-600" id="admin-reply-author"></span>
+                    <span class="block text-[11px] text-slate-500 truncate max-w-xl" id="admin-reply-snippet"></span>
+                </div>
+            </div>
+            <button type="button" id="admin-reply-cancel" class="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-200 transition-colors cursor-pointer" title="Cancel reply">
+                <i data-lucide="x" class="h-3.5 w-3.5"></i>
+            </button>
+        </div>
+
         <form id="admin-chat-form" class="flex shrink-0 items-end gap-2 border-t border-slate-100 bg-white p-3 sm:p-4" @if($conversation->status !== 'open') style="display:none" @endif>
             @csrf
             <textarea id="admin-chat-input" name="body" required maxlength="2000" rows="1" placeholder="Write a reply... (Enter to send, Shift+Enter for new line)" class="min-w-0 flex-1 resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm leading-relaxed focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-400 max-h-36 overflow-y-auto"></textarea>
-            <button id="admin-chat-submit" type="submit" title="Send reply (Enter)" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 mb-0.5">
+            <button id="admin-chat-submit" type="submit" title="Send reply (Enter)" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 mb-0.5 cursor-pointer">
                 <i data-lucide="send" class="h-4 w-4"></i>
             </button>
         </form>
@@ -74,6 +93,32 @@ document.addEventListener('DOMContentLoaded', () => {
     let messages = @json($initialMessages);
     let status = @json($conversation->status);
 
+    let activeReply = null;
+    let replyPreview = document.getElementById('admin-chat-reply-preview');
+    let replyAuthor = document.getElementById('admin-reply-author');
+    let replySnippet = document.getElementById('admin-reply-snippet');
+    let replyCancel = document.getElementById('admin-reply-cancel');
+
+    function setReply(id, author, text) {
+        activeReply = { id: id, author: author, text: text };
+        if (replyAuthor) replyAuthor.textContent = author;
+        if (replySnippet) replySnippet.textContent = text;
+        if (replyPreview) {
+            replyPreview.style.display = 'flex';
+            if (window.lucide) lucide.createIcons();
+        }
+        input.focus();
+    }
+
+    function clearReply() {
+        activeReply = null;
+        if (replyPreview) replyPreview.style.display = 'none';
+    }
+
+    if (replyCancel) {
+        replyCancel.addEventListener('click', clearReply);
+    }
+
     function applyClosedState() {
         let statusEl = document.getElementById('admin-chat-status');
         let closeForm = document.getElementById('admin-chat-close-form');
@@ -84,10 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (closeForm) closeForm.style.display = status === 'open' ? '' : 'none';
         form.style.display = status === 'open' ? '' : 'none';
+        if (replyPreview && status !== 'open') replyPreview.style.display = 'none';
         if (note) note.style.display = status === 'open' ? 'none' : '';
     }
 
-    function esc(s) { return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
+    function esc(s) { return String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
     function fmt(iso) {
         let d = new Date(iso);
         let hh = String(d.getHours()).padStart(2, '0'), mm = String(d.getMinutes()).padStart(2, '0');
@@ -104,7 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Enter sends the message; Shift+Enter creates a new line (line break)
     input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
+        if (e.key === 'Escape') {
+            clearReply();
+        } else if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
         }
@@ -137,9 +185,28 @@ document.addEventListener('DOMContentLoaded', () => {
             let isAgent = g.sender_type === 'agent';
             let bubbles = g.items.map(function (m, idx) {
                 let isLast = idx === g.items.length - 1;
-                return '<div class="max-w-[70%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ' + (isAgent ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-slate-200 bg-white text-slate-800') + '">'
+                let quoteHtml = '';
+                if (m.reply_to) {
+                    let qAuthor = m.reply_to.sender_name || (m.reply_to.sender_type === 'customer' ? customerName : 'Agent');
+                    let qBg = isAgent ? 'bg-blue-700/60 border-blue-300 text-blue-100' : 'bg-slate-100 border-blue-600 text-slate-700';
+                    let qAuthorColor = isAgent ? 'text-blue-200' : 'text-blue-600';
+                    quoteHtml = '<div class="mb-2 rounded-lg border-l-4 px-2.5 py-1.5 text-xs text-left cursor-pointer select-none ' + qBg + '" onclick="document.getElementById(\'admin-msg-' + m.reply_to.id + '\')?.scrollIntoView({behavior:\'smooth\',block:\'center\'})">'
+                        + '<span class="block text-[10px] font-bold ' + qAuthorColor + '">' + esc(qAuthor) + '</span>'
+                        + '<span class="block truncate text-[11px] opacity-90">' + esc(m.reply_to.body || '') + '</span>'
+                        + '</div>';
+                }
+
+                let replyBtn = '<button type="button" class="admin-reply-trigger inline-flex items-center justify-center h-6 w-6 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 hover:text-slate-900 opacity-0 group-hover:opacity-100 transition-all shrink-0 cursor-pointer shadow-2xs" title="Reply to this message" data-id="' + m.id + '" data-name="' + esc(g.name) + '" data-body="' + esc(m.body) + '">'
+                    + '<i data-lucide="reply" class="h-3 w-3"></i>'
+                    + '</button>';
+
+                return '<div class="group flex items-center gap-1.5 max-w-[80%] ' + (isAgent ? 'flex-row-reverse self-end' : 'self-start') + '" id="admin-msg-' + m.id + '">'
+                    + replyBtn
+                    + '<div class="rounded-2xl px-4 py-2.5 text-sm shadow-sm ' + (isAgent ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-slate-200 bg-white text-slate-800') + '">'
+                    + quoteHtml
                     + '<p class="whitespace-pre-wrap break-words leading-relaxed">' + esc(m.body) + '</p>'
                     + (isLast ? '<p class="mt-1 text-[10px] ' + (isAgent ? 'text-blue-100' : 'text-slate-400') + '">' + fmt(m.created_at) + '</p>' : '')
+                    + '</div>'
                     + '</div>';
             }).join('<div class="h-1"></div>');
             return '<div class="flex flex-col gap-1 ' + (isAgent ? 'items-end' : 'items-start') + '">'
@@ -147,6 +214,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 + bubbles
                 + '</div>';
         }).join('');
+
+        box.querySelectorAll('.admin-reply-trigger').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setReply(this.dataset.id, this.dataset.name, this.dataset.body);
+            });
+        });
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
         box.scrollTop = box.scrollHeight;
     }
 
@@ -160,6 +239,11 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
         input.disabled = true;
 
+        let payload = { body: body };
+        if (activeReply && activeReply.id) {
+            payload.reply_to_id = activeReply.id;
+        }
+
         fetch(sendUrl, {
             method: 'POST',
             headers: {
@@ -167,11 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Accept': 'application/json',
                 'X-CSRF-TOKEN': token,
             },
-            body: JSON.stringify({ body: body }),
+            body: JSON.stringify(payload),
         })
             .then(function (r) { return r.ok ? r.json() : Promise.reject(r); })
             .then(function (d) {
                 messages.push(d.message);
+                clearReply();
                 render();
                 input.value = '';
                 autoResize();
