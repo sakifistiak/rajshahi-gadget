@@ -128,8 +128,12 @@
         // A product's own spec entries (admin-curated) take precedence over these
         // generic base rows, so skip a base row whenever a spec already covers the
         // same label (e.g. a "Warranty" spec) to avoid showing the label twice.
+        // Also skip a base row entirely when none of the selected products have a
+        // value for it (e.g. no product has Warranty filled in) — an all-blank row
+        // just wastes space and looks unfinished.
         var visibleBaseRows = baseRows.filter(function (row) {
-            return !seenKeys[row.label.toLowerCase()];
+            if (seenKeys[row.label.toLowerCase()]) return false;
+            return selected.some(function (p) { return p && row.render(p); });
         });
 
         var html = '';
