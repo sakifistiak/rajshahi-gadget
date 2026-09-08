@@ -985,10 +985,10 @@ html.dark .btn-buy-now:hover {
     flex-shrink: 0;
     overflow-y: auto;
     padding: .5rem;
-    background: var(--surface, #fff);
+    background: var(--background, #fff);
     border: 1px solid var(--border, #e5e7eb);
-    border-radius: .6rem 0 0 .6rem;
-    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
+    border-radius: 3px 0 0 3px;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
 }
 .kg-mega-cat {
     display: flex;
@@ -1018,11 +1018,11 @@ html.dark .btn-buy-now:hover {
     overflow-y: auto;
     padding: .75rem 1rem;
     min-width: 12rem;
-    background: var(--surface, #fff);
+    background: var(--background, #fff);
     border: 1px solid var(--border, #e5e7eb);
     border-left: none;
-    border-radius: 0 .6rem .6rem 0;
-    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1);
 }
 .kg-mega-brand-panel { display: none; }
 .kg-mega-brand-panel.is-active { display: block; }
