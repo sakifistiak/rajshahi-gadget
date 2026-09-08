@@ -362,8 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Mobile: the static CSS bundle has no `grid-cols-5`, so instead of the
        horizontal snap-scroll carousel (which pushed the last badge off-screen),
        lay the badges out as an equal-width flex row that always fits the
-       viewport — however many badges the admin configures. Desktop (>=640px)
-       keeps the existing sm:grid / lg:grid-cols-5 layout untouched. */
+       viewport — however many badges the admin configures. */
     @media (max-width: 639.98px) {
         #home-trustbar {
             display: flex;
@@ -380,6 +379,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         #home-trustbar .trustbar-label {
             font-size: 10px;
+        }
+    }
+    /* Desktop (>=640px): none of the sm:/lg: classes on this element (sm:grid,
+       sm:grid-cols-3, lg:grid-cols-5, sm:w-auto, sm:justify-center, ...) exist
+       in the static CSS bundle either, so it was silently falling back to the
+       mobile fixed-width flex row — left-aligned instead of centered, with
+       uneven leftover space on the right. Lay the badges out as a centered,
+       wrapping flex row instead, sized to their own content. */
+    @media (min-width: 640px) {
+        #home-trustbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            column-gap: 2.5rem;
+            row-gap: 1rem;
+            margin: 0;
+            padding: 0;
+            overflow: visible;
+        }
+        #home-trustbar > li {
+            flex: 0 0 auto;
+            width: auto;
+            flex-direction: row;
+            gap: .75rem;
+            text-align: left;
+        }
+        #home-trustbar > li > span:first-child {
+            height: 2.75rem;
+            width: 2.75rem;
+        }
+        #home-trustbar .trustbar-label {
+            font-size: .875rem;
         }
     }
 </style>
