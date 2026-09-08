@@ -31,6 +31,22 @@ class AnalyticsController extends Controller
             ->limit(50)
             ->get();
 
+        $liveSessionsFormatted = $liveSessions->map(function ($s) {
+            return [
+                'id' => $s->id,
+                'session_id' => substr($s->session_id, 0, 8) . '...',
+                'current_title' => $s->current_title ?: 'Browsing Store',
+                'current_url' => $s->current_url,
+                'referrer_domain' => $s->referrer_domain ?: 'direct',
+                'device_type' => $s->device_type ?: 'desktop',
+                'browser' => $s->browser ?: 'Browser',
+                'platform' => $s->platform ?: 'OS',
+                'time_ago' => $s->last_active_at ? Carbon::parse($s->last_active_at)->diffForHumans() : 'Just now',
+                'is_viewing_product' => $s->viewable_type === 'product',
+                'is_viewing_blog' => $s->viewable_type === 'blog_post',
+            ];
+        })->values()->all();
+
         // 2. High-level metric KPI counts for selected period
         $visitsQuery = AnalyticsVisit::period($period);
         $totalVisits = (clone $visitsQuery)->count();
@@ -146,6 +162,7 @@ class AnalyticsController extends Controller
             'period',
             'liveCount',
             'liveSessions',
+            'liveSessionsFormatted',
             'totalVisits',
             'uniqueVisitors',
             'productViews',
