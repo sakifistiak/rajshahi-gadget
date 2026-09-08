@@ -78,7 +78,7 @@
     }
 </style>
 
-<script src="/assets/kg-translate.js?v=3"></script>
+<script src="/assets/kg-translate.js?v=4"></script>
 <script>document.addEventListener('DOMContentLoaded', function () { if (window.kgInitTranslateToggle) window.kgInitTranslateToggle('#blog-translate-scope'); });</script>
 
 <div class="container-page py-10" id="blog-translate-scope">

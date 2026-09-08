@@ -1,13 +1,15 @@
 /**
- * Khan Gadget - Blog & Content Language Translator (Google GTX Neural Engine)
- * Translates page body, rich-text, placeholders, and dynamically loaded posts.
- * Header, footer, drawers, and elements with .notranslate / translate="no" are strictly preserved.
+ * Khan Gadget - Bidirectional Blog & Content Translator (Google GTX Neural Engine)
+ * Translates page body, titles, excerpts, rich-text, search placeholder, and document title.
+ * - Switching to 'EN': Everything becomes English (including posts originally written in Bengali).
+ * - Switching to 'বাং': Everything becomes Bengali (including posts originally written in English).
+ * - Header, footer, navigation drawers, and live chat are strictly protected and never modified.
  */
 (function () {
     'use strict';
 
     var STORAGE_KEY = 'kg_lang_pref';
-    var CACHE_PREFIX = 'kg_tr_v4_';
+    var CACHE_PREFIX = 'kg_tr_v5_';
     var currentLang = 'en';
     var isTranslating = false;
     var activeScopes = [];
@@ -54,7 +56,7 @@
         return !!el.closest('header, footer, nav[aria-label="Mobile footer navigation"], #kg-mobile-drawer, #kg-lang-toggle, .notranslate, [translate="no"], script, style, noscript, svg, code');
     }
 
-    // Check if a string needs translation
+    // Check if a string needs translation to targetLang
     function needsTranslation(text, targetLang) {
         if (!text) return false;
         var trimmed = text.trim();
@@ -64,7 +66,7 @@
         if (!/[a-zA-Z\u0980-\u09FF]/.test(trimmed)) return false;
 
         if (targetLang === 'bn') {
-            // Needs translation to Bengali if it contains any Latin/English letters
+            // Needs translation to Bengali if it contains any English / Latin letters
             return /[a-zA-Z]/.test(trimmed);
         } else if (targetLang === 'en') {
             // Needs translation to English if it contains any Bengali characters
@@ -73,7 +75,7 @@
         return false;
     }
 
-    // Google Translate GTX endpoint with fallback
+    // Google Translate GTX endpoint
     function translateSingle(text, targetLang) {
         return new Promise(function (resolve) {
             if (!text || !text.trim()) {
@@ -124,7 +126,6 @@
             return translateSingle(text, targetLang);
         }
 
-        // Split into sentences / segments
         var parts = text.split(/(?<=[।!?.\n])\s+/);
         var chunks = [];
         var cur = '';
@@ -294,7 +295,7 @@
         });
     }
 
-    // Translate all scopes to target language
+    // Translate page to target language ('en' or 'bn')
     function applyLanguage(targetLang) {
         if (isTranslating && targetLang === currentLang) return;
         currentLang = targetLang;
@@ -302,27 +303,13 @@
             localStorage.setItem(STORAGE_KEY, targetLang);
         } catch (e) {}
 
-        // If target is English, restore all original text immediately
-        if (targetLang === 'en') {
-            updateToggleButtons('en', false);
-            activeScopes.forEach(function (scope) {
-                var items = collectItems(scope);
-                items.textItems.forEach(function (item) {
-                    item.node.nodeValue = item.node.__origText;
-                });
-                items.placeholderItems.forEach(function (item) {
-                    item.element.placeholder = item.element.__origPlaceholder;
-                });
-                items.altItems.forEach(function (item) {
-                    item.element.alt = item.element.__origAlt;
-                });
-            });
-            return;
-        }
-
-        // Target is Bengali ('bn')
         isTranslating = true;
-        updateToggleButtons('bn', true);
+        updateToggleButtons(targetLang, true);
+
+        // Store original document title
+        if (document.__origTitle === undefined) {
+            document.__origTitle = document.title;
+        }
 
         // Collect all items across all active scopes
         var allTextItems = [];
@@ -336,12 +323,12 @@
             allAltItems = allAltItems.concat(res.altItems);
         });
 
-        // Find unique core strings that need translation
+        // Find unique core strings that need translation to targetLang
         var uniqueCoresMap = {};
         var uniqueCoresList = [];
 
         function registerCore(core) {
-            if (needsTranslation(core, 'bn') && !uniqueCoresMap[core]) {
+            if (needsTranslation(core, targetLang) && !uniqueCoresMap[core]) {
                 uniqueCoresMap[core] = true;
                 uniqueCoresList.push(core);
             }
@@ -351,18 +338,26 @@
         allPlaceholderItems.forEach(function (it) { registerCore(it.core); });
         allAltItems.forEach(function (it) { registerCore(it.core); });
 
-        // If nothing needs translation, wrap up
+        // Check document title
+        if (document.__origTitle && needsTranslation(document.__origTitle, targetLang)) {
+            registerCore(document.__origTitle);
+        }
+
+        // Translation map
+        var translationMap = {};
+
+        // If no strings need translation, just apply existing / original and finish
         if (uniqueCoresList.length === 0) {
+            applyResultsToDOM(allTextItems, allPlaceholderItems, allAltItems, translationMap, targetLang);
             isTranslating = false;
-            updateToggleButtons('bn', false);
+            updateToggleButtons(targetLang, false);
             return;
         }
 
         // Create tasks for concurrent execution
-        var translationMap = {};
         var tasks = uniqueCoresList.map(function (core) {
             return function () {
-                return translateTextWithChunking(core, 'bn').then(function (translated) {
+                return translateTextWithChunking(core, targetLang).then(function (translated) {
                     translationMap[core] = translated;
                 });
             };
@@ -370,32 +365,55 @@
 
         // Run with concurrency pool of 6
         runConcurrent(tasks, 6).then(function () {
-            // Apply translations to DOM
-            allTextItems.forEach(function (it) {
-                if (translationMap[it.core]) {
-                    it.node.nodeValue = it.leading + translationMap[it.core] + it.trailing;
-                }
-            });
-
-            allPlaceholderItems.forEach(function (it) {
-                if (translationMap[it.core]) {
-                    it.element.placeholder = it.leading + translationMap[it.core] + it.trailing;
-                }
-            });
-
-            allAltItems.forEach(function (it) {
-                if (translationMap[it.core]) {
-                    it.element.alt = it.leading + translationMap[it.core] + it.trailing;
-                }
-            });
-
+            applyResultsToDOM(allTextItems, allPlaceholderItems, allAltItems, translationMap, targetLang);
             isTranslating = false;
-            updateToggleButtons('bn', false);
+            updateToggleButtons(targetLang, false);
         }).catch(function (err) {
             console.error('Translation error:', err);
+            applyResultsToDOM(allTextItems, allPlaceholderItems, allAltItems, translationMap, targetLang);
             isTranslating = false;
-            updateToggleButtons('bn', false);
+            updateToggleButtons(targetLang, false);
         });
+    }
+
+    // Apply translations or restored originals to DOM
+    function applyResultsToDOM(allTextItems, allPlaceholderItems, allAltItems, translationMap, targetLang) {
+        // Text nodes
+        allTextItems.forEach(function (it) {
+            if (translationMap[it.core]) {
+                it.node.nodeValue = it.leading + translationMap[it.core] + it.trailing;
+            } else if (!needsTranslation(it.core, targetLang)) {
+                // If it already matches the target language or doesn't need translation, restore original
+                it.node.nodeValue = it.node.__origText;
+            }
+        });
+
+        // Placeholders
+        allPlaceholderItems.forEach(function (it) {
+            if (translationMap[it.core]) {
+                it.element.placeholder = it.leading + translationMap[it.core] + it.trailing;
+            } else if (!needsTranslation(it.core, targetLang)) {
+                it.element.placeholder = it.element.__origPlaceholder;
+            }
+        });
+
+        // Image alts
+        allAltItems.forEach(function (it) {
+            if (translationMap[it.core]) {
+                it.element.alt = it.leading + translationMap[it.core] + it.trailing;
+            } else if (!needsTranslation(it.core, targetLang)) {
+                it.element.alt = it.element.__origAlt;
+            }
+        });
+
+        // Document title
+        if (document.__origTitle) {
+            if (translationMap[document.__origTitle]) {
+                document.title = translationMap[document.__origTitle];
+            } else if (!needsTranslation(document.__origTitle, targetLang)) {
+                document.title = document.__origTitle;
+            }
+        }
     }
 
     // Initialize toggle and scopes
@@ -412,7 +430,6 @@
         toggles.forEach(function (toggle) {
             var buttons = toggle.querySelectorAll('.kg-lang-btn');
             buttons.forEach(function (btn) {
-                // Prevent duplicate listeners
                 if (btn.__kgBound) return;
                 btn.__kgBound = true;
 
@@ -429,7 +446,6 @@
         if (!mutationObserver && window.MutationObserver) {
             var debounceTimer = null;
             mutationObserver = new MutationObserver(function (mutations) {
-                if (currentLang !== 'bn') return;
                 var hasNewNodes = false;
                 mutations.forEach(function (m) {
                     if (m.addedNodes && m.addedNodes.length > 0) {
@@ -446,7 +462,7 @@
                 if (hasNewNodes) {
                     if (debounceTimer) clearTimeout(debounceTimer);
                     debounceTimer = setTimeout(function () {
-                        applyLanguage('bn');
+                        applyLanguage(currentLang);
                     }, 150);
                 }
             });
@@ -461,11 +477,9 @@
 
         // Listen for custom content update events (e.g. load-more ajax completion)
         window.addEventListener('kg-content-updated', function () {
-            if (currentLang === 'bn') {
-                setTimeout(function () {
-                    applyLanguage('bn');
-                }, 100);
-            }
+            setTimeout(function () {
+                applyLanguage(currentLang);
+            }, 100);
         });
 
         // Check stored preference
@@ -474,11 +488,7 @@
             pref = localStorage.getItem(STORAGE_KEY) || 'en';
         } catch (e) {}
 
-        if (pref === 'bn') {
-            applyLanguage('bn');
-        } else {
-            updateToggleButtons('en', false);
-        }
+        applyLanguage(pref);
     }
 
     // Export globally
