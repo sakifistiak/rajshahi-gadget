@@ -957,17 +957,13 @@ html.dark .btn-buy-now:hover {
     z-index: 60;
     display: flex;
     align-items: flex-start;
+    gap: .6rem;
     min-width: 30rem;
     max-height: 26rem;
-    background: var(--surface, #fff);
-    border: 1px solid var(--border, #e5e7eb);
-    border-radius: .6rem;
-    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
     opacity: 0;
     visibility: hidden;
     transform: translateY(6px);
     transition: opacity .16s ease, transform .16s ease, visibility .16s;
-    overflow: hidden;
 }
 .kg-mega-menu-wrap:hover .kg-mega-menu,
 .kg-mega-menu.is-open {
@@ -975,15 +971,23 @@ html.dark .btn-buy-now:hover {
     visibility: visible;
     transform: translateY(0);
 }
-.kg-mega-menu-cats {
-    align-self: flex-start;
-    width: 13rem;
-    height: fit-content;
+/* Each column is its own self-contained card — sized to its own content —
+   instead of sharing one outer box whose height would otherwise be forced
+   to match whichever column (almost always the brand list) is taller,
+   leaving visible blank space under the shorter category list. */
+.kg-mega-menu-cats,
+.kg-mega-menu-brands {
     max-height: 100%;
-    flex-shrink: 0;
     overflow-y: auto;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: .6rem;
+    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
+}
+.kg-mega-menu-cats {
+    width: 13rem;
+    flex-shrink: 0;
     padding: .5rem;
-    border-right: 1px solid var(--border, #e5e7eb);
 }
 .kg-mega-cat {
     display: flex;
@@ -1009,7 +1013,6 @@ html.dark .btn-buy-now:hover {
 }
 .kg-mega-menu-brands {
     flex: 1;
-    overflow-y: auto;
     padding: .75rem 1rem;
     min-width: 12rem;
 }
