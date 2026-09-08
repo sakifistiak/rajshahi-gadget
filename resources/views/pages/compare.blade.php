@@ -41,7 +41,7 @@
         html += products.map(function (p) {
             return '<button type="button" class="kg-compare-result flex w-full items-center gap-3 p-3 text-left hover:bg-secondary" data-slug="' + p.slug + '">' +
                 '<img src="' + p.image + '" alt="" class="h-14 w-14 shrink-0 rounded object-cover bg-secondary">' +
-                '<span class="min-w-0"><span class="block line-clamp-2 text-sm font-medium text-foreground">' + escapeHtml(p.name) + '</span><span class="block text-xs text-muted-foreground">' + p.price + '</span></span>' +
+                '<span class="min-w-0"><span class="line-clamp-2 text-sm font-medium text-foreground">' + escapeHtml(p.name) + '</span><span class="block text-xs text-muted-foreground">' + p.price + '</span></span>' +
                 '</button>';
         }).join('');
         results.innerHTML = html;
