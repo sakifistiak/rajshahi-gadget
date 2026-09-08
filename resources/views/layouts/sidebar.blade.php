@@ -32,6 +32,19 @@
              <span>Dashboard</span>
          </a>
 
+         <!-- 1.5. Visitor & Reach Analytics -->
+         <a href="{{ route('admin.analytics.index') }}" 
+            class="flex items-center justify-between px-3 py-2.5 rounded-md font-bold transition-all {{ request()->routeIs('admin.analytics.*') ? 'bg-indigo-50 text-indigo-600' : 'text-slate-800 hover:bg-slate-50 hover:text-indigo-600' }}">
+             <span class="flex items-center gap-2.5">
+                 <i data-lucide="activity" class="h-4.5 w-4.5 shrink-0 {{ request()->routeIs('admin.analytics.*') ? 'text-indigo-600' : 'text-slate-500' }}"></i>
+                 <span>Analytics</span>
+             </span>
+             <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700">
+                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                 Live
+             </span>
+         </a>
+
 
          <!-- 2. Ecommerce -->
          <div class="pt-1">

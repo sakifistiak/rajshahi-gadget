@@ -8,13 +8,14 @@ use Illuminate\Support\Str;
 class BlogPost extends Model
 {
     protected $fillable = [
-        'slug', 'title', 'content', 'featured_image', 'published_at',
+        'slug', 'title', 'content', 'featured_image', 'published_at', 'views_count',
     ];
 
     protected function casts(): array
     {
         return [
             'published_at' => 'date',
+            'views_count' => 'integer',
         ];
     }
 

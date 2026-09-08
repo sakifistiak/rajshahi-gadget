@@ -793,6 +793,12 @@ class PageController extends Controller
         return $this->shop($request);
     }
 
+    public function analyticsPing(Request $request, \App\Services\AnalyticsTracker $tracker)
+    {
+        $tracker->ping($request);
+        return response()->json(['ok' => true]);
+    }
+
     private function render(string $view)
     {
         if (! View::exists($view)) {

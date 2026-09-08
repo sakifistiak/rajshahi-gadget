@@ -11,6 +11,7 @@
                 <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Condition') }}</th>
                 <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Price') }}</th>
                 <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Stock') }}</th>
+                <th class="px-6 py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Views') }}</th>
                 <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
             </tr>
         </thead>
@@ -52,6 +53,12 @@
                             </span>
                         @endif
                     </td>
+                    <td class="px-6 py-3.5 whitespace-nowrap text-center">
+                        <span class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                            <i data-lucide="eye" class="h-3 w-3 text-slate-400"></i>
+                            {{ number_format($product->views_count ?? 0) }}
+                        </span>
+                    </td>
                     <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                         <div class="flex justify-end items-center gap-3">
                             <a href="{{ route('admin.products.edit', ['product' => $product, 'return' => request()->fullUrl()]) }}" class="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1">
@@ -72,7 +79,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-4 text-center text-xs text-slate-400">
+                    <td colspan="9" class="px-6 py-4 text-center text-xs text-slate-400">
                         @if (request('q') || request('category') || request('condition') || request('brand') || request('stock'))
                             {{ __('No products match your search/filters') }}
                         @else

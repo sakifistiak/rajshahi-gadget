@@ -26,6 +26,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Image') }}</th>
                         <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Title') }}</th>
+                        <th class="px-6 py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Views') }}</th>
                         <th class="px-6 py-3 text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Actions') }}</th>
                     </tr>
                 </thead>
@@ -38,6 +39,12 @@
                             <td class="px-6 py-3.5">
                                 <span class="text-xs font-semibold text-slate-800">{{ $post->title }}</span>
                                 <div class="text-[9px] text-slate-400">/blog/{{ $post->slug }}</div>
+                            </td>
+                            <td class="px-6 py-3.5 whitespace-nowrap text-center">
+                                <span class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full">
+                                    <i data-lucide="eye" class="h-3 w-3 text-slate-400"></i>
+                                    {{ number_format($post->views_count ?? 0) }}
+                                </span>
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap text-right text-xs font-medium">
                                 <div class="flex justify-end items-center gap-3">
@@ -58,7 +65,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No blog posts yet') }}</td>
+                            <td colspan="4" class="px-6 py-4 text-center text-xs text-slate-400">{{ __('No blog posts yet') }}</td>
                         </tr>
                     @endforelse
                 </tbody>

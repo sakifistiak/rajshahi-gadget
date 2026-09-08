@@ -183,3 +183,39 @@
 </footer>
 @include('partials.cart-script')
 @include('partials.mobile-drawer')
+
+{{-- Analytics Activity Heartbeat --}}
+<script>
+    (function () {
+        if (window.__kgAnalyticsHeartbeatInit) return;
+        window.__kgAnalyticsHeartbeatInit = true;
+
+        var pingInterval = 45000; // 45 seconds
+        var pingUrl = '{{ route('api.analytics.ping') }}';
+        var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        function sendPing() {
+            if (document.visibilityState && document.visibilityState !== 'visible') {
+                return;
+            }
+            try {
+                fetch(pingUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        url: window.location.href,
+                        title: document.title
+                    }),
+                    keepalive: true
+                }).catch(function () {});
+            } catch (e) {}
+        }
+
+        setInterval(sendPing, pingInterval);
+    })();
+</script>
+

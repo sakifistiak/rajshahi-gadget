@@ -13,7 +13,7 @@ class Product extends Model
         'slug', 'name', 'brand_id', 'category_id', 'condition_id',
         'price', 'compare_at_price', 'rating', 'reviews_count',
         'badge', 'description', 'in_stock', 'warranty',
-        'is_new_arrival', 'price_is_tba',
+        'is_new_arrival', 'price_is_tba', 'views_count',
     ];
 
     protected function casts(): array
@@ -26,6 +26,7 @@ class Product extends Model
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
+            'views_count' => 'integer',
         ];
     }
 

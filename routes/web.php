@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CartAbandonmentController;
@@ -40,6 +41,7 @@ Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.sear
 Route::get('/api/compare', [PageController::class, 'compareData'])->name('api.compare');
 Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
 Route::get('/api/nav-categories', [PageController::class, 'navCategories'])->name('api.nav-categories');
+Route::post('/api/analytics/ping', [PageController::class, 'analyticsPing'])->name('api.analytics.ping');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
@@ -148,6 +150,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('media/upload', [AdminMediaController::class, 'upload'])->name('media.upload');
         Route::get('media/list', [AdminMediaController::class, 'list'])->name('media.list');
         Route::delete('media/{filename}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
+
+        // Visitor, Product & Blog Reach Analytics
+        Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('analytics/live-stats', [AdminAnalyticsController::class, 'liveStats'])->name('analytics.live-stats');
     });
 });
 
