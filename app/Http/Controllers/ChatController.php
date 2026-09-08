@@ -48,8 +48,12 @@ class ChatController extends Controller
     {
         $data = $request->validate(['body' => 'required|string|max:2000']);
 
-        ChatConversation::autoCloseStale();
-
+        // Deliberately NOT calling ChatConversation::autoCloseStale() here — the
+        // customer sending a message right now is proof the conversation isn't
+        // stale. Running the sweep first (as this used to) closed the
+        // conversation based on the *old* last_message_at (if their previous
+        // message was >15 min ago) and then rejected this very message with
+        // "closed" below, even though the customer was actively replying.
         $conversation = ChatConversation::where('customer_token', $request->session()->get('chat_token'))->first();
 
         if (! $conversation || $conversation->status !== 'open') {
