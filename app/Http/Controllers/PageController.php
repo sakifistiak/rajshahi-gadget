@@ -439,9 +439,9 @@ class PageController extends Controller
             });
         }
 
-        if ($request->boolean('exclude_out_of_stock')) {
-            $query->where('in_stock', true);
-        }
+        // Out-of-stock products are always excluded from the shop listing —
+        // this used to be an optional checkbox filter, but is now permanent.
+        $query->where('in_stock', true);
 
         // Spec filters (RAM, Storage, Processor, ...) are defined per category,
         // but the same filter (e.g. "RAM") is normally redefined identically on
