@@ -976,7 +976,10 @@ html.dark .btn-buy-now:hover {
     transform: translateY(0);
 }
 .kg-mega-menu-cats {
+    align-self: flex-start;
     width: 13rem;
+    height: fit-content;
+    max-height: 100%;
     flex-shrink: 0;
     overflow-y: auto;
     padding: .5rem;
