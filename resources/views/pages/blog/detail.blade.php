@@ -78,8 +78,8 @@
     }
 </style>
 
-<script src="/assets/kg-translate.js?v=4"></script>
-<script>document.addEventListener('DOMContentLoaded', function () { if (window.kgInitTranslateToggle) window.kgInitTranslateToggle('#blog-translate-scope'); });</script>
+<script src="/assets/kg-translate.js?v=20260909_02"></script>
+<script>(function(){function run(){if(window.kgInitTranslateToggle)window.kgInitTranslateToggle('#blog-translate-scope');}if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',run);}else{run();}})();</script>
 
 <div class="container-page py-10" id="blog-translate-scope">
     

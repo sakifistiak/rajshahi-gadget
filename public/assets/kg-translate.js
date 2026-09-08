@@ -1,15 +1,15 @@
 /**
- * Khan Gadget - Bidirectional Blog & Content Translator (Google GTX Neural Engine)
+ * Khan Gadget - Bidirectional Blog & Content Translator (Google GTX + Fallback)
  * Translates page body, titles, excerpts, rich-text, search placeholder, and document title.
- * - Switching to 'EN': Everything becomes English (including posts originally written in Bengali).
- * - Switching to 'বাং': Everything becomes Bengali (including posts originally written in English).
+ * - 'EN': Everything becomes English (including posts originally written in Bengali).
+ * - 'বাং': Everything becomes Bengali (including posts originally written in English).
  * - Header, footer, navigation drawers, and live chat are strictly protected and never modified.
  */
 (function () {
     'use strict';
 
     var STORAGE_KEY = 'kg_lang_pref';
-    var CACHE_PREFIX = 'kg_tr_v5_';
+    var CACHE_PREFIX = 'kg_tr_v6_';
     var currentLang = 'en';
     var isTranslating = false;
     var activeScopes = [];
@@ -75,7 +75,70 @@
         return false;
     }
 
-    // Google Translate GTX endpoint
+    // Primary Engine: Google Translate GTX endpoint
+    function fetchGoogle(text, targetLang) {
+        return new Promise(function (resolve, reject) {
+            var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.timeout = 8000;
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data && data[0] && Array.isArray(data[0])) {
+                            var translated = data[0].map(function (chunk) {
+                                return (chunk && chunk[0]) ? chunk[0] : '';
+                            }).join('');
+                            if (translated && translated.trim()) {
+                                return resolve(translated);
+                            }
+                        }
+                    } catch (err) {}
+                }
+                reject(new Error('Google translate empty response'));
+            };
+
+            xhr.onerror = function () { reject(new Error('Google network error')); };
+            xhr.ontimeout = function () { reject(new Error('Google timeout')); };
+            xhr.send();
+        });
+    }
+
+    // Secondary Engine: MyMemory fallback
+    function fetchMyMemory(text, targetLang) {
+        return new Promise(function (resolve) {
+            var pair = targetLang === 'bn' ? 'en|bn' : 'bn|en';
+            var url = 'https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=' + pair;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.timeout = 8000;
+
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        if (data && data.responseData && data.responseData.translatedText) {
+                            var tr = data.responseData.translatedText;
+                            if (tr && tr.indexOf('MYMEMORY WARNING') === -1) {
+                                return resolve(tr);
+                            }
+                        }
+                    } catch (err) {}
+                }
+                resolve(text);
+            };
+
+            xhr.onerror = function () { resolve(text); };
+            xhr.ontimeout = function () { resolve(text); };
+            xhr.send();
+        });
+    }
+
+    // Unified single text translator with caching and fallback
     function translateSingle(text, targetLang) {
         return new Promise(function (resolve) {
             if (!text || !text.trim()) {
@@ -89,34 +152,17 @@
                 return;
             }
 
-            var url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=' + targetLang + '&dt=t&q=' + encodeURIComponent(text);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.timeout = 10000;
-
-            xhr.onload = function () {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        if (data && data[0] && Array.isArray(data[0])) {
-                            var translated = data[0].map(function (chunk) {
-                                return (chunk && chunk[0]) ? chunk[0] : '';
-                            }).join('');
-                            if (translated && translated.trim()) {
-                                setCache(targetLang, text, translated);
-                                resolve(translated);
-                                return;
-                            }
-                        }
-                    } catch (err) {}
-                }
-                resolve(text);
-            };
-
-            xhr.onerror = function () { resolve(text); };
-            xhr.ontimeout = function () { resolve(text); };
-            xhr.send();
+            fetchGoogle(text, targetLang)
+                .then(function (translated) {
+                    setCache(targetLang, text, translated);
+                    resolve(translated);
+                })
+                .catch(function () {
+                    fetchMyMemory(text, targetLang).then(function (translated) {
+                        setCache(targetLang, text, translated);
+                        resolve(translated);
+                    });
+                });
         });
     }
 
@@ -346,7 +392,7 @@
         // Translation map
         var translationMap = {};
 
-        // If no strings need translation, just apply existing / original and finish
+        // If no strings need translation, apply existing/original and finish
         if (uniqueCoresList.length === 0) {
             applyResultsToDOM(allTextItems, allPlaceholderItems, allAltItems, translationMap, targetLang);
             isTranslating = false;
@@ -383,7 +429,6 @@
             if (translationMap[it.core]) {
                 it.node.nodeValue = it.leading + translationMap[it.core] + it.trailing;
             } else if (!needsTranslation(it.core, targetLang)) {
-                // If it already matches the target language or doesn't need translation, restore original
                 it.node.nodeValue = it.node.__origText;
             }
         });
@@ -433,7 +478,8 @@
                 if (btn.__kgBound) return;
                 btn.__kgBound = true;
 
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
                     var target = btn.dataset.lang;
                     if (target) {
                         applyLanguage(target);
@@ -489,6 +535,17 @@
         } catch (e) {}
 
         applyLanguage(pref);
+    }
+
+    // Self-initialize automatically
+    function autoInit() {
+        initTranslateToggle('#blog-translate-scope');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', autoInit);
+    } else {
+        autoInit();
     }
 
     // Export globally

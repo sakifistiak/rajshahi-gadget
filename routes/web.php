@@ -52,6 +52,7 @@ Route::middleware('throttle:30,1')->group(function () {
     Route::post('/cart/sync', [CartSyncController::class, 'sync'])->name('cart.sync');
 });
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
+Route::get('/blog', [PageController::class, 'blogIndex'])->name('blog.index');
 Route::get('/blog/load-more', [PageController::class, 'blogLoadMore'])->name('blog.load-more');
 Route::get('/blog/search-suggest', [PageController::class, 'blogSearchSuggest'])->name('blog.search-suggest');
 Route::get('/blog/{slug}', [PageController::class, 'blog'])->name('blog');
