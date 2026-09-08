@@ -1,4 +1,7 @@
 <!-- Global Interactive Shopping Cart System - Premium Fly-to-Cart Animation -->
+@unless(request()->routeIs('checkout'))
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endunless
 <style>
 @keyframes kgFloatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }
@@ -70,7 +73,27 @@
         if (existing) { existing.quantity = (existing.quantity || 1) + 1; }
         else { cart.push({ slug: product.slug, name: product.name, price: product.price || 0, image: product.image || '', quantity: 1 }); }
         saveCart(cart);
+        syncCartDebounced();
     }
+
+    // ── Abandoned-cart tracking: lets the admin panel see (and, once an SMS
+    // gateway is configured, follow up on) carts that never reach checkout. ──
+    var cartSyncTimer = null;
+    function syncCartNow(extra) {
+        var tokenEl = document.querySelector('meta[name="csrf-token"]');
+        if (!tokenEl) return;
+        var payload = Object.assign({ items: getCart() }, extra || {});
+        fetch('{{ route('cart.sync') }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': tokenEl.content },
+            body: JSON.stringify(payload)
+        }).catch(function() {});
+    }
+    function syncCartDebounced(extra, delay) {
+        if (cartSyncTimer) clearTimeout(cartSyncTimer);
+        cartSyncTimer = setTimeout(function() { syncCartNow(extra); }, delay || 800);
+    }
+    window.kgSyncCartDebounced = syncCartDebounced;
     function getCartCount() {
         return getCart().reduce(function(s, i) { return s + (i.quantity || 1); }, 0);
     }

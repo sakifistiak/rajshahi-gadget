@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\EnsureCartToken;
+use App\Http\Middleware\EnsureChatAccess;
+use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,8 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
-            'chat.access' => \App\Http\Middleware\EnsureChatAccess::class,
+            'admin' => EnsureUserIsAdmin::class,
+            'chat.access' => EnsureChatAccess::class,
+        ]);
+        $middleware->web(append: [
+            EnsureCartToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

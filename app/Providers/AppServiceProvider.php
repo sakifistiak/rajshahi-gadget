@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\SmsGateway;
 use App\Models\SiteSetting;
 use App\Models\StoreLocation;
+use App\Support\Sms\LogSmsGateway;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +16,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(SmsGateway::class, function () {
+            return match (config('services.sms.driver', 'log')) {
+                // 'twilio' => new \App\Support\Sms\TwilioSmsGateway(...),
+                default => new LogSmsGateway,
+            };
+        });
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\EnsureCartToken;
+use App\Models\AbandonedCart;
 use App\Models\FlashSaleProduct;
 use App\Models\Order;
 use App\Models\Product;
@@ -105,6 +107,14 @@ class OrderController extends Controller
 
             return $order;
         });
+
+        if ($token = $request->cookie(EnsureCartToken::COOKIE_NAME)) {
+            AbandonedCart::where('cart_token', $token)->update([
+                'status' => AbandonedCart::STATUS_RECOVERED,
+                'recovered_at' => now(),
+                'order_id' => $order->id,
+            ]);
+        }
 
         return response()->json(['order_number' => $order->order_number]);
     }

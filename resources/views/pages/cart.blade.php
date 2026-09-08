@@ -143,12 +143,14 @@ html, body { overflow-x: clip; }
             else { c[i].quantity = (c[i].quantity || 1) - 1; if (c[i].quantity < 1) c.splice(i, 1); }
             saveCart(c);
             renderCartPage();
+            if (window.kgSyncCartDebounced) window.kgSyncCartDebounced();
         }
         if (rb) {
             var c = getCart();
             c.splice(parseInt(rb.dataset.idx), 1);
             saveCart(c);
             renderCartPage();
+            if (window.kgSyncCartDebounced) window.kgSyncCartDebounced();
         }
     }
 

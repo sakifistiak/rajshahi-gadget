@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\CartAbandonmentController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ChatAgentController;
 use App\Http\Controllers\Admin\ChatController as AdminChatController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\PromoBannerController as AdminPromoBannerController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StoreLocationController;
+use App\Http\Controllers\CartSyncController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CustomPageController;
 use App\Http\Controllers\OrderController;
@@ -47,6 +49,7 @@ Route::middleware('throttle:30,1')->group(function () {
     Route::get('/chat/messages', [ChatController::class, 'messages'])->name('chat.messages');
     Route::post('/chat/messages', [ChatController::class, 'send'])->name('chat.messages.send');
     Route::post('/chat/close', [ChatController::class, 'close'])->name('chat.close');
+    Route::post('/cart/sync', [CartSyncController::class, 'sync'])->name('cart.sync');
 });
 Route::get('/product/{slug}', [PageController::class, 'product'])->name('product');
 Route::get('/blog/load-more', [PageController::class, 'blogLoadMore'])->name('blog.load-more');
@@ -131,6 +134,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('orders/{order}/invoice', [AdminOrderController::class, 'invoice'])->name('orders.invoice');
         Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
         Route::delete('orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
+
+        // Abandoned Carts
+        Route::get('cart-abandonment', [CartAbandonmentController::class, 'index'])->name('cart-abandonment.index');
+        Route::post('cart-abandonment/settings', [CartAbandonmentController::class, 'updateSettings'])->name('cart-abandonment.settings');
+        Route::get('cart-abandonment/{abandonedCart}', [CartAbandonmentController::class, 'show'])->name('cart-abandonment.show');
+        Route::patch('cart-abandonment/{abandonedCart}/contacted', [CartAbandonmentController::class, 'markContacted'])->name('cart-abandonment.contacted');
+        Route::delete('cart-abandonment/{abandonedCart}', [CartAbandonmentController::class, 'destroy'])->name('cart-abandonment.destroy');
 
         // Media Library
         Route::get('media', [AdminMediaController::class, 'index'])->name('media.index');

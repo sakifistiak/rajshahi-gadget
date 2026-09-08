@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'sms' => [
+        // No gateway configured yet — 'log' just writes what would be sent to
+        // the log file. Set to a real driver key once an SMS provider is
+        // chosen and its App\Support\Sms\* gateway class is wired up in
+        // AppServiceProvider.
+        'driver' => env('SMS_GATEWAY_DRIVER', 'log'),
+    ],
+
 ];
