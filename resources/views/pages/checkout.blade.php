@@ -202,19 +202,19 @@
         document.getElementById('checkout-items').innerHTML = items.map(function (item) { return '<div class="flex gap-3"><img class="h-14 w-14 rounded object-cover bg-secondary" src="' + escapeHtml(item.image) + '" alt=""><div class="min-w-0 flex-1"><p class="text-sm font-medium">' + escapeHtml(item.name) + '</p><p class="mt-1 text-sm text-muted-foreground">Qty: ' + Number(item.quantity || 1) + '</p></div><strong class="text-sm">' + money(Number(item.price || 0) * Number(item.quantity || 1)) + '</strong></div>'; }).join('');
         document.getElementById('checkout-subtotal').textContent = money(total);
 
-        // Abandoned-cart tracking: capture name/phone/email as the shopper
-        // types, even if they never submit — lets admin follow up on carts
-        // that stall right at checkout, not just ones abandoned earlier.
+        // Abandoned-cart tracking: capture items immediately on checkout page
+        // load, plus name/phone/email as the shopper types — lets admin follow up
+        // on carts that stall right at checkout, even if they never type or submit.
         (function () {
             var contactFields = ['customer_name', 'phone', 'email'];
             var syncTimer = null;
             function syncContact() {
                 var tokenEl = document.querySelector('meta[name="csrf-token"]');
-                if (!tokenEl) return;
+                if (!tokenEl || !items.length) return;
                 var payload = { items: items };
                 contactFields.forEach(function (name) {
                     var field = document.querySelector('[name="' + name + '"]');
-                    if (field) payload[name] = field.value;
+                    if (field && field.value) payload[name] = field.value;
                 });
                 fetch('{{ route('cart.sync') }}', {
                     method: 'POST',
@@ -222,6 +222,12 @@
                     body: JSON.stringify(payload)
                 }).catch(function () {});
             }
+
+            // Sync on mount if items are present
+            if (items.length > 0) {
+                setTimeout(syncContact, 500);
+            }
+
             contactFields.forEach(function (name) {
                 var field = document.querySelector('[name="' + name + '"]');
                 if (!field) return;

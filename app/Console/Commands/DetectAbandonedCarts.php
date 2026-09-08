@@ -16,17 +16,14 @@ class DetectAbandonedCarts extends Command
 
     public function handle(SmsGateway $sms): int
     {
-        if (SiteSetting::getValue('cart_abandonment_enabled', '0') !== '1') {
+        if (SiteSetting::getValue('cart_abandonment_enabled', '1') !== '1') {
             return self::SUCCESS;
         }
 
         $thresholdMinutes = (int) SiteSetting::getValue('cart_abandonment_threshold_minutes', '60');
         $cooldownHours = (int) SiteSetting::getValue('cart_abandonment_resend_cooldown_hours', '24');
 
-        $flagged = AbandonedCart::where('status', AbandonedCart::STATUS_ACTIVE)
-            ->whereNotNull('phone')
-            ->where('last_activity_at', '<', now()->subMinutes($thresholdMinutes))
-            ->update(['status' => AbandonedCart::STATUS_ABANDONED]);
+        $flagged = AbandonedCart::autoDetectAbandoned($thresholdMinutes);
 
         $this->info("Flagged {$flagged} cart(s) as abandoned.");
 

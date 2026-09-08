@@ -213,6 +213,9 @@
     // ── Init ──
     function initCartButtons() {
         updateNavbarBadge(false);
+        if (getCart().length > 0) {
+            syncCartDebounced({}, 1500);
+        }
         // Buy Now always starts a single-product checkout.  Product cards in some
         // legacy page templates are buttons, so resolve their product URL here.
         document.addEventListener('click', function(e) {

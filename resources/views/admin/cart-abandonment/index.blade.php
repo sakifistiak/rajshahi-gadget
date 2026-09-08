@@ -20,7 +20,7 @@
             @csrf
             <div class="md:col-span-2">
                 <label class="flex items-center gap-2.5 text-xs font-bold text-slate-700 cursor-pointer select-none">
-                    <input type="checkbox" name="cart_abandonment_enabled" value="1" {{ ($settings['cart_abandonment_enabled'] ?? '0') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
+                    <input type="checkbox" name="cart_abandonment_enabled" value="1" {{ ($settings['cart_abandonment_enabled'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                     Enable abandoned-cart tracking &amp; reminders
                 </label>
             </div>
@@ -55,6 +55,11 @@
            class="px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5 {{ $currentStatus === 'all' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
             <span>All</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $currentStatus === 'all' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600' }}">{{ $statusCounts['all'] }}</span>
+        </a>
+        <a href="{{ route('admin.cart-abandonment.index', array_merge(request()->query(), ['status' => 'active'])) }}"
+           class="px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5 {{ $currentStatus === 'active' ? 'bg-sky-50 text-sky-600' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
+            <span>Active</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $currentStatus === 'active' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-600' }}">{{ $statusCounts['active'] }}</span>
         </a>
         <a href="{{ route('admin.cart-abandonment.index', array_merge(request()->query(), ['status' => 'abandoned'])) }}"
            class="px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5 {{ $currentStatus === 'abandoned' ? 'bg-amber-50 text-amber-600' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50' }}">
@@ -128,7 +133,9 @@
                                 <div class="text-[9px] text-slate-400">{{ $cart->last_activity_at?->format('h:i A') }}</div>
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap">
-                                @if ($cart->status === 'abandoned')
+                                @if ($cart->status === 'active')
+                                    <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-sky-50 text-sky-600 border border-sky-100">Active</span>
+                                @elseif ($cart->status === 'abandoned')
                                     <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-amber-50 text-amber-600 border border-amber-100">Abandoned</span>
                                 @elseif ($cart->status === 'reminded')
                                     <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-purple-50 text-purple-600 border border-purple-100">Reminded</span>

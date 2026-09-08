@@ -11,7 +11,10 @@ class CartAbandonmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AbandonedCart::where('status', '!=', AbandonedCart::STATUS_ACTIVE);
+        // Lazily auto-detect any idle active carts that have crossed the threshold
+        AbandonedCart::autoDetectAbandoned();
+
+        $query = AbandonedCart::query();
 
         if ($request->filled('status') && $request->status !== 'all') {
             $query->where('status', $request->status);
@@ -28,21 +31,21 @@ class CartAbandonmentController extends Controller
 
         $carts = $query->latest('last_activity_at')->paginate(15)->withQueryString();
 
-        $groupedCounts = AbandonedCart::where('status', '!=', AbandonedCart::STATUS_ACTIVE)
-            ->selectRaw('status, count(*) as total')
+        $groupedCounts = AbandonedCart::selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status')
             ->toArray();
 
         $statusCounts = [
             'all' => array_sum($groupedCounts),
+            'active' => $groupedCounts[AbandonedCart::STATUS_ACTIVE] ?? 0,
             'abandoned' => $groupedCounts[AbandonedCart::STATUS_ABANDONED] ?? 0,
             'reminded' => $groupedCounts[AbandonedCart::STATUS_REMINDED] ?? 0,
             'recovered' => $groupedCounts[AbandonedCart::STATUS_RECOVERED] ?? 0,
         ];
 
         $settingsKeys = [
-            'cart_abandonment_enabled' => '0',
+            'cart_abandonment_enabled' => '1',
             'cart_abandonment_threshold_minutes' => '60',
             'cart_abandonment_resend_cooldown_hours' => '24',
             'cart_abandonment_sms_template' => "Hi {name}, you left {items} (৳{value}) in your cart at Khan Gadget. Complete your order before it's gone!",
