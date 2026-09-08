@@ -959,15 +959,10 @@ html.dark .btn-buy-now:hover {
     align-items: flex-start;
     min-width: 30rem;
     max-height: 26rem;
-    background: var(--surface, #fff);
-    border: 1px solid var(--border, #e5e7eb);
-    border-radius: .6rem;
-    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
     opacity: 0;
     visibility: hidden;
     transform: translateY(6px);
     transition: opacity .16s ease, transform .16s ease, visibility .16s;
-    overflow: hidden;
 }
 .kg-mega-menu-wrap:hover .kg-mega-menu,
 .kg-mega-menu.is-open {
@@ -975,20 +970,25 @@ html.dark .btn-buy-now:hover {
     visibility: visible;
     transform: translateY(0);
 }
-/* One shared panel/border/shadow (the original look), but the category
-   column sizes to its own content (align-self + height: fit-content)
-   instead of stretching to match the taller brand list, and its divider
-   border stops with it — so a shorter category list just leaves quiet
-   background space, not a separately bordered "empty box". */
+/* A shared border/background/box-shadow on this wrapper, combined with
+   overflow: hidden to clip it to rounded corners, was silently forcing the
+   shorter category column to stretch to the taller brand column's height
+   in real browser testing (align-self/height: fit-content had no effect
+   while that overflow: hidden was in place) — repeatedly confirmed live,
+   not just in theory. So there is no shared box here anymore: each column
+   is its own bordered/shadowed panel, sized only to its own content, sitting
+   flush against each other (no gap) with only the outer corners rounded so
+   they still read as one continuous panel rather than two floating cards. */
 .kg-mega-menu-cats {
-    align-self: flex-start;
     width: 13rem;
-    height: fit-content;
     max-height: 100%;
     flex-shrink: 0;
     overflow-y: auto;
     padding: .5rem;
-    border-right: 1px solid var(--border, #e5e7eb);
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: .6rem 0 0 .6rem;
+    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
 }
 .kg-mega-cat {
     display: flex;
@@ -1014,9 +1014,15 @@ html.dark .btn-buy-now:hover {
 }
 .kg-mega-menu-brands {
     flex: 1;
+    max-height: 100%;
     overflow-y: auto;
     padding: .75rem 1rem;
     min-width: 12rem;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-left: none;
+    border-radius: 0 .6rem .6rem 0;
+    box-shadow: 0 20px 40px rgb(0 0 0 / .12);
 }
 .kg-mega-brand-panel { display: none; }
 .kg-mega-brand-panel.is-active { display: block; }
