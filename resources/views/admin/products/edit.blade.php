@@ -147,6 +147,8 @@
                 </div>
             </div>
 
+            @include('admin.products._filter-attributes')
+
             <!-- Featured Image -->
             <div class="p-4 bg-slate-50 rounded-sm border border-slate-200">
                 <div class="flex items-center justify-between mb-2">

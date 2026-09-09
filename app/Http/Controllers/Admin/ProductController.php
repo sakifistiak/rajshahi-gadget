@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Condition;
+use App\Models\FilterAttribute;
 use App\Models\Product;
 use App\Support\ImageUploader;
-use App\Support\ProductFilterSync;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -98,8 +98,10 @@ class ProductController extends Controller
         $categories = Category::all();
         $conditions = Condition::all();
         $brands = Brand::all();
+        $filterAttributesByCategory = FilterAttribute::orderBy('sort_order')->get()->groupBy('category_id');
+        $productFilterValues = collect();
 
-        return view('admin.products.create', compact('categories', 'conditions', 'brands'));
+        return view('admin.products.create', compact('categories', 'conditions', 'brands', 'filterAttributesByCategory', 'productFilterValues'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -118,6 +120,8 @@ class ProductController extends Controller
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
+            'filter_values' => 'nullable|array',
+            'filter_values.*' => 'nullable|string|max:100',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'gallery_paths' => 'nullable|array',
@@ -201,7 +205,7 @@ class ProductController extends Controller
             }
         }
 
-        ProductFilterSync::syncProduct($product);
+        $this->syncDirectFilterValues($product, $request);
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully!');
     }
@@ -212,8 +216,10 @@ class ProductController extends Controller
         $conditions = Condition::all();
         $brands = Brand::all();
         $product->load(['highlights', 'specs', 'images', 'filterValues']);
+        $filterAttributesByCategory = FilterAttribute::orderBy('sort_order')->get()->groupBy('category_id');
+        $productFilterValues = $product->filterValues->keyBy('filter_attribute_id');
 
-        return view('admin.products.edit', compact('product', 'categories', 'conditions', 'brands'));
+        return view('admin.products.edit', compact('product', 'categories', 'conditions', 'brands', 'filterAttributesByCategory', 'productFilterValues'));
     }
 
     public function update(Request $request, Product $product): RedirectResponse
@@ -232,6 +238,8 @@ class ProductController extends Controller
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
+            'filter_values' => 'nullable|array',
+            'filter_values.*' => 'nullable|string|max:100',
             'image_path' => 'nullable|string|max:500',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
             'gallery_paths' => 'nullable|array',
@@ -314,7 +322,7 @@ class ProductController extends Controller
             }
         }
 
-        ProductFilterSync::syncProduct($product);
+        $this->syncDirectFilterValues($product, $request);
 
         $target = $this->safeReturnUrl($request->input('return')) ?? route('admin.products.index');
 
@@ -359,6 +367,46 @@ class ProductController extends Controller
         $message .= 'Could not delete '.$blocked->pluck('name')->implode(', ').' because they have existing orders.';
 
         return redirect($target)->with($deletable->count() > 0 ? 'success' : 'error', $message);
+    }
+
+    private function syncDirectFilterValues(Product $product, Request $request): void
+    {
+        $submitted = $request->input('filter_values', []);
+        $attributes = FilterAttribute::where('category_id', $product->category_id)
+            ->get()
+            ->keyBy('id');
+
+        $product->filterValues()->delete();
+
+        foreach ((array) $submitted as $attributeId => $value) {
+            $attribute = $attributes->get((int) $attributeId);
+            $value = is_string($value) ? trim($value) : $value;
+
+            if (! $attribute || $value === null || $value === '') {
+                continue;
+            }
+
+            if ($attribute->type === 'range') {
+                if (! is_numeric($value)) {
+                    continue;
+                }
+
+                $product->filterValues()->create([
+                    'filter_attribute_id' => $attribute->id,
+                    'numeric_value' => (float) $value,
+                ]);
+                continue;
+            }
+
+            if (! in_array($value, $attribute->optionList(), true)) {
+                continue;
+            }
+
+            $product->filterValues()->create([
+                'filter_attribute_id' => $attribute->id,
+                'text_value' => $value,
+            ]);
+        }
     }
 
     private function storeUploadedImage(UploadedFile $file): string

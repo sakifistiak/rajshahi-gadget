@@ -10,7 +10,7 @@
         <div class="flex items-center justify-between bg-white p-5 rounded-sm border border-gray-200 shadow-sm">
             <div>
                 <h1 class="text-xl font-bold text-gray-900">Filter Attributes</h1>
-                <p class="text-xs text-gray-500 mt-1">Define which spec filters (RAM, Storage, DPI, Connection...) appear on the shop page for each category. A category with no attributes here shows no spec filters.</p>
+                <p class="text-xs text-gray-500 mt-1">Define which product filters (RAM, Storage, DPI, Connection...) appear on the shop page for each category. Values are set directly on each product.</p>
             </div>
             <a href="{{ route('admin.filter-attributes.create') }}"
                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-sm shadow-sm transition-colors flex items-center gap-1.5">

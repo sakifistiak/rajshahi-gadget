@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\FilterAttribute;
-use App\Support\ProductFilterSync;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -37,9 +36,7 @@ class FilterAttributeController extends Controller
 
         FilterAttribute::create($data);
 
-        ProductFilterSync::syncCategory($data['category_id']);
-
-        return redirect()->route('admin.filter-attributes.index')->with('success', 'Filter attribute added. Existing products in this category have been scanned for it.');
+        return redirect()->route('admin.filter-attributes.index')->with('success', 'Filter attribute added. You can set its value from each product add/edit page.');
     }
 
     public function edit(FilterAttribute $filterAttribute): View
@@ -52,28 +49,18 @@ class FilterAttributeController extends Controller
     public function update(Request $request, FilterAttribute $filterAttribute): RedirectResponse
     {
         $data = $this->validated($request);
-        $originalCategoryId = $filterAttribute->category_id;
-
         if ($data['category_id'] != $filterAttribute->category_id || $data['label'] !== $filterAttribute->label) {
             $data['key'] = $this->uniqueKey($data['category_id'], $data['label'], $filterAttribute->id);
         }
 
         $filterAttribute->update($data);
 
-        ProductFilterSync::syncCategory($data['category_id']);
-        if ($originalCategoryId != $data['category_id']) {
-            ProductFilterSync::syncCategory($originalCategoryId);
-        }
-
-        return redirect()->route('admin.filter-attributes.index')->with('success', 'Filter attribute updated. Existing products have been re-scanned.');
+        return redirect()->route('admin.filter-attributes.index')->with('success', 'Filter attribute updated. Product values remain manually controlled.');
     }
 
     public function destroy(FilterAttribute $filterAttribute): RedirectResponse
     {
-        $categoryId = $filterAttribute->category_id;
         $filterAttribute->delete();
-        ProductFilterSync::syncCategory($categoryId);
-
         return redirect()->route('admin.filter-attributes.index')->with('success', 'Filter attribute deleted.');
     }
 
@@ -82,7 +69,6 @@ class FilterAttributeController extends Controller
         $data = $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
             'label' => ['required', 'string', 'max:60'],
-            'match_labels' => ['nullable', 'string', 'max:255'],
             'unit' => ['nullable', 'string', 'max:20'],
             'type' => ['required', Rule::in(['range', 'select'])],
             'options' => ['required_if:type,select', 'nullable', 'string', 'max:1000'],

@@ -41,13 +41,6 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Reads From Spec Label(s)</label>
-                    <input type="text" name="match_labels" value="{{ old('match_labels') }}" placeholder="e.g. RAM, Memory"
-                           class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-sm text-xs focus:bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
-                    <p class="text-[11px] text-slate-500 mt-1.5">The value auto-fills from whichever Specification the product already has under this label (comma-separated to match more than one, e.g. products using either "RAM" or "Memory"). Leave blank to match the attribute's own Label above.</p>
-                </div>
-
                 <div x-show="type === 'range'">
                     <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Unit <span class="normal-case font-normal text-gray-400">(optional)</span></label>
                     <input type="text" name="unit" value="{{ old('unit') }}" placeholder="e.g. GB"

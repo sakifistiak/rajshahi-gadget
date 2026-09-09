@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\FilterAttribute;
-use App\Support\ProductFilterSync;
 use Illuminate\Database\Seeder;
 
 class FilterAttributeSeeder extends Seeder
@@ -33,7 +32,6 @@ class FilterAttributeSeeder extends Seeder
                 );
             }
 
-            ProductFilterSync::syncCategory($category->id);
         }
     }
 
