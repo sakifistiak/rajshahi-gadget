@@ -253,17 +253,26 @@
             var productName='Product', productPrice=0, productImage='', productSlug='product-'+Date.now(), imgEl=null;
 
             if (card) {
+                // Use server-rendered identity first. Parsing the nearest
+                // product link can pick a related/recent product on detail pages.
+                if (card.dataset.cartSlug) {
+                    productSlug = card.dataset.cartSlug;
+                    productName = card.dataset.cartName || productName;
+                    productPrice = Number(card.dataset.cartPrice || 0);
+                    productImage = card.dataset.cartImage || '';
+                }
+
                 // Prefer the title heading over the image link — the image is wrapped
                 // in an a[href*="/product/"] that comes first in the DOM but has no
                 // text, so querySelector('h3, ..., a[href*="/product/"]') would match
                 // that empty anchor first and silently produce a blank cart item name.
                 var t = card.querySelector('h3') || card.querySelector('.line-clamp-2') || card.querySelector('a[href*="/product/"]');
-                if (t) {
+                if (t && !card.dataset.cartSlug) {
                     var tName = t.textContent.trim();
                     if (tName) productName = tName;
                 }
                 var l = card.querySelector('a[href*="/product/"]');
-                if (l) { var p = l.getAttribute('href').split('/product/'); if(p.length>1) productSlug=p[1].split('?')[0]; }
+                if (l && !card.dataset.cartSlug) { var p = l.getAttribute('href').split('/product/'); if(p.length>1) productSlug=p[1].split('?')[0]; }
                 
                 // Extract price from the card. Only read the FIRST run of digits
                 // from a currency-looking string and sanity-check the range —
@@ -278,7 +287,7 @@
                     return (n >= 100 && n <= 100000000) ? n : 0;
                 };
                 var priceContainer = card.querySelector('.mt-3.flex, [class*="items-baseline"]');
-                if (priceContainer) {
+                if (priceContainer && !card.dataset.cartSlug) {
                     var spans = priceContainer.querySelectorAll('span');
                     for (var i = 0; i < spans.length; i++) {
                         if (spans[i].textContent.includes('Save') || spans[i].classList.contains('line-through')) continue;
@@ -286,7 +295,7 @@
                         if (productPrice) break;
                     }
                 }
-                if (!productPrice) {
+                if (!productPrice && !card.dataset.cartSlug) {
                     var priceEls = card.querySelectorAll('.text-base, .font-semibold, .tabular-nums, [class*="price" i]');
                     for (var j = 0; j < priceEls.length; j++) {
                         productPrice = priceFromText(priceEls[j].textContent);
@@ -295,7 +304,7 @@
                 }
 
                 imgEl = card.querySelector('img');
-                if (imgEl) productImage = imgEl.src;
+                if (imgEl && !productImage) productImage = imgEl.src;
             }
 
             addToCart({ slug: productSlug, name: productName, price: productPrice, image: productImage });

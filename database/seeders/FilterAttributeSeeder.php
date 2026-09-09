@@ -48,6 +48,15 @@ class FilterAttributeSeeder extends Seeder
                 'sort_order' => 10,
             ],
             [
+                'key' => 'processor_generation',
+                'label' => 'Processor Generation',
+                'match_labels' => 'Processor Generation, CPU Generation, Generation',
+                'type' => 'select',
+                'unit' => null,
+                'options' => '1st Gen, 2nd Gen, 3rd Gen, 4th Gen, 5th Gen, 6th Gen, 7th Gen, 8th Gen, 9th Gen, 10th Gen, 11th Gen, 12th Gen, 13th Gen, 14th Gen, Core Ultra Series 1, Core Ultra Series 2, Ryzen 3000 Series, Ryzen 4000 Series, Ryzen 5000 Series, Ryzen 6000 Series, Ryzen 7000 Series, Ryzen 8000 Series, Ryzen AI 300 Series',
+                'sort_order' => 15,
+            ],
+            [
                 'key' => 'ram',
                 'label' => 'RAM',
                 'match_labels' => 'RAM, Memory',

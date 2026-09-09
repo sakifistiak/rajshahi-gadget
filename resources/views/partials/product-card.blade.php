@@ -1,4 +1,4 @@
-<article class="product-card-item group flex h-full flex-col border border-border bg-secondary overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px" data-price="{{ $product->price ?? 0 }}" data-name="{{ $product->name }}" data-in-stock="{{ $product->in_stock ? 1 : 0 }}">
+<article class="product-card-item group flex h-full flex-col border border-border bg-secondary overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px" data-price="{{ $product->price ?? 0 }}" data-name="{{ $product->name }}" data-in-stock="{{ $product->in_stock ? 1 : 0 }}" data-cart-slug="{{ $product->slug }}" data-cart-name="{{ $product->name }}" data-cart-price="{{ $product->price ?? 0 }}" data-cart-image="{{ $product->primaryImage() }}">
     <div class="relative overflow-hidden bg-surface">
         <a href="/product/{{ $product->slug }}" class="block">
             <div class="aspect-square w-full overflow-hidden">
@@ -60,7 +60,7 @@
                     Order Now
                 </a>
             @else
-                <button type="button" class="h-9 w-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center shrink-0 transition-colors shadow-sm" title="Add to Cart" aria-label="Add to Cart">
+                <button type="button" class="h-9 w-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center shrink-0 transition-colors shadow-sm" title="Add to Cart" aria-label="Add to Cart" data-cart-slug="{{ $product->slug }}" data-cart-name="{{ $product->name }}" data-cart-price="{{ $product->price ?? 0 }}" data-cart-image="{{ $product->primaryImage() }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="height:16px;width:16px" aria-hidden="true"><circle cx="8" cy="21" r="1"></circle><circle cx="19" cy="21" r="1"></circle><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path></svg>
                 </button>
                 <a href="/checkout?product={{ $product->slug }}" class="btn-buy-now flex-1 inline-flex items-center justify-center rounded-full font-bold text-sm transition-all shadow-sm" style="height:36px; padding:0 16px;">
