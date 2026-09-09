@@ -165,11 +165,18 @@
             // Pagination links inside the swapped region
             results.addEventListener('click', function (e) {
                 const link = e.target.closest('a');
-                if (link && results.contains(link) && link.href) {
-                    e.preventDefault();
-                    load(link.href);
-                    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (!link || !results.contains(link) || !link.href) return;
+
+                // Only AJAX-load links that point back to this list endpoint.
+                // Edit/View links must perform a normal navigation; otherwise
+                // the complete edit layout gets injected inside the result table.
+                const targetUrl = new URL(link.href, window.location.origin);
+                const listUrl = new URL(form.action, window.location.origin);
+                if (targetUrl.pathname !== listUrl.pathname) return;
+
+                e.preventDefault();
+                load(targetUrl.href);
+                results.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         })();
     </script>
