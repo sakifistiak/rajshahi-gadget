@@ -230,7 +230,7 @@
                         {{ __('+ Add Spec') }}
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mb-3">Label/value pairs shown in the "Specifications" table on the product page (e.g. "Processor" / "Core Ultra 7 155H").</p>
+                <p class="text-[11px] text-slate-500 mb-3">Label/value pairs shown in the "Specifications" table. Category filters such as Processor, RAM and RAM Type are automatically built from matching rows here.</p>
 
                 <div id="specs-container" class="space-y-2">
                     <!-- JS will populate rows -->

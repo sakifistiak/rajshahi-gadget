@@ -220,7 +220,7 @@
                         {{ __('+ Add Spec') }}
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mb-3">Label/value pairs shown in the "Specifications" table on the product page (e.g. "Processor" / "Core Ultra 7 155H").</p>
+                <p class="text-[11px] text-slate-500 mb-3">Label/value pairs shown in the "Specifications" table. Category filters such as Processor, RAM and RAM Type are automatically built from matching rows here.</p>
 
                 <div id="specs-container" class="space-y-2">
                     <!-- Rows injected by JavaScript below -->
@@ -406,12 +406,12 @@
             if (oldSpecsLabel.length > 0) {
                 oldSpecsLabel.forEach((label, i) => addSpecRow(label, oldSpecsValue[i] || ''));
             } else {
-                addSpecRow('𝐌𝐎𝐃𝐄𝐋');
-                addSpecRow('𝐏𝐑𝐎𝐂𝐄𝐒𝐒𝐎𝐑');
-                addSpecRow('𝐒𝐏𝐄𝐄𝐃');
-                addSpecRow('𝐑𝐀𝐌');
-                addSpecRow('𝐒𝐒𝐃');
-                addSpecRow('𝐃𝐈𝐒𝐏𝐋𝐀𝐘');
+                addSpecRow('Model');
+                addSpecRow('Processor');
+                addSpecRow('RAM');
+                addSpecRow('RAM Type');
+                addSpecRow('Storage');
+                addSpecRow('Display');
             }
         });
     </script>

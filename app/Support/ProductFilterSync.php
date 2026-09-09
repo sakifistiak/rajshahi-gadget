@@ -73,10 +73,10 @@ class ProductFilterSync
 
     private static function findMatchingSpec(Product $product, FilterAttribute $attribute)
     {
-        $labels = array_map('mb_strtolower', $attribute->matchLabelList());
+        $labels = array_map([static::class, 'normalizeLabel'], $attribute->matchLabelList());
 
         return $product->specs->first(
-            fn ($spec) => in_array(mb_strtolower(trim($spec->label)), $labels, true)
+            fn ($spec) => in_array(static::normalizeLabel($spec->label), $labels, true)
         );
     }
 
@@ -116,11 +116,21 @@ class ProductFilterSync
     private static function matchOption(string $text, array $options): ?string
     {
         foreach ($options as $option) {
-            if (mb_stripos($text, $option) !== false) {
+            if (mb_stripos(static::normalizeValue($text), static::normalizeValue($option)) !== false) {
                 return $option;
             }
         }
 
         return null;
+    }
+
+    private static function normalizeLabel(string $value): string
+    {
+        return mb_strtolower(trim(preg_replace('/\s+/u', ' ', $value)));
+    }
+
+    private static function normalizeValue(string $value): string
+    {
+        return mb_strtolower(preg_replace('/\s+/u', '', trim($value)));
     }
 }
