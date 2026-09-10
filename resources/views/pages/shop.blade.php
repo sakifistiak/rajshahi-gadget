@@ -149,10 +149,6 @@
                     </div>
                 </div>
 
-                <!-- Submit Button if needed -->
-                <button type="submit" class="w-full py-2 bg-primary text-primary-foreground text-xs font-bold rounded shadow-sm hover:opacity-90 transition-opacity">
-                    Apply Filters
-                </button>
             </form>
         </aside><div data-tsd-source="/src/routes/shop.tsx:132:9"><div class="flex flex-wrap items-center gap-3" data-tsd-source="/src/routes/shop.tsx:133:11"><button class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm lg:hidden" data-tsd-source="/src/routes/shop.tsx:134:13"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal h-4 w-4" aria-hidden="true" data-tsd-source="/src/routes/shop.tsx:138:15"><path d="M10 5H3"></path><path d="M12 19H3"></path><path d="M14 3v4"></path><path d="M16 17v4"></path><path d="M21 12h-9"></path><path d="M21 19h-5"></path><path d="M21 5h-7"></path><path d="M8 10v4"></path><path d="M8 12H3"></path></svg>Filters </button><div class="ms-auto flex flex-wrap items-center gap-2 text-xs" data-tsd-source="/src/routes/shop.tsx:141:13"><a data-tsd-source="/src/routes/shop.tsx:148:17" class="rounded-full px-3 py-1.5 bg-foreground text-background active" href="/shop?sort=featured&amp;condition=" data-status="active" aria-current="page">Featured</a><a data-tsd-source="/src/routes/shop.tsx:148:17" href="/shop?sort=price-asc&amp;condition=" class="rounded-full px-3 py-1.5 border border-border hover:bg-secondary">Price ↑</a><a data-tsd-source="/src/routes/shop.tsx:148:17" href="/shop?sort=price-desc&amp;condition=" class="rounded-full px-3 py-1.5 border border-border hover:bg-secondary">Price ↓</a><a data-tsd-source="/src/routes/shop.tsx:148:17" href="/shop?sort=rating&amp;condition=" class="rounded-full px-3 py-1.5 border border-border hover:bg-secondary">Top rated</a></div></div><p class="mt-4 text-sm text-muted-foreground">Showing <span class="font-medium text-foreground">{{ $products->total() ?? $products->count() }}</span> products</p><div class="mt-6 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 xl:grid-cols-3">@foreach ($products as $product)
 @include('partials.product-card', ['product' => $product])
@@ -247,6 +243,83 @@ document.addEventListener('DOMContentLoaded', function () {
         return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
 });
+</script>
+<script>
+(function () {
+    var filterRequest = null;
+
+    function resultsRoot(documentLike) {
+        var countText = documentLike.querySelector('main p.mt-4');
+        return countText ? countText.parentElement : null;
+    }
+
+    function urlFromForm(form) {
+        var url = new URL(form.action || '/shop', window.location.origin);
+        url.search = new URLSearchParams(new FormData(form)).toString();
+        return url;
+    }
+
+    async function applyShopFilters(url, pushState) {
+        var form = document.getElementById('shop-filter-form');
+        var currentResults = resultsRoot(document);
+        if (!form || !currentResults) return;
+
+        if (filterRequest) filterRequest.abort();
+        filterRequest = new AbortController();
+        currentResults.setAttribute('aria-busy', 'true');
+        currentResults.classList.add('opacity-60', 'pointer-events-none');
+
+        try {
+            var response = await fetch(url.toString(), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                signal: filterRequest.signal
+            });
+            if (!response.ok) throw new Error('Filter request failed');
+
+            var html = await response.text();
+            var parsed = new DOMParser().parseFromString(html, 'text/html');
+            var nextForm = parsed.getElementById('shop-filter-form');
+            var nextResults = resultsRoot(parsed);
+            if (!nextForm || !nextResults) throw new Error('Filter response is incomplete');
+
+            form.replaceWith(nextForm);
+            currentResults.replaceWith(nextResults);
+            if (pushState) window.history.pushState({}, '', url.toString());
+            if (window.lucide) window.lucide.createIcons();
+        } catch (error) {
+            if (error.name !== 'AbortError') console.error('Shop filter error:', error);
+        } finally {
+            var freshResults = resultsRoot(document);
+            if (freshResults) {
+                freshResults.removeAttribute('aria-busy');
+                freshResults.classList.remove('opacity-60', 'pointer-events-none');
+            }
+        }
+    }
+
+    document.addEventListener('change', function (event) {
+        var form = event.target.closest && event.target.closest('#shop-filter-form');
+        if (form) applyShopFilters(urlFromForm(form), true);
+    });
+
+    document.addEventListener('submit', function (event) {
+        var form = event.target.closest && event.target.closest('#shop-filter-form');
+        if (!form) return;
+        event.preventDefault();
+        applyShopFilters(urlFromForm(form), true);
+    });
+
+    document.addEventListener('click', function (event) {
+        var link = event.target.closest && event.target.closest('#shop-results a, main a');
+        if (!link || !link.href || new URL(link.href, window.location.origin).pathname !== '/shop') return;
+        event.preventDefault();
+        applyShopFilters(new URL(link.href, window.location.origin), true);
+    });
+
+    window.addEventListener('popstate', function () {
+        applyShopFilters(new URL(window.location.href), false);
+    });
+})();
 </script>
 @include('partials.mobile-drawer')
 </body></html>
