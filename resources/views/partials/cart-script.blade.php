@@ -73,7 +73,9 @@
         if (existing) { existing.quantity = (existing.quantity || 1) + 1; }
         else { cart.push({ slug: product.slug, name: product.name, price: product.price || 0, image: product.image || '', quantity: 1 }); }
         saveCart(cart);
-        syncCartDebounced();
+        // Record this exact add action for Analytics, instead of inferring it
+        // later from the current cart snapshot.
+        syncCartNow({ added_slug: product.slug });
     }
 
     // ── Abandoned-cart tracking: lets the admin panel see (and, once an SMS

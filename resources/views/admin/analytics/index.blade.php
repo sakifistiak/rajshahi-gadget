@@ -130,6 +130,14 @@
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-600">{{ $blogReach->count() }}</span>
             </button>
 
+            <button @click="activeTab = 'cart-adds'"
+                    :class="activeTab === 'cart-adds' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'"
+                    class="px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5">
+                <i data-lucide="shopping-cart" class="h-3.5 w-3.5"></i>
+                <span>Cart Adds</span>
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-100 text-slate-600">{{ $cartAdds->count() }}</span>
+            </button>
+
             <button @click="activeTab = 'sources'" 
                     :class="activeTab === 'sources' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'"
                     class="px-3 py-1.5 text-xs font-bold rounded-sm transition-colors flex items-center gap-1.5">
@@ -297,7 +305,71 @@
             </div>
         </div>
 
-        <!-- TAB 3: Blog Reach Table -->
+        <!-- TAB 3: Most Added to Cart Table -->
+        <div x-show="activeTab === 'cart-adds'" class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div>
+                    <h3 class="text-[13px] font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="shopping-cart" class="h-3.5 w-3.5 text-emerald-600"></i>
+                        Most Added to Cart Products
+                    </h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Products customers added to cart during {{ $periodLabel }}.</p>
+                </div>
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-100">
+                    {{ $cartAdds->count() }} Products Tracked
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-100">
+                    <thead class="bg-slate-50/20">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider w-12">#</th>
+                            <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Product') }}</th>
+                            <th class="px-6 py-3 text-left text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Price & Stock') }}</th>
+                            <th class="px-6 py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Cart Adds') }}</th>
+                            <th class="px-6 py-3 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ __('Unique Carts') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($cartAdds as $index => $item)
+                            <tr class="hover:bg-slate-50/30 transition-colors">
+                                <td class="px-6 py-3.5 whitespace-nowrap text-xs font-extrabold text-slate-400">{{ $index + 1 }}</td>
+                                <td class="px-6 py-3.5 whitespace-nowrap">
+                                    <div class="flex items-center gap-3">
+                                        <img src="{{ $item['thumbnail'] ?? '/assets/no-image-placeholder.svg' }}" alt="{{ $item['name'] }}" class="h-9 w-9 object-cover rounded border border-slate-100 shadow-sm shrink-0">
+                                        <div>
+                                            @if ($item['product'])
+                                                <a href="{{ route('admin.products.edit', $item['product_id']) }}" class="text-xs font-semibold text-slate-800 hover:text-blue-600 block">{{ $item['name'] }}</a>
+                                            @else
+                                                <span class="text-xs font-semibold text-slate-800">{{ $item['name'] }}</span>
+                                            @endif
+                                            <div class="text-[9px] text-slate-400">Category: {{ $item['category_name'] }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-3.5 whitespace-nowrap">
+                                    @if ($item['price'])
+                                        <div class="text-xs font-bold text-slate-800">৳{{ number_format($item['price']) }}</div>
+                                    @endif
+                                    @if ($item['in_stock'])
+                                        <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-emerald-50 text-emerald-600 border border-emerald-100">In Stock</span>
+                                    @else
+                                        <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-rose-50 text-rose-600 border border-rose-100">Out of Stock</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-3.5 whitespace-nowrap text-center text-xs font-extrabold text-emerald-600">{{ number_format($item['adds_total']) }}</td>
+                                <td class="px-6 py-3.5 whitespace-nowrap text-center text-xs font-bold text-slate-600">{{ number_format($item['unique_carts']) }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="5" class="px-6 py-8 text-center text-xs text-slate-400">No cart additions recorded for this period yet.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 4: Blog Reach Table -->
         <div x-show="activeTab === 'blogs'" class="bg-white rounded-md border border-slate-200 shadow-sm overflow-hidden">
             <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                 <div>

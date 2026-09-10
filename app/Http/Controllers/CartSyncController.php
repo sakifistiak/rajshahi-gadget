@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\EnsureCartToken;
 use App\Models\AbandonedCart;
+use App\Models\CartAddEvent;
+use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -27,11 +29,25 @@ class CartSyncController extends Controller
             'items.*.name' => ['nullable', 'string', 'max:255'],
             'items.*.price' => ['nullable', 'numeric', 'min:0'],
             'items.*.image' => ['nullable', 'string', 'max:2048'],
+            'added_slug' => ['nullable', 'string', 'max:255'],
         ]);
 
         $token = $request->cookie(EnsureCartToken::COOKIE_NAME);
         if (! $token) {
             return response()->json(['ok' => false], 422);
+        }
+
+        if (! empty($data['added_slug'])) {
+            $product = Product::where('slug', $data['added_slug'])->first(['id', 'slug', 'name']);
+            if ($product) {
+                CartAddEvent::create([
+                    'product_id' => $product->id,
+                    'product_slug' => $product->slug,
+                    'product_name' => $product->name,
+                    'cart_token' => $token,
+                    'created_at' => now(),
+                ]);
+            }
         }
 
         $hasItems = ! empty($data['items']);

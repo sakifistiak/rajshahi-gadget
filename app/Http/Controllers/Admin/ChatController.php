@@ -28,7 +28,13 @@ class ChatController extends Controller
 
     public function unreadCount()
     {
-        $count = ChatMessage::where('sender_type', 'customer')->whereNull('read_at')->count();
+        // Closed conversations must not keep the global sidebar alert ringing.
+        // Only unread customer messages in currently open conversations need
+        // an admin/agent notification.
+        $count = ChatMessage::where('sender_type', 'customer')
+            ->whereNull('read_at')
+            ->whereHas('conversation', fn ($query) => $query->where('status', 'open'))
+            ->count();
 
         return response()->json(['count' => $count]);
     }

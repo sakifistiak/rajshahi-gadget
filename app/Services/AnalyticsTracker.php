@@ -14,6 +14,9 @@ use Illuminate\Support\Str;
 
 class AnalyticsTracker
 {
+    /** Keep one analytics visitor session across the www and non-www hosts. */
+    private const VISITOR_COOKIE = 'kg_analytics_sid_v2';
+
     /**
      * Track a storefront request
      */
@@ -44,10 +47,25 @@ class AnalyticsTracker
         }
 
         // 3. Session & Visitor identification
-        $sessionId = $request->cookie('kg_analytics_sid');
+        $sessionId = $request->cookie(self::VISITOR_COOKIE);
         if (!$sessionId || strlen($sessionId) < 10) {
             $sessionId = (string) Str::uuid();
-            Cookie::queue('kg_analytics_sid', $sessionId, 60 * 24 * 30); // 30 days
+            $host = strtolower($request->getHost());
+            $cookieDomain = in_array($host, ['khangadget.com', 'www.khangadget.com'], true)
+                ? '.khangadget.com'
+                : null;
+
+            Cookie::queue(
+                self::VISITOR_COOKIE,
+                $sessionId,
+                60 * 24 * 30,
+                '/',
+                $cookieDomain,
+                $request->isSecure(),
+                true,
+                false,
+                'lax'
+            ); // 30 days
         }
 
         $ip = $request->ip() ?? '127.0.0.1';
@@ -132,7 +150,7 @@ class AnalyticsTracker
      */
     public function ping(Request $request): bool
     {
-        $sessionId = $request->cookie('kg_analytics_sid') ?? $request->input('sid');
+        $sessionId = $request->cookie(self::VISITOR_COOKIE) ?? $request->input('sid');
         if (!$sessionId) return false;
 
         $url = $request->input('url');

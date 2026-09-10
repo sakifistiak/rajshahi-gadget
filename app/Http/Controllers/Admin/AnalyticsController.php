@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AnalyticsActiveSession;
 use App\Models\AnalyticsVisit;
 use App\Models\BlogPost;
+use App\Models\CartAddEvent;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -111,7 +112,44 @@ class AnalyticsController extends Controller
             ];
         });
 
-        // 4. Blog Reach (Top Blog Posts in period)
+        // 4. Products most often added to cart during the selected period
+        $topCartAddsData = CartAddEvent::period($period)
+            ->select(
+                'product_id',
+                'product_slug',
+                'product_name',
+                DB::raw('count(*) as adds_total'),
+                DB::raw('count(distinct cart_token) as unique_carts')
+            )
+            ->groupBy('product_id', 'product_slug', 'product_name')
+            ->orderByDesc('adds_total')
+            ->limit(30)
+            ->get();
+
+        $cartProductIds = $topCartAddsData->pluck('product_id')->filter()->all();
+        $cartProducts = Product::whereIn('id', $cartProductIds)
+            ->with(['category', 'images'])
+            ->get()
+            ->keyBy('id');
+
+        $cartAdds = $topCartAddsData->map(function ($row) use ($cartProducts) {
+            $product = $cartProducts->get($row->product_id);
+
+            return [
+                'product' => $product,
+                'product_id' => $row->product_id,
+                'name' => $product?->name ?? $row->product_name,
+                'category_name' => $product?->category?->name ?? 'Uncategorized',
+                'slug' => $product?->slug ?? $row->product_slug,
+                'price' => $product?->price,
+                'thumbnail' => $product?->primaryImage() ?? $product?->image,
+                'in_stock' => $product?->in_stock ?? false,
+                'adds_total' => $row->adds_total,
+                'unique_carts' => $row->unique_carts,
+            ];
+        });
+
+        // 5. Blog Reach (Top Blog Posts in period)
         $topBlogsData = AnalyticsVisit::period($period)
             ->where('viewable_type', 'blog_post')
             ->whereNotNull('viewable_id')
@@ -207,6 +245,7 @@ class AnalyticsController extends Controller
             'productViews',
             'blogViews',
             'productReach',
+            'cartAdds',
             'blogReach',
             'trafficSources',
             'deviceData',
