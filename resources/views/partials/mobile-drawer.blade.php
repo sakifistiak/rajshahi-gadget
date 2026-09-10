@@ -900,6 +900,8 @@ html.dark .btn-buy-now:hover {
 #kg-customer-chat-header-text { min-width: 0; }
 #kg-customer-chat-header-text strong { display: block; font-size: .85rem; font-weight: 700; line-height: 1.3; }
 #kg-customer-chat-header-text small { display: block; font-size: .7rem; color: rgba(255,255,255,.65); line-height: 1.3; margin-top: 1px; }
+#kg-customer-chat-header-actions { display: flex; align-items: center; gap: .35rem; flex-shrink: 0; }
+#kg-minimize-customer-chat,
 #kg-close-customer-chat {
     display: grid;
     place-items: center;
@@ -913,6 +915,7 @@ html.dark .btn-buy-now:hover {
     flex-shrink: 0;
     transition: background .15s;
 }
+#kg-minimize-customer-chat:hover,
 #kg-close-customer-chat:hover { background: rgba(255,255,255,.2); }
 #kg-customer-chat-messages { height: 280px; overflow-y: auto; padding: .9rem; background: #f8fafc; display: flex; flex-direction: column; }
 .kg-chat-row { display: flex; align-items: center; gap: .35rem; margin-bottom: .55rem; max-width: 90%; }
@@ -1454,9 +1457,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <small>We usually reply in a few minutes</small>
                 </span>
             </div>
-            <button type="button" id="kg-close-customer-chat" aria-label="Close chat">
+            <div id="kg-customer-chat-header-actions">
+            <button type="button" id="kg-minimize-customer-chat" aria-label="Minimize chat" title="Minimize chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg>
+            </button>
+            <button type="button" id="kg-close-customer-chat" aria-label="End chat" title="End chat">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
+            </div>
         </div>
         <div id="kg-customer-chat-start" class="is-visible">
             <p class="text-sm">Start a conversation</p>
@@ -1497,6 +1505,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   list = document.getElementById('kg-customer-chat-messages'),
                   chatForm2 = document.getElementById('kg-customer-chat-form'),
                   closedBanner = document.getElementById('kg-customer-chat-closed-banner'),
+                  minimizeBtn = document.getElementById('kg-minimize-customer-chat'),
                   replyBar = document.getElementById('kg-customer-chat-reply-preview'),
                   replyBarName = document.getElementById('kg-reply-name'),
                   replyBarSnippet = document.getElementById('kg-reply-snippet'),
@@ -1602,6 +1611,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const closeBtn = document.getElementById('kg-close-customer-chat');
+            if (minimizeBtn) minimizeBtn.addEventListener('click', () => {
+                // Minimizing only hides the panel. The conversation remains open
+                // so customers can continue it when they open the widget again.
+                if (timer) { clearInterval(timer); timer = null; }
+                box.classList.remove('is-visible');
+            });
+
             if (closeBtn) closeBtn.addEventListener('click', () => {
                 const isChatting = body.style.display !== 'none' && chatForm2 && chatForm2.style.display !== 'none';
                 if (isChatting) {
