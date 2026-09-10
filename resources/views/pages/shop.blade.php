@@ -43,7 +43,7 @@
                                 <input type="checkbox" name="condition[]" value="{{ $cond->slug }}"
                                        class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
                                        {{ in_array($cond->slug, $conditionSlugs) ? 'checked' : '' }}
-                                       onchange="this.form.submit()" />
+                                       />
                                 <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($cond->slug, $conditionSlugs) ? 'font-bold text-foreground' : '' }}">
                                     {{ strtoupper($cond->label) }}
                                 </span>
@@ -61,7 +61,7 @@
                                 <input type="checkbox" name="category[]" value="{{ $cat->slug }}"
                                        class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
                                        {{ in_array($cat->slug, $categorySlugs) ? 'checked' : '' }}
-                                       onchange="this.form.submit()" />
+                                       />
                                 <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($cat->slug, $categorySlugs) ? 'font-bold text-foreground' : '' }}">
                                     {{ $cat->name }}
                                 </span>
@@ -79,7 +79,7 @@
                                 <input type="checkbox" name="brand[]" value="{{ $b->slug }}"
                                        class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
                                        {{ in_array($b->slug, $brandSlugs) ? 'checked' : '' }}
-                                       onchange="this.form.submit()" />
+                                       />
                                 <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($b->slug, $brandSlugs) ? 'font-bold text-foreground' : '' }}">
                                     {{ $b->name }}
                                 </span>
@@ -101,13 +101,13 @@
                                            value="{{ request("spec_min.{$attr->key}") }}"
                                            placeholder="{{ $attr->min_bound !== null ? (int) $attr->min_bound : 'Min' }}"
                                            class="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs"
-                                           onchange="this.form.submit()" />
+                                           />
                                     <span class="text-xs text-muted-foreground">–</span>
                                     <input type="number" name="spec_max[{{ $attr->key }}]"
                                            value="{{ request("spec_max.{$attr->key}") }}"
                                            placeholder="{{ $attr->max_bound !== null ? (int) $attr->max_bound : 'Max' }}"
                                            class="w-full rounded-md border border-border bg-background px-2.5 py-1.5 text-xs"
-                                           onchange="this.form.submit()" />
+                                           />
                                 </div>
                             @else
                                 <div class="space-y-2">
@@ -117,7 +117,7 @@
                                             <input type="checkbox" name="spec_select[{{ $attr->key }}][]" value="{{ $option }}"
                                                    class="h-4 w-4 rounded border-border accent-foreground cursor-pointer"
                                                    {{ in_array($option, $selectedOptions) ? 'checked' : '' }}
-                                                   onchange="this.form.submit()" />
+                                                   />
                                             <span class="text-foreground/90 group-hover:text-foreground transition-colors {{ in_array($option, $selectedOptions) ? 'font-bold text-foreground' : '' }}">
                                                 {{ $option }}
                                             </span>
@@ -145,7 +145,7 @@
                                value="{{ $selectedMaxPrice }}"
                                class="w-full accent-foreground cursor-pointer" 
                                oninput="document.getElementById('price-display').innerText = new Intl.NumberFormat().format(this.value)"
-                               onchange="this.form.submit()" />
+                               />
                     </div>
                 </div>
 
@@ -250,4 +250,3 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @include('partials.mobile-drawer')
 </body></html>
-
