@@ -147,6 +147,13 @@
                 </div>
             </div>
 
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">{{ __('Stock Quantity') }}</label>
+                <input id="stock_quantity" type="number" name="stock_quantity" min="0" value="{{ old('stock_quantity', $product->stock_quantity) }}"
+                       class="w-full md:w-1/2 text-xs px-3.5 py-2.5 rounded-sm border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all">
+                <p class="mt-1 text-[11px] text-slate-400">{{ __('Set to 0 to mark this product as out of stock.') }}</p>
+            </div>
+
             @include('admin.products._filter-attributes')
 
             <!-- Featured Image -->

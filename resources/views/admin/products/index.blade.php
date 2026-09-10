@@ -31,6 +31,20 @@
                 <p class="text-[10px] text-slate-400 mt-0.5">Manage details of all products uploaded to the catalog.</p>
             </div>
             <div class="flex items-center gap-2">
+                <a href="{{ route('admin.products.export-stock') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors">
+                    <i data-lucide="download" class="h-3.5 w-3.5"></i>
+                    {{ __('Export CSV') }}
+                </a>
+                <form action="{{ route('admin.products.import-stock') }}" method="POST" enctype="multipart/form-data" class="inline-flex items-center gap-1.5" onsubmit="return confirm('এই CSV ফাইল থেকে স্টক ও দাম আপডেট করবেন? ভুল থাকলে import বাতিল হবে।');">
+                    @csrf
+                    <label class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[11px] font-bold uppercase rounded shadow-sm transition-colors cursor-pointer">
+                        <i data-lucide="upload" class="h-3.5 w-3.5"></i>
+                        {{ __('Import CSV') }}
+                        <input type="file" name="stock_file" accept=".csv,text/csv" required class="hidden" onchange="this.form.querySelector('[data-file-name]').textContent = this.files[0]?.name || 'Import CSV';">
+                    </label>
+                    <button type="submit" class="px-2 py-1.5 bg-slate-700 hover:bg-slate-800 text-white text-[11px] font-bold rounded">{{ __('Apply') }}</button>
+                    <span data-file-name class="hidden"></span>
+                </form>
                 <form action="{{ route('admin.products.bulk-destroy') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete the selected products?');">
                     @csrf
                     @method('DELETE')

@@ -52,6 +52,7 @@
                                 {{ __('Out of Stock') }}
                             </span>
                         @endif
+                        <div class="text-[9px] text-slate-400 mt-1">Qty: {{ number_format($product->stock_quantity ?? 0) }}</div>
                     </td>
                     <td class="px-6 py-3.5 whitespace-nowrap text-center">
                         <span class="inline-flex items-center gap-1 text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-full">

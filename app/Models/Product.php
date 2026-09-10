@@ -12,7 +12,7 @@ class Product extends Model
     protected $fillable = [
         'slug', 'name', 'brand_id', 'category_id', 'condition_id',
         'price', 'compare_at_price', 'rating', 'reviews_count',
-        'badge', 'description', 'in_stock', 'warranty',
+        'badge', 'description', 'in_stock', 'stock_quantity', 'warranty',
         'is_new_arrival', 'price_is_tba', 'views_count',
     ];
 
@@ -24,6 +24,7 @@ class Product extends Model
             'rating' => 'decimal:1',
             'reviews_count' => 'integer',
             'in_stock' => 'boolean',
+            'stock_quantity' => 'integer',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
             'views_count' => 'integer',

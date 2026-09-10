@@ -12,11 +12,121 @@ use App\Support\ImageUploader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function exportStockCsv()
+    {
+        $filename = 'product-stock-'.now()->format('Y-m-d-His').'.csv';
+
+        return response()->streamDownload(function () {
+            $output = fopen('php://output', 'w');
+            // UTF-8 BOM makes Bengali/product names open correctly in Excel.
+            fwrite($output, "\xEF\xBB\xBF");
+            fputcsv($output, ['product_id', 'product_name', 'price', 'compare_at_price', 'stock_quantity', 'in_stock']);
+
+            Product::query()->orderBy('id')->chunk(500, function ($products) use ($output) {
+                foreach ($products as $product) {
+                    fputcsv($output, [
+                        $product->id,
+                        $product->name,
+                        $product->price,
+                        $product->compare_at_price,
+                        $product->stock_quantity,
+                        $product->stock_quantity > 0 ? 'yes' : 'no',
+                    ]);
+                }
+            });
+
+            fclose($output);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    public function importStockCsv(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'stock_file' => 'required|file|mimes:csv,txt|max:5120',
+        ]);
+
+        $file = $request->file('stock_file');
+        $handle = fopen($file->getRealPath(), 'r');
+        $errors = [];
+        $updates = [];
+        $line = 0;
+
+        try {
+            $headers = fgetcsv($handle);
+            $line++;
+            $headers = array_map(fn ($header) => strtolower(trim((string) $header, " \t\r\n\xEF\xBB\xBF")), $headers ?: []);
+            $required = ['product_id', 'price', 'stock_quantity'];
+            $missing = array_diff($required, $headers);
+
+            if ($missing) {
+                return back()->with('error', 'CSV header must contain: '.implode(', ', $required));
+            }
+
+            $positions = array_flip($headers);
+            while (($row = fgetcsv($handle)) !== false) {
+                $line++;
+                if (count(array_filter($row, fn ($value) => trim((string) $value) !== '')) === 0) {
+                    continue;
+                }
+
+                $productId = trim((string) ($row[$positions['product_id']] ?? ''));
+                $price = trim((string) ($row[$positions['price']] ?? ''));
+                $quantity = trim((string) ($row[$positions['stock_quantity']] ?? ''));
+                $compareAtPrice = array_key_exists('compare_at_price', $positions)
+                    ? trim((string) ($row[$positions['compare_at_price']] ?? ''))
+                    : null;
+
+                if (! ctype_digit($productId) || ! Product::whereKey((int) $productId)->exists()) {
+                    $errors[] = "Line {$line}: invalid product_id.";
+                    continue;
+                }
+                if (! ctype_digit($price)) {
+                    $errors[] = "Line {$line}: price must be a whole number.";
+                    continue;
+                }
+                if (! ctype_digit($quantity)) {
+                    $errors[] = "Line {$line}: stock_quantity must be zero or a positive whole number.";
+                    continue;
+                }
+                if ($compareAtPrice !== null && $compareAtPrice !== '' && ! ctype_digit($compareAtPrice)) {
+                    $errors[] = "Line {$line}: compare_at_price must be empty or a whole number.";
+                    continue;
+                }
+
+                $updates[(int) $productId] = [
+                    'price' => (int) $price,
+                    'compare_at_price' => $compareAtPrice === null || $compareAtPrice === '' ? null : (int) $compareAtPrice,
+                    'stock_quantity' => (int) $quantity,
+                    'in_stock' => (int) $quantity > 0,
+                ];
+            }
+        } finally {
+            fclose($handle);
+        }
+
+        if ($errors) {
+            $message = 'Import cancelled. No products were updated. '.implode(' ', array_slice($errors, 0, 5));
+            if (count($errors) > 5) {
+                $message .= ' (and '.(count($errors) - 5).' more errors)';
+            }
+            return back()->with('error', $message);
+        }
+
+        DB::transaction(function () use ($updates) {
+            foreach ($updates as $productId => $values) {
+                Product::whereKey($productId)->update($values);
+            }
+        });
+
+        return back()->with('success', count($updates).' product(s) stock and price updated from CSV.');
+    }
+
     public function index(Request $request): View
     {
         $query = Product::with(['category', 'condition', 'brand']);
@@ -113,6 +223,7 @@ class ProductController extends Controller
             'condition_id' => 'required|exists:conditions,id',
             'price' => 'required|integer|min:0',
             'compare_at_price' => 'nullable|integer|min:0',
+            'stock_quantity' => 'nullable|integer|min:0',
             'description' => 'required|string',
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
@@ -136,6 +247,10 @@ class ProductController extends Controller
             $slug .= '-'.($count + 1);
         }
 
+        $stockQuantity = $request->has('stock_quantity')
+            ? (int) $request->input('stock_quantity')
+            : ($request->input('in_stock', '1') === '1' ? 1 : 0);
+
         $product = Product::create([
             'name' => $request->name,
             'slug' => $slug,
@@ -145,7 +260,8 @@ class ProductController extends Controller
             'price' => $request->price,
             'compare_at_price' => $request->compare_at_price,
             'description' => $request->description,
-            'in_stock' => $request->input('in_stock', '1') === '1',
+            'in_stock' => $stockQuantity > 0,
+            'stock_quantity' => $stockQuantity,
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
             'rating' => 4.5, // default for new
@@ -231,6 +347,7 @@ class ProductController extends Controller
             'condition_id' => 'required|exists:conditions,id',
             'price' => 'required|integer|min:0',
             'compare_at_price' => 'nullable|integer|min:0',
+            'stock_quantity' => 'nullable|integer|min:0',
             'description' => 'required|string',
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
@@ -248,6 +365,10 @@ class ProductController extends Controller
             'gallery_files.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,svg|max:10240',
         ]);
 
+        $stockQuantity = $request->has('stock_quantity')
+            ? (int) $request->input('stock_quantity')
+            : ($request->input('in_stock', '1') === '1' ? max(1, (int) $product->stock_quantity) : 0);
+
         $product->update([
             'name' => $request->name,
             'brand_id' => $request->brand_id,
@@ -256,7 +377,8 @@ class ProductController extends Controller
             'price' => $request->price,
             'compare_at_price' => $request->compare_at_price,
             'description' => $request->description,
-            'in_stock' => $request->input('in_stock', '1') === '1',
+            'in_stock' => $stockQuantity > 0,
+            'stock_quantity' => $stockQuantity,
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
         ]);

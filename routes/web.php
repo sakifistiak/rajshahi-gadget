@@ -102,6 +102,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin CRUDs
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        Route::get('products/export-stock', [AdminProductController::class, 'exportStockCsv'])->name('products.export-stock');
+        Route::post('products/import-stock', [AdminProductController::class, 'importStockCsv'])->name('products.import-stock');
         Route::delete('products/bulk-destroy', [AdminProductController::class, 'bulkDestroy'])->name('products.bulk-destroy');
         Route::resource('products', AdminProductController::class);
         Route::resource('categories', CategoryController::class)->except('show');
