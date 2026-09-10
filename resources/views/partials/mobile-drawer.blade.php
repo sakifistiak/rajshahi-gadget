@@ -950,7 +950,7 @@ html.dark .btn-buy-now:hover {
     color: #0f172a;
     transform: scale(1.08);
 }
-.kg-chat-message { max-width: 100%; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; white-space: pre-wrap; animation: kg-chat-msg-in .2s ease; position: relative; }
+.kg-chat-message { max-width: 100%; padding: .55rem .8rem; border-radius: .8rem; font-size: .82rem; line-height: 1.45; word-wrap: break-word; white-space: pre-wrap; position: relative; }
 .kg-chat-message.customer { background: #24272c; color: #fff; border-bottom-right-radius: .25rem; }
 .kg-chat-message.agent { background: #fff; border: 1px solid #e5e7eb; color: #1f2937; border-bottom-left-radius: .25rem; }
 .kg-chat-quote {
@@ -1498,6 +1498,9 @@ document.addEventListener('DOMContentLoaded', function() {
     </section>
     <script>
     (function () {
+        if (window.__kgCustomerChatInitialized) return;
+        window.__kgCustomerChatInitialized = true;
+
         function initCustomerChat() {
             const box = document.getElementById('kg-customer-chat'),
                   start = document.getElementById('kg-customer-chat-start'),

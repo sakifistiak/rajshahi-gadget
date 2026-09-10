@@ -182,7 +182,6 @@
     <div class="h-2 sm:hidden"></div>
 </footer>
 @include('partials.cart-script')
-@include('partials.mobile-drawer')
 
 {{-- Analytics Activity Heartbeat --}}
 <script>
@@ -218,4 +217,3 @@
         setInterval(sendPing, pingInterval);
     })();
 </script>
-

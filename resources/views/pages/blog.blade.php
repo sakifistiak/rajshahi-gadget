@@ -3,6 +3,7 @@
 @verbatim
 </div><!--/$--></main>@endverbatim
 @include('partials.footer')
+@include('partials.mobile-drawer')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const searchInputs = document.querySelectorAll('header input[type="search"]');
