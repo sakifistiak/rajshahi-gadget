@@ -1513,6 +1513,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!box) return;
             let timer;
             let activeReply = null;
+            let lastRenderKey = '';
 
             function esc(s) {
                 return String(s || '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
@@ -1537,6 +1538,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             function render(data) {
+                const isClosed = data.conversation && data.conversation.status === 'closed';
+                const renderKey = JSON.stringify({
+                    status: data.conversation?.status || '',
+                    messages: data.messages || []
+                });
+
+                // Polling runs every few seconds. Do not rebuild the message
+                // list when nothing changed, otherwise existing messages replay
+                // their entrance animation and appear to jump.
+                if (renderKey === lastRenderKey) {
+                    if (chatForm2) chatForm2.style.display = isClosed ? 'none' : 'flex';
+                    if (closedBanner) closedBanner.style.display = isClosed ? 'block' : 'none';
+                    return;
+                }
+                lastRenderKey = renderKey;
+
                 list.innerHTML = (data.messages || []).map(m => {
                     const isCust = m.sender_type === 'customer';
                     const senderLabel = isCust ? (data.conversation?.customer_name || 'You') : (m.sender_name || 'Agent');
@@ -1569,7 +1586,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 list.scrollTop = list.scrollHeight;
 
-                const isClosed = data.conversation && data.conversation.status === 'closed';
                 if (chatForm2) chatForm2.style.display = isClosed ? 'none' : 'flex';
                 if (closedBanner) closedBanner.style.display = isClosed ? 'block' : 'none';
                 if (isClosed) {
@@ -1587,6 +1603,7 @@ document.addEventListener('DOMContentLoaded', function() {
             function resetToStart() {
                 if (timer) { clearInterval(timer); timer = null; }
                 clearReply();
+                lastRenderKey = '';
                 list.innerHTML = '';
                 if (closedBanner) closedBanner.style.display = 'none';
                 if (chatForm2) chatForm2.style.display = 'flex';
