@@ -18,6 +18,11 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function stockImport(): View
+    {
+        return view('admin.products.stock-import');
+    }
+
     public function exportStockCsv()
     {
         $filename = 'product-stock-'.now()->format('Y-m-d-His').'.csv';
