@@ -1201,40 +1201,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function applySingleProductButtonStyles() {
-        document.querySelectorAll('button, a').forEach(function(el) {
-            var text = (el.textContent || '').trim();
-            if (text.includes('Buy Now')) {
-                el.style.backgroundColor = '#24272c';
-                el.style.color = '#ffffff';
-                el.style.borderRadius = '9999px';
-                el.classList.add('rounded-full', 'font-bold');
-
-                // If button has nested price or icons, simplify it to just "Buy Now" text
-                if (el.querySelector('.tabular-nums') || el.children.length > 0) {
-                    // Check if it's the main single product page big Buy Now button
-                    if (el.classList.contains('bg-primary') || el.closest('.min-w-56') || el.classList.contains('sm:min-w-56') || el.getAttribute('data-tsd-source')?.includes('product.$slug.tsx:177')) {
-                        el.innerHTML = '<span class="text-sm font-bold">Buy Now</span>';
-                        // The "Order on WhatsApp" button is now server-rendered directly on the
-                        // product detail page (aligned in a grid with Add to Cart), so it is no
-                        // longer injected here.
-                    }
-                }
-            }
-
-            // Hide "Save to wishlist" button on single product page (it lacks the 'absolute' class which card wishlist buttons have)
-            if (el.getAttribute('aria-label') === 'Save to wishlist' && !el.classList.contains('absolute')) {
-                el.style.display = 'none';
-            }
-        });
-        
-        // Hide the feature section (Free next-day, 2-year warranty, etc.)
-        document.querySelectorAll('ul').forEach(function(el) {
-            var text = el.textContent || '';
-            if (text.includes('Free next') && text.includes('warranty')) {
-                el.style.display = 'none';
-            }
-        });
-        
         // Replace $ with ৳ globally in text nodes
         function replaceDollarWithTaka(node) {
             if (node.nodeType === 3) { // Text node
@@ -1247,7 +1213,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         replaceDollarWithTaka(document.body);
     }
-    applySingleProductButtonStyles();
     enableProductImageMagnifier();
 
     var liveChatWidget = document.getElementById('kg-live-chat');
@@ -1328,7 +1293,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    setTimeout(applySingleProductButtonStyles, 300);
 });
 </script>
 
