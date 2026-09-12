@@ -254,7 +254,16 @@ class ProductController extends Controller
 
         $stockQuantity = $request->has('stock_quantity')
             ? (int) $request->input('stock_quantity')
-            : ($request->input('in_stock', '1') === '1' ? 1 : 0);
+            : 0;
+
+        // The stock status radio is an explicit user choice.  Previously the
+        // presence of stock_quantity meant this value was ignored, so changing
+        // In Stock/Out of Stock in the edit form had no effect.
+        if ($request->has('in_stock')) {
+            $stockQuantity = $request->boolean('in_stock')
+                ? max(1, $stockQuantity)
+                : 0;
+        }
 
         $product = Product::create([
             'name' => $request->name,
@@ -372,7 +381,16 @@ class ProductController extends Controller
 
         $stockQuantity = $request->has('stock_quantity')
             ? (int) $request->input('stock_quantity')
-            : ($request->input('in_stock', '1') === '1' ? max(1, (int) $product->stock_quantity) : 0);
+            : (int) $product->stock_quantity;
+
+        // Let the explicit status selection override the quantity field.  This
+        // keeps the two controls consistent when a product is toggled between
+        // in-stock and out-of-stock from the edit screen.
+        if ($request->has('in_stock')) {
+            $stockQuantity = $request->boolean('in_stock')
+                ? max(1, $stockQuantity)
+                : 0;
+        }
 
         $product->update([
             'name' => $request->name,
