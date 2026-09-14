@@ -1326,9 +1326,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 + '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>'
                 + '</button>';
 
-            var brandLinks = '<a class="kg-mega-brand-link kg-mega-all-link" href="/shop?category[]=' + encodeURIComponent(cat.slug) + '">All ' + cat.name + '</a>';
+            var categoryUrl = '/shop/' + encodeURIComponent(cat.slug);
+            var brandLinks = '<a class="kg-mega-brand-link kg-mega-all-link" href="' + categoryUrl + '">All ' + cat.name + '</a>';
             (cat.brands || []).forEach(function(brand) {
-                brandLinks += '<a class="kg-mega-brand-link" href="/shop?category[]=' + encodeURIComponent(cat.slug) + '&brand[]=' + encodeURIComponent(brand.slug) + '">' + brand.name + '</a>';
+                brandLinks += '<a class="kg-mega-brand-link" href="' + categoryUrl + '?brand[]=' + encodeURIComponent(brand.slug) + '">' + brand.name + '</a>';
             });
             brandHtml += '<div class="kg-mega-brand-panel' + (i === 0 ? ' is-active' : '') + '" data-cat-panel="' + cat.slug + '">' + brandLinks + '</div>';
         });
@@ -1337,7 +1338,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         catList.querySelectorAll('.kg-mega-cat').forEach(function(btn) {
             btn.addEventListener('mouseenter', function() { setActiveCategory(btn.dataset.cat); });
-            btn.addEventListener('click', function() { setActiveCategory(btn.dataset.cat); });
+            btn.addEventListener('click', function() {
+                window.location.href = '/shop/' + encodeURIComponent(btn.dataset.cat);
+            });
         });
     }
 

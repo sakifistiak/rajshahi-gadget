@@ -340,6 +340,7 @@ class PageController extends Controller
                     return [
                         'slug' => $category->slug,
                         'name' => $category->name,
+                        'parent_id' => $category->parent_id,
                         'brands' => $brands,
                     ];
                 });
@@ -411,6 +412,7 @@ class PageController extends Controller
     public function shop(Request $request)
     {
         $query = Product::with(['category', 'brand', 'condition', 'images', 'highlights']);
+        $categoryContext = $request->attributes->get('category_context');
 
         // Each filter accepts either a single value (?condition=intact, used by
         // plain nav links) or multiple (?condition[]=intact&condition[]=pre-owned,
@@ -420,6 +422,27 @@ class PageController extends Controller
         $categorySlugs = array_filter((array) $request->input('category', []));
         $brandSlugs = array_filter((array) $request->input('brand', []));
 
+        // Category filters are hierarchical: selecting a parent category also
+        // includes every descendant, while selecting a child remains specific
+        // to that child. Keep the original slugs for checkbox state/URLs.
+        $categoryOptions = Category::orderBy('sort_order')->orderBy('name')->get();
+        $selectedCategoryIds = $categoryOptions
+            ->whereIn('slug', $categorySlugs)
+            ->pluck('id')
+            ->values();
+        $filterCategoryIds = $selectedCategoryIds->all();
+        $knownCategoryIds = $selectedCategoryIds->all();
+        do {
+            $childIds = $categoryOptions
+                ->whereIn('parent_id', $knownCategoryIds)
+                ->pluck('id')
+                ->reject(fn ($id) => in_array($id, $filterCategoryIds, true))
+                ->values()
+                ->all();
+            $filterCategoryIds = array_merge($filterCategoryIds, $childIds);
+            $knownCategoryIds = $childIds;
+        } while (! empty($childIds));
+
         if (! empty($conditionSlugs)) {
             $query->whereHas('condition', function ($q) use ($conditionSlugs) {
                 $q->whereIn('slug', $conditionSlugs);
@@ -427,9 +450,7 @@ class PageController extends Controller
         }
 
         if (! empty($categorySlugs)) {
-            $query->whereHas('category', function ($q) use ($categorySlugs) {
-                $q->whereIn('slug', $categorySlugs);
-            });
+            $query->whereIn('category_id', $filterCategoryIds);
         }
 
         if (! empty($brandSlugs)) {
@@ -452,11 +473,10 @@ class PageController extends Controller
         // simply never defines a "processor" key, so that filter never appears
         // for it regardless of whether a category is selected.
         $attributesQuery = FilterAttribute::query();
-        if (! empty($categorySlugs)) {
-            $attributesQuery->whereHas('category', function ($q) use ($categorySlugs) {
-                $q->whereIn('slug', $categorySlugs);
-            });
+        if (! empty($filterCategoryIds)) {
+            $attributesQuery->whereIn('category_id', $filterCategoryIds);
         }
+
         $rawAttributes = $attributesQuery->orderBy('sort_order')->get()->groupBy('key');
 
         $filterAttributes = collect();
@@ -540,13 +560,15 @@ class PageController extends Controller
         $products = $query->paginate(48)->withQueryString();
         // The shop filter must follow the admin-managed display order too.
         // Category::all() uses database/insert order and ignores sort_order.
-        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
+        $categories = $categoryContext
+            ? $categoryOptions->where('parent_id', $categoryContext->id)->values()
+            : $categoryOptions;
         $brands = Brand::all();
         $conditions = Condition::all();
 
         return view('pages.shop', compact(
             'products', 'categories', 'brands', 'conditions',
-            'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes', 'priceMax'
+            'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes', 'priceMax', 'categoryContext'
         ));
     }
 
@@ -789,7 +811,9 @@ class PageController extends Controller
 
     public function category(string $category, Request $request)
     {
-        $request->merge(['category' => $category]);
+        $categoryContext = Category::where('slug', $category)->firstOrFail();
+        $request->attributes->set('category_context', $categoryContext);
+        $request->merge(['category' => $categoryContext->slug]);
 
         return $this->shop($request);
     }
