@@ -94,15 +94,15 @@
         {{-- Image gallery --}}
         <div>
             <div class="group overflow-hidden rounded-md border border-border bg-surface">
-                <div class="aspect-square" id="mainImageStage" style="position:relative;overflow:hidden">
-                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="1200" height="1200" style="transform-origin:50% 50%" class="h-full w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.8]" />
+                <div id="mainImageStage" style="position:relative;overflow:hidden;aspect-ratio:3 / 4">
+                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="900" height="1200" style="transform-origin:50% 50%" class="h-full w-full object-contain transition-transform duration-300 ease-out" />
                 </div>
             </div>
             @if($product->images->count() > 1)
                 <div id="galleryThumbs" class="mt-4 flex gap-3 overflow-x-auto pb-1">
                     @foreach($product->images as $image)
                         <div class="gallery-thumb shrink-0 overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}" style="width:72px">
-                            <div class="aspect-square">
+                            <div style="aspect-ratio:3 / 4">
                                 <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-contain" />
                             </div>
                         </div>
@@ -468,12 +468,13 @@
                 card.className = 'recently-viewed-card flex gap-3 rounded-sm border border-border bg-card p-3';
 
                 var imgWrap = document.createElement('div');
-                imgWrap.className = 'h-16 w-16 shrink-0 overflow-hidden rounded-sm bg-surface';
+                imgWrap.className = 'w-20 shrink-0 overflow-hidden rounded-sm bg-surface';
+                imgWrap.style.aspectRatio = '3 / 4';
                 var img = document.createElement('img');
                 img.src = p.image;
                 img.alt = p.name;
                 img.loading = 'lazy';
-                img.className = 'h-full w-full object-cover';
+                img.className = 'h-full w-full object-contain';
                 imgWrap.appendChild(img);
 
                 var info = document.createElement('div');
@@ -596,8 +597,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.products.forEach(item => {
                             html += `
                                 <a href="${item.url}" class="flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors text-slate-800 group">
-                                    <div class="h-12 w-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
-                                        <img src="${item.image}" alt="${escapeHtml(item.name)}" class="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                                    <div class="h-16 w-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                                        <img src="${item.image}" alt="${escapeHtml(item.name)}" class="h-full w-full object-contain" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="text-xs font-bold truncate text-gray-900 group-hover:text-blue-600 transition-colors">${escapeHtml(item.name)}</div>

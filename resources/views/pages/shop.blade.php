@@ -198,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         data.products.forEach(item => {
                             html += `
                                 <a href="${item.url}" class="flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors text-slate-800 group">
-                                    <div class="h-12 w-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
-                                        <img src="${item.image}" alt="${escapeHtml(item.name)}" class="h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                                    <div class="h-16 w-12 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                                        <img src="${item.image}" alt="${escapeHtml(item.name)}" class="h-full w-full object-contain" />
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="text-xs font-bold truncate text-gray-900 group-hover:text-blue-600 transition-colors">${escapeHtml(item.name)}</div>
