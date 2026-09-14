@@ -1,5 +1,23 @@
 {{-- Dynamic Logo Swap from Site Settings --}}
 <script>
+    // Keep every active shop filter when changing the sort order. The static
+    // page markup contains sort links, so update them from the current query
+    // string instead of rebuilding the URL with only the sort parameter.
+    document.addEventListener('DOMContentLoaded', function () {
+        var currentParams = new URLSearchParams(window.location.search);
+        document.querySelectorAll('a[href*="/shop?sort="]').forEach(function (link) {
+            var href = new URL(link.href, window.location.origin);
+            var sort = href.searchParams.get('sort');
+            if (!sort) return;
+
+            var params = new URLSearchParams(currentParams);
+            params.set('sort', sort);
+            params.delete('page');
+            link.href = '/shop?' + params.toString();
+        });
+    });
+</script>
+<script>
     window.__SITE_LOGO_LIGHT = "{{ $siteLogo ?? '/media/b3ca13-kg-lockup-v2.png' }}";
     window.__SITE_LOGO_DARK  = "{{ $siteLogoDark ?? '/media/b3ca13-kg-lockup-v2.png' }}";
     window.__SITE_NAME       = "{{ $siteName ?? 'Khan Gadget' }}";
