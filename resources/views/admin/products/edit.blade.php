@@ -171,10 +171,10 @@
                 <input type="hidden" name="image_path" x-model="imagePath" />
 
                 <div class="flex items-start gap-3">
-                    <div class="w-20 shrink-0 rounded-sm border border-slate-200 bg-white overflow-hidden flex items-center justify-center" style="aspect-ratio:3 / 4" x-show="imagePath">
+                    <div class="w-20 shrink-0 rounded-sm border border-slate-200 bg-white overflow-hidden flex items-center justify-center" style="aspect-ratio:4 / 3" x-show="imagePath">
                         <img :src="imagePath" alt="Featured image preview" class="h-full w-full object-contain">
                     </div>
-                    <div class="w-20 shrink-0 rounded-sm border border-dashed border-slate-300 bg-white flex items-center justify-center" style="aspect-ratio:3 / 4" x-show="!imagePath">
+                    <div class="w-20 shrink-0 rounded-sm border border-dashed border-slate-300 bg-white flex items-center justify-center" style="aspect-ratio:4 / 3" x-show="!imagePath">
                         <i data-lucide="image" class="w-6 h-6 text-slate-300"></i>
                     </div>
 
@@ -345,7 +345,7 @@
             const row = document.createElement('div');
             row.className = 'flex items-center gap-2 gallery-row bg-white border border-slate-200 rounded-sm p-2';
             row.innerHTML = `
-                <div class="w-12 shrink-0 rounded-sm border border-slate-200 bg-slate-100 overflow-hidden flex items-center justify-center" style="aspect-ratio:3 / 4">
+                <div class="w-12 shrink-0 rounded-sm border border-slate-200 bg-slate-100 overflow-hidden flex items-center justify-center" style="aspect-ratio:4 / 3">
                     <img id="gallery_preview_${idx}" src="${existingPath}" class="h-full w-full object-contain ${existingPath ? '' : 'hidden'}" onerror="this.classList.add('hidden')">
                     <i data-lucide="image" id="gallery_placeholder_${idx}" class="w-5 h-5 text-slate-300 ${existingPath ? 'hidden' : ''}"></i>
                 </div>
