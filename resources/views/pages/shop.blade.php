@@ -3,17 +3,35 @@
     // Keep every active shop filter when changing the sort order. The static
     // page markup contains sort links, so update them from the current query
     // string instead of rebuilding the URL with only the sort parameter.
-    document.addEventListener('DOMContentLoaded', function () {
-        var currentParams = new URLSearchParams(window.location.search);
-        document.querySelectorAll('a[href*="/shop?sort="]').forEach(function (link) {
-            var href = new URL(link.href, window.location.origin);
-            var sort = href.searchParams.get('sort');
-            if (!sort) return;
+    function shopSortUrl(link) {
+        var target = new URL(link.href, window.location.origin);
+        var sort = target.searchParams.get('sort');
+        if (!sort) return null;
 
-            var params = new URLSearchParams(currentParams);
-            params.set('sort', sort);
-            params.delete('page');
-            link.href = '/shop?' + params.toString();
+        var params = new URLSearchParams(window.location.search);
+        params.set('sort', sort);
+        params.delete('page');
+        return '/shop?' + params.toString();
+    }
+
+    // Capture the click before any client-side navigation handler can replace
+    // it with the original static URL and drop the active filter parameters.
+    document.addEventListener('click', function (event) {
+        var link = event.target.closest && event.target.closest('a');
+        if (!link || !link.href) return;
+
+        var url = shopSortUrl(link);
+        if (!url) return;
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        window.location.assign(url);
+    }, true);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('a[href*="/shop?sort="]').forEach(function (link) {
+            var url = shopSortUrl(link);
+            if (url) link.href = url;
         });
     });
 </script>
