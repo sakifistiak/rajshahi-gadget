@@ -1,8 +1,8 @@
 <article class="product-card-item group flex h-full flex-col border border-border bg-secondary overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px" data-price="{{ $product->price ?? 0 }}" data-name="{{ $product->name }}" data-in-stock="{{ $product->in_stock ? 1 : 0 }}" data-cart-slug="{{ $product->slug }}" data-cart-name="{{ $product->name }}" data-cart-price="{{ $product->price ?? 0 }}" data-cart-image="{{ $product->primaryImage() }}">
     <div class="relative overflow-hidden bg-surface">
         <a href="/product/{{ $product->slug }}" class="block">
-            <div class="w-full overflow-hidden" style="aspect-ratio: 3 / 4">
-                <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="900" height="1200" class="h-full w-full object-contain" />
+            <div class="w-full overflow-hidden" style="aspect-ratio: 3 / 4; line-height: 0">
+                <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="900" height="1200" class="block h-full w-full object-contain object-center" style="display:block; width:100%; height:100%; object-fit:contain; object-position:center;" />
             </div>
         </a>
         @if ($product->badge)
