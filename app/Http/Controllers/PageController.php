@@ -813,7 +813,13 @@ class PageController extends Controller
     {
         $categoryContext = Category::where('slug', $category)->firstOrFail();
         $request->attributes->set('category_context', $categoryContext);
-        $request->merge(['category' => $categoryContext->slug]);
+
+        // A category URL provides the parent scope by default. If the user
+        // selected one or more child categories in the sidebar, preserve those
+        // submitted values so the checkbox state and filtered results survive.
+        if (! $request->has('category')) {
+            $request->merge(['category' => $categoryContext->slug]);
+        }
 
         return $this->shop($request);
     }
