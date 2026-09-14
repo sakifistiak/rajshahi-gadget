@@ -24,7 +24,7 @@ class FilterAttributeController extends Controller
 
     public function create(): View
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
 
         return view('admin.filter-attributes.create', compact('categories'));
     }
@@ -41,7 +41,7 @@ class FilterAttributeController extends Controller
 
     public function edit(FilterAttribute $filterAttribute): View
     {
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
 
         return view('admin.filter-attributes.edit', compact('filterAttribute', 'categories'));
     }

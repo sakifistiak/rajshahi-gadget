@@ -538,7 +538,9 @@ class PageController extends Controller
         }
 
         $products = $query->paginate(48)->withQueryString();
-        $categories = Category::all();
+        // The shop filter must follow the admin-managed display order too.
+        // Category::all() uses database/insert order and ignores sort_order.
+        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
         $brands = Brand::all();
         $conditions = Condition::all();
 

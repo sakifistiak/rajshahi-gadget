@@ -188,7 +188,7 @@ class ProductController extends Controller
             return view('admin.products._results', compact('products'));
         }
 
-        $categories = Category::orderBy('name')->get();
+        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
         $conditions = Condition::orderBy('label')->get();
         $brands = Brand::orderBy('name')->get();
 
@@ -210,7 +210,7 @@ class ProductController extends Controller
 
     public function create(): View
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
         $conditions = Condition::all();
         $brands = Brand::all();
         $filterAttributesByCategory = FilterAttribute::orderBy('sort_order')->get()->groupBy('category_id');
@@ -342,7 +342,7 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('sort_order')->orderBy('name')->get();
         $conditions = Condition::all();
         $brands = Brand::all();
         $product->load(['highlights', 'specs', 'images', 'filterValues']);
