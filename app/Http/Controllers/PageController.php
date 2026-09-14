@@ -525,16 +525,14 @@ class PageController extends Controller
             $query->where('price', '<=', (float) $request->max_price);
         }
 
-        // Always place in-stock products first, and out-of-stock products at the end
-        $query->orderByDesc('in_stock');
-
-        // Sort order
-        if ($request->sort === 'price-asc') {
-            $query->orderBy('price', 'asc');
-        } elseif ($request->sort === 'price-desc') {
-            $query->orderBy('price', 'desc');
+        // Sort order. Reset any order already attached to the query so price
+        // sorting is always the first and authoritative ordering rule.
+        if ($request->input('sort') === 'price-asc') {
+            $query->reorder('price', 'asc')->orderBy('id', 'asc');
+        } elseif ($request->input('sort') === 'price-desc') {
+            $query->reorder('price', 'desc')->orderBy('id', 'asc');
         } else {
-            $query->latest();
+            $query->reorder()->latest();
         }
 
         $products = $query->paginate(48)->withQueryString();
