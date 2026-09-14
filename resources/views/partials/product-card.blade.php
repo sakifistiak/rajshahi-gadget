@@ -2,7 +2,7 @@
     <div class="relative overflow-hidden bg-surface">
         <a href="/product/{{ $product->slug }}" class="block">
             <div class="w-full overflow-hidden" style="aspect-ratio: 3 / 4; line-height: 0">
-                <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="900" height="1200" class="block h-full w-full object-contain object-center" style="display:block; width:100%; height:100%; object-fit:contain; object-position:center;" />
+                <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="900" height="1200" class="block h-full w-full object-cover object-center" style="display:block; width:100%; height:100%; object-fit:cover; object-position:center;" />
             </div>
         </a>
         @if ($product->badge)

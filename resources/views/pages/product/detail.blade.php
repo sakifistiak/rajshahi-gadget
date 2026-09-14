@@ -95,7 +95,7 @@
         <div>
             <div class="group overflow-hidden rounded-md border border-border bg-surface">
                 <div id="mainImageStage" style="position:relative;overflow:hidden;aspect-ratio:3 / 4">
-                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="900" height="1200" style="transform-origin:50% 50%; object-fit:contain; object-position:center" class="h-full w-full object-contain transition-transform duration-300 ease-out" />
+                    <img id="mainProductImage" src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" width="900" height="1200" style="transform-origin:50% 50%; object-fit:cover; object-position:center" class="h-full w-full object-cover transition-transform duration-300 ease-out" />
                 </div>
             </div>
             @if($product->images->count() > 1)
@@ -103,7 +103,7 @@
                     @foreach($product->images as $image)
                         <div class="gallery-thumb shrink-0 overflow-hidden rounded-sm bg-surface ring-1 ring-border {{ $loop->first ? 'is-active' : '' }}" data-full="{{ $image->image_path }}" data-index="{{ $loop->index }}" style="width:72px">
                             <div style="aspect-ratio:3 / 4">
-                                <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-contain" />
+                                <img src="{{ $image->image_path }}" alt="{{ $product->name }}" loading="eager" fetchpriority="high" class="h-full w-full object-cover" />
                             </div>
                         </div>
                     @endforeach
