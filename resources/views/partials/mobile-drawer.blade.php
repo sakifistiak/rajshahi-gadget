@@ -1341,7 +1341,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    var cacheKey = 'kg_nav_categories_v1';
+    // Bump this key whenever the menu response shape or visibility rules change.
+    // This prevents an old sessionStorage snapshot from hiding newly-created categories.
+    var cacheKey = 'kg_nav_categories_v2';
     var cached = null;
     try { cached = JSON.parse(sessionStorage.getItem(cacheKey) || 'null'); } catch (e) {}
     if (cached) {

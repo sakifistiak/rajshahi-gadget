@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -31,6 +32,7 @@ class CategoryController extends Controller
         $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['name']);
 
         Category::create($data);
+        Cache::forget('nav.category_brands');
 
         return redirect()->route('admin.categories.index')->with('success', 'Category created successfully!');
     }
@@ -48,6 +50,7 @@ class CategoryController extends Controller
         $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['name'], $category->id);
 
         $category->update($data);
+        Cache::forget('nav.category_brands');
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully!');
     }
@@ -59,6 +62,7 @@ class CategoryController extends Controller
         }
 
         $category->delete();
+        Cache::forget('nav.category_brands');
 
         return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully!');
     }

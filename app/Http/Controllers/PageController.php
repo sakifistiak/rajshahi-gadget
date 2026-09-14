@@ -324,8 +324,9 @@ class PageController extends Controller
 
     /**
      * Categories + the brands that actually have products in each, for the
-     * "ALL PRODUCTS" header mega-menu. Cached briefly since it only changes
-     * when products/categories/brands are added or edited in the admin panel.
+     * "ALL PRODUCTS" header mega-menu. Categories are intentionally not
+     * filtered by product count so newly-created categories are visible
+     * immediately, even before the first product is added.
      */
     public function navCategories()
     {
@@ -341,9 +342,7 @@ class PageController extends Controller
                         'name' => $category->name,
                         'brands' => $brands,
                     ];
-                })
-                ->filter(fn ($category) => $category['brands']->isNotEmpty())
-                ->values();
+                });
         });
 
         return response()->json($menu);
