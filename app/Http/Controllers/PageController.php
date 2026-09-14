@@ -527,10 +527,12 @@ class PageController extends Controller
 
         // Sort order. Reset any order already attached to the query so price
         // sorting is always the first and authoritative ordering rule.
+        // The UI arrows are used as the requested direction: Price ↑ means
+        // highest price first, while Price ↓ means lowest price first.
         if ($request->input('sort') === 'price-asc') {
-            $query->reorder('price', 'asc')->orderBy('id', 'asc');
-        } elseif ($request->input('sort') === 'price-desc') {
             $query->reorder('price', 'desc')->orderBy('id', 'asc');
+        } elseif ($request->input('sort') === 'price-desc') {
+            $query->reorder('price', 'asc')->orderBy('id', 'asc');
         } else {
             $query->reorder()->latest();
         }

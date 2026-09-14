@@ -29,6 +29,11 @@
     }, true);
 
     document.addEventListener('DOMContentLoaded', function () {
+        // The shop sort menu should only expose price sorting.
+        document.querySelectorAll('a[href*="sort=featured"], a[href*="sort=rating"]').forEach(function (link) {
+            link.remove();
+        });
+
         document.querySelectorAll('a[href*="/shop?sort="]').forEach(function (link) {
             var url = shopSortUrl(link);
             if (url) link.href = url;
