@@ -395,7 +395,7 @@
             const row = document.createElement('div');
             row.className = 'flex items-center gap-2 spec-row';
             row.innerHTML = `
-                <input type="text" name="specs_label[]" value="${label.replace(/"/g, '&quot;')}" placeholder="e.g. Processor" class="border-slate-200 rounded-sm text-xs w-2/5 py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                <input type="text" name="specs_label[]" value="${label.replace(/"/g, '&quot;')}" placeholder="e.g. Processor" class="font-serif font-bold uppercase text-slate-500 border-slate-200 rounded-sm text-xs w-2/5 py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
                 <input type="text" name="specs_value[]" value="${value.replace(/"/g, '&quot;')}" placeholder="e.g. Core Ultra 7 155H" class="border-slate-200 rounded-sm text-xs w-full py-1.5 px-3 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none" />
                 <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-sm hover:bg-rose-50 transition-colors" title="Remove spec">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>

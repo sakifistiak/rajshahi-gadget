@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             ConditionSeeder::class,
             ProductSeeder::class,
+            KhanGadgetDummyProductSeeder::class,
             FilterAttributeSeeder::class,
             BlogPostSeeder::class,
             TestimonialSeeder::class,

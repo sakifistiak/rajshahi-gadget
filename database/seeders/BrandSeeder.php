@@ -15,6 +15,7 @@ class BrandSeeder extends Seeder
             ['slug' => 'lenovo', 'name' => 'Lenovo', 'logo_path' => '/media/brands/lenovo.svg'],
             ['slug' => 'asus', 'name' => 'Asus', 'logo_path' => '/media/brands/asus.svg'],
             ['slug' => 'acer', 'name' => 'Acer', 'logo_path' => '/media/brands/acer.svg'],
+            ['slug' => 'msi', 'name' => 'MSI', 'logo_path' => '/media/b3ca13-kg-lockup-v2.png'],
             ['slug' => 'khan-gadget', 'name' => 'Khan Gadget', 'logo_path' => '/media/b3ca13-kg-lockup-v2.png'],
         ];
 

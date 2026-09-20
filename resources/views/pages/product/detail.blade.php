@@ -35,7 +35,13 @@
         @media (min-width: 640px) {
             .product-price-amount { font-size: 29px; }
         }
-        .product-rich-text a { text-decoration: underline; color: var(--color-foreground, #09090b); }
+        /* Product descriptions should use solid black text throughout, including
+           content that is pasted with inline formatting from the editor. */
+        .product-rich-text,
+        .product-rich-text * {
+            color: #000000 !important;
+        }
+        .product-rich-text a { text-decoration: underline; color: #000000 !important; }
         .product-rich-text img { max-width: 100%; height: auto; border-radius: 2px; }
         .product-rich-text p { margin: 0 0 0.2rem; line-height: 1.45; }
         .product-rich-text p:empty,
@@ -43,6 +49,13 @@
         .product-rich-text p:last-child { margin-bottom: 0; }
         .product-rich-text ul, .product-rich-text ol { margin: 0 0 0.4rem; padding-left: 1.25em; }
         .product-rich-text li { margin-bottom: 0.15rem; }
+
+        .spec-row dt {
+            font-family: Georgia, 'Times New Roman', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #617081 !important;
+        }
 
         /* Compact, capped-width image column instead of scaling with viewport width. */
         @media (min-width: 1024px) {
