@@ -45,6 +45,7 @@
             font-family: inherit;
         }
     </style>
+@include('partials.canonical')
 </head>
 <body class="min-h-screen bg-background text-foreground">
     @include('partials.header')

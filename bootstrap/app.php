@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnforceCanonicalUrl;
 use App\Http\Middleware\EnsureCartToken;
 use App\Http\Middleware\EnsureChatAccess;
 use App\Http\Middleware\EnsureUserIsAdmin;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->prepend(EnforceCanonicalUrl::class);
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
             'chat.access' => EnsureChatAccess::class,

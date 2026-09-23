@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+Disallow: /cart
+Disallow: /checkout
+Disallow: /compare
+Disallow: /thank-you
+Disallow: /*?*sort=
+Disallow: /*?*page=
+
+Sitemap: https://www.khangadget.com/sitemap.xml

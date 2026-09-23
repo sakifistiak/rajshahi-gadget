@@ -13,10 +13,9 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    # Trailing-slash redirects are handled by App\Http\Middleware\EnforceCanonicalUrl.
+    # Laravel's stock rule here redirected /shop/ to /public/shop on the production host
+    # (document root above public/), which leaked /public into the URL space.
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

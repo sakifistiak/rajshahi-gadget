@@ -56,6 +56,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Canonical URL (SEO)
+    |--------------------------------------------------------------------------
+    |
+    | The single public origin (scheme + host, no path) the storefront is served
+    | from, e.g. https://www.khangadget.com. When set, every other host and plain
+    | http are 301-redirected to it, HSTS is sent, and canonical tags, the XML
+    | sitemap and robots.txt all use it. Leave empty locally: nothing is
+    | redirected and canonical URLs fall back to the current request's origin.
+    |
+    */
+
+    'canonical_url' => env('CANONICAL_URL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

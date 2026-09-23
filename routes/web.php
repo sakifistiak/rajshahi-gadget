@@ -30,6 +30,13 @@ use App\Http\Controllers\CustomPageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Middleware\EnsureCartToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +44,15 @@ use App\Http\Controllers\ProfileController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [PageController::class, 'home'])->name('home');
+// XML sitemap. No session/cookie middleware: crawlers get a cookie-free, cacheable response.
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap')->withoutMiddleware([
+    EnsureCartToken::class,
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    ShareErrorsFromSession::class,
+    ValidateCsrfToken::class,
+]);
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
 Route::get('/api/compare', [PageController::class, 'compareData'])->name('api.compare');
 Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');

@@ -33,6 +33,7 @@
         .kg-map-btn:hover { background-color: var(--primary); opacity: .9; }
         .kg-phone-link:hover { color: var(--foreground); }
     </style>
+@include('partials.canonical', ['canonicalPath' => \App\Support\Seo::path('page', $page->slug)])
 </head>
 <body class="bg-background text-foreground antialiased min-h-screen flex flex-col">
     <!-- Header Navbar -->
