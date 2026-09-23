@@ -1,8 +1,11 @@
+{{-- Alpine scope for the mobile sidebar drawer. `contents` keeps the <nav> a direct flex child of <body>,
+     so the layout is unchanged. Escape closes the drawer. --}}
+<div x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false" class="contents">
 <nav class="bg-white border-b border-slate-200 h-14 shrink-0 flex items-center justify-between px-4 z-20">
     <!-- Left Section: Mobile Menu Toggle & Official Site Logo -->
     <div class="flex items-center gap-3">
         <!-- Toggle button for sidebar on mobile -->
-        <button @click="sidebarOpen = !sidebarOpen" class="text-slate-500 hover:text-slate-700 focus:outline-none lg:hidden p-1 rounded-md hover:bg-slate-100">
+        <button type="button" @click="sidebarOpen = !sidebarOpen" aria-label="Open menu" :aria-expanded="sidebarOpen.toString()" class="text-slate-500 hover:text-slate-700 focus:outline-none lg:hidden p-1 rounded-md hover:bg-slate-100">
             <i data-lucide="menu" class="h-5 w-5"></i>
         </button>
         
@@ -69,7 +72,9 @@
          class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"
          @click="sidebarOpen = false"></div>
 
-    <div class="fixed inset-0 flex">
+    {{-- This full-screen row sits above the backdrop, so it receives the outside taps; .self closes the drawer only
+         when the empty area (not the panel or its children) is tapped. --}}
+    <div class="fixed inset-0 flex" @click.self="sidebarOpen = false">
         <!-- Sidebar slide panel -->
         <div x-show="sidebarOpen"
              x-transition:enter="transition ease-in-out duration-300 transform"
@@ -92,41 +97,9 @@
                 <img src="{{ \App\Models\SiteSetting::getValue('logo_light', '/media/b3ca13-kg-lockup-v2.png') }}" alt="{{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}" class="h-7 w-auto object-contain" />
             </div>
             
-            <!-- Mobile Sidebar User Info -->
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                <div class="flex items-center gap-3 p-2 rounded-lg border border-slate-200 bg-white shadow-sm">
-                    <div class="h-10 w-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
-                        {{ substr(Auth::user()->name, 0, 2) }}
-                    </div>
-                    <div class="overflow-hidden">
-                        <h4 class="text-xs font-semibold text-slate-800 truncate">{{ Auth::user()->name }}</h4>
-                        <p class="text-[10px] text-slate-400 truncate mt-0.5">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mobile Navigation -->
-            <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto text-xs">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-md font-semibold {{ request()->routeIs('dashboard') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <i data-lucide="layout-dashboard" class="h-4 w-4"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ route('admin.analytics.index') }}" class="flex items-center justify-between px-3 py-2 rounded-md font-semibold {{ request()->routeIs('admin.analytics.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <span class="flex items-center gap-3">
-                        <i data-lucide="activity" class="h-4 w-4"></i>
-                        <span>Analytics</span>
-                    </span>
-                    <span class="px-1.5 py-0.2 rounded text-[10px] font-bold {{ request()->routeIs('admin.analytics.*') ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500' }}">Live</span>
-                </a>
-                <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md font-semibold {{ request()->routeIs('admin.products.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <i data-lucide="package" class="h-4 w-4"></i>
-                    <span>Products</span>
-                </a>
-                <a href="{{ route('admin.customers.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-md font-semibold {{ request()->routeIs('admin.customers.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <i data-lucide="users" class="h-4 w-4"></i>
-                    <span>Customers</span>
-                </a>
-            </nav>
+            <!-- Full admin menu (same as desktop sidebar) -->
+            @include('layouts.sidebar-menu')
         </div>
     </div>
+</div>
 </div>
