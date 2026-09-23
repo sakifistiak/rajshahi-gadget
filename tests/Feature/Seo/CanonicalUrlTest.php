@@ -78,7 +78,7 @@ class CanonicalUrlTest extends TestCase
 
         $this->get(self::CANONICAL.'/up')
             ->assertOk()
-            ->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+            ->assertHeader('Strict-Transport-Security', 'max-age=31536000');
     }
 
     public function test_hsts_is_also_sent_on_the_redirect_from_the_apex_domain(): void
@@ -87,7 +87,7 @@ class CanonicalUrlTest extends TestCase
 
         $this->get('https://khangadget.com/')
             ->assertStatus(301)
-            ->assertHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+            ->assertHeader('Strict-Transport-Security', 'max-age=31536000');
     }
 
     public function test_nothing_is_forced_and_no_hsts_is_sent_when_no_canonical_url_is_configured(): void

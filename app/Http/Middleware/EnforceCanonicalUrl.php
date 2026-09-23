@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnforceCanonicalUrl
 {
-    public const HSTS = 'max-age=31536000; includeSubDomains; preload';
+    public const HSTS = 'max-age=31536000';
 
     public function handle(Request $request, Closure $next): Response
     {
