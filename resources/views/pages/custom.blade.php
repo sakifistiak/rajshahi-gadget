@@ -4,8 +4,8 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>{{ $page->meta_title ?? $page->title }} - {{ \App\Models\SiteSetting::getValue('site_name', 'Khan Gadget') }}</title>
-    @if($page->meta_description)
-        <meta name="description" content="{{ $page->meta_description }}"/>
+    @if(($cmsDescription = \App\Support\Seo::customPageDescription($page)) !== '')
+        <meta name="description" content="{{ $cmsDescription }}"/>
     @endif
     <link rel="icon" href="{{ $siteFavicon ?? '/favicon.png' }}" type="image/png"/>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -50,6 +50,9 @@
                     </h1>
                     <p class="text-xs text-muted-foreground mt-2">Last updated: {{ $page->updated_at->format('F d, Y') }}</p>
                 </header>
+            @elseif (stripos((string) $page->content, '<h1') === false)
+                {{-- The editor hid the visible title and the content has no H1 of its own: keep one for crawlers and screen readers. --}}
+                <h1 class="sr-only">{{ $page->title }}</h1>
             @endif
 
             <!-- Render HTML Content -->

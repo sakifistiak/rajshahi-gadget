@@ -32,6 +32,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Middleware\EnsureCartToken;
+use App\Support\Seo;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
@@ -85,6 +86,10 @@ Route::get('/shop/{category}', [PageController::class, 'category'])->name('categ
 
 Route::get('/terms-and-conditions', fn () => redirect('/page/terms-conditions', 301))->name('terms');
 Route::get('/terms', fn () => redirect('/page/terms-conditions', 301));
+// The static /about and /contact templates only hold placeholder text and made-up company details.
+// The real pages are the CMS pages, so the old URLs redirect there permanently, to the canonical origin.
+Route::get('/about', fn () => redirect(Seo::url('/page/about-us'), 301));
+Route::get('/contact', fn () => redirect(Seo::url('/page/contact'), 301));
 Route::get('/page/{slug}', [CustomPageController::class, 'show'])->name('pages.custom');
 
 /*

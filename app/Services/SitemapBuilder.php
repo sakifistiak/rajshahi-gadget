@@ -14,8 +14,10 @@ use Carbon\Carbon;
  * Builds /sitemap.xml from the database (SEO phase 1: C4).
  *
  * Only canonical, publicly reachable (HTTP 200) URLs are listed: no filtered/sorted shop URLs,
- * no cart/checkout/compare, nothing under /public. One file holds up to 50,000 URLs; switch to
- * a sitemap index (products / pages / blog) before the catalogue gets near that.
+ * no cart/checkout/compare, nothing under /public. The static /about and /contact pages are left
+ * out on purpose: they still hold template placeholder text, and the real ones are CMS pages
+ * under /page/. One file holds up to 50,000 URLs; switch to a sitemap index (products / pages /
+ * blog) before the catalogue gets near that.
  *
  * Built on demand, deliberately without a cache: it is a handful of cheap queries at this
  * catalogue size and is therefore always current, including after the admin bulk delete and the
@@ -44,8 +46,6 @@ class SitemapBuilder
             ['/philanthropic-work', $latestWork],
             ['/customer-spotlight', null],
             ['/customer-feedback', null],
-            ['/about', null],
-            ['/contact', null],
         ];
 
         // Category listings, only those that actually contain products (directly or via a child).

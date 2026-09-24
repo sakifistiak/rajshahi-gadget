@@ -123,14 +123,15 @@ class SitemapAndCanonicalTagTest extends TestCase
         $locs = $this->locs($this->sitemap());
 
         $expected = [
-            '/', '/shop', '/blog', '/about', '/contact', '/shop/laptops', '/product/acer-predator',
+            '/', '/shop', '/blog', '/shop/laptops', '/product/acer-predator',
             '/blog/live-post', '/page/warranty', '/philanthropic-work/food-drive',
         ];
         foreach ($expected as $path) {
             $this->assertContains('http://localhost'.$path, $locs, "missing $path");
         }
 
-        $excluded = ['/blog/draft-post', '/blog/future-post', '/page/hidden', '/shop/empty-category', '/cart', '/checkout', '/compare'];
+        // /about and /contact permanently redirect to the CMS pages, so they must never be listed.
+        $excluded = ['/blog/draft-post', '/blog/future-post', '/page/hidden', '/shop/empty-category', '/cart', '/checkout', '/compare', '/about', '/contact'];
         foreach ($excluded as $path) {
             $this->assertNotContains('http://localhost'.$path, $locs, "must not list $path");
         }
@@ -216,8 +217,8 @@ class SitemapAndCanonicalTagTest extends TestCase
             '/shop/laptops?brand=acer&utm_source=fb' => 'http://localhost/shop/laptops',
             '/product/acer-predator?ref=home' => 'http://localhost/product/acer-predator',
             '/blog?search=asus' => 'http://localhost/blog',
-            '/about' => 'http://localhost/about',
-            '/contact' => 'http://localhost/contact',
+            '/customer-feedback' => 'http://localhost/customer-feedback',
+            '/customer-spotlight' => 'http://localhost/customer-spotlight',
         ];
 
         foreach ($cases as $uri => $expected) {

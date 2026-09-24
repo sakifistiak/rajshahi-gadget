@@ -4,13 +4,13 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" data-precedence="default"/>
 <title>{{ $post->title }} | {{ $siteName ?? 'Khan Gadget' }}</title>
 <meta name="author" content="{{ $siteName ?? 'Khan Gadget' }}"/>
-<meta name="description" content="{{ $post->excerptText() }}"/>
+<meta name="description" content="{{ \App\Support\Seo::excerpt($post->content, 155) }}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{{ $post->title }} | {{ $siteName ?? 'Khan Gadget' }}"/>
-<meta name="twitter:description" content="{{ $post->excerptText() }}"/>
+<meta name="twitter:description" content="{{ \App\Support\Seo::excerpt($post->content, 155) }}"/>
 @if($post->featured_image)<meta property="og:image" content="{{ url($post->featured_image) }}"/><meta name="twitter:image" content="{{ url($post->featured_image) }}"/>@endif
 <meta property="og:title" content="{{ $post->title }} | {{ $siteName ?? 'Khan Gadget' }}"/>
-<meta property="og:description" content="{{ $post->excerptText() }}"/>
+<meta property="og:description" content="{{ \App\Support\Seo::excerpt($post->content, 155) }}"/>
 <meta property="og:type" content="article"/>
 <link rel="icon" href="{{ $siteFavicon ?? '/favicon.png' }}" type="image/png"/>
 <link rel="shortcut icon" href="{{ $siteFavicon ?? '/favicon.ico' }}" type="image/x-icon"/>

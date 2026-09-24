@@ -23,8 +23,8 @@ class SettingController extends Controller
         // Mobile slide menu "Info Links" default to the site's original static
         // link set so nothing changes on the storefront until an admin edits it.
         $defaultMobileDrawerInfoLinks = json_encode([
-            ['label' => 'About Us', 'url' => '/about', 'icon' => 'info'],
-            ['label' => 'Contact', 'url' => '/contact', 'icon' => 'phone'],
+            ['label' => 'About Us', 'url' => '/page/about-us', 'icon' => 'info'],
+            ['label' => 'Contact', 'url' => '/page/contact', 'icon' => 'phone'],
             ['label' => 'Privacy & Policy', 'url' => '/privacy-policy', 'icon' => 'shield'],
             ['label' => 'Terms & Conditions', 'url' => '/terms-conditions', 'icon' => 'file-text'],
             ['label' => 'Complain / Advice', 'url' => '/complain-advice', 'icon' => 'alert-triangle'],

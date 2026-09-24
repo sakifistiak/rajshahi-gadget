@@ -213,8 +213,8 @@ class StructuredDataPagesTest extends TestCase
             'home' => ['/'],
             'shop' => ['/shop'],
             'blog index' => ['/blog'],
-            'about' => ['/about'],
-            'contact' => ['/contact'],
+            'customer feedback' => ['/customer-feedback'],
+            'customer spotlight' => ['/customer-spotlight'],
             'cart' => ['/cart'],
             'compare' => ['/compare'],
         ];
@@ -241,7 +241,7 @@ class StructuredDataPagesTest extends TestCase
             SiteSetting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
-        $organization = $this->block($this->get('/about')->assertOk()->getContent(), 'Organization');
+        $organization = $this->block($this->get('/blog')->assertOk()->getContent(), 'Organization');
 
         $this->assertSame('Khan Gadget', $organization['name']);
         $this->assertSame('http://localhost/', $organization['url']);
@@ -256,7 +256,7 @@ class StructuredDataPagesTest extends TestCase
     {
         // SiteSetting::getValue() falls back to a built-in default for empty settings, and the footer
         // links to that default. The markup mirrors the footer, so it lists the same URLs.
-        $organization = $this->block($this->get('/about')->assertOk()->getContent(), 'Organization');
+        $organization = $this->block($this->get('/blog')->assertOk()->getContent(), 'Organization');
 
         $this->assertSame([
             'https://facebook.com/khansgadget',

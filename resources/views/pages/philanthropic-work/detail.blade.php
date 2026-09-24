@@ -4,13 +4,13 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" data-precedence="default"/>
 <title>{{ $work->title }} | {{ $siteName ?? 'Khan Gadget' }}</title>
 <meta name="author" content="{{ $siteName ?? 'Khan Gadget' }}"/>
-<meta name="description" content="{{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}"/>
+<meta name="description" content="{{ \App\Support\Seo::philanthropicWorkDescription($work, $siteName ?? null) }}"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{{ $work->title }} | {{ $siteName ?? 'Khan Gadget' }}"/>
-<meta name="twitter:description" content="{{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}"/>
+<meta name="twitter:description" content="{{ \App\Support\Seo::philanthropicWorkDescription($work, $siteName ?? null) }}"/>
 @if($work->image)<meta property="og:image" content="{{ url($work->image) }}"/><meta name="twitter:image" content="{{ url($work->image) }}"/>@endif
 <meta property="og:title" content="{{ $work->title }} | {{ $siteName ?? 'Khan Gadget' }}"/>
-<meta property="og:description" content="{{ $siteDescription ?? 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.' }}"/>
+<meta property="og:description" content="{{ \App\Support\Seo::philanthropicWorkDescription($work, $siteName ?? null) }}"/>
 <meta property="og:type" content="article"/>
 <link rel="icon" href="{{ $siteFavicon ?? '/favicon.png' }}" type="image/png"/>
 <link rel="shortcut icon" href="{{ $siteFavicon ?? '/favicon.ico' }}" type="image/x-icon"/>

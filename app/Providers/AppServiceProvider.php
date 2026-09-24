@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Contracts\SmsGateway;
 use App\Models\SiteSetting;
 use App\Models\StoreLocation;
+use App\Support\Seo;
 use App\Support\Sms\LogSmsGateway;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -74,8 +75,8 @@ class AppServiceProvider extends ServiceProvider
             // Policy, ...) — admin-editable via Settings, defaulting to the site's
             // original static link set so behavior is unchanged until edited.
             $defaultMobileDrawerInfoLinks = [
-                ['label' => 'About Us', 'url' => '/about', 'icon' => 'info'],
-                ['label' => 'Contact', 'url' => '/contact', 'icon' => 'phone'],
+                ['label' => 'About Us', 'url' => '/page/about-us', 'icon' => 'info'],
+                ['label' => 'Contact', 'url' => '/page/contact', 'icon' => 'phone'],
                 ['label' => 'Privacy & Policy', 'url' => '/privacy-policy', 'icon' => 'shield'],
                 ['label' => 'Terms & Conditions', 'url' => '/terms-conditions', 'icon' => 'file-text'],
                 ['label' => 'Complain / Advice', 'url' => '/complain-advice', 'icon' => 'alert-triangle'],
@@ -91,7 +92,8 @@ class AppServiceProvider extends ServiceProvider
                 'siteShareImage' => SiteSetting::getValue('site_share_image', '/media/b3ca13-kg-lockup-v2.png'),
                 'siteName' => SiteSetting::getValue('site_name', 'Khan Gadget'),
                 'siteSlogan' => SiteSetting::getValue('site_slogan', 'Brand NEW Intact BOX, Without BOX & Pre-Owned'),
-                'siteDescription' => SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.'),
+                // Cleaned once here: the admin textarea can hold line breaks and HTML entities, and this feeds every meta description that has no page-specific text.
+                'siteDescription' => Seo::text(SiteSetting::getValue('site_description', 'Bangladesh-er trusted destination for Brand new intact box, without box and certified pre-owned gadgets.')),
                 'sitePhone' => SiteSetting::getValue('site_phone', '+8801700000000'),
                 'footerPhoneLinkType' => SiteSetting::getValue('footer_phone_link_type', 'tel'),
                 // Used by WhatsApp ordering now and by the live-chat integration later.
