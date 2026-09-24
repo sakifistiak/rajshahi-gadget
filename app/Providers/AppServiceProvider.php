@@ -7,6 +7,7 @@ use App\Models\SiteSetting;
 use App\Models\StoreLocation;
 use App\Support\Seo;
 use App\Support\Sms\LogSmsGateway;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +31,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // The storefront markup was exported from a React/TanStack app that stamped every element with a
+        // dev-only source-location attribute (data-tsd-source="/src/components/site/Navbar.tsx:14:5"). Nothing
+        // reads them, and they leak internal file paths, so they are dropped from the compiled views. Doing it
+        // at compile time leaves the templates as they are and costs nothing per request. The one exception is
+        // ProductCard.tsx: public/assets/styles-*.css has a rule that selects on it (hiding the compare and
+        // wishlist overlays inside product cards), so those values stay.
+        Blade::prepareStringsForCompilationUsing(
+            fn (string $template) => preg_replace('/\sdata-tsd-source="(?![^"]*ProductCard\.tsx)[^"]*"/', '', $template) ?? $template
+        );
+
         // Share Stock & Price Disclaimer Notice settings ONLY with relevant views
         View::composer(['pages.product.detail', 'pages.cart', 'admin.home-settings.index'], function ($view) {
             $view->with([

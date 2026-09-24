@@ -20,7 +20,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         
         <!-- Lucide Icons Library -->
-        <script src="https://unpkg.com/lucide@latest"></script>
+        @include('partials.lucide-script')
         
         <style>
             body {

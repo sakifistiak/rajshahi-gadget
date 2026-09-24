@@ -13,6 +13,9 @@ class SectionTitleStyle
         'oswald' => ['label' => 'Oswald',            'stack' => "'Oswald', sans-serif",           'google' => 'Oswald:wght@700'],
     ];
 
+    /** Inter at every weight the storefront's Tailwind classes use (font-normal, -medium, -semibold, -bold). */
+    private const BASE_FONT = 'Inter:wght@400;500;600;700';
+
     public const SHADOWS = [
         'none' => ['label' => 'None', 'css' => null],
         'soft' => ['label' => 'Soft', 'css' => '0 1px 3px rgba(0,0,0,0.2)'],
@@ -108,8 +111,9 @@ class SectionTitleStyle
 
         return [
             'text_color' => self::colorOrInherit($input['text_color'] ?? null, $defaults['text_color']),
-            'font' => array_key_exists($input['font'] ?? null, self::FONTS) ? $input['font'] : $defaults['font'],
-            'shadow' => array_key_exists($input['shadow'] ?? null, self::SHADOWS) ? $input['shadow'] : $defaults['shadow'],
+            // is_string(): a stored array or number here would make array_key_exists() throw and take the page down.
+            'font' => is_string($input['font'] ?? null) && array_key_exists($input['font'], self::FONTS) ? $input['font'] : $defaults['font'],
+            'shadow' => is_string($input['shadow'] ?? null) && array_key_exists($input['shadow'], self::SHADOWS) ? $input['shadow'] : $defaults['shadow'],
             'bg_type' => in_array($input['bg_type'] ?? null, self::BG_TYPES, true) ? $input['bg_type'] : $defaults['bg_type'],
             'bg_color' => self::hex($input['bg_color'] ?? null, $defaults['bg_color']),
             'bg_gradient_from' => self::hex($input['bg_gradient_from'] ?? null, $defaults['bg_gradient_from']),
@@ -211,13 +215,39 @@ class SectionTitleStyle
      * Combined Google Fonts URL for every non-default font in FONTS, loaded once
      * regardless of which sections actually use them (small fixed set, cheap to load).
      */
-    public static function googleFontsUrl(): string
+    /**
+     * The one Google Fonts stylesheet a page needs: Inter at every weight the storefront uses, plus only
+     * the section-title font families that page actually renders. The old version always asked for all five
+     * selectable families (Inter, Poppins, Playfair Display, Roboto Slab, Oswald) in a second stylesheet
+     * next to a separate Inter one, which is two render-blocking requests where one will do.
+     *
+     * @param  iterable<mixed>|null  $styles  Section title styles for the page, in any shape sanitizeFull()
+     *                                        accepts (null entries are fine). Null means every selectable font.
+     */
+    public static function googleFontsUrl(?iterable $styles = null): string
     {
-        $families = array_filter(array_column(self::FONTS, 'google'));
+        $keys = array_keys(self::FONTS);
+        if ($styles !== null) {
+            $keys = [];
+            foreach ($styles as $style) {
+                $scoped = self::sanitizeFull(is_array($style) ? $style : null);
+                $keys[] = $scoped['base']['font'];
+                $keys[] = $scoped['highlight']['font'];
+            }
+        }
+
+        $families = [];
+        foreach (array_unique($keys) as $key) {
+            // "Inter" is already in the base request, at all its weights.
+            if ($key !== 'inter' && isset(self::FONTS[$key]['google'])) {
+                $families[] = self::FONTS[$key]['google'];
+            }
+        }
+        sort($families);
 
         return 'https://fonts.googleapis.com/css2?'.implode('&', array_map(
-            fn ($f) => 'family='.$f,
-            $families
+            fn ($family) => 'family='.$family,
+            [self::BASE_FONT, ...$families]
         )).'&display=swap';
     }
 

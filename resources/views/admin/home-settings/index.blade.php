@@ -39,7 +39,7 @@
         }
     },
     trustbarIconPreviewUrl(name) {
-        return 'https://unpkg.com/lucide-static@latest/icons/' + (name || 'circle-help') + '.svg';
+        return 'https://unpkg.com/lucide-static@1.48.0/icons/' + (name || 'circle-help') + '.svg';
     },
     uploadTrustbarIcon(index, event) {
         const file = event.target.files[0];

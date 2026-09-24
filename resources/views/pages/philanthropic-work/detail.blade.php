@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
 <link rel="stylesheet" href="/assets/styles-CC_Lznyw.css">
-<script src="https://unpkg.com/lucide@latest"></script>
+@include('partials.lucide-script')
 <script src="/assets/theme.js?v=20260828"></script>
 @include('partials.canonical', ['canonicalPath' => \App\Support\Seo::path('philanthropic-work', $work->slug)])
 </head>

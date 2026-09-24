@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Checkout | {{ $siteName ?? 'Khan Gadget' }}</title>
     <link rel="stylesheet" href="/assets/styles-CC_Lznyw.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    @include('partials.lucide-script')
     <script src="/assets/theme.js?v=20260828"></script>
     <style>
         /* The static styles-CC_Lznyw.css bundle is missing fractional-value and

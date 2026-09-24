@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Order Confirmed | {{ $siteName ?? 'Khan Gadget' }}</title>
     <link rel="stylesheet" href="/assets/styles-CC_Lznyw.css">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    @include('partials.lucide-script')
     <script src="/assets/theme.js?v=20260828"></script>
     <style>
         /* Same reasoning as checkout.blade.php: the static styles-CC_Lznyw.css
