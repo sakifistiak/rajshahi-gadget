@@ -14,7 +14,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/products/{slug}', [ProductController::class, 'show']);
 
     // Categories
-    Route::get('/categories', [ProductController::class, 'categories']);
+    Route::get('/categories', [ProductController::class, 'categories'])->middleware('public.json:300');
     Route::get('/categories/{slug}/products', [ProductController::class, 'byCategory']);
 
     // Conditions

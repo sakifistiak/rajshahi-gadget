@@ -45,25 +45,35 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [PageController::class, 'home'])->name('home');
-// XML sitemap. No session/cookie middleware: crawlers get a cookie-free, cacheable response.
-Route::get('/sitemap.xml', SitemapController::class)->name('sitemap')->withoutMiddleware([
+// Middleware that starts a session or sets a cookie. Routes that serve the same bytes to everybody skip
+// all of it: no session row written per request, no Set-Cookie, so the response is safe to cache.
+$withoutSession = [
     EnsureCartToken::class,
     EncryptCookies::class,
     AddQueuedCookiesToResponse::class,
     StartSession::class,
     ShareErrorsFromSession::class,
     ValidateCsrfToken::class,
-]);
+];
+
+// XML sitemap. No session/cookie middleware: crawlers get a cookie-free, cacheable response.
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap')->withoutMiddleware($withoutSession);
 Route::get('/api/search', [PageController::class, 'ajaxSearch'])->name('api.search');
 Route::get('/api/compare', [PageController::class, 'compareData'])->name('api.compare');
-Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
-Route::get('/api/nav-categories', [PageController::class, 'navCategories'])->name('api.nav-categories');
+// Public, identical for every visitor, and fetched on every page load (site fonts by theme.js, the category
+// menu by the mobile drawer). Session-free and cacheable for 5 minutes: an admin change shows up within
+// that time. Never put anything visitor-specific in these responses.
+Route::middleware('public.json:300')->withoutMiddleware($withoutSession)->group(function () {
+    Route::get('/api/site-fonts', [PageController::class, 'siteFonts'])->name('api.site-fonts');
+    Route::get('/api/nav-categories', [PageController::class, 'navCategories'])->name('api.nav-categories');
+});
 Route::post('/api/analytics/ping', [PageController::class, 'analyticsPing'])->name('api.analytics.ping');
 Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
-Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you');
+// Order and customer data: never stored by a browser or a cache.
+Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you')->middleware('no.store');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
-Route::get('/orders/{order:order_number}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
-Route::middleware('throttle:30,1')->group(function () {
+Route::get('/orders/{order:order_number}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice')->middleware('no.store');
+Route::middleware(['throttle:30,1', 'no.store'])->group(function () {
     Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
     Route::get('/chat/messages', [ChatController::class, 'messages'])->name('chat.messages');
     Route::post('/chat/messages', [ChatController::class, 'send'])->name('chat.messages.send');
@@ -97,7 +107,8 @@ Route::get('/page/{slug}', [CustomPageController::class, 'show'])->name('pages.c
 | Khan Gadget — Secure Admin Panel (Laravel Breeze Auth Middleware)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+// Everything behind a login shows private data (orders, customers, chats, visitor analytics): never stored.
+Route::middleware(['auth', 'verified', 'no.store'])->group(function () {
     // Override default Breeze dashboard with our statistics dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
