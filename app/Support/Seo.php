@@ -53,6 +53,9 @@ class Seo
     /** Longest meta description that search results show in full. */
     private const DESCRIPTION_LIMIT = 155;
 
+    /** Page text shorter than this is too thin to be a page's own description on its own. */
+    private const THIN_TEXT = 70;
+
     /**
      * One unique description per listing page, 140 to 160 characters. Pages that are not listed
      * here (cart, account and so on) fall back to the cleaned site-wide description.
@@ -528,12 +531,88 @@ class Seo
             : static::excerpt(static::text($work->title).': philanthropic work supported by '.static::siteName($siteName).' in Bangladesh.', self::DESCRIPTION_LIMIT);
     }
 
-    /** CMS page description: the editor's own meta description, else an excerpt of the page content. */
-    public static function customPageDescription(CustomPage $page): string
+    /**
+     * CMS page description, so that no page is ever left without one:
+     *  1. the editor's own meta description;
+     *  2. else an excerpt of the page text, when there is enough of it;
+     *  3. else what the page really shows. A page with little or no text (the Contact page holds
+     *     only store locations) is described from its attached locations, naming only the kinds of
+     *     detail they actually have (addresses, phone numbers, opening hours);
+     *  4. else a generic line built from the page title.
+     * Any short text the page does have is kept as the first sentence.
+     */
+    public static function customPageDescription(CustomPage $page, ?string $siteName = null): string
     {
         $own = static::text($page->meta_description);
+        if ($own !== '') {
+            return $own;
+        }
 
-        return $own !== '' ? $own : static::excerpt($page->content, self::DESCRIPTION_LIMIT);
+        $limit = self::DESCRIPTION_LIMIT;
+        $text = static::excerpt($page->content, $limit);
+        if (mb_strlen($text) >= self::THIN_TEXT) {
+            return $text;
+        }
+
+        $sentences = static::customPageFallbackSentences($page, $siteName);
+        $description = ($text === '' || preg_match('/[.!?…]$/u', $text)) ? $text : $text.'.';
+
+        foreach ($sentences as $sentence) {
+            $candidate = trim($description.' '.$sentence);
+            if (mb_strlen($candidate) <= $limit) {
+                $description = $candidate;
+            }
+        }
+
+        return $description !== '' ? $description : static::fit($sentences[0], $limit);
+    }
+
+    /**
+     * Sentences that describe a CMS page from its data, most important first.
+     *
+     * @return non-empty-list<string>
+     */
+    private static function customPageFallbackSentences(CustomPage $page, ?string $siteName): array
+    {
+        $site = static::siteName($siteName);
+        $title = static::text($page->title);
+        $prefix = $title !== '' ? $title.': ' : '';
+        $locations = $page->locations;
+        $has = fn (string $field) => $locations->contains(fn ($location) => static::text($location->{$field}) !== '');
+
+        if ($locations->isEmpty()) {
+            return [$prefix.$site.' is a genuine wholesaler and retailer of imported laptops and gadgets in Bangladesh since 2012.'];
+        }
+
+        $count = $locations->count();
+        $action = $has('phone') ? 'call or visit' : 'visit';
+        $sentences = [static::upperFirst($prefix.($count === 1
+            ? "$action our $site location in Bangladesh."
+            : "$action any of our $count $site locations across Bangladesh."))];
+
+        $details = array_values(array_filter([
+            $has('address') ? 'addresses' : null,
+            $has('phone') ? 'phone numbers' : null,
+            $has('details') ? 'opening hours' : null,
+        ]));
+        if ($details !== []) {
+            $sentences[] = static::upperFirst(static::andList($details)).'.';
+        }
+
+        return $sentences;
+    }
+
+    /** "a", "a and b", "a, b and c". */
+    private static function andList(array $items): string
+    {
+        $last = array_pop($items);
+
+        return $items === [] ? (string) $last : implode(', ', $items).' and '.$last;
+    }
+
+    private static function upperFirst(string $text): string
+    {
+        return mb_strtoupper(mb_substr($text, 0, 1)).mb_substr($text, 1);
     }
 
     private static function siteName(?string $siteName): string

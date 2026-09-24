@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\CustomPage;
+use App\Models\CustomPageLocation;
 use App\Models\PhilanthropicWork;
 use App\Models\Product;
 use App\Models\ProductHighlight;
@@ -272,15 +273,110 @@ class OnPageTextTest extends TestCase
         $this->assertDoesNotMatchRegularExpression('/\.sr-only\{[^}]*(?:display:none|visibility:hidden)/', $css, 'sr-only must not be a display:none style hide.');
     }
 
-    public function test_cms_page_description_prefers_the_editor_then_the_content(): void
+    /** @param  list<array<string, mixed>>  $locations */
+    private function cmsPage(array $attributes = [], array $locations = []): CustomPage
     {
-        $own = CustomPage::make(['title' => 'About', 'meta_description' => "  Our\nown &amp; edited text  ", 'content' => '<p>Ignored body</p>']);
-        $fromBody = CustomPage::make(['title' => 'About', 'meta_description' => null, 'content' => '<p>Registered with the Bangladesh Computer Samity.</p><p>Trusted since 2012.</p>']);
-        $empty = CustomPage::make(['title' => 'Empty', 'meta_description' => null, 'content' => '<p><br></p>']);
+        $page = CustomPage::make(array_merge(['title' => 'Contact', 'meta_description' => null, 'content' => ''], $attributes));
+        $page->setRelation('locations', collect(array_map(fn (array $location) => new CustomPageLocation($location), $locations)));
+
+        return $page;
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function branches(int $count, array $overrides = []): array
+    {
+        return array_map(fn (int $i) => array_merge([
+            'name' => "BRANCH $i",
+            'address' => "Shop $i, Some Road, Dhaka",
+            'phone' => '0171710734'.$i,
+            'details' => 'TUESDAY OFF, OTHER DAYS 10.30 AM - 8 PM',
+        ], $overrides), range(1, $count));
+    }
+
+    public function test_cms_page_description_prefers_the_editor_then_enough_page_text(): void
+    {
+        $own = $this->cmsPage(['meta_description' => "  Our\nown &amp; edited text  ", 'content' => '<p>Ignored body</p>']);
+        $long = $this->cmsPage(['title' => 'About', 'content' => '<p>Registered with the Bangladesh Computer Samity, established in 2012 and trusted for over a decade.</p>']);
 
         $this->assertSame('Our own & edited text', Seo::customPageDescription($own));
-        $this->assertSame('Registered with the Bangladesh Computer Samity. Trusted since 2012.', Seo::customPageDescription($fromBody));
-        $this->assertSame('', Seo::customPageDescription($empty));
+        $this->assertSame(
+            'Registered with the Bangladesh Computer Samity, established in 2012 and trusted for over a decade.',
+            Seo::customPageDescription($long),
+        );
+    }
+
+    public function test_a_page_that_only_shows_store_locations_is_described_from_them(): void
+    {
+        // The live Contact page: empty editor content and a dozen attached locations.
+        $contact = $this->cmsPage(['content' => '<p><br></p><p>&nbsp;</p>'], $this->branches(12));
+
+        $description = Seo::customPageDescription($contact, 'Khan Gadget');
+
+        $this->assertSame('Contact: call or visit any of our 12 Khan Gadget locations across Bangladesh. Addresses, phone numbers and opening hours.', $description);
+        $this->assertLessThanOrEqual(155, mb_strlen($description));
+    }
+
+    public function test_the_location_description_names_only_details_the_page_really_has(): void
+    {
+        $onlyAddresses = $this->cmsPage([], $this->branches(3, ['phone' => null, 'details' => null]));
+        $onlyPhones = $this->cmsPage([], $this->branches(3, ['address' => null, 'details' => null]));
+        $bare = $this->cmsPage([], [['name' => 'One'], ['name' => 'Two']]);
+        $single = $this->cmsPage([], $this->branches(1));
+
+        $this->assertSame('Contact: visit any of our 3 Khan Gadget locations across Bangladesh. Addresses.', Seo::customPageDescription($onlyAddresses, 'Khan Gadget'));
+        $this->assertSame('Contact: call or visit any of our 3 Khan Gadget locations across Bangladesh. Phone numbers.', Seo::customPageDescription($onlyPhones, 'Khan Gadget'));
+        $this->assertSame('Contact: visit any of our 2 Khan Gadget locations across Bangladesh.', Seo::customPageDescription($bare, 'Khan Gadget'));
+        $this->assertSame('Contact: call or visit our Khan Gadget location in Bangladesh. Addresses, phone numbers and opening hours.', Seo::customPageDescription($single, 'Khan Gadget'));
+    }
+
+    public function test_the_location_description_never_copies_private_looking_details(): void
+    {
+        $description = Seo::customPageDescription($this->cmsPage([], $this->branches(2)), 'Khan Gadget');
+
+        $this->assertStringNotContainsString('0171710734', $description, 'Phone numbers are named as a kind of detail, never copied.');
+        $this->assertStringNotContainsString('Some Road', $description);
+        $this->assertStringNotContainsString('BRANCH', $description);
+    }
+
+    public function test_short_page_text_is_kept_as_the_first_sentence(): void
+    {
+        $page = $this->cmsPage(['content' => '<p>Call or visit us</p>'], $this->branches(3));
+
+        $this->assertSame(
+            'Call or visit us. Contact: call or visit any of our 3 Khan Gadget locations across Bangladesh. Addresses, phone numbers and opening hours.',
+            Seo::customPageDescription($page, 'Khan Gadget'),
+        );
+    }
+
+    public function test_a_page_with_no_text_and_no_locations_gets_a_titled_fallback(): void
+    {
+        $terms = $this->cmsPage(['title' => 'Terms & Conditions', 'content' => '<p><br></p>']);
+        $privacy = $this->cmsPage(['title' => 'Privacy Policy', 'content' => null]);
+
+        $termsDescription = Seo::customPageDescription($terms, 'Khan Gadget');
+
+        $this->assertSame('Terms & Conditions: Khan Gadget is a genuine wholesaler and retailer of imported laptops and gadgets in Bangladesh since 2012.', $termsDescription);
+        $this->assertNotSame($termsDescription, Seo::customPageDescription($privacy, 'Khan Gadget'), 'Fallbacks stay unique per page.');
+    }
+
+    public function test_a_cms_page_always_gets_a_plain_description_within_the_limit(): void
+    {
+        $cases = [
+            'no title, no content' => $this->cmsPage(['title' => '', 'content' => null]),
+            'huge title' => $this->cmsPage(['title' => str_repeat('Extremely long page title ', 12), 'content' => '']),
+            'huge title with locations' => $this->cmsPage(['title' => str_repeat('Extremely long page title ', 12)], $this->branches(4)),
+            'markup only' => $this->cmsPage(['content' => '<div><img src="x.jpg"><iframe src="map"></iframe></div>']),
+            'decorative title' => $this->cmsPage(['title' => '𝐂𝐨𝐧𝐭𝐚𝐜𝐭&nbsp;𝐔𝐬']),
+            'thin text just under the threshold' => $this->cmsPage(['content' => '<p>'.str_repeat('a', 69).'</p>'], $this->branches(2)),
+        ];
+
+        foreach ($cases as $name => $page) {
+            $description = Seo::customPageDescription($page, 'Khan Gadget');
+
+            $this->assertNotSame('', $description, $name);
+            $this->assertLessThanOrEqual(155, mb_strlen($description), $name);
+            $this->assertSame($description, Seo::text($description), "$name must already be plain text.");
+        }
     }
 
     public function test_philanthropic_work_description_uses_its_text_or_falls_back_to_its_title(): void

@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Condition;
 use App\Models\CustomPage;
+use App\Models\CustomPageLocation;
 use App\Models\PhilanthropicWork;
 use App\Models\Product;
 use App\Models\ProductHighlight;
@@ -259,18 +260,47 @@ class OnPageTextPagesTest extends TestCase
         $this->assertSame(['Terms of sale'], $this->h1s($html));
     }
 
-    public function test_cms_page_description_uses_the_editors_text_else_the_content(): void
+    public function test_cms_page_description_uses_the_editors_text_else_the_content_else_a_fallback(): void
     {
         CustomPage::forceCreate(['title' => 'Own', 'slug' => 'own', 'is_active' => true, 'meta_description' => "Written by\nthe editor &amp; kept", 'content' => '<p>Ignored</p>']);
-        CustomPage::forceCreate(['title' => 'Body', 'slug' => 'body', 'is_active' => true, 'content' => '<p>Registered with the Bangladesh Computer Samity.</p><p>Trusted since 2012.</p>']);
+        CustomPage::forceCreate(['title' => 'Body', 'slug' => 'body', 'is_active' => true, 'content' => '<p>Registered with the Bangladesh Computer Samity, established in 2012.</p><p>Trusted for over a decade.</p>']);
         CustomPage::forceCreate(['title' => 'Empty', 'slug' => 'empty', 'is_active' => true, 'content' => '<p><br></p>']);
 
         $this->assertSame('Written by the editor & kept', $this->description($this->get('/page/own')->assertOk()->getContent()));
         $this->assertSame(
-            'Registered with the Bangladesh Computer Samity. Trusted since 2012.',
+            'Registered with the Bangladesh Computer Samity, established in 2012. Trusted for over a decade.',
             $this->description($this->get('/page/body')->assertOk()->getContent()),
         );
-        $this->assertNull($this->description($this->get('/page/empty')->assertOk()->getContent()), 'No description is better than an empty one.');
+        $this->assertSame(
+            'Empty: Khan Gadget is a genuine wholesaler and retailer of imported laptops and gadgets in Bangladesh since 2012.',
+            $this->description($this->get('/page/empty')->assertOk()->getContent()),
+            'A page with nothing to excerpt still gets a description.',
+        );
+    }
+
+    public function test_the_contact_page_is_described_from_its_locations_and_has_exactly_one_description(): void
+    {
+        $contact = CustomPage::forceCreate(['title' => 'Contact', 'slug' => 'contact', 'is_active' => true, 'show_title' => true, 'content' => '<p><br></p>']);
+        foreach (['ELEPHANT ROAD BRANCH', 'BASHUNDHARA BRANCH', 'DHAKA SERVICE CENTER'] as $order => $name) {
+            CustomPageLocation::forceCreate([
+                'custom_page_id' => $contact->id,
+                'name' => $name,
+                'address' => 'Shop No: 136 | Ground Floor, New Elephant Road, Dhaka-1205',
+                'phone' => '01974122755',
+                'details' => 'TUESDAY OFF, OTHER DAYS 10.30 AM - 8 PM',
+                'sort_order' => $order,
+            ]);
+        }
+
+        $html = $this->get('/page/contact')->assertOk()->getContent();
+
+        $this->assertSame(1, substr_count($html, '<meta name="description"'));
+        $this->assertSame(
+            'Contact: call or visit any of our 3 Khan Gadget locations across Bangladesh. Addresses, phone numbers and opening hours.',
+            $this->description($html),
+        );
+        $this->assertStringNotContainsString('01974122755', $this->description($html));
+        $this->assertSame(['Contact'], $this->h1s($html));
     }
 
     public function test_blog_post_description_is_decoded_once(): void
