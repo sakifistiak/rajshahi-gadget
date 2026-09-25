@@ -1,5 +1,5 @@
-<article class="product-card-item group flex h-full flex-col border border-border overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px; background-color:#ffffff" data-price="{{ $product->price ?? 0 }}" data-name="{{ $product->name }}" data-in-stock="{{ $product->in_stock ? 1 : 0 }}" data-cart-slug="{{ $product->slug }}" data-cart-name="{{ $product->name }}" data-cart-price="{{ $product->price ?? 0 }}" data-cart-image="{{ $product->primaryImage() }}">
-    <div class="relative overflow-hidden" style="background-color:#ffffff">
+<article class="product-card-item group flex h-full flex-col border border-border overflow-hidden transition-shadow hover:shadow-sm" style="border-radius:10px" data-price="{{ $product->price ?? 0 }}" data-name="{{ $product->name }}" data-in-stock="{{ $product->in_stock ? 1 : 0 }}" data-cart-slug="{{ $product->slug }}" data-cart-name="{{ $product->name }}" data-cart-price="{{ $product->price ?? 0 }}" data-cart-image="{{ $product->primaryImage() }}">
+    <div class="product-card-media relative overflow-hidden">
         <a href="/product/{{ $product->slug }}" class="block">
             <div class="w-full overflow-hidden" style="aspect-ratio: 4 / 3; line-height: 0">
                 <img src="{{ $product->primaryImage() }}" alt="{{ $product->name }}" loading="lazy" width="1200" height="900" class="block h-full w-full object-contain object-center" style="display:block; width:100%; height:100%; object-fit:contain; object-position:center;" />

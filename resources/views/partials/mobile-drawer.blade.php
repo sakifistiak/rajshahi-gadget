@@ -655,6 +655,19 @@ html.dark .btn-buy-now:hover {
     color: #1c1e22 !important;
 }
 
+/* Product cards (partials/product-card) are white in light mode. In dark mode
+   the text switches to the light theme colors, so the card body has to follow
+   the theme too or the title and price disappear into the white. The image
+   frame stays white: product photos are shot on white, and a dark frame would
+   leave a white box around every image. */
+.product-card-item,
+.product-card-media {
+    background-color: #ffffff;
+}
+html.dark .product-card-item {
+    background-color: var(--card);
+}
+
 /* The main product image follows the mouse position while zoomed. */
 @media (hover: hover) and (pointer: fine) {
     .product-image-magnifier {
