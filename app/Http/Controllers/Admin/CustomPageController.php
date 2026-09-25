@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CustomPage;
+use App\Support\GoogleForm;
 use App\Support\ImageUploader;
+use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -50,6 +52,8 @@ class CustomPageController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'content' => 'nullable|string',
+            'google_form_url' => ['nullable', 'string', 'max:5000', $this->googleFormRule()],
+            'google_form_height' => 'nullable|integer|min:300|max:20000',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
             'show_title' => 'nullable|boolean',
@@ -77,6 +81,8 @@ class CustomPageController extends Controller
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
             'content' => $request->content,
+            'google_form_url' => GoogleForm::embedUrl($request->google_form_url),
+            'google_form_height' => $request->google_form_height,
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? true : false,
             'show_title' => $request->has('show_title') ? true : false,
@@ -108,6 +114,8 @@ class CustomPageController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'content' => 'nullable|string',
+            'google_form_url' => ['nullable', 'string', 'max:5000', $this->googleFormRule()],
+            'google_form_height' => 'nullable|integer|min:300|max:20000',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
             'show_title' => 'nullable|boolean',
@@ -135,6 +143,8 @@ class CustomPageController extends Controller
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
             'content' => $request->content,
+            'google_form_url' => GoogleForm::embedUrl($request->google_form_url),
+            'google_form_height' => $request->google_form_height,
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? true : false,
             'show_title' => $request->has('show_title') ? true : false,
@@ -153,6 +163,19 @@ class CustomPageController extends Controller
         $page->delete();
 
         return redirect()->route('admin.pages.index')->with('success', 'Custom page deleted successfully!');
+    }
+
+    /**
+     * The Google Form field takes a form's share link or its whole <iframe> embed code, and only
+     * accepts it if it points at a public Google Form (see GoogleForm::embedUrl()).
+     */
+    private function googleFormRule(): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) {
+            if (is_string($value) && GoogleForm::embedUrl($value) === null) {
+                $fail('Paste the form link from Google Forms (Send, then the link or the <> embed code). It must be a docs.google.com/forms link: not the /edit link, and not a forms.gle short link.');
+            }
+        };
     }
 
     /**

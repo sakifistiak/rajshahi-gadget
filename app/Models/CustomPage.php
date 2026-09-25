@@ -11,12 +11,20 @@ class CustomPage extends Model
 {
     use HasFactory;
 
+    /**
+     * Pixel height for the embedded Google Form on wide screens (the page adds room on phones,
+     * where the questions wrap onto more lines).
+     */
+    public const DEFAULT_GOOGLE_FORM_HEIGHT = 1200;
+
     protected $fillable = [
         'title',
         'slug',
         'meta_title',
         'meta_description',
         'content',
+        'google_form_url',
+        'google_form_height',
         'is_active',
         'show_title',
         'sort_order',
@@ -25,6 +33,7 @@ class CustomPage extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'show_title' => 'boolean',
+        'google_form_height' => 'integer',
     ];
 
     public function locations(): HasMany

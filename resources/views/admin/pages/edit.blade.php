@@ -124,6 +124,34 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Google Form embed (rendered below the page content, outside the rich text editor) -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+                        <div class="border-b border-slate-100 pb-3">
+                            <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="clipboard-list" class="h-3.5 w-3.5 text-blue-600"></i>
+                                Google Form
+                            </h3>
+                            <p class="text-[11px] text-slate-500 mt-1">Optional. Shows a Google Form (survey, complaint, feedback) below the page content. In Google Forms click <strong>Send</strong>, then copy the link (🔗) or the embed code (&lt;&gt;) and paste it here. Leave empty for no form.</p>
+                        </div>
+
+                        <div>
+                            <label for="google_form_url" class="block text-xs font-bold text-slate-700 mb-1">Form link or embed code</label>
+                            <textarea name="google_form_url" id="google_form_url" rows="2" placeholder="https://docs.google.com/forms/d/e/.../viewform" class="w-full px-3 py-2 text-xs font-mono border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">{{ old('google_form_url', $page->google_form_url) }}</textarea>
+                            @error('google_form_url')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="google_form_height" class="block text-xs font-bold text-slate-700 mb-1">Form height (px)</label>
+                            <input type="number" name="google_form_height" id="google_form_height" min="300" max="20000" step="50" value="{{ old('google_form_height', $page->google_form_height) }}" placeholder="{{ \App\Models\CustomPage::DEFAULT_GOOGLE_FORM_HEIGHT }}" style="max-width: 12rem" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                            <p class="text-[11px] text-slate-400 mt-1">Height on desktop; phones get 30% more. If the form scrolls inside its box on the site, increase this. If there is empty space below it, reduce it.</p>
+                            @error('google_form_height')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Sidebar Controls (Right 1 col) -->

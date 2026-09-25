@@ -32,6 +32,11 @@
         .kg-details-btn:hover { background-color: var(--secondary); }
         .kg-map-btn:hover { background-color: var(--primary); opacity: .9; }
         .kg-phone-link:hover { color: var(--foreground); }
+
+        /* Embedded Google Form (see the admin page editor). Questions wrap onto more lines on a
+           phone, so the frame gets 30% more height there than the height set in the admin. */
+        .kg-google-form { display: block; width: 100%; height: calc(var(--kg-form-h) * 1.3); border: 0; background: #ffffff; }
+        @media (min-width: 640px) { .kg-google-form { height: var(--kg-form-h); } }
     </style>
 @include('partials.canonical', ['canonicalPath' => \App\Support\Seo::path('page', $page->slug)])
 </head>
@@ -59,6 +64,18 @@
             <article id="custom-page-content" class="text-foreground leading-relaxed text-sm sm:text-base">
                 {!! $page->content !!}
             </article>
+
+            <!-- Google Form (added per-page from the admin page editor) -->
+            @if ($googleFormUrl = \App\Support\GoogleForm::embedUrl($page->google_form_url))
+                <section aria-label="{{ $page->title }} form" class="mt-8">
+                    <div class="border border-border overflow-hidden" style="border-radius: 10px">
+                        <iframe src="{{ $googleFormUrl }}" title="{{ $page->title }} form" loading="lazy" class="kg-google-form" style="--kg-form-h: {{ $page->google_form_height ?: \App\Models\CustomPage::DEFAULT_GOOGLE_FORM_HEIGHT }}px">Loading…</iframe>
+                    </div>
+                    <p class="text-xs text-muted-foreground mt-3 text-center">
+                        Form not showing? <a href="{{ preg_replace('/[?&]embedded=true$/', '', $googleFormUrl) }}" target="_blank" rel="noopener noreferrer" class="text-foreground" style="text-decoration: underline">Open it in Google Forms</a>
+                    </p>
+                </section>
+            @endif
 
             <!-- Store Locations (added per-page from the admin page editor) -->
             @if ($page->locations->isNotEmpty())
