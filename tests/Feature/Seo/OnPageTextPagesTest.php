@@ -112,6 +112,18 @@ class OnPageTextPagesTest extends TestCase
         $this->assertSame('Acme Gadgets — Genuine Imported Laptops & Gadgets in Bangladesh', $this->title($html));
     }
 
+    public function test_home_headline_and_subtext_can_be_customized_via_settings(): void
+    {
+        SiteSetting::updateOrCreate(['key' => 'home_headline'], ['value' => 'Premium Laptops & Tech in Dhaka']);
+        SiteSetting::updateOrCreate(['key' => 'home_headline_subtext'], ['value' => 'Authorized retailer with official warranty.']);
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertSame(['Premium Laptops & Tech in Dhaka'], $this->h1s($html));
+        $this->assertSame('Khan Gadget — Premium Laptops & Tech in Dhaka', $this->title($html));
+        $this->assertStringContainsString('Authorized retailer with official warranty.', $html);
+    }
+
     public function test_home_h1_survives_every_admin_toggle_being_switched_off(): void
     {
         foreach (['home_hero_active', 'home_ticker_active', 'home_trustbar_active', 'home_flash_active', 'home_new_arrival_active'] as $key) {

@@ -1,6 +1,8 @@
 <x-app-layout>
 <div class="w-full space-y-6" x-data="{
     sections: {{ json_encode($sectionsList) }},
+    headline: {{ json_encode($settings['home_headline'] ?? \App\Support\Seo::HOME_HEADLINE) }},
+    headlineSubtext: {{ json_encode($settings['home_headline_subtext'] ?? 'Brand new intact box, without box and certified pre-owned laptops, MacBooks and gadgets from a genuine wholesaler and retailer since 2012.') }},
     flashTitle: {{ json_encode($settings['home_flash_title'] ?? 'Limited time deals') }},
     flashHighlight: {{ json_encode($settings['home_flash_highlight'] ?? 'deals') }},
     flashStyle: {{ json_encode($flashTitleStyle) }},
@@ -206,6 +208,44 @@
                     <span class="text-sm font-bold text-slate-800">Store Benefits Bar</span>
                     <input type="checkbox" name="home_trustbar_active" value="1" {{ ($settings['home_trustbar_active'] ?? '1') == '1' ? 'checked' : '' }} class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 border-slate-300">
                 </label>
+            </div>
+        </div>
+
+        <!-- Homepage Main Headline & Subtitle (H1 & SEO) -->
+        <div class="bg-white rounded-sm border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-slate-100 bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <i data-lucide="heading" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Homepage Main Headline & Subtitle (H1 & SEO)</h3>
+                        <p class="text-xs text-slate-500">The primary H1 heading and intro description displayed on your homepage. Also used in the browser title.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Main Heading (H1)
+                        <span class="text-slate-400 font-normal lowercase">(used for on-page H1 and browser title)</span>
+                    </label>
+                    <input type="text" name="home_headline" x-model="headline" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Genuine Imported Laptops & Gadgets in Bangladesh">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Subtitle / Intro Description
+                        <span class="text-slate-400 font-normal lowercase">(paragraph below the H1 heading)</span>
+                    </label>
+                    <textarea name="home_headline_subtext" x-model="headlineSubtext" rows="3" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Describe your store offerings..."></textarea>
+                </div>
+
+                <!-- Live Preview -->
+                <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2 text-left">Live Preview on Homepage:</span>
+                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900" x-text="headline || '{{ \App\Support\Seo::HOME_HEADLINE }}'"></h2>
+                    <p class="mx-auto mt-2 max-w-3xl text-sm text-slate-500" x-text="headlineSubtext"></p>
+                </div>
             </div>
         </div>
 

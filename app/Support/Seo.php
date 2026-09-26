@@ -419,9 +419,11 @@ class Seo
     */
 
     /** Home page <title>: the site name plus the keyword headline. */
-    public static function homeTitle(?string $siteName): string
+    public static function homeTitle(?string $siteName, ?string $headline = null): string
     {
-        return static::siteName($siteName).' — '.self::HOME_HEADLINE;
+        $headline = $headline ?: SiteSetting::getValue('home_headline', self::HOME_HEADLINE);
+
+        return static::siteName($siteName).' — '.$headline;
     }
 
     /** Unique description for a listing page, or the cleaned fallback when the page has none of its own. */

@@ -100,6 +100,8 @@ class HomeSettingController extends Controller
             'checkout_cod_notice_text' => 'অর্ডার কনফার্ম করার জন্য ন্যূনতম ২,০০০ টাকা অগ্রিম পেমেন্ট করতে হবে।',
             'product_trust_badges_active' => '1',
             'home_trustbar_active' => '1',
+            'home_headline' => \App\Support\Seo::HOME_HEADLINE,
+            'home_headline_subtext' => 'Brand new intact box, without box and certified pre-owned laptops, MacBooks and gadgets from a genuine wholesaler and retailer since 2012.',
         ];
 
         $settings = [];
@@ -309,6 +311,14 @@ class HomeSettingController extends Controller
                 'home_new_arrival_title_style',
                 json_encode(SectionTitleStyle::sanitizeFull(is_array($decodedNewArrivalStyle) ? $decodedNewArrivalStyle : null))
             );
+        }
+
+        if ($request->has('home_headline')) {
+            SiteSetting::setValue('home_headline', trim($request->input('home_headline', '')));
+        }
+
+        if ($request->has('home_headline_subtext')) {
+            SiteSetting::setValue('home_headline_subtext', trim($request->input('home_headline_subtext', '')));
         }
 
         if ($request->has('home_sections_json')) {
