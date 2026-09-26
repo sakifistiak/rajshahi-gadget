@@ -27,12 +27,14 @@ class CustomPage extends Model
         'google_form_height',
         'is_active',
         'show_title',
+        'show_updated_at',
         'sort_order',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'show_title' => 'boolean',
+        'show_updated_at' => 'boolean',
         'google_form_height' => 'integer',
     ];
 

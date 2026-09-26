@@ -124,6 +124,23 @@ class OnPageTextPagesTest extends TestCase
         $this->assertStringContainsString('Authorized retailer with official warranty.', $html);
     }
 
+    public function test_admin_cannot_save_an_overlong_home_headline(): void
+    {
+        $admin = User::forceCreate([
+            'name' => 'Admin',
+            'email' => 'admin@example.test',
+            'password' => bcrypt('secret'),
+            'email_verified_at' => now(),
+            'is_admin' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->post('/admin/home-settings', ['home_headline' => str_repeat('a', 71)])
+            ->assertSessionHasErrors('home_headline');
+
+        $this->assertSame(Seo::HOME_HEADLINE, SiteSetting::getValue('home_headline', Seo::HOME_HEADLINE));
+    }
+
     public function test_home_h1_survives_every_admin_toggle_being_switched_off(): void
     {
         foreach (['home_hero_active', 'home_ticker_active', 'home_trustbar_active', 'home_flash_active', 'home_new_arrival_active'] as $key) {
@@ -260,6 +277,28 @@ class OnPageTextPagesTest extends TestCase
         $html = $this->get('/page/warranty')->assertOk()->getContent();
 
         $this->assertSame(['Warranty'], $this->h1s($html));
+        $this->assertStringNotContainsString('sr-only', $html);
+    }
+
+    public function test_cms_page_can_hide_the_title_but_keep_the_last_updated_date(): void
+    {
+        CustomPage::forceCreate(['title' => 'Returns', 'slug' => 'returns', 'is_active' => true, 'show_title' => false, 'show_updated_at' => true, 'content' => '<p>Text</p>']);
+
+        $html = $this->get('/page/returns')->assertOk()->getContent();
+
+        $this->assertStringContainsString('Last updated:', $html);
+        $this->assertMatchesRegularExpression('#<h1 class="sr-only">\s*Returns\s*</h1>#', $html);
+        $this->assertSame(['Returns'], $this->h1s($html));
+    }
+
+    public function test_cms_page_can_hide_the_last_updated_date_but_keep_the_title(): void
+    {
+        CustomPage::forceCreate(['title' => 'Pre-Order Policy', 'slug' => 'pre-order-policy', 'is_active' => true, 'show_title' => true, 'show_updated_at' => false, 'content' => '<p>Text</p>']);
+
+        $html = $this->get('/page/pre-order-policy')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('Last updated:', $html);
+        $this->assertSame(['Pre-Order Policy'], $this->h1s($html));
         $this->assertStringNotContainsString('sr-only', $html);
     }
 

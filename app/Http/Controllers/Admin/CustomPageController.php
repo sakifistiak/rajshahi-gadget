@@ -57,6 +57,7 @@ class CustomPageController extends Controller
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
             'show_title' => 'nullable|boolean',
+            'show_updated_at' => 'nullable|boolean',
             'location_name' => 'nullable|array',
             'location_name.*' => 'nullable|string|max:255',
             'location_address' => 'nullable|array',
@@ -86,6 +87,7 @@ class CustomPageController extends Controller
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? true : false,
             'show_title' => $request->has('show_title') ? true : false,
+            'show_updated_at' => $request->has('show_updated_at') ? true : false,
         ]);
 
         $this->syncLocations($request, $page);
@@ -119,6 +121,7 @@ class CustomPageController extends Controller
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
             'show_title' => 'nullable|boolean',
+            'show_updated_at' => 'nullable|boolean',
             'location_name' => 'nullable|array',
             'location_name.*' => 'nullable|string|max:255',
             'location_address' => 'nullable|array',
@@ -148,6 +151,7 @@ class CustomPageController extends Controller
             'sort_order' => $request->sort_order ?? 0,
             'is_active' => $request->has('is_active') ? true : false,
             'show_title' => $request->has('show_title') ? true : false,
+            'show_updated_at' => $request->has('show_updated_at') ? true : false,
         ]);
 
         $this->syncLocations($request, $page);

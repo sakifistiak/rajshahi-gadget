@@ -2,7 +2,7 @@
 <div class="w-full space-y-6" x-data="{
     sections: {{ json_encode($sectionsList) }},
     headline: {{ json_encode($settings['home_headline'] ?? \App\Support\Seo::HOME_HEADLINE) }},
-    headlineSubtext: {{ json_encode($settings['home_headline_subtext'] ?? 'Brand new intact box, without box and certified pre-owned laptops, MacBooks and gadgets from a genuine wholesaler and retailer since 2012.') }},
+    headlineSubtext: {{ json_encode($settings['home_headline_subtext'] ?? \App\Support\Seo::HOME_SUBTEXT) }},
     flashTitle: {{ json_encode($settings['home_flash_title'] ?? 'Limited time deals') }},
     flashHighlight: {{ json_encode($settings['home_flash_highlight'] ?? 'deals') }},
     flashStyle: {{ json_encode($flashTitleStyle) }},
@@ -230,20 +230,20 @@
                         Main Heading (H1)
                         <span class="text-slate-400 font-normal lowercase">(used for on-page H1 and browser title)</span>
                     </label>
-                    <input type="text" name="home_headline" x-model="headline" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Genuine Imported Laptops & Gadgets in Bangladesh">
+                    <input type="text" name="home_headline" x-model="headline" maxlength="70" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g. Genuine Imported Laptops & Gadgets in Bangladesh">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                         Subtitle / Intro Description
                         <span class="text-slate-400 font-normal lowercase">(paragraph below the H1 heading)</span>
                     </label>
-                    <textarea name="home_headline_subtext" x-model="headlineSubtext" rows="3" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Describe your store offerings..."></textarea>
+                    <textarea name="home_headline_subtext" x-model="headlineSubtext" maxlength="300" rows="3" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Describe your store offerings..."></textarea>
                 </div>
 
                 <!-- Live Preview -->
                 <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 text-center">
                     <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2 text-left">Live Preview on Homepage:</span>
-                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900" x-text="headline || '{{ \App\Support\Seo::HOME_HEADLINE }}'"></h2>
+                    <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900" x-text="headline || {{ json_encode(\App\Support\Seo::HOME_HEADLINE) }}"></h2>
                     <p class="mx-auto mt-2 max-w-3xl text-sm text-slate-500" x-text="headlineSubtext"></p>
                 </div>
             </div>

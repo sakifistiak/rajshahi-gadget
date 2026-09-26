@@ -48,14 +48,19 @@
     <main class="flex-1 py-10 sm:py-16">
         <div class="container-page">
 <!-- Page Header -->
-            @if ($page->show_title)
+            @if ($page->show_title || $page->show_updated_at)
                 <header class="border-b border-border pb-6 mb-8">
-                    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
-                        {{ $page->title }}
-                    </h1>
-                    <p class="text-xs text-muted-foreground mt-2">Last updated: {{ $page->updated_at->format('F d, Y') }}</p>
+                    @if ($page->show_title)
+                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+                            {{ $page->title }}
+                        </h1>
+                    @endif
+                    @if ($page->show_updated_at)
+                        <p class="text-xs text-muted-foreground {{ $page->show_title ? 'mt-2' : '' }}">Last updated: {{ $page->updated_at->format('F d, Y') }}</p>
+                    @endif
                 </header>
-            @elseif (stripos((string) $page->content, '<h1') === false)
+            @endif
+            @if (! $page->show_title && stripos((string) $page->content, '<h1') === false)
                 {{-- The editor hid the visible title and the content has no H1 of its own: keep one for crawlers and screen readers. --}}
                 <h1 class="sr-only">{{ $page->title }}</h1>
             @endif

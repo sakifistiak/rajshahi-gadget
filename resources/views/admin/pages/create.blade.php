@@ -168,10 +168,21 @@
                         <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
                             <div>
                                 <span class="block text-xs font-bold text-slate-800">Show Page Title</span>
-                                <span class="text-[11px] text-slate-500">Display the title & "Last updated" date at the top of the page</span>
+                                <span class="text-[11px] text-slate-500">Display the page title at the top of the page</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" name="show_title" value="1" {{ old('show_title', true) ? 'checked' : '' }} class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                            <div>
+                                <span class="block text-xs font-bold text-slate-800">Show "Last Updated" Date</span>
+                                <span class="text-[11px] text-slate-500">Display the "Last updated" date at the top of the page</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="show_updated_at" value="1" {{ old('show_updated_at', true) ? 'checked' : '' }} class="sr-only peer">
                                 <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                             </label>
                         </div>

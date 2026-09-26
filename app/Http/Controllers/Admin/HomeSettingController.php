@@ -8,6 +8,7 @@ use App\Models\Condition;
 use App\Models\SiteSetting;
 use App\Support\ImageUploader;
 use App\Support\SectionTitleStyle;
+use App\Support\Seo;
 use Illuminate\Http\Request;
 
 class HomeSettingController extends Controller
@@ -100,8 +101,8 @@ class HomeSettingController extends Controller
             'checkout_cod_notice_text' => 'অর্ডার কনফার্ম করার জন্য ন্যূনতম ২,০০০ টাকা অগ্রিম পেমেন্ট করতে হবে।',
             'product_trust_badges_active' => '1',
             'home_trustbar_active' => '1',
-            'home_headline' => \App\Support\Seo::HOME_HEADLINE,
-            'home_headline_subtext' => 'Brand new intact box, without box and certified pre-owned laptops, MacBooks and gadgets from a genuine wholesaler and retailer since 2012.',
+            'home_headline' => Seo::HOME_HEADLINE,
+            'home_headline_subtext' => Seo::HOME_SUBTEXT,
         ];
 
         $settings = [];
@@ -185,6 +186,11 @@ class HomeSettingController extends Controller
 
     public function update(Request $request)
     {
+        $request->validate([
+            'home_headline' => 'nullable|string|max:70',
+            'home_headline_subtext' => 'nullable|string|max:300',
+        ]);
+
         if ($request->has('popup_offer_active')) {
             $existingDesktopImage = SiteSetting::getValue('popup_offer_image');
             $hasNewDesktopImage = $request->hasFile('popup_offer_image_file') || $request->filled('popup_offer_image');

@@ -47,6 +47,9 @@ class Seo
     /** Visible headline of the home page. The home <title> and its H1 both use it. */
     public const HOME_HEADLINE = 'Genuine Imported Laptops & Gadgets in Bangladesh';
 
+    /** Intro paragraph under the home H1, used when the admin has not set one. */
+    public const HOME_SUBTEXT = 'Brand new intact box, without box and certified pre-owned laptops, MacBooks and gadgets from a genuine wholesaler and retailer since 2012.';
+
     /** Longest <title> that search results show in full. */
     private const TITLE_LIMIT = 60;
 

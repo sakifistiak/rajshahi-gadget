@@ -18,6 +18,7 @@ use App\Models\Product;
 use App\Models\ProductFilterValue;
 use App\Models\PromoBanner;
 use App\Models\SiteSetting;
+use App\Services\AnalyticsTracker;
 use App\Support\SectionTitleStyle;
 use App\Support\Seo;
 use Illuminate\Http\Request;
@@ -81,10 +82,7 @@ class PageController extends Controller
         $homePromosActive = SiteSetting::getValue('home_promos_active', '1') == '1';
         $homeTestimonialsActive = SiteSetting::getValue('home_testimonials_active', '1') == '1';
         $homeHeadline = SiteSetting::getValue('home_headline', Seo::HOME_HEADLINE);
-        $homeHeadlineSubtext = SiteSetting::getValue(
-            'home_headline_subtext',
-            'Brand new intact box, without box and certified pre-owned laptops, MacBooks and gadgets from a genuine wholesaler and retailer since 2012.'
-        );
+        $homeHeadlineSubtext = SiteSetting::getValue('home_headline_subtext', Seo::HOME_SUBTEXT);
         $homeTickerActive = SiteSetting::getValue('home_ticker_active', '1') == '1';
         $defaultTickerText = "🎉 Eid Special: Up to 15% off on Brand New Intact Box iPhones\n🚚 Same-day delivery inside Dhaka on orders before 3 PM\n🛡️ 7-day easy replacement on all Pre-Owned products\n💳 0% EMI up to 12 months on selected products\n📞 Chat with us on WhatsApp for instant support";
         $homeTickerText = SiteSetting::getValue('home_ticker_text', $defaultTickerText);
@@ -832,9 +830,10 @@ class PageController extends Controller
         return $this->shop($request);
     }
 
-    public function analyticsPing(Request $request, \App\Services\AnalyticsTracker $tracker)
+    public function analyticsPing(Request $request, AnalyticsTracker $tracker)
     {
         $tracker->ping($request);
+
         return response()->json(['ok' => true]);
     }
 
