@@ -64,6 +64,11 @@
         <style>
             .footer-columns { display: flex; flex-direction: column; gap: 2.5rem; }
             .footer-brand-col { max-width: 22rem; }
+            .kg-social { position: relative; display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 9999px; border: 1px solid var(--border); color: var(--muted-foreground); transition: background-color .15s, border-color .15s, color .15s; }
+            .kg-social svg { width: 18px; height: 18px; }
+            .kg-social:hover, .kg-social:focus-visible { background-color: var(--foreground); border-color: var(--foreground); color: var(--background); }
+            .kg-social::after { content: attr(aria-label); position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); padding: 4px 8px; border-radius: 4px; background-color: var(--foreground); color: var(--background); font-size: 12px; line-height: 1.2; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 10; }
+            .kg-social:hover::after, .kg-social:focus-visible::after { opacity: 1; }
             @media (min-width: 768px) {
                 .footer-columns { flex-direction: row; justify-content: space-between; align-items: flex-start; gap: 4rem; }
             }
@@ -112,23 +117,23 @@
                 </address>
 
                 <div class="mt-5 flex flex-wrap items-center gap-2">
-                    <a href="mailto:{{ $siteEmail ?? 'khangadget.bd@gmail.com' }}" aria-label="Gmail" title="Gmail" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-full w-full" aria-hidden="true"><path fill="#EA4335" d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.579.298-1.075.799-1.375A1.6 1.6 0 0 1 1.636 4c.318 0 .653.083.94.264L12 10.51l9.424-6.246a1.63 1.63 0 0 1 .94-.264c.837 0 1.636.694 1.636 1.457Z"/></svg>
+                    <a href="mailto:{{ $siteEmail ?? 'khangadget.bd@gmail.com' }}" aria-label="Gmail" class="kg-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
                     </a>
-                    <a href="{{ $socialFacebook ?? 'https://facebook.com/khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" style="background-color:#1877F2" class="grid h-10 w-10 place-items-center rounded-full p-2 text-white shadow-sm transition-transform hover:scale-105">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="h-full w-full" aria-hidden="true"><path fill="currentColor" d="M80 299.3l0 212.7 116 0 0-212.7 86.5 0 18-97.8-104.5 0 0-34.6c0-51.7 20.3-71.5 72.7-71.5 16.3 0 29.4 .4 37 1.2l0-88.7C291.4 4 256.4 0 236.2 0 129.3 0 80 50.5 80 159.4l0 42.1-66 0 0 97.8 66 0z"/></svg>
+                    <a href="{{ $socialFacebook ?? 'https://facebook.com/khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="kg-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                     </a>
-                    <a href="{{ $socialYoutube ?? 'https://youtube.com/@khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" style="background-color:#FF0000" class="grid h-10 w-10 place-items-center rounded-full p-2 text-white shadow-sm transition-transform hover:scale-105">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="h-full w-full" aria-hidden="true"><path fill="currentColor" d="M549.7 124.1C543.5 100.4 524.9 81.8 501.4 75.5 458.9 64 288.1 64 288.1 64S117.3 64 74.7 75.5C51.2 81.8 32.7 100.4 26.4 124.1 15 167 15 256.4 15 256.4s0 89.4 11.4 132.3c6.3 23.6 24.8 41.5 48.3 47.8 42.6 11.5 213.4 11.5 213.4 11.5s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zM232.2 337.6l0-162.4 142.7 81.2-142.7 81.2z"/></svg>
+                    <a href="{{ $socialYoutube ?? 'https://youtube.com/@khansgadget' }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="kg-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
                     </a>
-                    <a href="{{ $socialInstagram ?? 'https://bikroy.com/en/shops/khangadgets' }}" target="_blank" rel="noopener noreferrer" aria-label="Bikroy" title="Bikroy" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
-                        <img src="/media/icon-bikroy.ico" alt="Bikroy" class="h-full w-full object-contain">
+                    <a href="{{ $socialInstagram ?? 'https://bikroy.com/en/shops/khangadgets' }}" target="_blank" rel="noopener noreferrer" aria-label="Bikroy" class="kg-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 10a4 4 0 0 1-8 0"/><path d="M3.103 6.034h17.794"/><path d="M3.4 5.467a2 2 0 0 0-.4 1.2V20a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.667a2 2 0 0 0-.4-1.2l-2-2.667A2 2 0 0 0 17 2H7a2 2 0 0 0-1.6.8z"/></svg>
                     </a>
-                    <a href="{{ $socialWhatsapp ?? 'https://bdstall.com/stall/2373' }}" target="_blank" rel="noopener noreferrer" aria-label="BD Stall" title="BD Stall" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
-                        <img src="/media/icon-bdstall.png" alt="BD Stall" class="h-full w-full object-contain rounded-full">
+                    <a href="{{ $socialWhatsapp ?? 'https://bdstall.com/stall/2373' }}" target="_blank" rel="noopener noreferrer" aria-label="BD Stall" class="kg-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12a2 2 0 0 1-2-2V7"/></svg>
                     </a>
-                    <a href="{{ $socialDaraz ?? 'https://daraz.com.bd/shop/ki2kz4ne' }}" target="_blank" rel="noopener noreferrer" aria-label="Daraz" title="Daraz" class="grid h-10 w-10 place-items-center rounded-full border border-border bg-white p-2 shadow-sm transition-transform hover:scale-105">
-                        <img src="/media/icon-daraz.ico" alt="Daraz" class="h-full w-full object-contain">
+                    <a href="{{ $socialDaraz ?? 'https://daraz.com.bd/shop/ki2kz4ne' }}" target="_blank" rel="noopener noreferrer" aria-label="Daraz" class="kg-social">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                     </a>
                 </div>
             </div>
