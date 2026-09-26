@@ -80,7 +80,7 @@ class HomeSettingController extends Controller
             'home_new_arrival_badge_icon' => '',
             'home_new_arrival_badge_text' => 'New Arrival',
             'home_new_arrival_subtitle_active' => '1',
-            'home_new_arrival_subtitle_text' => 'Fresh stock, sourced on request — order now, get it soon',
+            'home_new_arrival_subtitle_text' => 'Fresh stock, sourced on request - order now, get it soon',
             'home_promos_active' => '1',
             'home_testimonials_active' => '1',
             'home_ticker_active' => '1',

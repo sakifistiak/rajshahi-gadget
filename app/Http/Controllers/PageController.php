@@ -72,7 +72,7 @@ class PageController extends Controller
         $homeNewArrivalBadgeIcon = SiteSetting::getValue('home_new_arrival_badge_icon', '');
         $homeNewArrivalBadgeText = SiteSetting::getValue('home_new_arrival_badge_text', 'New Arrival');
         $homeNewArrivalSubtitleActive = SiteSetting::getValue('home_new_arrival_subtitle_active', '1') == '1';
-        $homeNewArrivalSubtitleText = SiteSetting::getValue('home_new_arrival_subtitle_text', 'Fresh stock, sourced on request — order now, get it soon');
+        $homeNewArrivalSubtitleText = SiteSetting::getValue('home_new_arrival_subtitle_text', 'Fresh stock, sourced on request - order now, get it soon');
         $newArrivalProducts = Product::with(['category', 'brand', 'condition', 'images', 'highlights'])
             ->newArrival()
             ->latest()

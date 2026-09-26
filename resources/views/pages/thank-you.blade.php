@@ -135,13 +135,13 @@
                                 <p class="mt-1 text-sm font-medium">{{ $order->storeLocation->name }}</p>
                                 <div class="mt-0.5 text-sm text-muted-foreground">{!! $order->storeLocation->address !!}</div>
                             @else
-                                <p class="mt-1 text-sm text-muted-foreground">Outlet no longer available — we will contact you.</p>
+                                <p class="mt-1 text-sm text-muted-foreground">Outlet no longer available - we will contact you.</p>
                             @endif
                         </div>
                     @else
                         <div>
                             <p class="text-xs font-medium text-muted-foreground">Delivery area</p>
-                            <p class="mt-1 text-sm font-medium">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : ($order->delivery_area === 'outside_dhaka' ? 'Outside Dhaka' : '—') }}</p>
+                            <p class="mt-1 text-sm font-medium">{{ $order->delivery_area === 'inside_dhaka' ? 'Inside Dhaka' : ($order->delivery_area === 'outside_dhaka' ? 'Outside Dhaka' : '-') }}</p>
                         </div>
                         <div style="grid-column:1/-1">
                             <p class="text-xs font-medium text-muted-foreground">Delivery address</p>

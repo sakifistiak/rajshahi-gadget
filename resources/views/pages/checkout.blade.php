@@ -82,7 +82,7 @@
                                 <option value="outside_dhaka">Outside Dhaka</option>
                             </select>
                         </label>
-                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Specific Address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, area — as detailed as possible"></textarea></label>
+                        <label class="co-field co-span-2 text-sm font-medium" id="address-field">Specific Address<textarea required name="address" rows="3" class="rounded-md border border-border bg-background font-normal" placeholder="House, road, area - as detailed as possible"></textarea></label>
                         <label class="co-field co-span-2 text-sm font-medium">Order Note <span class="font-normal text-muted-foreground">(optional)</span><textarea name="note" rows="2" class="rounded-md border border-border bg-background font-normal"></textarea></label>
                     </div>
                 </div>

@@ -426,7 +426,7 @@ class Seo
     {
         $headline = $headline ?: SiteSetting::getValue('home_headline', self::HOME_HEADLINE);
 
-        return static::siteName($siteName).' — '.$headline;
+        return static::siteName($siteName).' - '.$headline;
     }
 
     /** Unique description for a listing page, or the cleaned fallback when the page has none of its own. */

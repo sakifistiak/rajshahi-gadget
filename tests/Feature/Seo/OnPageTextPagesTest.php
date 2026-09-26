@@ -98,7 +98,7 @@ class OnPageTextPagesTest extends TestCase
         $html = $this->get('/')->assertOk()->getContent();
 
         $this->assertSame(['Genuine Imported Laptops & Gadgets in Bangladesh'], $this->h1s($html));
-        $this->assertSame('Khan Gadget — Genuine Imported Laptops & Gadgets in Bangladesh', $this->title($html));
+        $this->assertSame('Khan Gadget - Genuine Imported Laptops & Gadgets in Bangladesh', $this->title($html));
         $this->assertSame($this->title($html), $this->meta($html, 'property="og:title"'));
         $this->assertSame($this->title($html), $this->meta($html, 'name="twitter:title"'));
     }
@@ -109,7 +109,7 @@ class OnPageTextPagesTest extends TestCase
 
         $html = $this->get('/')->assertOk()->getContent();
 
-        $this->assertSame('Acme Gadgets — Genuine Imported Laptops & Gadgets in Bangladesh', $this->title($html));
+        $this->assertSame('Acme Gadgets - Genuine Imported Laptops & Gadgets in Bangladesh', $this->title($html));
     }
 
     public function test_home_headline_and_subtext_can_be_customized_via_settings(): void
@@ -120,7 +120,7 @@ class OnPageTextPagesTest extends TestCase
         $html = $this->get('/')->assertOk()->getContent();
 
         $this->assertSame(['Premium Laptops & Tech in Dhaka'], $this->h1s($html));
-        $this->assertSame('Khan Gadget — Premium Laptops & Tech in Dhaka', $this->title($html));
+        $this->assertSame('Khan Gadget - Premium Laptops & Tech in Dhaka', $this->title($html));
         $this->assertStringContainsString('Authorized retailer with official warranty.', $html);
     }
 

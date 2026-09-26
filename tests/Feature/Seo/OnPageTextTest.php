@@ -120,8 +120,8 @@ class OnPageTextTest extends TestCase
 
     public function test_home_title_carries_the_keyword_headline(): void
     {
-        $this->assertSame('Khan Gadget — Genuine Imported Laptops & Gadgets in Bangladesh', Seo::homeTitle('Khan Gadget'));
-        $this->assertSame('Acme — Genuine Imported Laptops & Gadgets in Bangladesh', Seo::homeTitle('Acme'));
+        $this->assertSame('Khan Gadget - Genuine Imported Laptops & Gadgets in Bangladesh', Seo::homeTitle('Khan Gadget'));
+        $this->assertSame('Acme - Genuine Imported Laptops & Gadgets in Bangladesh', Seo::homeTitle('Acme'));
     }
 
     public function test_long_product_titles_are_cut_to_about_sixty_characters(): void
