@@ -22,7 +22,7 @@
     @endphp
     <nav class="mt-10 flex items-center justify-center gap-2" aria-label="Pagination">
         @if($p->onFirstPage())
-            <span class="grid h-9 w-9 place-items-center rounded-full border border-border opacity-40" aria-hidden="true">
+            <span class="grid h-9 w-9 place-items-center rounded-full border border-border" style="opacity: .4" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
             </span>
         @else
@@ -50,7 +50,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
             </a>
         @else
-            <span class="grid h-9 w-9 place-items-center rounded-full border border-border opacity-40" aria-hidden="true">
+            <span class="grid h-9 w-9 place-items-center rounded-full border border-border" style="opacity: .4" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
             </span>
         @endif
