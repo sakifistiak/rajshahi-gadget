@@ -34,6 +34,10 @@ php artisan test tests/Feature/Auth/AuthenticationTest.php   # run a single test
 - `AppServiceProvider::boot()` registers a global `View::composer('*', ...)` that runs on **every** view render and injects ~30 settings-derived variables (`$siteName`, `$socialFacebook`, `$footerCol1Links`, ...) plus active `StoreLocation`s into every view. The settings/locations reads are cache-backed (above); only the JSON decoding of footer/menu link blobs happens per render.
 - Adding a new admin-editable setting means touching three places: `Admin\SettingController` (default in `index()`, validation rule + key in `update()`), `AppServiceProvider::boot()` (share it globally), and the admin Blade form that edits it (`resources/views/admin/settings/index.blade.php` or the relevant admin screen).
 
+### Image uploads: always under `public/`, never the `storage` disk
+- Every admin image upload goes through `App\Support\ImageUploader::storeInPublic($file, 'uploads/...')`, which writes into `public/` and returns a URL path such as `/uploads/popups/x.webp`.
+- Never use `storeOnDisk(...)`, `->store(..., 'public')` or a `/storage/...` URL for anything the site shows. Those only work while the `public/storage` symlink (`php artisan storage:link`) exists, and the live cPanel host does not have it. The upload "succeeds" and the image silently 404s. This broke the offer popup banner once already.
+
 ### Routing: catch-all page resolver
 - `routes/web.php` declares specific named routes first, then ends with a catch-all `Route::get('/{page}', [PageController::class, 'page'])`. `PageController::page()` resolves this to `resources/views/pages/{page}.blade.php` if it exists. New specific routes must be declared **above** this catch-all or they'll never be reached.
 - `PageController::product()` looks up a DB-backed `Product` first (renders `pages.product.detail`); if no matching row exists it falls back to a static `resources/views/pages/product/{slug}.blade.php` view (leftover per-product pages from the original static build).

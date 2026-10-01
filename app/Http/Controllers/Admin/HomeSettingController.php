@@ -219,15 +219,17 @@ class HomeSettingController extends Controller
         }
 
         if ($request->hasFile('popup_offer_image_file')) {
-            $path = ImageUploader::storeOnDisk($request->file('popup_offer_image_file'), 'popups');
-            SiteSetting::setValue('popup_offer_image', '/storage/'.$path);
+            // Saved under public/ like every other admin upload: a /storage URL
+            // needs the public/storage symlink, which the live host does not have.
+            $path = ImageUploader::storeInPublic($request->file('popup_offer_image_file'), 'uploads/popups');
+            SiteSetting::setValue('popup_offer_image', $path);
         } elseif ($request->has('popup_offer_image')) {
             SiteSetting::setValue('popup_offer_image', $request->input('popup_offer_image', ''));
         }
 
         if ($request->hasFile('popup_offer_image_mobile_file')) {
-            $pathMobile = ImageUploader::storeOnDisk($request->file('popup_offer_image_mobile_file'), 'popups');
-            SiteSetting::setValue('popup_offer_image_mobile', '/storage/'.$pathMobile);
+            $pathMobile = ImageUploader::storeInPublic($request->file('popup_offer_image_mobile_file'), 'uploads/popups');
+            SiteSetting::setValue('popup_offer_image_mobile', $pathMobile);
         } elseif ($request->has('popup_offer_image_mobile')) {
             SiteSetting::setValue('popup_offer_image_mobile', $request->input('popup_offer_image_mobile', ''));
         }
