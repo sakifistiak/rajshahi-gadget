@@ -36,11 +36,15 @@
         padding: 0 !important;
         line-height: 1.5;
     }
+    /* A blank line in the editor (<p><br></p>) is a paragraph break: a small
+       gap like a chat message, not a whole empty text line. */
     .blog-rich-text p:empty,
     .blog-rich-text p:has(> br:only-child) {
         margin: 0 !important;
         padding: 0 !important;
-        min-height: 1.2em;
+        height: 0.75em;
+        line-height: 0;
+        overflow: hidden;
     }
     .blog-rich-text h1, .blog-rich-text h2, .blog-rich-text h3 {
         font-weight: 600;
