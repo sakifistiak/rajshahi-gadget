@@ -229,7 +229,7 @@
                         {{ __('+ Add Spec') }}
                     </button>
                 </div>
-                <p class="text-[11px] text-slate-500 mb-3">Label/value pairs shown in the "Specifications" table. Category filters such as Processor, RAM and RAM Type are automatically built from matching rows here.</p>
+                <p class="text-[11px] text-slate-500 mb-3">Label/value pairs shown in the "Specifications" table. Plain text, saved and shown exactly as typed. Shop filters are set separately in their own Filter section.</p>
 
                 <div id="specs-container" class="space-y-2">
                     <!-- Rows injected by JavaScript below -->
@@ -415,12 +415,14 @@
             if (oldSpecsLabel.length > 0) {
                 oldSpecsLabel.forEach((label, i) => addSpecRow(label, oldSpecsValue[i] || ''));
             } else {
-                addSpecRow('Model');
-                addSpecRow('Processor');
-                addSpecRow('RAM');
-                addSpecRow('RAM Type');
-                addSpecRow('Storage');
-                addSpecRow('Display');
+                // Keep these exact Unicode-bold labels with the colon. The admin types
+                // the spec as plain text; filters live in their own section.
+                addSpecRow('𝐌𝐎𝐃𝐄𝐋:');
+                addSpecRow('𝐏𝐑𝐎𝐂𝐄𝐒𝐒𝐎𝐑:');
+                addSpecRow('𝐒𝐏𝐄𝐄𝐃:');
+                addSpecRow('𝐑𝐀𝐌:');
+                addSpecRow('𝐒𝐓𝐎𝐑𝐀𝐆𝐄:');
+                addSpecRow('𝐃𝐈𝐒𝐏𝐋𝐀𝐘:');
             }
         });
     </script>

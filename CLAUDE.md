@@ -38,6 +38,10 @@ php artisan test tests/Feature/Auth/AuthenticationTest.php   # run a single test
 - Every admin image upload goes through `App\Support\ImageUploader::storeInPublic($file, 'uploads/...')`, which writes into `public/` and returns a URL path such as `/uploads/popups/x.webp`.
 - Never use `storeOnDisk(...)`, `->store(..., 'public')` or a `/storage/...` URL for anything the site shows. Those only work while the `public/storage` symlink (`php artisan storage:link`) exists, and the live cPanel host does not have it. The upload "succeeds" and the image silently 404s. This broke the offer popup banner once already.
 
+### Product specifications vs filters: never couple them
+- The admin product form (create and edit) pre-fills the Specifications Table with exactly these six labels, Unicode-bold with a trailing colon: `𝐌𝐎𝐃𝐄𝐋:` `𝐏𝐑𝐎𝐂𝐄𝐒𝐒𝐎𝐑:` `𝐒𝐏𝐄𝐄𝐃:` `𝐑𝐀𝐌:` `𝐒𝐓𝐎𝐑𝐀𝐆𝐄:` `𝐃𝐈𝐒𝐏𝐋𝐀𝐘:`. The owner chose these. Do not rename them, turn them into plain text, or add rows like "RAM Type". The owner adds extra rows by hand when needed.
+- Specs are free text, saved and shown exactly as typed. Shop filters are set only in the separate Filter section (`admin/products/_filter-attributes.blade.php`). Never derive filters from spec labels or change spec labels to suit filters. Commit `de8c9d7` did that and had to be reverted.
+
 ### Routing: catch-all page resolver
 - `routes/web.php` declares specific named routes first, then ends with a catch-all `Route::get('/{page}', [PageController::class, 'page'])`. `PageController::page()` resolves this to `resources/views/pages/{page}.blade.php` if it exists. New specific routes must be declared **above** this catch-all or they'll never be reached.
 - `PageController::product()` looks up a DB-backed `Product` first (renders `pages.product.detail`); if no matching row exists it falls back to a static `resources/views/pages/product/{slug}.blade.php` view (leftover per-product pages from the original static build).
