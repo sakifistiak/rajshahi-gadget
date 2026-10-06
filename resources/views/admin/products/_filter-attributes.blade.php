@@ -18,7 +18,7 @@
                         ? $oldFilterValues[$attribute->id]
                         : ($existingFilterValues->get($attribute->id)?->text_value ?? $existingFilterValues->get($attribute->id)?->numeric_value);
                 @endphp
-                <div>
+                <div class="filter-attribute-field" data-key="{{ $attribute->key }}">
                     <label class="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                         {{ $attribute->label }}{{ $attribute->unit ? ' (' . $attribute->unit . ')' : '' }}
                     </label>
@@ -43,18 +43,38 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const category = document.getElementById('category_id');
+    const main = document.getElementById('main_category_id');
+    const sub = document.getElementById('sub_category_id');
     const groups = document.querySelectorAll('#product-filter-attributes .filter-attribute-group');
-    if (!category || !groups.length) return;
+    if (!main || !groups.length) return;
 
+    // Show the main category's filters plus the sub category's. When both
+    // define the same filter (e.g. RAM), only the sub category's copy is used.
+    // Hidden fields are disabled so they are never submitted.
     function updateFilterAttributes() {
-        const selected = category.value;
+        const subId = sub && !sub.disabled ? sub.value : '';
+        const subKeys = new Set();
         groups.forEach(group => {
-            group.classList.toggle('hidden', group.dataset.categoryId !== selected);
+            if (subId && group.dataset.categoryId === subId) {
+                group.querySelectorAll('.filter-attribute-field').forEach(field => subKeys.add(field.dataset.key));
+            }
+        });
+
+        groups.forEach(group => {
+            const id = group.dataset.categoryId;
+            const isSub = subId !== '' && id === subId;
+            const isMain = id === main.value;
+            group.classList.toggle('hidden', !isSub && !isMain);
+            group.querySelectorAll('.filter-attribute-field').forEach(field => {
+                const shown = isSub || (isMain && !subKeys.has(field.dataset.key));
+                field.classList.toggle('hidden', !shown);
+                field.querySelectorAll('select, input').forEach(input => { input.disabled = !shown; });
+            });
         });
     }
 
-    category.addEventListener('change', updateFilterAttributes);
+    main.addEventListener('change', updateFilterAttributes);
+    if (sub) sub.addEventListener('change', updateFilterAttributes);
     updateFilterAttributes();
 });
 </script>

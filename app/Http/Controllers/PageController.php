@@ -23,6 +23,7 @@ use App\Support\SectionTitleStyle;
 use App\Support\Seo;
 use App\Support\SslCommerz;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
@@ -420,7 +421,6 @@ class PageController extends Controller
 
     public function shop(Request $request)
     {
-        $query = Product::with(['category', 'brand', 'condition', 'images', 'highlights']);
         $categoryContext = $request->attributes->get('category_context');
 
         // Each filter accepts either a single value (?condition=intact, used by
@@ -439,38 +439,31 @@ class PageController extends Controller
             ->whereIn('slug', $categorySlugs)
             ->pluck('id')
             ->values();
-        $filterCategoryIds = $selectedCategoryIds->all();
-        $knownCategoryIds = $selectedCategoryIds->all();
-        do {
-            $childIds = $categoryOptions
-                ->whereIn('parent_id', $knownCategoryIds)
-                ->pluck('id')
-                ->reject(fn ($id) => in_array($id, $filterCategoryIds, true))
-                ->values()
-                ->all();
-            $filterCategoryIds = array_merge($filterCategoryIds, $childIds);
-            $knownCategoryIds = $childIds;
-        } while (! empty($childIds));
+        $filterCategoryIds = $this->withDescendantIds($categoryOptions, $selectedCategoryIds->all());
+
+        // Every active filter is a closure, so the sidebar can work out what
+        // each option would match with all the *other* filters applied.
+        $filters = [];
 
         if (! empty($conditionSlugs)) {
-            $query->whereHas('condition', function ($q) use ($conditionSlugs) {
-                $q->whereIn('slug', $conditionSlugs);
-            });
+            $filters['condition'] = fn ($q) => $q->whereHas('condition', fn ($c) => $c->whereIn('slug', $conditionSlugs));
         }
 
         if (! empty($categorySlugs)) {
-            $query->whereIn('category_id', $filterCategoryIds);
+            $filters['category'] = fn ($q) => $q->whereIn('category_id', $filterCategoryIds);
         }
 
         if (! empty($brandSlugs)) {
-            $query->whereHas('brand', function ($q) use ($brandSlugs) {
-                $q->whereIn('slug', $brandSlugs);
-            });
+            $filters['brand'] = fn ($q) => $q->whereHas('brand', fn ($b) => $b->whereIn('slug', $brandSlugs));
         }
 
-        // Out-of-stock products are always excluded from the shop listing —
-        // this used to be an optional checkbox filter, but is now permanent.
-        $query->where('in_stock', true);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $filters['search'] = fn ($q) => $q->where(function ($w) use ($search) {
+                $w->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
 
         // Spec filters (RAM, Storage, Processor, ...) are defined per category,
         // but the same filter (e.g. "RAM") is normally redefined identically on
@@ -480,10 +473,19 @@ class PageController extends Controller
         // (e.g. "ram") are merged into a single sidebar filter here, matched
         // against any of their underlying attribute IDs — a mouse's category
         // simply never defines a "processor" key, so that filter never appears
-        // for it regardless of whether a category is selected.
+        // for it regardless of whether a category is selected. A sub category
+        // also gets the filters defined on its main category (e.g. Laptops).
         $attributesQuery = FilterAttribute::query();
         if (! empty($filterCategoryIds)) {
-            $attributesQuery->whereIn('category_id', $filterCategoryIds);
+            $attributeCategoryIds = $filterCategoryIds;
+            foreach ($selectedCategoryIds as $id) {
+                $parentId = $categoryOptions->firstWhere('id', $id)?->parent_id;
+                while ($parentId && ! in_array($parentId, $attributeCategoryIds, true)) {
+                    $attributeCategoryIds[] = $parentId;
+                    $parentId = $categoryOptions->firstWhere('id', $parentId)?->parent_id;
+                }
+            }
+            $attributesQuery->whereIn('category_id', $attributeCategoryIds);
         }
 
         $rawAttributes = $attributesQuery->orderBy('sort_order')->get()->groupBy('key');
@@ -492,67 +494,117 @@ class PageController extends Controller
         foreach ($rawAttributes as $key => $group) {
             $ids = $group->pluck('id');
             $attribute = clone $group->first();
+            $attribute->filter_ids = $ids;
             $attribute->options = $group->pluck('options')
                 ->filter()
                 ->flatMap(fn ($options) => array_map('trim', explode(',', $options)))
                 ->filter()
                 ->unique()->values()->implode(', ');
 
-            $bounds = ProductFilterValue::whereIn('filter_attribute_id', $ids)
-                ->selectRaw('MIN(numeric_value) as min_bound, MAX(numeric_value) as max_bound')
-                ->first();
-            $attribute->min_bound = $bounds->min_bound;
-            $attribute->max_bound = $bounds->max_bound;
-
             if ($attribute->type === 'range') {
                 $min = $request->input("spec_min.{$key}");
                 $max = $request->input("spec_max.{$key}");
                 if (($min !== null && $min !== '') || ($max !== null && $max !== '')) {
-                    $query->whereHas('filterValues', function ($q) use ($ids, $min, $max) {
-                        $q->whereIn('filter_attribute_id', $ids);
+                    $filters["spec:{$key}"] = fn ($q) => $q->whereHas('filterValues', function ($v) use ($ids, $min, $max) {
+                        $v->whereIn('filter_attribute_id', $ids);
                         if ($min !== null && $min !== '') {
-                            $q->where('numeric_value', '>=', (float) $min);
+                            $v->where('numeric_value', '>=', (float) $min);
                         }
                         if ($max !== null && $max !== '') {
-                            $q->where('numeric_value', '<=', (float) $max);
+                            $v->where('numeric_value', '<=', (float) $max);
                         }
                     });
                 }
             } else {
                 $selected = array_filter((array) $request->input("spec_select.{$key}", []));
                 if (! empty($selected)) {
-                    $query->whereHas('filterValues', function ($q) use ($ids, $selected) {
-                        $q->whereIn('filter_attribute_id', $ids)->whereIn('text_value', $selected);
-                    });
+                    $filters["spec:{$key}"] = fn ($q) => $q->whereHas('filterValues', fn ($v) => $v->whereIn('filter_attribute_id', $ids)->whereIn('text_value', $selected));
                 }
             }
 
             $filterAttributes->push($attribute);
         }
 
-        // Search query
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            });
+        if ($request->filled('max_price')) {
+            $maxPrice = (float) $request->max_price;
+            $filters['max_price'] = fn ($q) => $q->where('price', '<=', $maxPrice);
         }
+
+        // In-stock products matching every active filter except $except.
+        // Out-of-stock products are always excluded from the shop listing —
+        // this used to be an optional checkbox filter, but is now permanent.
+        $matching = function (?string $except = null) use ($filters) {
+            $query = Product::query()->where('in_stock', true);
+            foreach ($filters as $name => $apply) {
+                if ($name !== $except) {
+                    $apply($query);
+                }
+            }
+
+            return $query;
+        };
+
+        // Hide every sidebar option that no product would match. Each group is
+        // checked without its own selection, so ticking "i5" never hides "i7"
+        // (options of one filter combine), while picking a brand or category
+        // hides the processors that brand never has. A ticked option always
+        // stays visible so it can be unticked.
+        $filterAttributes = $filterAttributes->filter(function ($attribute) use ($matching, $request) {
+            $key = $attribute->key;
+            $values = ProductFilterValue::whereIn('filter_attribute_id', $attribute->filter_ids)
+                ->whereIn('product_id', $matching("spec:{$key}")->select('id'));
+
+            if ($attribute->type === 'range') {
+                $bounds = $values->selectRaw('MIN(numeric_value) as min_bound, MAX(numeric_value) as max_bound')->first();
+                $attribute->min_bound = $bounds->min_bound;
+                $attribute->max_bound = $bounds->max_bound;
+
+                return $bounds->min_bound !== null
+                    || filled($request->input("spec_min.{$key}"))
+                    || filled($request->input("spec_max.{$key}"));
+            }
+
+            $available = $values->distinct()->pluck('text_value')->all();
+            $selected = (array) $request->input("spec_select.{$key}", []);
+            $attribute->options = collect($attribute->optionList())
+                ->filter(fn ($option) => in_array($option, $available, true) || in_array($option, $selected, true))
+                ->implode(', ');
+
+            return $attribute->options !== '';
+        })->values();
+
+        $conditionIds = $matching('condition')->distinct()->pluck('condition_id')->all();
+        $conditions = Condition::all()
+            ->filter(fn ($c) => in_array($c->id, $conditionIds) || in_array($c->slug, $conditionSlugs, true))
+            ->values();
+
+        $brandIds = $matching('brand')->distinct()->pluck('brand_id')->all();
+        $brands = Brand::all()
+            ->filter(fn ($b) => in_array($b->id, $brandIds) || in_array($b->slug, $brandSlugs, true))
+            ->values();
+
+        // The shop filter must follow the admin-managed display order too.
+        // Category::all() uses database/insert order and ignores sort_order.
+        // A category stays listed while it or one of its sub categories has a match.
+        $usedCategoryIds = $matching('category')->distinct()->pluck('category_id')->all();
+        $categories = ($categoryContext
+            ? $categoryOptions->where('parent_id', $categoryContext->id)
+            : $categoryOptions)
+            ->filter(fn ($c) => in_array($c->slug, $categorySlugs, true)
+                || array_intersect($this->withDescendantIds($categoryOptions, [$c->id]), $usedCategoryIds) !== [])
+            ->values();
 
         // The price slider's ceiling reflects the highest price among products
         // matching every other active filter (category/condition/brand/spec/
         // search), rounded up to the nearest ৳10k — so narrowing to a category
         // with a lower top price (e.g. Pre-Owned maxing at 49k) also narrows the
         // slider (to 50k), instead of a fixed ceiling hiding pricier products in
-        // other categories. Computed from a clone, before max_price is applied
-        // to $query itself, so dragging the slider down can't shrink its own max.
-        $rawMaxPrice = (clone $query)->max('price');
+        // other categories. Computed without max_price itself, so dragging the
+        // slider down can't shrink its own max.
+        $rawMaxPrice = $matching('max_price')->max('price');
         $priceMax = $rawMaxPrice ? (int) (ceil($rawMaxPrice / 10000) * 10000) : 300000;
 
-        // Max Price filter
-        if ($request->filled('max_price')) {
-            $query->where('price', '<=', (float) $request->max_price);
-        }
+        $query = $matching()->with(['category', 'brand', 'condition', 'images', 'highlights']);
 
         // Sort order. Reset any order already attached to the query so price
         // sorting is always the first and authoritative ordering rule.
@@ -567,18 +619,36 @@ class PageController extends Controller
         }
 
         $products = $query->paginate(48)->withQueryString();
-        // The shop filter must follow the admin-managed display order too.
-        // Category::all() uses database/insert order and ignores sort_order.
-        $categories = $categoryContext
-            ? $categoryOptions->where('parent_id', $categoryContext->id)->values()
-            : $categoryOptions;
-        $brands = Brand::all();
-        $conditions = Condition::all();
 
         return view('pages.shop', compact(
             'products', 'categories', 'brands', 'conditions',
             'conditionSlugs', 'categorySlugs', 'brandSlugs', 'filterAttributes', 'priceMax', 'categoryContext'
         ));
+    }
+
+    /**
+     * The given category ids plus every descendant of them.
+     *
+     * @param  Collection<int, Category>  $categories
+     * @param  array<int, int>  $ids
+     * @return array<int, int>
+     */
+    private function withDescendantIds($categories, array $ids): array
+    {
+        $all = $ids;
+        $known = $ids;
+        do {
+            $childIds = $categories
+                ->whereIn('parent_id', $known)
+                ->pluck('id')
+                ->reject(fn ($id) => in_array($id, $all, true))
+                ->values()
+                ->all();
+            $all = array_merge($all, $childIds);
+            $known = $childIds;
+        } while (! empty($childIds));
+
+        return $all;
     }
 
     public function product(string $slug)

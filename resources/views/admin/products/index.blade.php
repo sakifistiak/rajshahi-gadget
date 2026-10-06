@@ -68,7 +68,7 @@
             <select name="category" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white cursor-pointer">
                 <option value="">{{ __('All Categories') }}</option>
                 @foreach ($categories as $cat)
-                    <option value="{{ $cat->id }}" {{ (string) request('category') === (string) $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    <option value="{{ $cat->id }}" {{ (string) request('category') === (string) $cat->id ? 'selected' : '' }}>{{ $cat->parent_id ? ($categories->firstWhere('id', $cat->parent_id)?->name.' › ') : '' }}{{ $cat->name }}</option>
                 @endforeach
             </select>
             <select name="condition" class="px-3 py-1.5 text-xs border border-slate-200 rounded focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none bg-white cursor-pointer">

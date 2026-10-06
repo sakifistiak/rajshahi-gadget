@@ -29,6 +29,9 @@
                         <div class="text-[9px] text-slate-400">Brand: {{ $product->brand?->name }}</div>
                     </td>
                     <td class="px-6 py-3.5 whitespace-nowrap text-xs text-slate-600">
+                        @if ($product->category?->parent)
+                            <span class="text-slate-400">{{ $product->category->parent->name }} ›</span>
+                        @endif
                         {{ $product->category?->name }}
                     </td>
                     <td class="px-6 py-3.5 whitespace-nowrap">

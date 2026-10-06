@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -89,18 +90,22 @@ class ProductController extends Controller
 
                 if (! ctype_digit($productId) || ! Product::whereKey((int) $productId)->exists()) {
                     $errors[] = "Line {$line}: invalid product_id.";
+
                     continue;
                 }
                 if (! ctype_digit($price)) {
                     $errors[] = "Line {$line}: price must be a whole number.";
+
                     continue;
                 }
                 if (! ctype_digit($quantity)) {
                     $errors[] = "Line {$line}: stock_quantity must be zero or a positive whole number.";
+
                     continue;
                 }
                 if ($compareAtPrice !== null && $compareAtPrice !== '' && ! ctype_digit($compareAtPrice)) {
                     $errors[] = "Line {$line}: compare_at_price must be empty or a whole number.";
+
                     continue;
                 }
 
@@ -120,6 +125,7 @@ class ProductController extends Controller
             if (count($errors) > 5) {
                 $message .= ' (and '.(count($errors) - 5).' more errors)';
             }
+
             return back()->with('error', $message);
         }
 
@@ -134,7 +140,7 @@ class ProductController extends Controller
 
     public function index(Request $request): View
     {
-        $query = Product::with(['category', 'condition', 'brand']);
+        $query = Product::with(['category.parent', 'condition', 'brand']);
 
         if ($search = trim((string) $request->input('q'))) {
             $query->where('name', 'like', "%{$search}%");
@@ -152,7 +158,7 @@ class ProductController extends Controller
             $categoryId = $request->input('category');
             $query->where(function ($q) use ($categoryId) {
                 if (is_numeric($categoryId)) {
-                    $q->where('category_id', $categoryId);
+                    $q->whereIn('category_id', Category::where('parent_id', $categoryId)->pluck('id')->push((int) $categoryId));
                 } else {
                     $q->whereHas('category', fn ($c) => $c->where('slug', $categoryId)->orWhere('name', $categoryId));
                 }
@@ -221,6 +227,7 @@ class ProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $this->resolveCategory($request);
         $request->validate([
             'name' => 'required|string|max:255',
             'brand_id' => 'required|exists:brands,id',
@@ -354,6 +361,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product): RedirectResponse
     {
+        $this->resolveCategory($request);
         $request->validate([
             'name' => 'required|string|max:255',
             'brand_id' => 'required|exists:brands,id',
@@ -514,10 +522,32 @@ class ProductController extends Controller
         return redirect($target)->with($deletable->count() > 0 ? 'success' : 'error', $message);
     }
 
+    /**
+     * The form sends a required main category and an optional sub category of
+     * it. The product is saved under the sub category when one is picked,
+     * otherwise under the main category.
+     */
+    private function resolveCategory(Request $request): void
+    {
+        if (! $request->has('main_category_id')) {
+            return; // an older form that still posts category_id directly
+        }
+
+        $request->validate([
+            'main_category_id' => ['required', Rule::exists('categories', 'id')->whereNull('parent_id')],
+            'sub_category_id' => ['nullable', Rule::exists('categories', 'id')->where('parent_id', (int) $request->input('main_category_id'))],
+        ], [
+            'main_category_id.required' => 'Please select a main category.',
+            'sub_category_id.exists' => 'The sub category must belong to the selected main category.',
+        ]);
+
+        $request->merge(['category_id' => $request->input('sub_category_id') ?: $request->input('main_category_id')]);
+    }
+
     private function syncDirectFilterValues(Product $product, Request $request): void
     {
         $submitted = $request->input('filter_values', []);
-        $attributes = FilterAttribute::where('category_id', $product->category_id)
+        $attributes = FilterAttribute::whereIn('category_id', Category::find($product->category_id)?->selfAndAncestorIds() ?? [])
             ->get()
             ->keyBy('id');
 
@@ -540,6 +570,7 @@ class ProductController extends Controller
                     'filter_attribute_id' => $attribute->id,
                     'numeric_value' => (float) $value,
                 ]);
+
                 continue;
             }
 
