@@ -21,6 +21,7 @@ use App\Models\SiteSetting;
 use App\Services\AnalyticsTracker;
 use App\Support\SectionTitleStyle;
 use App\Support\Seo;
+use App\Support\SslCommerz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
@@ -399,7 +400,9 @@ class PageController extends Controller
             'quantity' => max(1, min(10, $request->integer('qty', 1))),
         ] : null;
 
-        return view('pages.checkout', compact('buyNow'));
+        $onlinePaymentEnabled = SslCommerz::enabled();
+
+        return view('pages.checkout', compact('buyNow', 'onlinePaymentEnabled'));
     }
 
     public function thankYou(Request $request)

@@ -109,7 +109,7 @@
                             $codNoticeOn = ($codAdvanceNoticeActive ?? '0') == '1' && $codNoticeText !== '';
                         @endphp
                         <!-- 1. Cash on Delivery (Active) -->
-                        <label class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 border-primary bg-background p-3 sm:p-4 transition-colors">
+                        <label data-pay-option class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 border-primary bg-background p-3 sm:p-4 transition-colors">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                                 <input checked type="radio" name="payment_method" value="cod" class="h-4 w-4 text-primary focus:ring-primary shrink-0">
                                 <div class="w-14 sm:w-16 h-8 sm:h-9 px-1 py-1 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-md flex items-center justify-center shrink-0 overflow-hidden">
@@ -167,6 +167,24 @@
                             </span>
                         </div>
 
+                        @if($onlinePaymentEnabled)
+                        <!-- 4. Online payment via SSLCommerz (cards, mobile banking, net banking) -->
+                        <label data-pay-option class="flex cursor-pointer items-center justify-between gap-2.5 sm:gap-3 rounded-md border-2 bg-background p-3 sm:p-4 transition-colors" style="border-color:var(--border)">
+                            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <input type="radio" name="payment_method" value="sslcommerz" class="h-4 w-4 text-primary focus:ring-primary shrink-0">
+                                <div class="w-14 sm:w-16 h-8 sm:h-9 px-1 py-1 bg-white rounded-md border border-slate-200 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src="/assets/payment/cards.svg" alt="Cards & Bank" class="h-full w-full object-contain" />
+                                </div>
+                                <div class="min-w-0">
+                                    <strong class="text-xs sm:text-sm font-bold text-foreground block leading-tight">Online Payment</strong>
+                                    <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-tight">Card, bKash, Nagad & Net Banking (SSLCommerz)</p>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-[11px] font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 shrink-0 whitespace-nowrap">
+                                Available
+                            </span>
+                        </label>
+                        @else
                         <!-- 4. Card / Bank & EMI (Coming Soon) -->
                         <div class="flex items-center justify-between gap-2.5 sm:gap-3 rounded-md border border-border/70 bg-secondary/30 p-3 sm:p-4 opacity-90 cursor-not-allowed">
                             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -183,10 +201,11 @@
                                 Coming Soon
                             </span>
                         </div>
+                        @endif
                     </div>
                 </div>
             </section>
-            <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order Summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong id="checkout-delivery-fee">Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 hidden text-sm text-red-600 dark:text-red-400"></p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place Order</button></aside>
+            <aside class="rounded-lg border border-border bg-card p-5"><h2 class="text-lg font-semibold">Order Summary</h2><div id="checkout-items" class="mt-5 space-y-4"></div><div class="mt-5 space-y-2 border-t border-border pt-4 text-sm"><div class="flex justify-between"><span>Subtotal</span><strong id="checkout-subtotal"></strong></div><div class="flex justify-between"><span>Delivery</span><strong id="checkout-delivery-fee">Free</strong></div><div class="flex justify-between border-t border-border pt-3 text-base"><strong>Total</strong><strong id="checkout-total"></strong></div></div><p id="checkout-error" class="mt-4 {{ in_array(request('payment'), ['failed', 'cancelled'], true) ? '' : 'hidden' }} text-sm text-red-600 dark:text-red-400">{{ request('payment') === 'cancelled' ? 'Payment was cancelled. Your cart is still here - try again or choose Cash on Delivery.' : (request('payment') === 'failed' ? 'Payment was not completed. Try again or choose Cash on Delivery.' : '') }}</p><button id="place-order" type="submit" class="mt-6 w-full rounded-full bg-primary font-bold text-primary-foreground transition" style="padding:12px 16px">Place Order</button></aside>
         </form>
     </main>
     @include('partials.footer', ['hideOutlets' => true])
@@ -304,6 +323,21 @@
             });
             areaSelect.addEventListener('change', updateDeliveryFee);
 
+            // Highlight the chosen payment row and match the button to it.
+            function refreshPaymentOption() {
+                var online = false;
+                document.querySelectorAll('[data-pay-option]').forEach(function (label) {
+                    var radio = label.querySelector('input[type="radio"]');
+                    label.style.borderColor = radio.checked ? 'var(--primary)' : 'var(--border)';
+                    if (radio.checked && radio.value === 'sslcommerz') online = true;
+                });
+                document.getElementById('place-order').textContent = online && !isPickupMode() ? 'Pay Now' : 'Place Order';
+            }
+            document.querySelectorAll('[name="payment_method"], [name="delivery_method"]').forEach(function (radio) {
+                radio.addEventListener('change', refreshPaymentOption);
+            });
+            refreshPaymentOption();
+
             refreshFieldStates();
         })();
 
@@ -311,8 +345,8 @@
             event.preventDefault(); var form = event.currentTarget, button = document.getElementById('place-order'), error = document.getElementById('checkout-error');
             if (!form.reportValidity()) return;
             error.classList.add('hidden'); button.disabled = true; button.textContent = 'Placing Order…';
-            var data = Object.fromEntries(new FormData(form).entries()); data.items = items.map(function (item) { return { slug: item.slug, quantity: Number(item.quantity || 1) }; });
-            try { var response = await fetch('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify(data) }); var payload = await response.json(); if (!response.ok) throw new Error(payload.message || Object.values(payload.errors || {})[0]?.[0] || 'Could not place the order.'); if (!buyNow) localStorage.removeItem(cartKey); window.location.href = '/thank-you?order=' + encodeURIComponent(payload.order_number); } catch (err) { error.textContent = err.message; error.classList.remove('hidden'); button.disabled = false; button.textContent = 'Place Order'; }
+            var data = Object.fromEntries(new FormData(form).entries()); if (data.delivery_method === 'store_pickup' && data.payment_method === 'sslcommerz') data.payment_method = 'cod'; data.items = items.map(function (item) { return { slug: item.slug, quantity: Number(item.quantity || 1) }; });
+            try { var response = await fetch('/orders', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }, body: JSON.stringify(data) }); var payload = await response.json(); if (!response.ok) throw new Error(payload.message || Object.values(payload.errors || {})[0]?.[0] || 'Could not place the order.'); if (payload.redirect_url) { try { sessionStorage.setItem('kg_paying_from', buyNow ? 'buy_now' : 'cart'); } catch (e) {} window.location.href = payload.redirect_url; return; } if (!buyNow) localStorage.removeItem(cartKey); window.location.href = '/thank-you?order=' + encodeURIComponent(payload.order_number); } catch (err) { error.textContent = err.message; error.classList.remove('hidden'); button.disabled = false; button.textContent = data.payment_method === 'sslcommerz' ? 'Pay Now' : 'Place Order'; }
         });
     })();
     </script>

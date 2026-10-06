@@ -14,6 +14,16 @@ class Order extends Model
         'total', 'status', 'delivery_method', 'store_location_id',
     ];
 
+    protected function casts(): array
+    {
+        return ['paid_at' => 'datetime'];
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid';
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);

@@ -29,6 +29,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         // no.store must wrap route-model binding, so a 404 for an unknown order number is never stored either.
         $middleware->prependToPriorityList(before: SubstituteBindings::class, prepend: NoStore::class);
+        // SSLCommerz posts back from its own domain; SslCommerzController validates every payment server-side.
+        $middleware->validateCsrfTokens(except: ['payment/sslcommerz/*']);
         $middleware->web(append: [
             EnsureCartToken::class,
             TrackVisitorAnalytics::class,

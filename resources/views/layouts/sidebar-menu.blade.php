@@ -1,7 +1,7 @@
 {{-- Shared admin menu (profile card + navigation). Rendered inside the desktop <aside>
      (layouts/sidebar.blade.php) and the mobile drawer (layouts/navigation.blade.php). --}}
 <div class="flex min-h-0 flex-1 flex-col"
-       x-data="{ openSection: '{{ request()->routeIs('admin.orders.*') || request()->routeIs('admin.cart-abandonment.*') || request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.flash-sales.*') || request()->routeIs('admin.filter-attributes.*') || request()->routeIs('admin.store-locations.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.popup-offer.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.live-chat.*') || request()->routeIs('admin.live-chat-settings.*') ? 'live_chat' : (request()->routeIs('admin.blog-posts.*') || request()->routeIs('admin.customer-spotlights.*') || request()->routeIs('admin.customer-feedbacks.*') || request()->routeIs('admin.philanthropic-works.*') ? 'blog' : (request()->routeIs('admin.settings.*') ? 'settings' : 'ecommerce')))))  }}'
+       x-data="{ openSection: '{{ request()->routeIs('admin.orders.*') || request()->routeIs('admin.cart-abandonment.*') || request()->routeIs('admin.products.*') || request()->routeIs('admin.categories.*') || request()->routeIs('admin.brands.*') || request()->routeIs('admin.flash-sales.*') || request()->routeIs('admin.filter-attributes.*') || request()->routeIs('admin.store-locations.*') ? 'ecommerce' : (request()->routeIs('admin.sliders.*') || request()->routeIs('admin.popup-offer.*') || request()->routeIs('admin.promos.*') || request()->routeIs('admin.media.*') || request()->routeIs('admin.home-settings.*') ? 'home_settings' : (request()->routeIs('admin.customers.*') ? 'customer' : (request()->routeIs('admin.live-chat.*') || request()->routeIs('admin.live-chat-settings.*') ? 'live_chat' : (request()->routeIs('admin.blog-posts.*') || request()->routeIs('admin.customer-spotlights.*') || request()->routeIs('admin.customer-feedbacks.*') || request()->routeIs('admin.philanthropic-works.*') ? 'blog' : (request()->routeIs('admin.settings.*') || request()->routeIs('admin.payment-gateway.*') ? 'settings' : 'ecommerce')))))  }}'
         }">
  
      <!-- User Profile Card -->
@@ -230,6 +230,10 @@
                 <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
                     <i data-lucide="sliders" class="h-3.5 w-3.5 {{ request()->routeIs('admin.settings.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
                     <span>Site Settings</span>
+                </a>
+                <a href="{{ route('admin.payment-gateway.index') }}" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-bold transition-colors {{ request()->routeIs('admin.payment-gateway.*') ? 'bg-blue-50 text-blue-600' : 'text-slate-700 hover:text-blue-600 hover:bg-slate-50' }}">
+                    <i data-lucide="credit-card" class="h-3.5 w-3.5 {{ request()->routeIs('admin.payment-gateway.*') ? 'text-blue-600' : 'text-slate-400' }}"></i>
+                    <span>Payment Gateway</span>
                 </a>
                 <a href="#" class="flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-semibold text-slate-700 hover:text-blue-600 hover:bg-slate-50 transition-colors">
                     <i data-lucide="shield-check" class="h-3.5 w-3.5 text-slate-400"></i>

@@ -169,6 +169,26 @@
                     </div>
 
                     <div class="flex justify-between text-slate-600">
+                        <span>Payment Status:</span>
+                        <span class="font-bold uppercase {{ $order->isPaid() ? 'text-emerald-600' : 'text-slate-800' }}">{{ $order->payment_status }}</span>
+                    </div>
+
+                    @if($order->isPaid())
+                        <div class="flex justify-between text-slate-600">
+                            <span>Paid At:</span>
+                            <span class="font-semibold text-slate-800">{{ $order->paid_at?->format('d M Y, h:i A') }}</span>
+                        </div>
+                        <div class="flex justify-between gap-3 text-slate-600">
+                            <span>Paid Via:</span>
+                            <span class="font-semibold text-slate-800 text-right">{{ $order->payment_card_type ?: '-' }}</span>
+                        </div>
+                        <div class="flex justify-between gap-3 text-slate-600">
+                            <span>Bank Txn ID:</span>
+                            <span class="font-mono text-slate-800 text-right break-all">{{ $order->payment_bank_tran_id ?: '-' }}</span>
+                        </div>
+                    @endif
+
+                    <div class="flex justify-between text-slate-600">
                         <span>Subtotal:</span>
                         <span class="font-semibold text-slate-800">৳{{ number_format($order->subtotal) }}</span>
                     </div>

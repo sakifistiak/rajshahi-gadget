@@ -43,4 +43,12 @@ return [
         'driver' => env('SMS_GATEWAY_DRIVER', 'log'),
     ],
 
+    'sslcommerz' => [
+        // Online payment stays hidden at checkout until both credentials are set.
+        // Keep SSLCOMMERZ_SANDBOX=true until the live store is approved.
+        'store_id' => env('SSLCOMMERZ_STORE_ID'),
+        'store_password' => env('SSLCOMMERZ_STORE_PASSWORD'),
+        'sandbox' => env('SSLCOMMERZ_SANDBOX', true),
+    ],
+
 ];

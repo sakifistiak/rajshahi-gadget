@@ -8,9 +8,11 @@ use App\Models\FlashSaleProduct;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\SiteSetting;
+use App\Support\SslCommerz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 
 class OrderController extends Controller
 {
@@ -33,6 +35,9 @@ class OrderController extends Controller
 
         if (empty($data['payment_method'])) {
             $data['payment_method'] = ($data['delivery_method'] === 'store_pickup') ? 'Store Pickup' : 'cod';
+        }
+        if ($data['payment_method'] === 'sslcommerz' && ! SslCommerz::enabled()) {
+            throw ValidationException::withMessages(['payment_method' => 'Online payment is not available yet. Please choose Cash on Delivery.']);
         }
 
         $products = Product::whereIn('slug', collect($data['items'])->pluck('slug'))
@@ -114,6 +119,19 @@ class OrderController extends Controller
                 'recovered_at' => now(),
                 'order_id' => $order->id,
             ]);
+        }
+
+        if ($order->payment_method === 'sslcommerz') {
+            try {
+                return response()->json([
+                    'order_number' => $order->order_number,
+                    'redirect_url' => SslCommerz::initiate($order),
+                ]);
+            } catch (RuntimeException $e) {
+                $order->forceFill(['payment_status' => 'failed', 'status' => 'cancelled'])->save();
+
+                return response()->json(['message' => 'Online payment is unavailable right now. Please try again or choose Cash on Delivery.'], 502);
+            }
         }
 
         return response()->json(['order_number' => $order->order_number]);

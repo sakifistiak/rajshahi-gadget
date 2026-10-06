@@ -45,6 +45,13 @@
                 </div>
                 <p class="text-2xl font-bold text-foreground">Order confirmed!</p>
                 <p class="mt-2 text-sm text-muted-foreground">Thank you, {{ $order->customer_name }}. We will contact you soon to confirm delivery.</p>
+                @if($order->payment_method === 'sslcommerz')
+                    @if($order->isPaid())
+                        <p class="mt-3 text-sm font-semibold" style="color:#15803d">Payment received: ৳ {{ number_format($order->total) }}</p>
+                    @else
+                        <p class="mt-3 text-sm font-semibold" style="color:#b45309">We have not received confirmation of your payment yet. If money was taken, it will be confirmed shortly. Otherwise our team will contact you.</p>
+                    @endif
+                @endif
                 <p class="mt-4 text-sm text-muted-foreground">Order number</p>
                 <p class="font-bold text-lg" style="letter-spacing:0.02em">{{ $order->order_number }}</p>
                 <div class="ty-contact-grid" style="margin-top:16px">
@@ -184,5 +191,14 @@
     </main>
     @include('partials.footer', ['hideOutlets' => true])
     @include('partials.mobile-drawer')
+    @if($order->payment_method === 'sslcommerz' && $order->isPaid())
+    <script>
+        // Online payments keep the cart until SSLCommerz confirms; a "Buy Now" payment never touched it.
+        try {
+            if (sessionStorage.getItem('kg_paying_from') === 'cart') localStorage.removeItem('kg_shopping_cart');
+            sessionStorage.removeItem('kg_paying_from');
+        } catch (e) {}
+    </script>
+    @endif
 </body>
 </html>

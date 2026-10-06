@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\HomeSettingController;
 use App\Http\Controllers\Admin\LiveChatSettingController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PaymentGatewaySettingController;
 use App\Http\Controllers\Admin\PhilanthropicWorkController;
 use App\Http\Controllers\Admin\PopupOfferController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SslCommerzController;
 use App\Http\Middleware\EnsureCartToken;
 use App\Support\Seo;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -73,6 +75,13 @@ Route::get('/checkout', [PageController::class, 'checkout'])->name('checkout');
 Route::get('/thank-you', [PageController::class, 'thankYou'])->name('thank-you')->middleware('no.store');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 Route::get('/orders/{order:order_number}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice')->middleware('no.store');
+// SSLCommerz callbacks: CSRF-exempt in bootstrap/app.php, the payment is checked with the validator API instead.
+Route::middleware('no.store')->prefix('payment/sslcommerz')->name('payment.sslcommerz.')->group(function () {
+    Route::post('success', [SslCommerzController::class, 'success'])->name('success');
+    Route::post('fail', [SslCommerzController::class, 'fail'])->name('fail');
+    Route::post('cancel', [SslCommerzController::class, 'cancel'])->name('cancel');
+    Route::post('ipn', [SslCommerzController::class, 'ipn'])->name('ipn');
+});
 Route::middleware(['throttle:30,1', 'no.store'])->group(function () {
     Route::post('/chat/start', [ChatController::class, 'start'])->name('chat.start');
     Route::get('/chat/messages', [ChatController::class, 'messages'])->name('chat.messages');
@@ -158,6 +167,9 @@ Route::middleware(['auth', 'verified', 'no.store'])->group(function () {
         Route::resource('pages', App\Http\Controllers\Admin\CustomPageController::class);
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
+        Route::get('payment-gateway', [PaymentGatewaySettingController::class, 'index'])->name('payment-gateway.index');
+        Route::post('payment-gateway', [PaymentGatewaySettingController::class, 'update'])->name('payment-gateway.update');
+        Route::post('payment-gateway/test', [PaymentGatewaySettingController::class, 'test'])->middleware('throttle:10,1')->name('payment-gateway.test');
         Route::get('live-chat-settings', [LiveChatSettingController::class, 'index'])->name('live-chat-settings.index');
         Route::post('live-chat-settings', [LiveChatSettingController::class, 'update'])->name('live-chat-settings.update');
         Route::get('home-settings', [HomeSettingController::class, 'index'])->name('home-settings.index');
