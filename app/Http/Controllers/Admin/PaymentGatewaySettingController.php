@@ -20,6 +20,9 @@ class PaymentGatewaySettingController extends Controller
             'sslcommerz_sandbox' => SiteSetting::getValue('sslcommerz_sandbox', '1'),
             // Never sent back to the browser: the form only shows whether one is saved.
             'has_password' => SiteSetting::getValue('sslcommerz_store_password') !== null,
+            'sslcommerz_emi_enabled' => SiteSetting::getValue('sslcommerz_emi_enabled', '1'),
+            'sslcommerz_emi_min_amount' => SslCommerz::emiMinAmount(),
+            'sslcommerz_emi_max_instalment' => SslCommerz::emiMaxInstalment(),
         ];
         $active = SslCommerz::enabled();
 
@@ -31,11 +34,19 @@ class PaymentGatewaySettingController extends Controller
         $request->validate([
             'sslcommerz_store_id' => 'nullable|string|max:100',
             'sslcommerz_store_password' => 'nullable|string|max:255',
+            'sslcommerz_emi_min_amount' => 'nullable|integer|min:0|max:10000000',
+            'sslcommerz_emi_max_instalment' => 'nullable|in:'.implode(',', SslCommerz::EMI_TENURES),
         ]);
 
         SiteSetting::setValue('sslcommerz_store_id', trim((string) $request->input('sslcommerz_store_id')) ?: null);
         SiteSetting::setValue('sslcommerz_enabled', $request->has('sslcommerz_enabled') ? '1' : '0');
         SiteSetting::setValue('sslcommerz_sandbox', $request->has('sslcommerz_sandbox') ? '1' : '0');
+        SiteSetting::setValue('sslcommerz_emi_enabled', $request->has('sslcommerz_emi_enabled') ? '1' : '0');
+        foreach (['sslcommerz_emi_min_amount', 'sslcommerz_emi_max_instalment'] as $key) {
+            if ($request->filled($key)) {
+                SiteSetting::setValue($key, (string) $request->integer($key));
+            }
+        }
 
         // A blank password field keeps the saved one; the remove box clears it.
         if ($request->boolean('remove_store_password')) {

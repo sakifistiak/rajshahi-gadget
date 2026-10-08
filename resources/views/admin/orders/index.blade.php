@@ -122,8 +122,13 @@
                             </td>
                             <td class="px-6 py-3.5 whitespace-nowrap">
                                 <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-slate-100 text-slate-600 border border-slate-200/50 uppercase">
-                                    {{ $order->payment_method }}
+                                    {{ $order->paymentMethodLabel() }}
                                 </span>
+                                @if ($order->isPaymentOnHold())
+                                    <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-red-50 text-red-600 border border-red-100 uppercase">
+                                        On Hold
+                                    </span>
+                                @endif
                                 @if ($order->isPaid())
                                     <span class="px-2 py-0.5 inline-flex text-[9px] leading-5 font-bold rounded bg-emerald-50 text-emerald-600 border border-emerald-100 uppercase">
                                         Paid

@@ -45,7 +45,7 @@ class SslCommerzController extends Controller
     private function findOrder(Request $request): ?Order
     {
         return Order::where('order_number', (string) $request->input('tran_id'))
-            ->where('payment_method', 'sslcommerz')
+            ->whereIn('payment_method', ['sslcommerz', 'sslcommerz_emi'])
             ->first();
     }
 
@@ -82,6 +82,11 @@ class SslCommerzController extends Controller
                     'payment_val_id' => $txn['val_id'] ?? null,
                     'payment_bank_tran_id' => $txn['bank_tran_id'] ?? null,
                     'payment_card_type' => $txn['card_type'] ?? null,
+                    'payment_emi_instalment' => (int) ($txn['emi_instalment'] ?? 0) ?: null,
+                    // SSLCommerz: "if risk_level = 1 ... hold the transaction and verify the customer".
+                    'payment_risk_title' => (string) ($txn['risk_level'] ?? '0') === '1'
+                        ? ((string) ($txn['risk_title'] ?? '') ?: 'Flagged by SSLCommerz')
+                        : null,
                     'paid_at' => now(),
                     // A late success beats an earlier fail/cancel callback.
                     'status' => $order->status === 'cancelled' ? 'pending' : $order->status,

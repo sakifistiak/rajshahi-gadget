@@ -165,7 +165,7 @@
                 <div class="space-y-2.5 text-xs">
                     <div class="flex justify-between text-slate-600">
                         <span>Payment Method:</span>
-                        <span class="font-bold text-slate-800 uppercase">{{ $order->payment_method }}</span>
+                        <span class="font-bold text-slate-800 uppercase">{{ $order->paymentMethodLabel() }}</span>
                     </div>
 
                     <div class="flex justify-between text-slate-600">
@@ -173,7 +173,19 @@
                         <span class="font-bold uppercase {{ $order->isPaid() ? 'text-emerald-600' : 'text-slate-800' }}">{{ $order->payment_status }}</span>
                     </div>
 
+                    @if($order->isPaymentOnHold())
+                        <div class="p-3 rounded-sm bg-red-50 border border-red-200 text-red-700 font-semibold leading-snug">
+                            ON HOLD: SSLCommerz flagged this payment ({{ $order->payment_risk_title }}). Call and verify the customer before shipping.
+                        </div>
+                    @endif
+
                     @if($order->isPaid())
+                        @if($order->payment_emi_instalment)
+                            <div class="flex justify-between text-slate-600">
+                                <span>EMI Tenure:</span>
+                                <span class="font-semibold text-slate-800">{{ $order->payment_emi_instalment }} months</span>
+                            </div>
+                        @endif
                         <div class="flex justify-between text-slate-600">
                             <span>Paid At:</span>
                             <span class="font-semibold text-slate-800">{{ $order->paid_at?->format('d M Y, h:i A') }}</span>

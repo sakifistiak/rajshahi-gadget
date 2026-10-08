@@ -69,6 +69,36 @@ class SslCommerz
             && filled($credentials['store_password']);
     }
 
+    /** EMI tenures (months) SSLCommerz accepts for emi_max_inst_option. */
+    public const EMI_TENURES = [3, 6, 9, 12, 18, 24, 36];
+
+    /**
+     * EMI is a second checkout option on the same store. The bank EMI page
+     * only shows if SSLCommerz has also switched EMI on for the store.
+     */
+    public static function emiEnabled(): bool
+    {
+        return self::enabled() && SiteSetting::getValue('sslcommerz_emi_enabled', '1') === '1';
+    }
+
+    /** Smallest order total (BDT) that may be paid by EMI. */
+    public static function emiMinAmount(): int
+    {
+        return max(0, (int) SiteSetting::getValue('sslcommerz_emi_min_amount', '5000'));
+    }
+
+    public static function emiMaxInstalment(): int
+    {
+        $months = (int) SiteSetting::getValue('sslcommerz_emi_max_instalment', '36');
+
+        return in_array($months, self::EMI_TENURES, true) ? $months : 36;
+    }
+
+    public static function emiAvailableFor(int|float $total): bool
+    {
+        return self::emiEnabled() && $total >= self::emiMinAmount();
+    }
+
     private static function baseUrl(): string
     {
         return self::credentials()['sandbox']
@@ -98,6 +128,7 @@ class SslCommerz
 
     /**
      * Opens a payment session and returns the hosted payment page URL.
+     * An EMI order (payment_method sslcommerz_emi) opens the EMI page.
      */
     public static function initiate(Order $order): string
     {
@@ -124,6 +155,15 @@ class SslCommerz
             'product_name' => str($order->items->pluck('product_name')->implode(', '))->limit(250)->toString(),
             'product_category' => 'Electronics',
             'product_profile' => 'physical-goods',
+            // EMI orders open straight on the bank EMI page (cards only, no
+            // full-payment methods); a normal online payment hides EMI.
+            ...($order->isEmi() ? [
+                'emi_option' => 1,
+                'emi_max_inst_option' => self::emiMaxInstalment(),
+                'emi_allow_only' => 1,
+            ] : [
+                'emi_option' => 0,
+            ]),
         ]);
 
         $url = $response->json('GatewayPageURL');

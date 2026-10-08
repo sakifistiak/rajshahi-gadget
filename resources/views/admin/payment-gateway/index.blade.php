@@ -65,6 +65,31 @@
                     </span>
                 </label>
 
+                <div class="border-t border-slate-100 pt-5 space-y-4">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input type="checkbox" name="sslcommerz_emi_enabled" value="1" class="mt-0.5" {{ $settings['sslcommerz_emi_enabled'] === '1' ? 'checked' : '' }}>
+                        <span>
+                            <span class="block text-sm font-bold text-slate-800">EMI (credit card instalments)</span>
+                            <span class="block text-xs text-slate-500 mt-1">Shows "EMI (Credit Card)" at checkout next to the normal Online Payment. The customer goes straight to the bank EMI page. SSLCommerz must also have EMI switched on for your store, otherwise ask them at integration@sslcommerz.com.</span>
+                        </span>
+                    </label>
+                    <div class="grid gap-5 md:grid-cols-2">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700">EMI minimum order total (৳)</label>
+                            <input type="number" name="sslcommerz_emi_min_amount" min="0" step="1" value="{{ old('sslcommerz_emi_min_amount', $settings['sslcommerz_emi_min_amount']) }}" class="w-full rounded-sm border border-slate-200 px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500">
+                            <p class="text-[11px] text-slate-400">Banks usually offer EMI from ৳ 5,000.</p>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700">Longest EMI tenure</label>
+                            <select name="sslcommerz_emi_max_instalment" class="w-full rounded-sm border border-slate-200 px-3 py-2 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                @foreach (\App\Support\SslCommerz::EMI_TENURES as $months)
+                                    <option value="{{ $months }}" @selected((int) old('sslcommerz_emi_max_instalment', $settings['sslcommerz_emi_max_instalment']) === $months)>{{ $months }} months</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="border-t border-slate-100 pt-5 space-y-2">
                     <h3 class="text-sm font-bold text-slate-800">URLs for the SSLCommerz merchant panel</h3>
                     <p class="text-xs text-slate-500">Set this as the IPN URL in your SSLCommerz merchant panel. The other three are sent automatically with each payment.</p>

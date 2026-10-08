@@ -69,9 +69,10 @@ class SslCommerzPaymentTest extends TestCase
         ]);
     }
 
-    private function checkout(string $paymentMethod = 'sslcommerz')
+    private function checkout(string $paymentMethod = 'sslcommerz', array $overrides = [])
     {
         return $this->postJson('/orders', [
+            'accept_terms' => '1',
             'customer_name' => 'Rahim',
             'phone' => '01700000000',
             'delivery_method' => 'home_delivery',
@@ -79,6 +80,7 @@ class SslCommerzPaymentTest extends TestCase
             'address' => 'Dhanmondi, Dhaka',
             'payment_method' => $paymentMethod,
             'items' => [['slug' => 'macbook-air', 'quantity' => 1]],
+            ...$overrides,
         ]);
     }
 
@@ -194,5 +196,97 @@ class SslCommerzPaymentTest extends TestCase
 
         $this->assertSame('unpaid', Order::firstOrFail()->payment_status);
         Http::assertNothingSent();
+    }
+
+    public function test_an_emi_order_opens_the_emi_only_payment_page(): void
+    {
+        $this->fakeGateway(['emi_instalment' => '6', 'card_type' => 'VISA-City Bank']);
+        $this->get('/checkout')->assertOk()->assertSee('value="sslcommerz_emi"', false);
+
+        $this->checkout('sslcommerz_emi')->assertOk()->assertJsonPath('redirect_url', 'https://sandbox.sslcommerz.com/EasyCheckOut/testkey');
+        $order = Order::firstOrFail();
+        Http::assertSent(fn (HttpRequest $r) => str_contains($r->url(), '/gwprocess/v4/api.php')
+            && (int) $r['emi_option'] === 1
+            && (int) $r['emi_allow_only'] === 1
+            && (int) $r['emi_max_inst_option'] === 36);
+
+        $this->post('/payment/sslcommerz/success', ['tran_id' => $order->order_number, 'val_id' => 'VAL1'])
+            ->assertRedirect(route('thank-you', ['order' => $order->order_number]));
+
+        $order->refresh();
+        $this->assertTrue($order->isPaid());
+        $this->assertSame(6, $order->payment_emi_instalment);
+        $this->get('/thank-you?order='.$order->order_number)->assertSee('EMI, 6 months');
+    }
+
+    public function test_a_normal_online_payment_hides_emi(): void
+    {
+        $this->fakeGateway();
+        $this->checkout();
+
+        Http::assertSent(fn (HttpRequest $r) => str_contains($r->url(), '/gwprocess/v4/api.php')
+            && (int) $r['emi_option'] === 0
+            && ! isset($r['emi_allow_only']));
+    }
+
+    public function test_emi_is_refused_below_the_minimum_total(): void
+    {
+        SiteSetting::setValue('sslcommerz_emi_min_amount', '200000');
+        Http::fake();
+
+        $this->checkout('sslcommerz_emi')->assertUnprocessable()->assertJsonValidationErrors('payment_method');
+
+        $this->assertSame(0, Order::count());
+        Http::assertNothingSent();
+    }
+
+    public function test_emi_can_be_switched_off_on_its_own(): void
+    {
+        SiteSetting::setValue('sslcommerz_emi_enabled', '0');
+        Http::fake();
+
+        $this->get('/checkout')->assertOk()->assertSee('value="sslcommerz"', false)->assertDontSee('value="sslcommerz_emi"', false);
+        $this->checkout('sslcommerz_emi')->assertUnprocessable()->assertJsonValidationErrors('payment_method');
+    }
+
+    public function test_a_risky_payment_is_held_for_verification(): void
+    {
+        $this->fakeGateway(['risk_level' => '1', 'risk_title' => 'Safe card but suspicious']);
+        $this->checkout();
+        $order = Order::firstOrFail();
+
+        $this->post('/payment/sslcommerz/ipn', ['tran_id' => $order->order_number, 'val_id' => 'VAL1'])->assertSee('OK');
+
+        $order->refresh();
+        $this->assertTrue($order->isPaid());
+        $this->assertTrue($order->isPaymentOnHold());
+        $this->assertSame('Safe card but suspicious', $order->payment_risk_title);
+        $this->get('/thank-you?order='.$order->order_number)->assertSee('verify this payment');
+    }
+
+    public function test_a_normal_payment_is_not_held(): void
+    {
+        $this->fakeGateway(['risk_level' => '0', 'risk_title' => 'Safe']);
+        $this->checkout();
+        $order = Order::firstOrFail();
+
+        $this->post('/payment/sslcommerz/ipn', ['tran_id' => $order->order_number, 'val_id' => 'VAL1']);
+
+        $this->assertFalse($order->refresh()->isPaymentOnHold());
+    }
+
+    public function test_the_terms_box_must_be_ticked(): void
+    {
+        Http::fake();
+
+        $this->checkout('cod', ['accept_terms' => null])->assertUnprocessable()->assertJsonValidationErrors('accept_terms');
+        $this->get('/checkout')->assertSee('name="accept_terms"', false)->assertSee('/page/return-refund-policy', false);
+    }
+
+    public function test_an_unknown_payment_method_is_rejected(): void
+    {
+        Http::fake();
+
+        $this->checkout('bitcoin')->assertUnprocessable()->assertJsonValidationErrors('payment_method');
     }
 }

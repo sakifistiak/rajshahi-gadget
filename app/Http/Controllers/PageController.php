@@ -402,8 +402,11 @@ class PageController extends Controller
         ] : null;
 
         $onlinePaymentEnabled = SslCommerz::enabled();
+        $emiEnabled = SslCommerz::emiEnabled();
+        $emiMinAmount = SslCommerz::emiMinAmount();
+        $emiMaxInstalment = SslCommerz::emiMaxInstalment();
 
-        return view('pages.checkout', compact('buyNow', 'onlinePaymentEnabled'));
+        return view('pages.checkout', compact('buyNow', 'onlinePaymentEnabled', 'emiEnabled', 'emiMinAmount', 'emiMaxInstalment'));
     }
 
     public function thankYou(Request $request)

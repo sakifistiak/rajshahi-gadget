@@ -27,7 +27,9 @@ class OrderController extends Controller
             'address' => ['required_if:delivery_method,home_delivery', 'nullable', 'string', 'max:1000'],
             'store_location_id' => ['required_if:delivery_method,store_pickup', 'nullable', 'exists:store_locations,id'],
             'note' => ['nullable', 'string', 'max:1000'],
-            'payment_method' => ['nullable', 'string', 'max:50'],
+            'payment_method' => ['nullable', 'in:cod,sslcommerz,sslcommerz_emi'],
+            // SSLCommerz compliance: the customer ticks Terms, Privacy and Refund policy themselves.
+            'accept_terms' => ['accepted'],
             'items' => ['required', 'array', 'min:1', 'max:20'],
             'items.*.slug' => ['required', 'string', 'max:255'],
             'items.*.quantity' => ['required', 'integer', 'min:1', 'max:10'],
@@ -39,6 +41,10 @@ class OrderController extends Controller
         if ($data['payment_method'] === 'sslcommerz' && ! SslCommerz::enabled()) {
             throw ValidationException::withMessages(['payment_method' => 'Online payment is not available yet. Please choose Cash on Delivery.']);
         }
+        if ($data['payment_method'] === 'sslcommerz_emi' && ! SslCommerz::emiEnabled()) {
+            throw ValidationException::withMessages(['payment_method' => 'EMI is not available right now. Please choose another payment method.']);
+        }
+        unset($data['accept_terms']);
 
         $products = Product::whereIn('slug', collect($data['items'])->pluck('slug'))
             ->where('in_stock', true)
@@ -91,6 +97,11 @@ class OrderController extends Controller
                     : (int) SiteSetting::getValue('shipping_fee_outside_dhaka', 130);
             }
 
+            // Checked on the server-side total; throwing here also rolls back the flash-sale counts.
+            if ($data['payment_method'] === 'sslcommerz_emi' && ! SslCommerz::emiAvailableFor($subtotal + $shippingFee)) {
+                throw ValidationException::withMessages(['payment_method' => 'EMI is available on orders of ৳ '.number_format(SslCommerz::emiMinAmount()).' or more.']);
+            }
+
             $order = Order::create([
                 ...collect($data)->except('items')->all(),
                 'order_number' => 'KG-'.now()->format('ymd').'-'.strtoupper(str()->random(6)),
@@ -121,7 +132,7 @@ class OrderController extends Controller
             ]);
         }
 
-        if ($order->payment_method === 'sslcommerz') {
+        if ($order->isOnlinePayment()) {
             try {
                 return response()->json([
                     'order_number' => $order->order_number,

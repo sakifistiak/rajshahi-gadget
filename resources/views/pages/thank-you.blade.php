@@ -45,9 +45,12 @@
                 </div>
                 <p class="text-2xl font-bold text-foreground">Order confirmed!</p>
                 <p class="mt-2 text-sm text-muted-foreground">Thank you, {{ $order->customer_name }}. We will contact you soon to confirm delivery.</p>
-                @if($order->payment_method === 'sslcommerz')
+                @if($order->isOnlinePayment())
                     @if($order->isPaid())
-                        <p class="mt-3 text-sm font-semibold" style="color:#15803d">Payment received: ৳ {{ number_format($order->total) }}</p>
+                        <p class="mt-3 text-sm font-semibold" style="color:#15803d">Payment received: ৳ {{ number_format($order->total) }}@if($order->isEmi()) (EMI{{ $order->payment_emi_instalment ? ', '.$order->payment_emi_instalment.' months' : '' }})@endif</p>
+                        @if($order->isPaymentOnHold())
+                            <p class="mt-2 text-sm" style="color:#b45309">Our team will call you to verify this payment before the order is shipped.</p>
+                        @endif
                     @else
                         <p class="mt-3 text-sm font-semibold" style="color:#b45309">We have not received confirmation of your payment yet. If money was taken, it will be confirmed shortly. Otherwise our team will contact you.</p>
                     @endif
@@ -191,7 +194,7 @@
     </main>
     @include('partials.footer', ['hideOutlets' => true])
     @include('partials.mobile-drawer')
-    @if($order->payment_method === 'sslcommerz' && $order->isPaid())
+    @if($order->isOnlinePayment() && $order->isPaid())
     <script>
         // Online payments keep the cart until SSLCommerz confirms; a "Buy Now" payment never touched it.
         try {

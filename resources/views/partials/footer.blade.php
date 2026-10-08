@@ -176,6 +176,16 @@
 
         </div>
 
+        @if(\App\Support\SslCommerz::enabled())
+        {{-- SSLCOMMERZ requires its "Pay With" banner in the footer of every page. --}}
+        <div class="mt-6 border-t border-border pt-4">
+            <picture>
+                <source media="(min-width: 768px)" srcset="/assets/payment/sslcommerz-banner-wide.webp" width="2400" height="269">
+                <img src="/assets/payment/sslcommerz-banner-grid.webp" width="1100" height="534" alt="Pay with Visa, Mastercard, Amex, bKash, Nagad, Rocket, Upay and internet banking - verified by SSLCOMMERZ" loading="lazy" decoding="async" style="display:block;width:100%;height:auto;border-radius:6px;background:#fff">
+            </picture>
+        </div>
+        @endif
+
         <!-- 3. Centered Dynamic Copyright Bar -->
         <div class="mt-6 border-t border-border pt-4 text-center text-xs text-muted-foreground">
             <p>© {{ date('Y') }} {{ $footerCopyright ?? 'Khan Gadget. All rights reserved.' }}</p>
