@@ -12,7 +12,7 @@ class Product extends Model
     protected $fillable = [
         'slug', 'name', 'brand_id', 'category_id', 'condition_id',
         'price', 'compare_at_price', 'rating', 'reviews_count',
-        'badge', 'description', 'in_stock', 'stock_quantity', 'warranty',
+        'badge', 'hide_condition_badge', 'description', 'in_stock', 'stock_quantity', 'warranty',
         'is_new_arrival', 'price_is_tba', 'views_count',
     ];
 
@@ -27,6 +27,7 @@ class Product extends Model
             'stock_quantity' => 'integer',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
+            'hide_condition_badge' => 'boolean',
             'views_count' => 'integer',
         ];
     }
@@ -48,6 +49,23 @@ class Product extends Model
         }
 
         return $this->in_stock ? 'In Stock' : 'Stock Out';
+    }
+
+    /**
+     * The automatic badge from the product's condition (e.g. "BRAND NEW"),
+     * or null when the condition has none or this product opts out.
+     *
+     * @return array{text: string, color: string, textColor: string}|null
+     */
+    public function conditionBadge(): ?array
+    {
+        if ($this->hide_condition_badge || ! $this->condition_id) {
+            return null;
+        }
+
+        $badge = Condition::badgeMap()[$this->condition_id] ?? null;
+
+        return $badge ? $badge + ['textColor' => Condition::badgeTextColor($badge['color'])] : null;
     }
 
     public function brand(): BelongsTo

@@ -10,6 +10,11 @@
                 {{ $product->badge }}
             </span>
         @endif
+        @if ($conditionBadge = $product->conditionBadge())
+            <span class="product-card-condition-badge absolute rounded font-extrabold uppercase pointer-events-none z-10" style="right: 6px; top: 6px; font-size: 8px; line-height: 10px; padding: 1.5px 4px; width: max-content; max-width: calc(100% - 12px); letter-spacing: 0.02em; background-color: {{ $conditionBadge['color'] }}; color: {{ $conditionBadge['textColor'] }};">
+                {{ $conditionBadge['text'] }}
+            </span>
+        @endif
     </div>
     <div class="flex flex-1 flex-col" style="padding:10px 12px 12px">
         <h3 class="line-clamp-2 text-xs font-semibold leading-snug text-foreground" style="margin:0">

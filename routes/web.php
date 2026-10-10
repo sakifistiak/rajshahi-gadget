@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CartAbandonmentController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ChatAgentController;
 use App\Http\Controllers\Admin\ChatController as AdminChatController;
+use App\Http\Controllers\Admin\ConditionBadgeController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\CustomerFeedbackController;
 use App\Http\Controllers\Admin\CustomerSpotlightController;
@@ -156,6 +157,8 @@ Route::middleware(['auth', 'verified', 'no.store'])->group(function () {
         Route::patch('promos/{promo}/toggle', [AdminPromoBannerController::class, 'toggle'])->name('promos.toggle');
         Route::resource('flash-sales', FlashSaleController::class)->except('show');
         Route::resource('filter-attributes', FilterAttributeController::class)->except('show');
+        Route::get('condition-badges', [ConditionBadgeController::class, 'index'])->name('condition-badges.index');
+        Route::post('condition-badges', [ConditionBadgeController::class, 'update'])->name('condition-badges.update');
         Route::resource('blog-posts', BlogPostController::class)->except('show');
         Route::resource('customer-spotlights', CustomerSpotlightController::class)->except('show');
         Route::resource('customer-feedbacks', CustomerFeedbackController::class)->except('show');

@@ -240,6 +240,8 @@ class ProductController extends Controller
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
+            'badge' => 'nullable|string|max:30',
+            'hide_condition_badge' => 'boolean',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
@@ -285,6 +287,8 @@ class ProductController extends Controller
             'stock_quantity' => $stockQuantity,
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
+            'badge' => trim((string) $request->input('badge')) ?: null,
+            'hide_condition_badge' => $request->boolean('hide_condition_badge'),
             'rating' => 4.5, // default for new
             'reviews_count' => 0,
         ]);
@@ -374,6 +378,8 @@ class ProductController extends Controller
             'in_stock' => 'boolean',
             'is_new_arrival' => 'boolean',
             'price_is_tba' => 'boolean',
+            'badge' => 'nullable|string|max:30',
+            'hide_condition_badge' => 'boolean',
             'highlights' => 'nullable|array',
             'specs_label' => 'nullable|array',
             'specs_value' => 'nullable|array',
@@ -412,6 +418,8 @@ class ProductController extends Controller
             'stock_quantity' => $stockQuantity,
             'is_new_arrival' => $request->has('is_new_arrival'),
             'price_is_tba' => $request->has('price_is_tba'),
+            'badge' => trim((string) $request->input('badge')) ?: null,
+            'hide_condition_badge' => $request->boolean('hide_condition_badge'),
         ]);
 
         // Sync highlights (delete old and insert new)
