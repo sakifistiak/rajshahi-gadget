@@ -268,6 +268,8 @@ class PageController extends Controller
             ->orWhereHas('brand', function ($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%");
             })
+            ->orderByDesc('in_stock')
+            ->orderBy('id')
             ->take(8)
             ->get()
             ->map(function ($product) {

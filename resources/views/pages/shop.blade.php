@@ -323,7 +323,11 @@ document.addEventListener('DOMContentLoaded', function () {
             var nextResults = resultsRoot(parsed);
             if (!nextForm || !nextResults) throw new Error('Filter response is incomplete');
 
+            // The sidebar scrolls on its own; keep the visitor where they clicked
+            // instead of jumping back to the first filter.
+            var formScrollTop = form.scrollTop;
             form.replaceWith(nextForm);
+            nextForm.scrollTop = formScrollTop;
             currentResults.replaceWith(nextResults);
             if (pushState) window.history.pushState({}, '', url.toString());
             if (window.lucide) window.lucide.createIcons();
