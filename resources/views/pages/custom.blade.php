@@ -26,6 +26,22 @@
         #custom-page-content > p:empty,
         #custom-page-content > p:has(> br:only-child) { display: none; }
 
+        /* Formatting saved by the Quill editor. Its look comes from quill.snow.css,
+           which only the admin loads, and the storefront bundle's reset flattens
+           headings and lists - so mirror the editor's rules here. */
+        #custom-page-content h1 { font-size: 2em; font-weight: 700; line-height: 1.25; }
+        #custom-page-content h2 { font-size: 1.5em; font-weight: 700; line-height: 1.3; }
+        #custom-page-content h3 { font-size: 1.17em; font-weight: 700; }
+        #custom-page-content h4 { font-size: 1em; font-weight: 700; }
+        #custom-page-content .ql-align-center { text-align: center; }
+        #custom-page-content .ql-align-right { text-align: right; }
+        #custom-page-content .ql-align-justify { text-align: justify; }
+        #custom-page-content ul { list-style: disc; padding-left: 1.5em; }
+        #custom-page-content ol { list-style: decimal; padding-left: 1.5em; }
+        #custom-page-content blockquote { border-left: 4px solid var(--border); padding-left: 1em; }
+        #custom-page-content pre.ql-syntax { background: #23241f; color: #f8f8f2; padding: .75em 1em; border-radius: 6px; overflow-x: auto; white-space: pre-wrap; }
+        #custom-page-content a { text-decoration: underline; }
+
         /* A few hover:/spacing utilities used by the location cards aren't in
            the harvested styles-CC_Lznyw.css bundle (see CLAUDE.md), so those
            bits are defined here instead of via class. */
