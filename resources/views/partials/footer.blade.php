@@ -186,6 +186,18 @@
         </div>
         @endif
 
+        {{-- Business and policy details required by the payment gateway (from the DSCC trade license). --}}
+        <div class="mt-6 border-t border-border pt-4 text-center text-xs text-muted-foreground" style="line-height:1.7">
+            <p><strong class="text-foreground">Trade License No:</strong> TRAD/DSCC/004397/2023</p>
+            <p><strong class="text-foreground">Registered Address:</strong> Shop 136, 1st Floor, Multiplan Center, 69-71 Mirpur Road, New Market, Dhaka-1205, Bangladesh</p>
+            <p><strong class="text-foreground">Delivery Time:</strong> Inside Dhaka - 5 days, Outside Dhaka - 10 days</p>
+            <p style="margin-top:6px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px">
+                <a href="/page/terms-conditions" class="underline hover:text-foreground">Terms &amp; Conditions</a>
+                <a href="/page/privacy-policy" class="underline hover:text-foreground">Privacy Policy</a>
+                <a href="/page/return-refund-policy" class="underline hover:text-foreground">Return &amp; Refund Policy</a>
+            </p>
+        </div>
+
         <!-- 3. Centered Dynamic Copyright Bar -->
         <div class="mt-6 border-t border-border pt-4 text-center text-xs text-muted-foreground">
             <p>© {{ date('Y') }} {{ $footerCopyright ?? 'Khan Gadget. All rights reserved.' }}</p>
